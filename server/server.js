@@ -140,7 +140,7 @@ export function createServer(opts = {}) {
 
   function startGame(room) {
     const taken = room.slots.filter((s) => s.ws).length;
-    const size = Math.max(room.options.size, taken, 1);
+    const size = room.options.noai ? Math.max(taken, 1) : Math.max(room.options.size, taken, 1); // noai : pas de place tenue par l'IA
     const used = new Set(room.slots.filter((s) => s.ws).map((s) => s.char));
     room.slots.forEach((s, i) => {
       if (i >= size) { s.mode = 'free'; return; }
@@ -384,7 +384,7 @@ export function createServer(opts = {}) {
         return broadcast(room, lobbyView(room));
       case 'options':
         if (room.started || c.slot !== hostSlot(room)) return;
-        room.options = { size: Math.max(1, Math.min(MAX_SLOTS, (m.size | 0) || 2)), stage: Math.max(0, Math.min(11, m.stage | 0)) };
+        room.options = { size: Math.max(1, Math.min(MAX_SLOTS, (m.size | 0) || 2)), stage: Math.max(0, Math.min(11, m.stage | 0)), noai: m.noai === true };
         if (typeof m.public === 'boolean') room.public = m.public;
         return broadcast(room, lobbyView(room));
       case 'start':
