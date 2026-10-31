@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<link rel="preload" href="ai_fighter_2.wasm" as="fetch" type="application/wasm" crossorigin>
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#f7f6f4">
 <title>AI Fighter 2</title>
@@ -10,7 +11,7 @@
   /* Jeu plein ecran : papier clair, encre sombre, accent rouge sceau. Un seul look, voulu. */
   :root { --paper: #f7f6f4; --ink: #1a1a22; --seal: #d6423a; color-scheme: light; }
   html, body { margin: 0; height: 100%; height: 100dvh; width: 100%; position: fixed; inset: 0; overflow: hidden; background: var(--paper); color: var(--ink); touch-action: none; overscroll-behavior: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
-  canvas#glcanvas { display: block; position: absolute; left: 0; top: 0; width: 100%; height: 100%; height: 100dvh; outline: none; touch-action: none; }
+  canvas#glcanvas { contain: strict; display: block; position: absolute; left: 0; top: 0; width: 100%; height: 100%; height: 100dvh; outline: none; touch-action: none; }
   [hidden] { display: none !important; }
   #loading { position: absolute; inset: 0; z-index: 4; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--paper); color: var(--ink); font: 600 20px/1.4 ui-monospace, Menlo, Consolas, monospace; letter-spacing: .08em; text-align: center; padding: 0 16px; }
   #loading i { display: block; width: 56px; height: 56px; border-radius: 50%; border: 3px solid var(--seal); margin-bottom: 18px; opacity: .85; }
