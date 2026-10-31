@@ -9,23 +9,19 @@
 <style>
   /* Jeu plein ecran : papier clair, encre sombre, accent rouge sceau. Un seul look, voulu. */
   :root { --paper: #f7f6f4; --ink: #1a1a22; --seal: #d6423a; color-scheme: light; }
-  html, body { margin: 0; height: 100%; width: 100%; overflow: hidden; background: var(--paper); color: var(--ink); touch-action: none; overscroll-behavior: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
-  canvas#glcanvas { display: block; position: absolute; left: 0; top: 0; width: 100%; height: 100%; outline: none; touch-action: none; }
+  html, body { margin: 0; height: 100%; height: 100dvh; width: 100%; position: fixed; inset: 0; overflow: hidden; background: var(--paper); color: var(--ink); touch-action: none; overscroll-behavior: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+  canvas#glcanvas { display: block; position: absolute; left: 0; top: 0; width: 100%; height: 100%; height: 100dvh; outline: none; touch-action: none; }
   [hidden] { display: none !important; }
   #loading { position: absolute; inset: 0; z-index: 4; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--paper); color: var(--ink); font: 600 20px/1.4 ui-monospace, Menlo, Consolas, monospace; letter-spacing: .08em; text-align: center; padding: 0 16px; }
   #loading i { display: block; width: 56px; height: 56px; border-radius: 50%; border: 3px solid var(--seal); margin-bottom: 18px; opacity: .85; }
   #loading small { font-weight: 400; font-size: 13px; opacity: .65; margin-top: 8px; letter-spacing: 0; }
-  #rot { position: absolute; inset: 0; z-index: 5; display: none; flex-direction: column; align-items: center; justify-content: center; background: rgba(247,246,244,.96); font: 600 18px/1.5 ui-monospace, Menlo, Consolas, monospace; text-align: center; padding: 0 24px; }
-  @media (orientation: portrait) and (pointer: coarse) { #rot { display: flex; } }
-  #rot button { margin-top: 18px; font: inherit; padding: 10px 18px; border: 2px solid var(--ink); background: transparent; color: var(--ink); border-radius: 6px; }
-  #fs { position: absolute; right: 6px; top: 6px; z-index: 3; width: 34px; height: 34px; opacity: .35; font: 600 16px monospace; border: 1px solid var(--ink); background: var(--paper); color: var(--ink); border-radius: 6px; padding: 0; }
+  #fs { position: absolute; right: max(6px, env(safe-area-inset-right)); top: max(6px, env(safe-area-inset-top)); z-index: 3; width: 34px; height: 34px; opacity: .35; font: 600 16px monospace; border: 1px solid var(--ink); background: var(--paper); color: var(--ink); border-radius: 6px; padding: 0; }
 </style>
 </head>
 <body>
 
 <canvas id="glcanvas" tabindex="1"></canvas>
 <div id="loading"><i></i>AI FIGHTER 2<small>chargement, quelques secondes...</small></div>
-<div id="rot">Tourne ton telephone en mode paysage<br>pour jouer.<button onclick="this.parentNode.style.display='none'">Jouer quand meme</button></div>
 <button id="fs" title="Plein ecran" aria-label="Plein ecran">[ ]</button>
 <script src="mq_js_bundle.js"></script>
 <script>
@@ -34,6 +30,13 @@ miniquad_add_plugin({
   name: "afh_storage", version: 1,
   register_plugin: function (importObject) {
     importObject.env.afh_ready = function () { var l = document.getElementById("loading"); if (l) l.hidden = true; };
+    // Zones sures (encoche, barre de gestes) : lues via une sonde CSS env(safe-area-inset-*), en centiemes de point.
+    var probe = document.createElement("div");
+    probe.style.cssText = "position:fixed;left:0;top:0;width:0;height:0;visibility:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)";
+    document.body.appendChild(probe);
+    importObject.env.afh_safe_inset = function (i) {
+      try { var cs = getComputedStyle(probe); var v = [cs.paddingLeft, cs.paddingTop, cs.paddingRight, cs.paddingBottom][i]; return Math.round((parseFloat(v) || 0) * 100); } catch (e) { return 0; }
+    };
     // Manettes (API Gamepad) : etat lu a la demande par le jeu, disposition standard.
     function pad(i) { try { var l = navigator.getGamepads ? navigator.getGamepads() : []; var g = l[i]; return g && g.connected ? g : null; } catch (e) { return null; } }
     importObject.env.afh_pad_connected = function (i) { return pad(i) ? 1 : 0; };
@@ -111,10 +114,13 @@ miniquad_add_plugin({
 high_dpi = true; // ecran net sur telephone : le jeu s adapte a la taille reelle de l ecran
 load("ai_fighter_2.wasm");
 document.getElementById("fs").addEventListener("click", function () {
-  try { var d = document.documentElement; if (document.fullscreenElement) document.exitFullscreen(); else if (d.requestFullscreen) { d.requestFullscreen().then(function () { try { screen.orientation.lock("landscape").catch(function () {}); } catch (e) {} }).catch(function () {}); } } catch (e) {}
+  try { var d = document.documentElement; if (document.fullscreenElement) document.exitFullscreen(); else if (d.requestFullscreen) { d.requestFullscreen().then(function () {}).catch(function () {}); } } catch (e) {}
 });
 document.addEventListener("contextmenu", function (e) { e.preventDefault(); });
 document.addEventListener("gesturestart", function (e) { e.preventDefault(); });
+// Pas de defilement, de zoom a deux doigts ni de tirer-pour-rafraichir : le jeu gere tous les doigts.
+document.addEventListener("touchmove", function (e) { e.preventDefault(); }, { passive: false });
+document.addEventListener("dblclick", function (e) { e.preventDefault(); });
 </script>
 </body>
 </html>
