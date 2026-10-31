@@ -1,0 +1,12 @@
+# Déploiement Render (plan gratuit) : un seul service qui sert le jeu web ET le relais en ligne.
+# Attention : le disque du plan gratuit est éphémère (les idées proposées ne survivent pas à un redémarrage ;
+# utiliser IDEAS_WEBHOOK pour les recevoir ailleurs). Le service s'endort après 15 min sans visite.
+services:
+  - type: web
+    name: ai-fighter-2
+    runtime: docker
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: AFK_MS
+        value: "60000"
