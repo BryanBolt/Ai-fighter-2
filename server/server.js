@@ -10,7 +10,15 @@ import { WebSocketServer } from 'ws';
 
 export const PROTOCOL_VERSION = 3; // 3 : parties hebergees (jeu complet : loadout, cmd sequences). 2 : join_any / host. Les clients v1 et v2 restent acceptes (hors parties completes).
 const COMPAT_VERSIONS = [1, 2, 3];
-const HOSTED_SIZE = 2; // parties hebergees : l'hote + une place tenue par l'IA, prise par le premier arrivant
+const HOSTED_SIZE = 2; // taille par defaut d une partie hebergee (anciens clients) ; le client actuel demande 4 avec `size` (places vides dormantes)
+const HOSTED_MIN = 2; // taille minimale demandable
+const MAX_CONN_PER_IP = 8; // connexions simultanees par adresse
+const MAX_CONNS = 600; // connexions totales
+const MAX_ROOMS_PER_IP = 3; // salons ouverts par la meme adresse
+const CHAT_GAP_MS = 600; // delai minimal entre deux messages de chat
+const MAX_LOADOUTS = 200; // changements d'equipement par place et par partie
+const RESYNC_GAP_MS = 2500; // delai minimal entre deux reprises forcees d'un meme joueur
+const MAX_BANNED = 40; // adresses bannies par salon
 const CMD_MARGIN = 30; // images d'avance d'une commande de jeu (vote, chapitre, dialogue)
 const MAX_CMDS = 2000; // commandes par place et par partie (le journal de reprise reste borne)
 const ROSTER = 10; // heros du roster en ligne
@@ -24,6 +32,7 @@ const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // sans caracteres ambigus 
 export function createServer(opts = {}) {
   const afkMs = opts.afkMs ?? Number(process.env.AFK_MS || 60000);
   const holdMs = opts.holdMs ?? HOLD_MS;
+  const idleMs = opts.idleMs ?? Number(process.env.IDLE_MS || 20 * 60 * 1000); // salon sans aucune action humaine
   const root = opts.root ?? process.env.WEB_ROOT ?? path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'web');
   const rooms = new Map(); // code -> salon
   const banned = new Map(); // code -> Set(ip)
@@ -59,6 +68,12 @@ export function createServer(opts = {}) {
     return { hero: int(l.hero, 0, ROSTER - 1), gear, moves: intList(l.moves, 24, 255), combos, special: int(l.special, 0, 40, null), bonuses: intList(l.bonuses, 48, 255), pet: int(l.pet, 0, 3), pet_level: int(l.pet_level, 1, 5, 1), daemon: int(l.daemon, 0, 9, null) };
   }
   const send = (ws, msg) => { if (ws && ws.readyState === 1) ws.send(JSON.stringify(msg)); };
+  // Texte venu d'un joueur : sans caracteres de controle, espaces nettoyes, longueur bornee.
+  const cleanText = (v, max) => String(v ?? '').replace(/[\u0000-\u001f\u007f-\u009f\u200b-\u200f\u2028-\u202e]/g, '').replace(/\s+/g, ' ').trim().slice(0, max);
+  const cleanName = (v) => cleanText(v, 14) || 'Joueur';
+  const cleanCode = (v) => String(v ?? '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8);
+  const ipCount = new Map(); // ip -> connexions ouvertes
+  const bornAt = Date.now();
 
   // ---------------------------------------------------------------- HTTP
   const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.wasm': 'application/wasm', '.json': 'application/json', '.png': 'image/png', '.webmanifest': 'application/manifest+json', '.txt': 'text/plain; charset=utf-8' };
@@ -71,7 +86,7 @@ export function createServer(opts = {}) {
     }
     if (url.pathname === '/api/status') {
       res.writeHead(200, { 'content-type': 'application/json', 'access-control-allow-origin': '*' });
-      res.end(JSON.stringify({ v: PROTOCOL_VERSION, rooms: rooms.size, players: [...rooms.values()].reduce((n, r) => n + humans(r).length, 0) })); return;
+      res.end(JSON.stringify({ v: PROTOCOL_VERSION, rooms: rooms.size, players: [...rooms.values()].reduce((n, r) => n + humans(r).length, 0), hosted: [...rooms.values()].filter((r) => r.full).length, conns: clients.size, up: Math.round((Date.now() - bornAt) / 1000) })); return;
     }
     if (url.pathname === '/api/ideas' && req.method === 'POST') { handleIdea(req, res); return; }
     let p = decodeURIComponent(url.pathname);
@@ -105,10 +120,10 @@ export function createServer(opts = {}) {
   }
 
   // ---------------------------------------------------------------- Salons
-  const emptySlot = () => ({ ws: null, name: '', char: 0, ready: false, token: null, mode: 'free', hi: -1, journal: [], lastMove: Date.now(), lastBits: 0, heldUntil: 0, ip: '', loadout: null, cmds: 0, lastLoadout: 0 });
+  const emptySlot = () => ({ ws: null, name: '', char: 0, ready: false, token: null, mode: 'free', hi: -1, journal: [], lastMove: Date.now(), lastBits: 0, heldUntil: 0, ip: '', loadout: null, cmds: 0, lastLoadout: 0, loadouts: 0, lastChat: 0, lastResync: 0, afkWarned: false, dormantDue: false });
   function makeRoom(isPublic) {
     const room = {
-      code: newCode(), public: !!isPublic, started: false, created: Date.now(), auto: false, run: 0, wave: 0, emptySince: 0, restartTimer: null, stageBase: rnd(STAGES),
+      code: newCode(), public: !!isPublic, started: false, created: Date.now(), lastAct: Date.now(), auto: false, run: 0, wave: 0, emptySince: 0, restartTimer: null, stageBase: rnd(STAGES),
       options: { size: 2, stage: 0 }, // size = nombre de heros en partie (les places vides sont tenues par l'IA)
       slots: Array.from({ length: MAX_SLOTS }, emptySlot),
       seed: 0, config: null, ctl: [], hashes: new Map(),
@@ -118,12 +133,15 @@ export function createServer(opts = {}) {
   }
   const humans = (room) => room.slots.map((s, i) => [s, i]).filter(([s]) => s.ws);
   const lobbyView = (room) => ({
-    t: 'room', code: room.code, public: room.public, started: room.started, auto: room.auto, run: room.run, options: room.options,
+    t: 'room', code: room.code, public: room.public, started: room.started, auto: room.auto, run: room.run, options: room.options, host: hostSlot(room), full: !!room.full,
     players: room.slots.map((s, i) => ({ slot: i, name: s.name, char: s.char, ready: s.ready, online: !!s.ws, mode: s.mode })),
   });
   const broadcast = (room, msg, except = null) => { for (const [s] of humans(room)) if (s.ws !== except) send(s.ws, msg); };
-  const publicList = () => [...rooms.values()].filter((r) => r.public).map((r) => ({ code: r.code, auto: r.auto, stage: r.options.stage, run: r.run, wave: r.wave, n: humans(r).length, max: r.options.size, started: r.started, host: r.slots.find((s) => s.ws)?.name || '', full: !!r.full, mode: r.mode | 0, chapter: r.chapter | 0 }));
-  const hostSlot = (room) => room.slots.findIndex((s) => s.ws);
+  // Liste publique : seulement les salons habites, les plus remplis (puis les plus recents) d'abord, bornee.
+  const publicList = () => [...rooms.values()].filter((r) => r.public && humans(r).length > 0)
+    .sort((a, b) => (humans(b).length / b.options.size - humans(a).length / a.options.size) || (b.created - a.created)).slice(0, 50)
+    .map((r) => ({ code: r.code, auto: r.auto, stage: r.options.stage, run: r.run, wave: r.wave, n: humans(r).length, max: r.options.size, started: r.started, host: r.slots.find((s) => s.ws)?.name || '', full: !!r.full, mode: r.mode | 0, chapter: r.chapter | 0, open: humans(r).length < r.options.size, age: Math.round((Date.now() - r.created) / 1000), players: humans(r).map(([s]) => s.name) }));
+  function hostSlot(room) { return room.slots.findIndex((s) => s.ws); }
 
   function attach(room, ws, c, name) {
     const now = Date.now();
@@ -131,11 +149,18 @@ export function createServer(opts = {}) {
     const idx = room.slots.findIndex((s, i) => i < limit && !s.ws && s.heldUntil < now && (!room.started || s.mode === 'ai'));
     if (idx < 0) return -1;
     const s = room.slots[idx];
-    s.ws = ws; s.name = (name || 'Joueur').slice(0, 14); s.token = c.token; s.ip = c.ip; s.heldUntil = 0;
-    s.ready = false; s.lastMove = now;
+    s.ws = ws; s.name = uniqueName(room, cleanName(name), idx); s.token = c.token; s.ip = c.ip; s.heldUntil = 0;
+    s.ready = false; s.lastMove = now; s.afkWarned = false;
     c.room = room; c.slot = idx;
     if (!room.started) s.mode = 'human';
     return idx;
+  }
+  // Deux amis avec le meme pseudo : le second devient « Nom 2 » (on sait qui parle dans le chat).
+  function uniqueName(room, name, idx) {
+    const taken = new Set(room.slots.filter((s, i) => i !== idx && s.ws).map((s) => s.name));
+    if (!taken.has(name)) return name;
+    for (let k = 2; k < 10; k++) { const n = `${name.slice(0, 12)} ${k}`; if (!taken.has(n)) return n; }
+    return name;
   }
 
   function startGame(room) {
@@ -153,7 +178,7 @@ export function createServer(opts = {}) {
         // Place vide : pas d'IA (salon sans IA, parties automatiques et hebergees) -> heros absent, pseudo vide, jusqu'a l'arrivee d'un ami.
         s.name = (room.options.noai || room.auto || room.full) ? '' : 'IA';
       }
-      s.hi = -1; s.journal = []; s.lastMove = Date.now(); s.lastBits = 0; s.cmds = 0;
+      s.hi = -1; s.journal = []; s.lastMove = Date.now(); s.lastBits = 0; s.cmds = 0; s.loadouts = 0; s.afkWarned = false;
     });
     room.started = true; room.ctl = []; room.hashes = new Map();
     room.seed = (rnd(0x7fffffff) >>> 0) || 1;
@@ -184,21 +209,25 @@ export function createServer(opts = {}) {
   });
 
   // Un joueur humain disparait (coupure, depart, AFK, expulsion) : une IA prend sa place des sa derniere entree connue.
-  function dropToAi(room, slot) {
+  // `dormant` : le heros disparait avec son joueur (parties sans IA) au lieu de continuer a se battre tout seul.
+  const noAiRoom = (room) => !!(room.full || room.auto || room.options.noai);
+  function dropToAi(room, slot, dormant = false) {
     const s = room.slots[slot];
     if (s.mode !== 'human') return;
     s.mode = 'ai';
-    control(room, slot, s.hi + 1, { ai: true });
+    s.dormantDue = false;
+    control(room, slot, s.hi + 1, dormant ? { ai: true, dormant: true } : { ai: true });
   }
 
   function closeRoom(room) {
     if (room.restartTimer) clearTimeout(room.restartTimer);
+    banned.delete(room.code); // la liste des expulses disparait avec le salon (sinon elle fuit en memoire)
     rooms.delete(room.code);
   }
 
   // ---- Parties toujours en cours : host / join_any (pas de salon d'attente, rejoignable a tout moment)
   function startAuto(room) {
-    room.options = { size: room.full ? HOSTED_SIZE : MAX_SLOTS, stage: room.full ? Math.max(0, Math.min(FULL_STAGES - 1, room.fixedStage ?? 0)) : Math.max(0, Math.min(STAGES - 1, room.fixedStage ?? (room.stageBase + room.run) % STAGES)) };
+    room.options = { size: room.full ? (room.hostedSize || HOSTED_SIZE) : MAX_SLOTS, stage: room.full ? Math.max(0, Math.min(FULL_STAGES - 1, room.fixedStage ?? 0)) : Math.max(0, Math.min(STAGES - 1, room.fixedStage ?? (room.stageBase + room.run) % STAGES)) };
     startGame(room);
   }
   function restartRun(room) {
@@ -221,15 +250,22 @@ export function createServer(opts = {}) {
     if (!cands.length) return -1;
     cands.sort((a, b) => ((a[0].heldUntil > now) - (b[0].heldUntil > now)) || ((b[0].char === char) - (a[0].char === char)));
     const [s, idx] = cands[0];
-    s.ws = ws; s.name = (c.name || 'Joueur').slice(0, 14); s.token = c.token; s.ip = c.ip; s.heldUntil = 0; s.ready = false; s.lastMove = now;
+    s.ws = ws; s.name = uniqueName(room, cleanName(c.name), idx); s.token = c.token; s.ip = c.ip; s.heldUntil = 0; s.ready = false; s.lastMove = now; s.afkWarned = false;
     c.room = room; c.slot = idx;
     return idx;
   }
+  // Limites par adresse : la boucle locale (tests, developpement) en est exemptee sauf si l'option est donnee explicitement.
+  const isLocal = (ip) => opts.ipLimits === undefined && /^(127\.0\.0\.1|::1|::ffff:127\.0\.0\.1)$/.test(ip);
+  const roomsOfIp = (ip) => [...rooms.values()].filter((r) => r.slots.some((s) => s.ws && s.ip === ip)).length;
   function hostNew(ws, c, char, priv, stage, full) {
-    if (rooms.size >= maxRooms) return send(ws, { t: 'error', msg: 'Serveur plein, reessaie dans un instant' });
+    if (rooms.size >= maxRooms) return send(ws, { t: 'error', msg: 'Serveur plein, reessaie dans un instant', code: 'full' });
+    if (roomsOfIp(c.ip) >= MAX_ROOMS_PER_IP && !isLocal(c.ip)) return send(ws, { t: 'error', msg: 'Trop de parties ouvertes depuis cette connexion', code: 'limit' });
     const room = makeRoom(!priv);
     room.auto = true;
-    if (full) { room.full = true; room.mode = int(full.mode, 0, 2); room.chapter = int(full.chapter, 0, 64); }
+    if (full) {
+      room.full = true; room.mode = int(full.mode, 0, 2); room.chapter = int(full.chapter, 0, 64);
+      room.hostedSize = int(full.size, HOSTED_MIN, MAX_SLOTS, HOSTED_SIZE); // 2 a 4 joueurs (places vides dormantes)
+    }
     if (Number.isInteger(stage) && stage >= 0 && stage < (room.full ? FULL_STAGES : STAGES)) room.fixedStage = stage;
     const idx = attach(room, ws, c, c.name);
     room.slots[idx].char = char;
@@ -243,10 +279,10 @@ export function createServer(opts = {}) {
     if (!rateOk(ws, c)) return;
     if (c.room) leaveRoom(c, ws, true);
     const char = Math.max(0, Math.min(ROSTER - 1, m.char | 0));
-    if (m.name) c.name = String(m.name).slice(0, 14);
+    if (m.name) c.name = cleanName(m.name);
     const now = Date.now();
     // La partie publique en cours la plus remplie qui a encore une place (a egalite : la plus ancienne).
-    const open = [...rooms.values()].filter((r) => r.auto && r.public && r.started && humans(r).length > 0 && humans(r).length < (r.full ? HOSTED_SIZE : MAX_SLOTS) && (!r.full || c.v >= 3) && !banned.get(r.code)?.has(c.ip))
+    const open = [...rooms.values()].filter((r) => r.auto && r.public && r.started && humans(r).length > 0 && humans(r).length < r.options.size && (!r.full || c.v >= 3) && !banned.get(r.code)?.has(c.ip))
       .sort((a, b) => humans(b).length - humans(a).length)[0];
     if (open) {
       const idx = takeAi(open, ws, c, char, now);
@@ -257,7 +293,7 @@ export function createServer(opts = {}) {
   function hostGame(ws, c, m) {
     if (!rateOk(ws, c)) return;
     if (c.room) leaveRoom(c, ws, true);
-    if (m.name) c.name = String(m.name).slice(0, 14);
+    if (m.name) c.name = cleanName(m.name);
     const full = m.full && c.v >= 3 ? m : null;
     hostNew(ws, c, Math.max(0, Math.min(ROSTER - 1, m.char | 0)), !!m.private, m.stage === undefined ? undefined : m.stage | 0, full);
   }
@@ -269,7 +305,10 @@ export function createServer(opts = {}) {
     if (s && s.ws === ws) {
       s.ws = null; s.ready = false;
       if (room.started) {
-        dropToAi(room, c.slot);
+        const wasHuman = s.mode === 'human';
+        // Depart definitif d'une partie sans IA : le heros s'efface. Simple coupure : l'IA tient la place le temps de la reprise, puis le heros s'efface.
+        dropToAi(room, c.slot, permanent && noAiRoom(room));
+        if (wasHuman && !permanent && noAiRoom(room)) s.dormantDue = true;
         s.heldUntil = permanent ? 0 : Date.now() + (room.auto ? autoHoldMs : holdMs);
         if (room.auto) broadcast(room, { t: 'presence', ev: 'leave', name: s.name, slot: c.slot });
       } else { s.mode = 'free'; s.name = ''; s.token = null; }
@@ -288,31 +327,42 @@ export function createServer(opts = {}) {
   const clients = new Map(); // ws -> etat
   wss.on('connection', (ws, req) => {
     const ip = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').toString().split(',')[0].trim();
-    const c = { id: crypto.randomBytes(4).toString('hex'), v: 1, token: newToken(), room: null, slot: -1, ip, name: 'Joueur', msgs: 0, since: Date.now() };
+    if (clients.size >= (opts.maxConns ?? MAX_CONNS) || ((ipCount.get(ip) || 0) >= (opts.connPerIp ?? MAX_CONN_PER_IP) && !isLocal(ip))) {
+      send(ws, { t: 'error', msg: clients.size >= (opts.maxConns ?? MAX_CONNS) ? 'Serveur tres occupe, reessaie dans un instant' : 'Trop de connexions depuis cette adresse', fatal: true, code: 'limit' });
+      ws.close(); return;
+    }
+    ipCount.set(ip, (ipCount.get(ip) || 0) + 1);
+    const c = { id: crypto.randomBytes(4).toString('hex'), v: 1, token: newToken(), room: null, slot: -1, ip, name: 'Joueur', msgs: 0, since: Date.now(), hello: false, alive: true };
     clients.set(ws, c);
+    ws.on('pong', () => { c.alive = true; });
     ws.on('message', (data) => {
+      c.alive = true;
       let m;
       try { m = JSON.parse(data.toString()); } catch { return; }
       if (!m || typeof m.t !== 'string') return;
+      if (!c.hello && m.t !== 'hello') return send(ws, { t: 'error', msg: 'Connexion mal initialisee, relance le jeu', code: 'nohello' });
       const now = Date.now(); // limite de debit grossiere (les entrees arrivent a 60/s)
       if (now - c.since > 1000) { c.since = now; c.msgs = 0; }
       if (++c.msgs > 240) return;
       try { handle(ws, c, m); } catch (e) { send(ws, { t: 'error', msg: 'message invalide' }); }
     });
-    ws.on('close', () => { leaveRoom(c, ws, false); clients.delete(ws); });
+    ws.on('close', () => {
+      leaveRoom(c, ws, false); clients.delete(ws);
+      const n = (ipCount.get(ip) || 1) - 1; if (n <= 0) ipCount.delete(ip); else ipCount.set(ip, n);
+    });
     ws.on('error', () => {});
   });
 
   function joinRoom(ws, c, code, m = {}) {
-    const room = rooms.get(String(code || '').toUpperCase());
-    if (!room) return send(ws, { t: 'error', msg: 'Salon introuvable' });
+    const room = rooms.get(cleanCode(code));
+    if (!room) return send(ws, { t: 'error', msg: 'Salon introuvable : la partie est peut-etre terminee', code: 'gone' });
     if (banned.get(room.code)?.has(c.ip)) return send(ws, { t: 'error', msg: 'Tu as ete expulse de ce salon' });
     if (room.full && c.v < 3) return send(ws, { t: 'error', msg: 'Partie complete : mets le jeu a jour pour la rejoindre', fatal: true });
     if (c.room) leaveRoom(c, ws, true);
     if (room.full && room.started) {
       // Partie hebergee en cours : on prend la place IA (comme join_any), l'equipement est transmis dans le message.
       const idx2 = takeAi(room, ws, c, int(m.char, 0, ROSTER - 1), Date.now());
-      if (idx2 < 0) return send(ws, { t: 'error', msg: 'Partie pleine' });
+      if (idx2 < 0) return send(ws, { t: 'error', msg: `Partie pleine (${room.options.size} joueurs)`, code: 'full' });
       room.slots[idx2].loadout = cleanLoadout(m.loadout);
       return finishJoin(room, ws, c, idx2);
     }
@@ -340,7 +390,7 @@ export function createServer(opts = {}) {
     switch (m.t) {
       case 'hello':
         if (!COMPAT_VERSIONS.includes(m.v)) return send(ws, { t: 'error', msg: 'Version incompatible : mets le jeu a jour', fatal: true });
-        c.v = m.v; c.name = String(m.name || 'Joueur').slice(0, 14);
+        c.v = m.v; c.name = cleanName(m.name); c.hello = true;
         if (m.token && /^[0-9a-f]{24}$/.test(m.token)) c.token = m.token;
         return send(ws, { t: 'welcome', v: PROTOCOL_VERSION, id: c.id, token: c.token });
       case 'join_any': return joinAny(ws, c, m);
@@ -363,11 +413,21 @@ export function createServer(opts = {}) {
       }
       case 'join': return joinRoom(ws, c, m.code, m);
       case 'rejoin': {
-        const room = rooms.get(String(m.code || '').toUpperCase());
-        const idx = room ? room.slots.findIndex((s) => s.token && s.token === m.token && !s.ws) : -1;
-        if (!room || idx < 0) return send(ws, { t: 'error', msg: 'Reprise impossible', rejoin: true });
+        const room = rooms.get(cleanCode(m.code));
+        if (!room) return send(ws, { t: 'error', msg: 'Reprise impossible', detail: 'Cette partie est terminee.', rejoin: true, code: 'gone' });
+        if (typeof m.token !== 'string' || !/^[0-9a-f]{24}$/.test(m.token)) return send(ws, { t: 'error', msg: 'Reprise impossible', detail: 'Jeton de reprise invalide.', rejoin: true, code: 'token' });
+        const idx = room.slots.findIndex((s) => s.token && s.token === m.token);
+        if (idx < 0) return send(ws, { t: 'error', msg: 'Reprise impossible', detail: 'Ta place a ete reprise par un autre joueur.', rejoin: true, code: 'taken' });
+        if (banned.get(room.code)?.has(c.ip)) return send(ws, { t: 'error', msg: 'Reprise impossible', detail: 'Tu as ete expulse de ce salon.', rejoin: true, code: 'banned' });
         const s = room.slots[idx];
-        s.ws = ws; s.heldUntil = 0; c.room = room; c.slot = idx; c.token = m.token;
+        // Ancienne connexion encore ouverte (coupure que le serveur n'a pas encore vue, frequent sur telephone) : on la remplace.
+        if (s.ws && s.ws !== ws) {
+          const old = s.ws; const oc = clients.get(old);
+          s.ws = null; if (oc) { oc.room = null; oc.slot = -1; }
+          send(old, { t: 'error', msg: 'Connexion reprise depuis un autre appareil', code: 'replaced' });
+          try { old.close(); } catch { /* deja fermee */ }
+        }
+        s.ws = ws; s.heldUntil = 0; s.afkWarned = false; c.room = room; c.slot = idx; c.token = m.token;
         return finishJoin(room, ws, c, idx);
       }
       case 'leave': leaveRoom(c, ws, true); return send(ws, { t: 'left' });
@@ -377,12 +437,13 @@ export function createServer(opts = {}) {
     const room = c.room;
     if (!room) return;
     const s = room.slots[c.slot];
+    if (m.t !== "input" && m.t !== "hash" && m.t !== "wave" && m.t !== "end") room.lastAct = Date.now(); // activite du salon (menage des salons abandonnes)
     switch (m.t) {
       case 'lobby':
         if (room.started) return;
         s.char = Math.max(0, Math.min(99, m.char | 0));
         s.ready = !!m.ready;
-        if (m.name) { s.name = String(m.name).slice(0, 14); c.name = s.name; }
+        if (m.name) { s.name = uniqueName(room, cleanName(m.name), c.slot); c.name = s.name; }
         return broadcast(room, lobbyView(room));
       case 'options':
         if (room.started || c.slot !== hostSlot(room)) return;
@@ -398,7 +459,7 @@ export function createServer(opts = {}) {
         const k = room.slots[m.slot | 0];
         if (!k || !k.ws || k === s) return;
         if (!banned.has(room.code)) banned.set(room.code, new Set());
-        banned.get(room.code).add(k.ip);
+        if (banned.get(room.code).size < MAX_BANNED) banned.get(room.code).add(k.ip);
         const kws = k.ws; const kc = clients.get(kws);
         send(kws, { t: 'kicked' });
         if (kc) leaveRoom(kc, kws, true);
@@ -411,7 +472,7 @@ export function createServer(opts = {}) {
           const f = m.f0 + k; b = b | 0;
           if (f < 0 || f > s.hi + 600) return;
           if (f > s.hi) { s.journal[f] = b; s.hi = f; }
-          if (b !== s.lastBits) { s.lastBits = b; s.lastMove = Date.now(); }
+          if (b !== s.lastBits) { s.lastBits = b; s.lastMove = room.lastAct = Date.now(); }
         });
         return broadcast(room, { t: 'input', slot: c.slot, f0: m.f0, bits: m.bits.map((b) => b | 0) }, ws);
       }
@@ -426,8 +487,11 @@ export function createServer(opts = {}) {
           const ref = h.get(Math.min(...h.keys()));
           for (const [k, v] of h) {
             if (v === ref) continue;
-            send(room.slots[k].ws, { t: 'desync', f });
-            send(room.slots[k].ws, { ...resyncPayload(room), you: k, forced: true });
+            const sk = room.slots[k]; const nowH = Date.now();
+            if (nowH - sk.lastResync < RESYNC_GAP_MS) continue; // pas de tempete de reprises si un client reste en desaccord
+            sk.lastResync = nowH;
+            send(sk.ws, { t: 'desync', f });
+            send(sk.ws, { ...resyncPayload(room), you: k, forced: true });
           }
           room.hashes.delete(f);
         }
@@ -443,8 +507,8 @@ export function createServer(opts = {}) {
         if (!room.full || !room.started || s.mode !== 'human') return;
         const lo = cleanLoadout(m.data);
         const now = Date.now();
-        if (!lo || now - s.lastLoadout < 1000) return;
-        s.lastLoadout = now; s.loadout = lo;
+        if (!lo || now - s.lastLoadout < 1000 || s.loadouts >= MAX_LOADOUTS) return;
+        s.lastLoadout = now; s.loadout = lo; s.loadouts++;
         return control(room, c.slot, highest(room) + REJOIN_MARGIN, { kind: 'loadout', data: lo });
       }
       case 'cmd': { // vote de recompense, chapitre suivant, fin de dialogue : sequence comme une entree
@@ -455,11 +519,16 @@ export function createServer(opts = {}) {
         return control(room, c.slot, highest(room) + CMD_MARGIN, { kind: 'cmd', cmd: m.cmd, arg });
       }
       case 'chat': {
-        const text = String(m.text || '').slice(0, 120);
-        if (text) broadcast(room, { t: 'chat', slot: c.slot, name: s.name, text });
+        const text = cleanText(m.text, 120);
+        const nowC = Date.now();
+        if (!text) return;
+        if (nowC - s.lastChat < CHAT_GAP_MS) return send(ws, { t: 'error', msg: 'Doucement, un message a la fois', code: 'chat_rate' });
+        s.lastChat = nowC;
+        broadcast(room, { t: 'chat', slot: c.slot, name: s.name, text });
         return;
       }
-      case 'wave': // progression affichee dans la liste des parties en cours
+      case 'wave': // progression affichee dans la liste des parties en cours (seul un joueur actif la fait avancer)
+        if (!room.started || s.mode !== 'human') return;
         room.wave = Math.max(0, Math.min(999, m.wave | 0));
         return;
       case 'end': // fin de partie : retour au salon (partie en cours : nouvelle partie apres un court ecran de resultats)
@@ -484,15 +553,41 @@ export function createServer(opts = {}) {
       if (room.started) {
         for (let i = 0; i < room.config.size; i++) {
           const s = room.slots[i];
-          if (s.ws && s.mode === 'human' && now - s.lastMove > afkMs) { dropToAi(room, i); send(s.ws, { t: 'afk' }); }
+          // Coupure non revenue a temps (partie sans IA) : le heros s'efface, il reapparaitra a l'arrivee d'un ami.
+          if (s.dormantDue && !s.ws && s.mode === 'ai' && s.heldUntil > 0 && now > s.heldUntil) { s.dormantDue = false; control(room, i, highest(room) + REJOIN_MARGIN, { ai: true, dormant: true }); }
+          if (s.ws && s.mode === 'human' && now - s.lastMove > afkMs) { dropToAi(room, i); send(s.ws, { t: 'afk' }); if (room.auto) broadcast(room, { t: 'presence', ev: 'afk', name: s.name, slot: i }, s.ws); s.afkWarned = false; }
+          else if (s.ws && s.mode === 'human' && !s.afkWarned && now - s.lastMove > afkMs * 0.7) { s.afkWarned = true; send(s.ws, { t: 'afk_warn', in: Math.max(1, Math.round((afkMs - (now - s.lastMove)) / 1000)) }); }
+          else if (s.afkWarned && now - s.lastMove < afkMs * 0.5) s.afkWarned = false;
         }
+      }
+      // Salon abandonne (joueurs connectes mais plus aucune action depuis longtemps, ex. telephone pose) : ferme, la place est liberee.
+      if (humans(room).length > 0 && now - room.lastAct > idleMs) {
+        for (const [x] of humans(room)) {
+          const w = x.ws; const cc = clients.get(w);
+          send(w, { t: 'error', msg: 'Partie fermee : plus personne n\'a joue depuis longtemps', code: 'idle' });
+          if (cc) leaveRoom(cc, w, true);
+        }
+        continue;
       }
       if (humans(room).length === 0 && (room.auto ? now - room.emptySince > graceMs : now - room.created > holdMs)) closeRoom(room);
     }
   }, 1000);
   timer.unref?.();
+  // Battement de coeur : une connexion silencieuse (telephone sorti du reseau) est coupee, sa place passe a l'IA/dormante
+  // et peut etre reprise ensuite. Les clients navigateur repondent aux pings WebSocket automatiquement.
+  const beat = setInterval(() => {
+    for (const [ws, c] of clients) {
+      if (!c.alive) { try { ws.terminate(); } catch { /* deja fermee */ } continue; }
+      c.alive = false;
+      try { ws.ping(); } catch { /* ignore */ }
+    }
+    const now = Date.now();
+    for (const [ip, at] of joinRate) if (now - at > 60000) joinRate.delete(ip);
+    for (const [ip, at] of ideasRate) if (now - at > 600000) ideasRate.delete(ip);
+  }, opts.beatMs ?? 20000);
+  beat.unref?.();
 
-  return { server, wss, rooms, close: () => new Promise((r) => { clearInterval(timer); for (const w of wss.clients) w.terminate(); wss.close(() => server.close(() => r())); }) };
+  return { server, wss, rooms, close: () => new Promise((r) => { clearInterval(timer); clearInterval(beat); for (const w of wss.clients) w.terminate(); wss.close(() => server.close(() => r())); }) };
 }
 
 // Lancement direct.
