@@ -140,7 +140,7 @@ export function createServer(opts = {}) {
 
   function startGame(room) {
     const taken = room.slots.filter((s) => s.ws).length;
-    const size = room.options.noai ? Math.max(taken, 1) : Math.max(room.options.size, taken, 1); // noai : pas de place tenue par l'IA
+    const size = Math.max(room.options.size, taken, 1);
     const used = new Set(room.slots.filter((s) => s.ws).map((s) => s.char));
     room.slots.forEach((s, i) => {
       if (i >= size) { s.mode = 'free'; return; }
@@ -149,7 +149,9 @@ export function createServer(opts = {}) {
         let ch = room.auto ? rnd(ROSTER) : 0;
         if (!room.auto) while (used.has(ch)) ch++;
         else for (let k = 0; used.has(ch) && k < ROSTER; k++) ch = (ch + 1) % ROSTER;
-        used.add(ch); s.char = ch; s.mode = 'ai'; s.name = 'IA';
+        used.add(ch); s.char = ch; s.mode = 'ai';
+        // Place vide : pas d'IA (salon sans IA, parties automatiques et hebergees) -> heros absent, pseudo vide, jusqu'a l'arrivee d'un ami.
+        s.name = (room.options.noai || room.auto || room.full) ? '' : 'IA';
       }
       s.hi = -1; s.journal = []; s.lastMove = Date.now(); s.lastBits = 0; s.cmds = 0;
     });
