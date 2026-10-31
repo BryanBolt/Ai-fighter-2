@@ -111,7 +111,9 @@ miniquad_add_plugin({
     };
   }
 });
-high_dpi = true; // ecran net sur telephone : le jeu s adapte a la taille reelle de l ecran
+// Telephone (tactile, pixels denses) : on dessine a la taille CSS et le navigateur agrandit, bien plus fluide qu'en pleine
+// resolution native (x7 pixels a remplir sur un ecran 3x). PC et ecrans peu denses : resolution native.
+high_dpi = !((navigator.maxTouchPoints > 0 || 'ontouchstart' in window) && window.devicePixelRatio > 1.5);
 load("ai_fighter_2.wasm");
 document.getElementById("fs").addEventListener("click", function () {
   try { var d = document.documentElement; if (document.fullscreenElement) document.exitFullscreen(); else if (d.requestFullscreen) { d.requestFullscreen().then(function () {}).catch(function () {}); } } catch (e) {}
