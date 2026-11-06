@@ -5,7 +5,7 @@
   "description": "Relais lockstep pour AI Fighter 2 (salons, parties rapides, reprise, AFK). Ne simule rien.",
   "type": "module",
   "main": "server.js",
-  "scripts": { "start": "node server.js", "test": "node --test --test-concurrency=1 test/server.test.js test/online2.test.js test/edge.test.js" },
+  "scripts": { "start": "node server.js", "test": "node --test --test-concurrency=1 test/server.test.js test/online2.test.js test/edge.test.js test/robust.test.js" },
   "engines": { "node": ">=20" },
   "dependencies": { "ws": "^8.18.0" }
 }

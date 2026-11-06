@@ -8,8 +8,8 @@ import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { WebSocketServer } from 'ws';
 
-export const PROTOCOL_VERSION = 3; // 3 : parties hebergees (jeu complet : loadout, cmd sequences). 2 : join_any / host. Les clients v1 et v2 restent acceptes (hors parties completes).
-const COMPAT_VERSIONS = [1, 2, 3];
+export const PROTOCOL_VERSION = 4; // 4 : table des coups changee (aeriens, realisme, grammaire X/Y) : les clients v1 a v3 sont refuses (desynchronisation du lockstep). 3 : parties hebergees (jeu complet : loadout, cmd sequences). 2 : join_any / host. Les clients v1 et v2 restent acceptes (hors parties completes).
+const COMPAT_VERSIONS = [4]; // une seule version : tous les joueurs d'une partie doivent avoir la meme table de coups
 const HOSTED_SIZE = 2; // taille par defaut d une partie hebergee (anciens clients) ; le client actuel demande 4 avec `size` (places vides dormantes)
 const HOSTED_MIN = 2; // taille minimale demandable
 const MAX_CONN_PER_IP = 8; // connexions simultanees par adresse
@@ -78,7 +78,8 @@ export function createServer(opts = {}) {
   // ---------------------------------------------------------------- HTTP
   const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.wasm': 'application/wasm', '.json': 'application/json', '.png': 'image/png', '.webmanifest': 'application/manifest+json', '.txt': 'text/plain; charset=utf-8' };
   const server = http.createServer((req, res) => {
-    const url = new URL(req.url, 'http://x');
+    let url;
+    try { url = new URL(req.url, 'http://x'); } catch { res.writeHead(400, { 'content-type': 'text/plain' }); res.end('requete invalide'); return; }
     if (url.pathname === '/health') { res.writeHead(200, { 'content-type': 'text/plain' }); res.end('ok'); return; }
     if (url.pathname === '/api/rooms') {
       res.writeHead(200, { 'content-type': 'application/json', 'access-control-allow-origin': '*' });
@@ -89,10 +90,14 @@ export function createServer(opts = {}) {
       res.end(JSON.stringify({ v: PROTOCOL_VERSION, rooms: rooms.size, players: [...rooms.values()].reduce((n, r) => n + humans(r).length, 0), hosted: [...rooms.values()].filter((r) => r.full).length, conns: clients.size, up: Math.round((Date.now() - bornAt) / 1000) })); return;
     }
     if (url.pathname === '/api/ideas' && req.method === 'POST') { handleIdea(req, res); return; }
-    let p = decodeURIComponent(url.pathname);
+    // Chemin mal encode (« %E0%A4 », « % ») : 400 au lieu d'une exception non rattrapee qui arretait tout le serveur.
+    let p;
+    try { p = decodeURIComponent(url.pathname); } catch { res.writeHead(400, { 'content-type': 'text/plain' }); res.end('chemin invalide'); return; }
     if (p === '/') p = '/index.html';
-    const file = path.normalize(path.join(root, p));
-    if (!file.startsWith(path.normalize(root)) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) {
+    // Dossier de la racine EXACTEMENT (avec separateur) : « web2 » n'est pas dans « web ».
+    const rootDir = path.resolve(root);
+    const file = path.resolve(rootDir, '.' + path.sep + p.replace(/^[\\/]+/, ''));
+    if (p.includes('\0') || !(file === rootDir || file.startsWith(rootDir + path.sep)) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) {
       res.writeHead(404, { 'content-type': 'text/plain' }); res.end('introuvable'); return;
     }
     res.writeHead(200, { 'content-type': MIME[path.extname(file)] || 'application/octet-stream', 'cache-control': 'no-cache' });
@@ -124,6 +129,7 @@ export function createServer(opts = {}) {
   function makeRoom(isPublic) {
     const room = {
       code: newCode(), public: !!isPublic, started: false, created: Date.now(), lastAct: Date.now(), auto: false, run: 0, wave: 0, emptySince: 0, restartTimer: null, stageBase: rnd(STAGES),
+      ff: true, // tir allie (reglage de l'hote, annonce a tous dans la config de partie)
       options: { size: 2, stage: 0 }, // size = nombre de heros en partie (les places vides sont tenues par l'IA)
       slots: Array.from({ length: MAX_SLOTS }, emptySlot),
       seed: 0, config: null, ctl: [], hashes: new Map(),
@@ -133,7 +139,7 @@ export function createServer(opts = {}) {
   }
   const humans = (room) => room.slots.map((s, i) => [s, i]).filter(([s]) => s.ws);
   const lobbyView = (room) => ({
-    t: 'room', code: room.code, public: room.public, started: room.started, auto: room.auto, run: room.run, options: room.options, host: hostSlot(room), full: !!room.full,
+    t: 'room', code: room.code, public: room.public, started: room.started, auto: room.auto, run: room.run, options: { ...room.options, ff: room.ff !== false }, host: hostSlot(room), full: !!room.full,
     players: room.slots.map((s, i) => ({ slot: i, name: s.name, char: s.char, ready: s.ready, online: !!s.ws, mode: s.mode })),
   });
   const broadcast = (room, msg, except = null) => { for (const [s] of humans(room)) if (s.ws !== except) send(s.ws, msg); };
@@ -182,7 +188,7 @@ export function createServer(opts = {}) {
     });
     room.started = true; room.ctl = []; room.hashes = new Map();
     room.seed = (rnd(0x7fffffff) >>> 0) || 1;
-    room.config = { seed: room.seed, size, run: room.run, stage: room.options.stage | 0, full: !!room.full, mode: room.mode | 0, chapter: room.chapter | 0, slots: room.slots.slice(0, size).map((s, i) => ({ slot: i, char: s.char, name: s.name, ai: s.mode === 'ai' })) };
+    room.config = { seed: room.seed, size, run: room.run, stage: room.options.stage | 0, full: !!room.full, mode: room.mode | 0, chapter: room.chapter | 0, ff: room.ff !== false, slots: room.slots.slice(0, size).map((s, i) => ({ slot: i, char: s.char, name: s.name, ai: s.mode === 'ai' })) };
     broadcast(room, { t: 'start', ...room.config });
   }
 
@@ -257,11 +263,12 @@ export function createServer(opts = {}) {
   // Limites par adresse : la boucle locale (tests, developpement) en est exemptee sauf si l'option est donnee explicitement.
   const isLocal = (ip) => opts.ipLimits === undefined && /^(127\.0\.0\.1|::1|::ffff:127\.0\.0\.1)$/.test(ip);
   const roomsOfIp = (ip) => [...rooms.values()].filter((r) => r.slots.some((s) => s.ws && s.ip === ip)).length;
-  function hostNew(ws, c, char, priv, stage, full) {
+  function hostNew(ws, c, char, priv, stage, full, ff) {
     if (rooms.size >= maxRooms) return send(ws, { t: 'error', msg: 'Serveur plein, reessaie dans un instant', code: 'full' });
     if (roomsOfIp(c.ip) >= MAX_ROOMS_PER_IP && !isLocal(c.ip)) return send(ws, { t: 'error', msg: 'Trop de parties ouvertes depuis cette connexion', code: 'limit' });
     const room = makeRoom(!priv);
     room.auto = true;
+    if (typeof ff === 'boolean') room.ff = ff;
     if (full) {
       room.full = true; room.mode = int(full.mode, 0, 2); room.chapter = int(full.chapter, 0, 64);
       room.hostedSize = int(full.size, HOSTED_MIN, MAX_SLOTS, HOSTED_SIZE); // 2 a 4 joueurs (places vides dormantes)
@@ -288,14 +295,14 @@ export function createServer(opts = {}) {
       const idx = takeAi(open, ws, c, char, now);
       if (idx >= 0) { if (open.full) open.slots[idx].loadout = cleanLoadout(m.loadout); return finishJoin(open, ws, c, idx); }
     }
-    hostNew(ws, c, char, false, undefined);
+    hostNew(ws, c, char, false, undefined, null, typeof m.ff === 'boolean' ? m.ff : undefined);
   }
   function hostGame(ws, c, m) {
     if (!rateOk(ws, c)) return;
     if (c.room) leaveRoom(c, ws, true);
     if (m.name) c.name = cleanName(m.name);
     const full = m.full && c.v >= 3 ? m : null;
-    hostNew(ws, c, Math.max(0, Math.min(ROSTER - 1, m.char | 0)), !!m.private, m.stage === undefined ? undefined : m.stage | 0, full);
+    hostNew(ws, c, Math.max(0, Math.min(ROSTER - 1, m.char | 0)), !!m.private, m.stage === undefined ? undefined : m.stage | 0, full, typeof m.ff === 'boolean' ? m.ff : undefined);
   }
 
   function leaveRoom(c, ws, permanent) {
@@ -420,6 +427,8 @@ export function createServer(opts = {}) {
         if (idx < 0) return send(ws, { t: 'error', msg: 'Reprise impossible', detail: 'Ta place a ete reprise par un autre joueur.', rejoin: true, code: 'taken' });
         if (banned.get(room.code)?.has(c.ip)) return send(ws, { t: 'error', msg: 'Reprise impossible', detail: 'Tu as ete expulse de ce salon.', rejoin: true, code: 'banned' });
         const s = room.slots[idx];
+        // Ce client occupait deja un autre salon : il le quitte (sinon sa place y reste « occupee » par une connexion fantome).
+        if (c.room && c.room !== room) leaveRoom(c, ws, true);
         // Ancienne connexion encore ouverte (coupure que le serveur n'a pas encore vue, frequent sur telephone) : on la remplace.
         if (s.ws && s.ws !== ws) {
           const old = s.ws; const oc = clients.get(old);
@@ -431,7 +440,7 @@ export function createServer(opts = {}) {
         return finishJoin(room, ws, c, idx);
       }
       case 'leave': leaveRoom(c, ws, true); return send(ws, { t: 'left' });
-      case 'ping': return send(ws, { t: 'pong', n: m.n });
+      case 'ping': return send(ws, { t: 'pong', n: typeof m.n === 'number' ? m.n : undefined });
       default: break;
     }
     const room = c.room;
@@ -448,10 +457,12 @@ export function createServer(opts = {}) {
       case 'options':
         if (room.started || c.slot !== hostSlot(room)) return;
         room.options = { size: Math.max(1, Math.min(MAX_SLOTS, (m.size | 0) || 2)), stage: Math.max(0, Math.min(11, m.stage | 0)), noai: m.noai === true };
+        if (typeof m.ff === 'boolean') room.ff = m.ff;
         if (typeof m.public === 'boolean') room.public = m.public;
         return broadcast(room, lobbyView(room));
       case 'start':
         if (room.started || c.slot !== hostSlot(room)) return;
+        if (typeof m.ff === 'boolean') room.ff = m.ff;
         if (humans(room).some(([x]) => !x.ready && x !== s)) return send(ws, { t: 'error', msg: 'Tout le monde doit etre pret' });
         return startGame(room);
       case 'kick': {
@@ -468,10 +479,13 @@ export function createServer(opts = {}) {
       case 'input': {
         if (!room.started || !Array.isArray(m.bits) || m.bits.length > 8 || !Number.isInteger(m.f0)) return;
         if (s.mode !== 'human') return;
+        // Avance du journal limitee dans le temps (~240 images/s, salve 1500) : un client ne gonfle pas `hi` (et le journal RLE de reprise) a volonte.
+        const nowI = Date.now();
+        s.budget = Math.min(1500, (s.budget ?? 1500) + (nowI - (s.budgetAt ?? nowI)) * 0.24); s.budgetAt = nowI;
         m.bits.forEach((b, k) => {
           const f = m.f0 + k; b = b | 0;
           if (f < 0 || f > s.hi + 600) return;
-          if (f > s.hi) { s.journal[f] = b; s.hi = f; }
+          if (f > s.hi) { const cost = f - s.hi; if (cost > s.budget) return; s.budget -= cost; s.journal[f] = b; s.hi = f; }
           if (b !== s.lastBits) { s.lastBits = b; s.lastMove = room.lastAct = Date.now(); }
         });
         return broadcast(room, { t: 'input', slot: c.slot, f0: m.f0, bits: m.bits.map((b) => b | 0) }, ws);
@@ -479,9 +493,12 @@ export function createServer(opts = {}) {
       case 'hash': {
         if (!room.started) return;
         const f = m.f | 0;
+        // Empreinte = 16 chiffres hexadecimaux : tout le reste est ignore (memoire du salon bornee, pas de 16 Ko par message).
+        if (f < 0 || typeof m.h !== 'string' || !/^[0-9a-f]{1,32}$/.test(m.h)) return;
         const h = room.hashes.get(f) || new Map();
-        h.set(c.slot, String(m.h));
+        h.set(c.slot, m.h);
         room.hashes.set(f, h);
+        while (room.hashes.size > 64) room.hashes.delete(room.hashes.keys().next().value);
         const need = room.slots.filter((x) => x.ws && x.mode === 'human').length;
         if (h.size >= need) {
           const ref = h.get(Math.min(...h.keys()));

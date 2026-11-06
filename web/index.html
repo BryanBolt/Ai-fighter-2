@@ -97,7 +97,7 @@ miniquad_add_plugin({
       return done;
     };
     importObject.env.afh_storage_set =function (kp, kl, vp, vl) {
-      try { localStorage.setItem(UTF8ToString(kp, kl), UTF8ToString(vp, vl)); } catch (e) {}
+      try { localStorage.setItem(UTF8ToString(kp, kl), UTF8ToString(vp, vl)); return 1; } catch (e) { return 0; }
     };
     importObject.env.afh_storage_len = function (kp, kl) {
       try { var v = localStorage.getItem(UTF8ToString(kp, kl)); return v === null ? -1 : new TextEncoder().encode(v).length; } catch (e) { return -1; }
@@ -124,6 +124,23 @@ document.addEventListener("gesturestart", function (e) { e.preventDefault(); });
 // Pas de defilement, de zoom a deux doigts ni de tirer-pour-rafraichir : le jeu gere tous les doigts.
 document.addEventListener("touchmove", function (e) { e.preventDefault(); }, { passive: false });
 document.addEventListener("dblclick", function (e) { e.preventDefault(); });
+</script>
+<script>
+// Touches maintenues quand la fenetre perd le focus ou que l'onglet se masque : le navigateur n'envoie plus le keyup,
+// le jeu croit la touche toujours enfoncee (le heros continue de marcher au retour). On les relache a la main.
+(function () {
+  var held = {};
+  window.addEventListener("keydown", function (e) { held[e.code] = 1; }, true);
+  window.addEventListener("keyup", function (e) { delete held[e.code]; }, true);
+  function release() {
+    var codes = Object.keys(held); held = {};
+    var c = document.getElementById("glcanvas");
+    if (!c || !c.onkeyup) return;
+    codes.forEach(function (code) { try { c.onkeyup({ code: code, ctrlKey: false, shiftKey: false, altKey: false }); } catch (e) {} });
+  }
+  window.addEventListener("blur", release);
+  document.addEventListener("visibilitychange", function () { if (document.hidden) release(); });
+})();
 </script>
 </body>
 </html>
