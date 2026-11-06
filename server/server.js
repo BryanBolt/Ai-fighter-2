@@ -8,8 +8,8 @@ import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { WebSocketServer } from 'ws';
 
-export const PROTOCOL_VERSION = 4; // 4 : table des coups changee (aeriens, realisme, grammaire X/Y) : les clients v1 a v3 sont refuses (desynchronisation du lockstep). 3 : parties hebergees (jeu complet : loadout, cmd sequences). 2 : join_any / host. Les clients v1 et v2 restent acceptes (hors parties completes).
-const COMPAT_VERSIONS = [4]; // une seule version : tous les joueurs d'une partie doivent avoir la meme table de coups
+export const PROTOCOL_VERSION = 5; // 5 : jusqu'a 8 joueurs, vague/PV de depart (solo -> en ligne) ; 4 : table des coups changee (aeriens, realisme, grammaire X/Y ; tir allie, QA). 3 : parties hebergees (jeu complet : loadout, cmd sequences). 2 : join_any / host. Seuls les clients v5 sont acceptes.
+const COMPAT_VERSIONS = [5]; // protocole 5 (8 joueurs) : les clients 1 a 4 ne savent pas lire des salons de 8 places, ils doivent se mettre a jour
 const HOSTED_SIZE = 2; // taille par defaut d une partie hebergee (anciens clients) ; le client actuel demande 4 avec `size` (places vides dormantes)
 const HOSTED_MIN = 2; // taille minimale demandable
 const MAX_CONN_PER_IP = 8; // connexions simultanees par adresse
@@ -24,7 +24,7 @@ const MAX_CMDS = 2000; // commandes par place et par partie (le journal de repri
 const ROSTER = 10; // heros du roster en ligne
 const STAGES = 12;
 const FULL_STAGES = 16; // parties hebergees : tous les stages de la campagne
-const MAX_SLOTS = 4;
+const MAX_SLOTS = 8;
 const REJOIN_MARGIN = 120; // images d'avance pour tout evenement de controle
 const HOLD_MS = 20 * 60 * 1000; // une place coupee reste reservee 20 min
 const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // sans caracteres ambigus (0/O, 1/I)
@@ -188,7 +188,7 @@ export function createServer(opts = {}) {
     });
     room.started = true; room.ctl = []; room.hashes = new Map();
     room.seed = (rnd(0x7fffffff) >>> 0) || 1;
-    room.config = { seed: room.seed, size, run: room.run, stage: room.options.stage | 0, full: !!room.full, mode: room.mode | 0, chapter: room.chapter | 0, ff: room.ff !== false, slots: room.slots.slice(0, size).map((s, i) => ({ slot: i, char: s.char, name: s.name, ai: s.mode === 'ai' })) };
+    room.config = { seed: room.seed, size, run: room.run, stage: room.options.stage | 0, full: !!room.full, mode: room.mode | 0, chapter: room.chapter | 0, wave: room.run === 0 ? (room.startWave | 0) : 0, hp: room.run === 0 ? (room.startHp | 0) : 0, ff: room.ff !== false, slots: room.slots.slice(0, size).map((s, i) => ({ slot: i, char: s.char, name: s.name, ai: s.mode === 'ai' })) };
     broadcast(room, { t: 'start', ...room.config });
   }
 
@@ -271,7 +271,8 @@ export function createServer(opts = {}) {
     if (typeof ff === 'boolean') room.ff = ff;
     if (full) {
       room.full = true; room.mode = int(full.mode, 0, 2); room.chapter = int(full.chapter, 0, 64);
-      room.hostedSize = int(full.size, HOSTED_MIN, MAX_SLOTS, HOSTED_SIZE); // 2 a 4 joueurs (places vides dormantes)
+      room.hostedSize = int(full.size, HOSTED_MIN, MAX_SLOTS, HOSTED_SIZE); // 2 a 8 joueurs (places vides dormantes)
+      room.startWave = int(full.wave, 0, 64, 0); room.startHp = int(full.hp, 0, 100, 0); // solo transforme : on reprend a la vague et aux PV de l'hote
     }
     if (Number.isInteger(stage) && stage >= 0 && stage < (room.full ? FULL_STAGES : STAGES)) room.fixedStage = stage;
     const idx = attach(room, ws, c, c.name);
