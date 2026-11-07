@@ -8,8 +8,8 @@ import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { WebSocketServer } from 'ws';
 
-export const PROTOCOL_VERSION = 5; // 5 : jusqu'a 8 joueurs, vague/PV de depart (solo -> en ligne) ; 4 : table des coups changee (aeriens, realisme, grammaire X/Y ; tir allie, QA). 3 : parties hebergees (jeu complet : loadout, cmd sequences). 2 : join_any / host. Seuls les clients v5 sont acceptes.
-const COMPAT_VERSIONS = [5]; // protocole 5 (8 joueurs) : les clients 1 a 4 ne savent pas lire des salons de 8 places, ils doivent se mettre a jour
+export const PROTOCOL_VERSION = 7; // 7 : entree Saisie (nouveau bit d'entree) + coups renommes (SCHEMA_VERSION 8) ; 6 : table des coups changee (grammaire X/Y des 9 autres heros, SCHEMA_VERSION 7) ; 5 : jusqu'a 8 joueurs, vague/PV de depart (solo -> en ligne) ; 4 : table des coups changee (aeriens, realisme, grammaire X/Y ; tir allie, QA). 3 : parties hebergees (jeu complet : loadout, cmd sequences). 2 : join_any / host. Seuls les clients v7 sont acceptes.
+const COMPAT_VERSIONS = [7]; // protocole 7 : les clients 1 a 6 n'ont pas la meme table de coups (et 1 a 4 ne savent pas lire des salons de 8 places), ils doivent se mettre a jour
 const HOSTED_SIZE = 2; // taille par defaut d une partie hebergee (anciens clients) ; le client actuel demande 4 avec `size` (places vides dormantes)
 const HOSTED_MIN = 2; // taille minimale demandable
 const MAX_CONN_PER_IP = 8; // connexions simultanees par adresse
@@ -30,6 +30,7 @@ const HOLD_MS = 20 * 60 * 1000; // une place coupee reste reservee 20 min
 const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // sans caracteres ambigus (0/O, 1/I)
 
 export function createServer(opts = {}) {
+  const trustProxy = opts.trustProxy ?? process.env.TRUST_PROXY === '1';
   const afkMs = opts.afkMs ?? Number(process.env.AFK_MS || 60000);
   const holdMs = opts.holdMs ?? HOLD_MS;
   const idleMs = opts.idleMs ?? Number(process.env.IDLE_MS || 20 * 60 * 1000); // salon sans aucune action humaine
@@ -334,7 +335,10 @@ export function createServer(opts = {}) {
   const wss = new WebSocketServer({ server, maxPayload: 16 * 1024 });
   const clients = new Map(); // ws -> etat
   wss.on('connection', (ws, req) => {
-    const ip = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').toString().split(',')[0].trim();
+    // x-forwarded-for n'est cru que derriere un proxy declare (TRUST_PROXY=1 ou opts.trustProxy) : sinon un client l'invente et contourne la limite par adresse.
+    // Derriere un proxy, on prend la DERNIERE entree (celle ajoutee par le proxy), jamais la premiere (fournie par le client).
+    const fwd = trustProxy ? String(req.headers['x-forwarded-for'] || '').split(',').pop().trim() : '';
+    const ip = (fwd || req.socket.remoteAddress || '').toString();
     if (clients.size >= (opts.maxConns ?? MAX_CONNS) || ((ipCount.get(ip) || 0) >= (opts.connPerIp ?? MAX_CONN_PER_IP) && !isLocal(ip))) {
       send(ws, { t: 'error', msg: clients.size >= (opts.maxConns ?? MAX_CONNS) ? 'Serveur tres occupe, reessaie dans un instant' : 'Trop de connexions depuis cette adresse', fatal: true, code: 'limit' });
       ws.close(); return;

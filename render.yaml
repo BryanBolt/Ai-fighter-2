@@ -10,3 +10,5 @@ services:
     envVars:
       - key: AFK_MS
         value: "60000"
+      - key: TRUST_PROXY
+        value: "1"
