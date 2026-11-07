@@ -35,7 +35,7 @@
 miniquad_add_plugin({
   name: "afh_storage", version: 1,
   register_plugin: function (importObject) {
-    importObject.env.afh_ready = function () { var l = document.getElementById("loading"); if (l) l.hidden = true; };
+    importObject.env.afh_ready = function () { var l = document.getElementById("loading"); if (!l) return; l.style.transition = "opacity .25s"; l.style.opacity = "0"; l.style.pointerEvents = "none"; setTimeout(function () { l.hidden = true; }, 300); };
     // Zones sures (encoche, barre de gestes) : lues via une sonde CSS env(safe-area-inset-*), en centiemes de point.
     var probe = document.createElement("div");
     probe.style.cssText = "position:fixed;left:0;top:0;width:0;height:0;visibility:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)";
