@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Atelier de pose</title>
+<style>
+body{margin:0;font:15px system-ui,sans-serif;background:#1c1d2e;color:#eee;padding:10px}
+h1{font-size:18px;margin:4px 0}
+.wrap{display:grid;grid-template-columns:minmax(260px,1fr) minmax(280px,1fr);gap:12px}
+@media(max-width:700px){.wrap{grid-template-columns:1fr}}
+canvas{width:100%;max-width:420px;background:#14152a;border-radius:10px;touch-action:none}
+.r{display:grid;grid-template-columns:90px 1fr 46px;gap:6px;align-items:center;margin:3px 0}
+.r input{width:100%}
+.r span{text-align:right;color:#f5c542}
+button{font:inherit;padding:8px 11px;border-radius:8px;border:0;margin:3px 3px 0 0;background:#3b3f66;color:#fff}
+button.p{background:#e0507a}
+textarea{width:100%;box-sizing:border-box;background:#101126;color:#9ef0b0;border:0;border-radius:8px;padding:8px;font:12px monospace}
+.g{display:flex;flex-wrap:wrap}
+</style></head><body>
+<h1>Atelier de pose (Kaze)</h1>
+<p style="margin:2px 0 8px;opacity:.85">Regle la posture avec les curseurs, puis "Copier mes valeurs" et colle-les dans le chat. Le dessin est une approximation du moteur : le dernier controle se fait dans le jeu.</p>
+<div class="wrap">
+<div><canvas id="c" width="420" height="420"></canvas>
+<div class="g" id="pre"></div></div>
+<div><div id="s"></div>
+<button class="p" onclick="cp()">Copier mes valeurs</button><button onclick="rst()">Reinitialiser</button>
+<textarea id="o" rows="4" readonly></textarea></div>
+</div>
+<script>
+var K=[['lean','Buste (avant +)',-45,45],['head','Tete',-30,30],['sh_f','Epaule avant',-30,170],['el_f','Coude avant',0,165],['sh_b','Epaule arriere',-100,170],['el_b','Coude arriere',-100,165],['hip_f','Hanche avant',-60,180],['kn_f','Genou avant',0,165],['hip_b','Hanche arriere',-60,180],['kn_b','Genou arriere',0,165],['lift','Hauteur sol',0,100]];
+var PRE={
+'Garde actuelle du jeu':[8,0,45,100,28,125,22,30,-22,20,0],
+'Garde (planche A)':[12,0,45,105,30,120,20,40,-20,30,0],
+'Pied de cote (D)':[-10,0,48,105,30,120,80,2,0,0,0],
+'Pied direct (F)':[-8,0,50,105,30,120,88,0,0,0,0],
+'Hache / vertical (H)':[-6,0,50,105,30,120,172,0,-10,4,0],
+'Pied haut (K)':[-6,0,50,105,30,120,136,0,0,0,0]};
+var V={};
+function rst(){set(PRE['Garde (planche A)']);}
+function set(a){K.forEach(function(k,i){V[k[0]]=a[i];var e=document.getElementById('i_'+k[0]);if(e)e.value=a[i];});draw();}
+var s=document.getElementById('s');
+K.forEach(function(k){var d=document.createElement('div');d.className='r';d.innerHTML='<label>'+k[1]+'</label><input type="range" id="i_'+k[0]+'" min="'+k[2]+'" max="'+k[3]+'" step="1"><span id="v_'+k[0]+'"></span>';s.appendChild(d);
+d.querySelector('input').addEventListener('input',function(e){V[k[0]]=+e.target.value;draw();});});
+var pre=document.getElementById('pre');
+Object.keys(PRE).forEach(function(n){var b=document.createElement('button');b.textContent=n;b.onclick=function(){set(PRE[n]);};pre.appendChild(b);});
+var c=document.getElementById('c'),x=c.getContext('2d');
+function dir(a,l){var r=a*Math.PI/180;return[Math.sin(r)*l,Math.cos(r)*l];} // 0 = bas, 90 = avant
+function add(p,q){return[p[0]+q[0],p[1]+q[1]];}
+function draw(){
+ var U=70,W=420,H=420,fl=360;
+ x.clearRect(0,0,W,H);
+ // sol
+ x.fillStyle='#1d1f38';x.fillRect(0,fl,W,H-fl);
+ x.strokeStyle='#4aa3ff';x.lineWidth=2;x.beginPath();x.ellipse(W/2,fl+4,95,9,0,0,7);x.stroke();
+ function foot(h,k){var a=dir(h,1),b=dir(h-k,1);return a[1]+b[1];}
+ var drop=Math.max(foot(V.hip_f,V.kn_f),foot(V.hip_b,V.kn_b));
+ var hip=[W/2,fl/1-drop*U-V.lift*U/100*1.0+0];
+ hip=[W/2,fl-drop*U-V.lift*0.9];
+ var ta=180-V.lean; var sh=add(hip,dir(ta,1.0*U)); var hd=add(sh,dir(ta+V.head*0.0,0.55*U));
+ var J={};
+ [['f',V.hip_f,V.kn_f],['b',V.hip_b,V.kn_b]].forEach(function(l){var kn=add(hip,dir(l[1],U));var ft=add(kn,dir(l[1]-l[2],U));J[l[0]+'k']=kn;J[l[0]+'f']=ft;});
+ [['f',V.sh_f,V.el_f],['b',V.sh_b,V.el_b]].forEach(function(l){var e=add(sh,dir(l[1],0.6*U));var h=add(e,dir(l[1]+l[2],0.55*U));J[l[0]+'e']=e;J[l[0]+'h']=h;});
+ function limb(p,w,col){x.strokeStyle=col;x.lineWidth=w;x.lineCap='round';x.lineJoin='round';x.beginPath();x.moveTo(p[0][0],p[0][1]);for(var i=1;i<p.length;i++)x.lineTo(p[i][0],p[i][1]);x.stroke();}
+ function dots(p,r,col){x.fillStyle=col;p.forEach(function(q){x.beginPath();x.arc(q[0],q[1],r,0,7);x.fill();});}
+ var D='#2a6fd6',L='#3d8bff',DD='#5fa5ff';
+ limb([hip,J.bk,J.bf],16,D);limb([sh,J.be,J.bh],12,D);
+ limb([hip,sh],18,L);
+ limb([hip,J.fk,J.ff],17,L);limb([sh,J.fe,J.fh],13,L);
+ dots([J.fk,J.bk,J.fe,sh,hip],6,DD);dots([J.ff,J.bf],11,L);dots([J.fh,J.bh],9,L);
+ x.fillStyle=L;x.beginPath();x.arc(hd[0],hd[1],26,0,7);x.fill();
+ x.fillStyle='rgba(180,215,255,.7)';x.beginPath();x.arc(hd[0]-8,hd[1]-9,7,0,7);x.fill();
+ K.forEach(function(k){document.getElementById('v_'+k[0]).textContent=V[k[0]];});
+ var a=K.map(function(k){return V[k[0]];});
+ document.getElementById('o').value='lean,head,sh_f,el_f,sh_b,el_b,hip_f,kn_f,hip_b,kn_b,lift\n'+a.join(',')+'\np('+a.slice(0,10).map(function(n){return n.toFixed(1);}).join(', ')+', 0.0)  lift='+a[10];
+}
+function cp(){var t=document.getElementById('o');t.select();try{document.execCommand('copy');}catch(e){}}
+rst();
+</script></body></html>
