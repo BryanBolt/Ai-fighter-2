@@ -95,6 +95,7 @@ export function createServer(opts = {}) {
     let p;
     try { p = decodeURIComponent(url.pathname); } catch { res.writeHead(400, { 'content-type': 'text/plain' }); res.end('chemin invalide'); return; }
     if (p === '/') p = '/index.html';
+    else if (p.endsWith('/')) p += 'index.html'; // dossiers : /combat_v2/ sert son index.html
     // Dossier de la racine EXACTEMENT (avec separateur) : « web2 » n'est pas dans « web ».
     const rootDir = path.resolve(root);
     const file = path.resolve(rootDir, '.' + path.sep + p.replace(/^[\\/]+/, ''));
