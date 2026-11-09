@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vie des niveaux</title>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b}
+body{margin:0;background:var(--papier);color:var(--encre);font-family:Nunito,sans-serif;padding:16px}
+h1,h2{font-family:Silkscreen,monospace;margin:.3em 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px}
+.card{border:3px solid var(--encre);border-radius:10px;padding:12px;background:#fff}
+.card img{width:100%;image-rendering:auto;border:2px solid var(--encre)}
+button{font-family:Silkscreen,monospace;border:2px solid var(--encre);background:#fff;padding:8px 12px;margin:4px 4px 0 0;cursor:pointer;border-radius:6px}
+button.ok.on{background:#3b9c5a;color:#fff}button.ko.on{background:var(--accent);color:#fff}
+textarea{width:100%;min-height:140px;font-family:Nunito,sans-serif;border:2px solid var(--encre);border-radius:6px;padding:8px;box-sizing:border-box}
+.gen{background:var(--accent);color:#fff}
+</style></head><body>
+<h1>VIE DES NIVEAUX</h1>
+<p>Renforts, groupes au repos, accessoires cassables, details d'arriere-plan. Valide ou renvoie chaque element, puis genere ton texte.</p>
+<div class="grid" id="g"></div>
+<h2>Mon texte</h2>
+<button class="gen" id="gen">Generer mon texte</button>
+<textarea id="out" readonly></textarea>
+<script>
+const items=[
+["renfort","Renforts en cours de vague","Un signal (point d'exclamation + cri) avant l'arrivee : par une porte, ou en tombant du toit sur les toits, le toit-jardin et le chantier. Un seul par etage, jamais en surcharge."],
+["discussion","Groupe qui discute puis reagit","Groupes de PNJ-ennemis au repos (cafe, telephone, sandwich, repliques du lieu). Alerte progressive : un coup ou l'approche du heros les reveille un par un."],
+["destruction","Accessoires cassables","Dix accessoires par lieu (lampadaire, pupitre, ecran, pot de fleurs, tonneau de sake, distributeur, poubelle...), avec butin et effets de casse."],
+["details","Petits details de vie","Oiseaux, neons qui clignotent, ecrans qui defilent, poussiere, feuilles, vapeur, employe qui traverse le fond."]];
+const st={};
+const g=document.getElementById('g');
+items.forEach(([id,t,d])=>{const c=document.createElement('div');c.className='card';
+c.innerHTML=`<h2>${t}</h2><img src="vie_niveaux/${id}.gif" alt="${t}"><p>${d}</p><button class="ok">Valider</button><button class="ko">A refaire</button>`;
+const [ok,ko]=c.querySelectorAll('button');
+ok.onclick=()=>{st[id]='ok';ok.classList.add('on');ko.classList.remove('on')};
+ko.onclick=()=>{st[id]='ko';ko.classList.add('on');ok.classList.remove('on')};
+g.appendChild(c)});
+document.getElementById('gen').onclick=()=>{
+const l=items.map(([id,t])=>`- ${t} : ${st[id]==='ok'?'VALIDE':st[id]==='ko'?'A REFAIRE':'pas encore juge'}`);
+document.getElementById('out').value="Retours sur la vie des niveaux :\n"+l.join("\n")};
+</script></body></html>
