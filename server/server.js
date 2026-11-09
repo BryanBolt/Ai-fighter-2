@@ -31,6 +31,11 @@ const REJOIN_MIN = 15; // images d'avance minimales pour un evenement de control
 const REJOIN_MAX = 590; // plafond (le journal accepte au plus +600 images)
 const HOLD_MS = 20 * 60 * 1000; // une place coupee reste reservee 20 min
 const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // sans caracteres ambigus (0/O, 1/I)
+const ROOM_TTL_MS = 30 * 60 * 1000; // salon « permanent » (lien de reconnexion) : garde 30 min apres le dernier joueur
+const MAX_MATCH_PER_MIN = 12; // demandes de partie (host / join_any / create / quick) par adresse et par minute
+const REPORT_GAP_MS = 5000; // delai minimal entre deux signalements d'un meme joueur
+const COLORS = 8; // palette de couleurs de joueurs (le client la definit : 8 teintes bien separees, sures pour le daltonisme)
+const MAX_PEEK = 8; // salons verifies d'un coup (reprise : « mes dernieres parties »)
 
 export function createServer(opts = {}) {
   const trustProxy = opts.trustProxy ?? process.env.TRUST_PROXY === '1';
@@ -46,6 +51,9 @@ export function createServer(opts = {}) {
   const graceMs = opts.graceMs ?? 30000; // partie vide apres une simple coupure : gardee un instant
   const restartMs = opts.restartMs ?? 7000; // ecran de resultats avant la nouvelle partie
   const joinRate = new Map(); // ip -> derniere demande host/join_any
+  const roomTtl = opts.roomTtlMs ?? ROOM_TTL_MS;
+  const matchLog = new Map(); // ip -> horodatages des demandes de partie (fenetre glissante d'une minute)
+  const reports = new Map(); // code -> Map(slot cible -> Set(jetons des signaleurs))
   const push = createPush({ sender: opts.pushSender ?? null, env: opts.pushEnv ?? process.env, roomExists: (c) => rooms.has(c) });
 
   const rnd = (n) => crypto.randomInt(n);
@@ -75,7 +83,11 @@ export function createServer(opts = {}) {
   const send = (ws, msg) => { if (ws && ws.readyState === 1) ws.send(JSON.stringify(msg)); };
   // Texte venu d'un joueur : sans caracteres de controle, espaces nettoyes, longueur bornee.
   const cleanText = (v, max) => String(v ?? '').replace(/[\u0000-\u001f\u007f-\u009f\u200b-\u200f\u2028-\u202e]/g, '').replace(/\s+/g, ' ').trim().slice(0, max);
-  const cleanName = (v) => cleanText(v, 14) || 'Joueur';
+  // Pseudo assaini : pas de lien ni d'adresse mail (ni de donnees personnelles collees par erreur), au moins une lettre ou un chiffre.
+  const cleanName = (v) => {
+    let n = cleanText(v, 120).replace(/[a-z][a-z0-9+.-]*:\/\/\S*/gi, ' ').replace(/\S+@\S+\.\S+/g, ' ').replace(/www\.\S+/gi, ' ').replace(/\d{6,}/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 14).trim();
+    return /[\p{L}\p{N}]/u.test(n) ? n : 'Joueur';
+  };
   const cleanCode = (v) => String(v ?? '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8);
   const ipCount = new Map(); // ip -> connexions ouvertes
   const bornAt = Date.now();
@@ -93,6 +105,11 @@ export function createServer(opts = {}) {
     if (url.pathname === '/api/status') {
       res.writeHead(200, { 'content-type': 'application/json', 'access-control-allow-origin': '*' });
       res.end(JSON.stringify({ v: PROTOCOL_VERSION, rooms: rooms.size, players: [...rooms.values()].reduce((n, r) => n + humans(r).length, 0), hosted: [...rooms.values()].filter((r) => r.full).length, conns: clients.size, up: Math.round((Date.now() - bornAt) / 1000) })); return;
+    }
+    if (url.pathname.startsWith('/api/room/')) {
+      const code = cleanCode(url.pathname.slice('/api/room/'.length));
+      res.writeHead(200, { 'content-type': 'application/json', 'access-control-allow-origin': '*', 'cache-control': 'no-store' });
+      res.end(JSON.stringify(peekRoom(code))); return;
     }
     if (url.pathname === '/api/ideas' && req.method === 'POST') { handleIdea(req, res); return; }
     if (push.handle(req, res, url.pathname)) return;
@@ -184,10 +201,11 @@ export function createServer(opts = {}) {
   }
 
   // ---------------------------------------------------------------- Salons
-  const emptySlot = () => ({ ws: null, name: '', char: 0, ready: false, token: null, mode: 'free', hi: -1, journal: [], lastMove: Date.now(), lastBits: 0, heldUntil: 0, ip: '', loadout: null, cmds: 0, lastLoadout: 0, loadouts: 0, lastChat: 0, lastResync: 0, afkWarned: false, dormantDue: false });
+  const emptySlot = () => ({ color: 0, ws: null, name: '', char: 0, ready: false, token: null, mode: 'free', hi: -1, journal: [], lastMove: Date.now(), lastBits: 0, heldUntil: 0, ip: '', loadout: null, cmds: 0, lastLoadout: 0, loadouts: 0, lastChat: 0, lastResync: 0, afkWarned: false, dormantDue: false });
   function makeRoom(isPublic) {
     const room = {
       code: newCode(), public: !!isPublic, started: false, created: Date.now(), lastAct: Date.now(), auto: false, run: 0, wave: 0, emptySince: 0, restartTimer: null, stageBase: rnd(STAGES),
+      keep: false, ownerIp: '', // keep : salon a lien permanent (reste ouvert `roomTtl` apres le dernier joueur) ; ownerIp : qui l'a ouvert (limite par adresse)
       ff: true, // tir allie (reglage de l'hote, annonce a tous dans la config de partie)
       options: { size: 2, stage: 0 }, // size = nombre de heros en partie (les places vides sont tenues par l'IA)
       slots: Array.from({ length: MAX_SLOTS }, emptySlot),
@@ -198,8 +216,8 @@ export function createServer(opts = {}) {
   }
   const humans = (room) => room.slots.map((s, i) => [s, i]).filter(([s]) => s.ws);
   const lobbyView = (room) => ({
-    t: 'room', code: room.code, public: room.public, started: room.started, auto: room.auto, run: room.run, options: { ...room.options, ff: room.ff !== false }, host: hostSlot(room), full: !!room.full,
-    players: room.slots.map((s, i) => ({ slot: i, name: s.name, char: s.char, ready: s.ready, online: !!s.ws, mode: s.mode })),
+    t: 'room', code: room.code, public: room.public, started: room.started, auto: room.auto, run: room.run, options: { ...room.options, ff: room.ff !== false }, host: hostSlot(room), full: !!room.full, private: !room.public, keep: !!room.keep, ttl: Math.round(roomTtl / 60000),
+    players: room.slots.map((s, i) => ({ slot: i, name: s.name, char: s.char, color: s.color, ready: s.ready, online: !!s.ws, mode: s.mode })),
   });
   const broadcast = (room, msg, except = null) => { for (const [s] of humans(room)) if (s.ws !== except) send(s.ws, msg); };
   // Liste publique : seulement les salons habites, les plus remplis (puis les plus recents) d'abord, bornee.
@@ -207,6 +225,18 @@ export function createServer(opts = {}) {
     .sort((a, b) => (humans(b).length / b.options.size - humans(a).length / a.options.size) || (b.created - a.created)).slice(0, 50)
     .map((r) => ({ code: r.code, auto: r.auto, stage: r.options.stage, run: r.run, wave: r.wave, n: humans(r).length, max: r.options.size, started: r.started, host: r.slots.find((s) => s.ws)?.name || '', full: !!r.full, mode: r.mode | 0, chapter: r.chapter | 0, open: humans(r).length < r.options.size, age: Math.round((Date.now() - r.created) / 1000), players: humans(r).map(([s]) => s.name) }));
   function hostSlot(room) { return room.slots.findIndex((s) => s.ws); }
+  // Etat public d'un salon connu par son code : AUCUNE donnee personnelle (pseudos et heros seulement, jamais d'adresse).
+  function peekRoom(code) {
+    const room = rooms.get(code);
+    if (!room) return { code, alive: false };
+    const hs = humans(room);
+    const size = room.started ? room.config.size : room.options.size;
+    return {
+      code, alive: true, public: room.public, started: room.started, auto: room.auto, full: !!room.full, n: hs.length, max: room.started ? Math.max(size, room.options.size) : room.options.size,
+      open: hs.length < (room.started ? Math.max(size, room.options.size) : room.options.size), names: hs.map(([s]) => s.name).slice(0, 8),
+      idle: Math.round((Date.now() - (hs.length ? room.lastAct : (room.emptySince || room.lastAct))) / 1000), ttl: room.keep ? Math.round(roomTtl / 1000) : 0,
+    };
+  }
 
   function attach(room, ws, c, name) {
     const now = Date.now();
@@ -214,7 +244,7 @@ export function createServer(opts = {}) {
     const idx = room.slots.findIndex((s, i) => i < limit && !s.ws && s.heldUntil < now && (!room.started || s.mode === 'ai'));
     if (idx < 0) return -1;
     const s = room.slots[idx];
-    s.ws = ws; s.name = uniqueName(room, cleanName(name), idx); s.token = c.token; s.ip = c.ip; s.heldUntil = 0;
+    s.ws = ws; s.name = uniqueName(room, cleanName(name), idx); s.token = c.token; s.ip = c.ip; s.heldUntil = 0; s.color = pickColor(room, idx, c.color);
     s.ready = false; s.lastMove = now; s.afkWarned = false;
     c.room = room; c.slot = idx;
     if (!room.started) s.mode = 'human';
@@ -228,6 +258,13 @@ export function createServer(opts = {}) {
     return name;
   }
 
+  // Couleur unique dans un salon : si la couleur voulue est prise par un autre joueur present, on propose la plus proche libre.
+  function pickColor(room, idx, want) {
+    const taken = new Set(room.slots.filter((x, i) => i !== idx && x.ws).map((x) => x.color));
+    const w = ((Number.isInteger(want) ? want : idx) % COLORS + COLORS) % COLORS;
+    for (let d = 0; d < COLORS; d++) for (const k of d === 0 ? [0] : [d, -d]) { const c = (w + k + COLORS) % COLORS; if (!taken.has(c)) return c; }
+    return w;
+  }
   function startGame(room) {
     const taken = room.slots.filter((s) => s.ws).length;
     const size = Math.max(room.options.size, taken, 1);
@@ -290,6 +327,7 @@ export function createServer(opts = {}) {
 
   function closeRoom(room) {
     if (room.restartTimer) clearTimeout(room.restartTimer);
+    reports.delete(room.code);
     banned.delete(room.code); // la liste des expulses disparait avec le salon (sinon elle fuit en memoire)
     rooms.delete(room.code);
   }
@@ -319,18 +357,35 @@ export function createServer(opts = {}) {
     if (!cands.length) return -1;
     cands.sort((a, b) => ((a[0].heldUntil > now) - (b[0].heldUntil > now)) || ((b[0].char === char) - (a[0].char === char)));
     const [s, idx] = cands[0];
-    s.ws = ws; s.name = uniqueName(room, cleanName(c.name), idx); s.token = c.token; s.ip = c.ip; s.heldUntil = 0; s.ready = false; s.lastMove = now; s.afkWarned = false;
+    s.ws = ws; s.name = uniqueName(room, cleanName(c.name), idx); s.token = c.token; s.ip = c.ip; s.heldUntil = 0; s.color = pickColor(room, idx, c.color); s.ready = false; s.lastMove = now; s.afkWarned = false;
     c.room = room; c.slot = idx;
     return idx;
   }
   // Limites par adresse : la boucle locale (tests, developpement) en est exemptee sauf si l'option est donnee explicitement.
   const isLocal = (ip) => opts.ipLimits === undefined && /^(127\.0\.0\.1|::1|::ffff:127\.0\.0\.1)$/.test(ip);
-  const roomsOfIp = (ip) => [...rooms.values()].filter((r) => r.slots.some((s) => s.ws && s.ip === ip)).length;
-  function hostNew(ws, c, char, priv, stage, full, ff) {
+  const roomsOfIp = (ip) => [...rooms.values()].filter((r) => r.slots.some((s) => s.ws && s.ip === ip) || (r.keep && r.ownerIp === ip)).length;
+  // Fenetre glissante : au plus MAX_MATCH_PER_MIN demandes de partie par minute et par adresse (hors boucle locale).
+  function matchOk(ws, c) {
+    if (isLocal(c.ip)) return true;
+    const now = Date.now();
+    const l = (matchLog.get(c.ip) || []).filter((t) => now - t < 60000);
+    if (l.length >= MAX_MATCH_PER_MIN) { send(ws, { t: 'error', msg: 'Trop de demandes de partie : patiente une minute', code: 'rate' }); return false; }
+    l.push(now); matchLog.set(c.ip, l);
+    if (matchLog.size > 5000) matchLog.clear();
+    return true;
+  }
+  // Une adresse qui a deja ses salons permanents vides : le plus ancien cede la place au nouveau (jamais un salon habite).
+  function evictOwned(ip) {
+    if (isLocal(ip)) return;
+    const mine = [...rooms.values()].filter((r) => r.keep && r.ownerIp === ip && humans(r).length === 0).sort((a, b) => a.emptySince - b.emptySince);
+    while (roomsOfIp(ip) >= MAX_ROOMS_PER_IP && mine.length) closeRoom(mine.shift());
+  }
+  function hostNew(ws, c, char, priv, stage, full, ff, keep) {
     if (rooms.size >= maxRooms) return send(ws, { t: 'error', msg: 'Serveur plein, reessaie dans un instant', code: 'full' });
+    evictOwned(c.ip);
     if (roomsOfIp(c.ip) >= MAX_ROOMS_PER_IP && !isLocal(c.ip)) return send(ws, { t: 'error', msg: 'Trop de parties ouvertes depuis cette connexion', code: 'limit' });
     const room = makeRoom(!priv);
-    room.auto = true;
+    room.auto = true; room.keep = !!keep; room.ownerIp = c.ip;
     if (typeof ff === 'boolean') room.ff = ff;
     if (full) {
       room.full = true; room.mode = int(full.mode, 0, 2); room.chapter = int(full.chapter, 0, 64);
@@ -347,26 +402,28 @@ export function createServer(opts = {}) {
     if (lo) { room.slots[idx].loadout = lo; control(room, idx, 0, { kind: 'loadout', data: lo }); }
   }
   function joinAny(ws, c, m) {
-    if (!rateOk(ws, c)) return;
+    if (!rateOk(ws, c) || !matchOk(ws, c)) return;
     if (c.room) leaveRoom(c, ws, true);
     const char = Math.max(0, Math.min(ROSTER - 1, m.char | 0));
     if (m.name) c.name = cleanName(m.name);
+    if (Number.isInteger(m.color)) c.color = m.color;
     const now = Date.now();
     // La partie publique en cours la plus remplie qui a encore une place (a egalite : la plus ancienne).
     const open = [...rooms.values()].filter((r) => r.auto && r.public && r.started && humans(r).length > 0 && humans(r).length < r.options.size && (!r.full || c.v >= 3) && !banned.get(r.code)?.has(c.ip))
       .sort((a, b) => humans(b).length - humans(a).length)[0];
     if (open) {
       const idx = takeAi(open, ws, c, char, now);
-      if (idx >= 0) { if (open.full) open.slots[idx].loadout = cleanLoadout(m.loadout); return finishJoin(open, ws, c, idx); }
+      if (idx >= 0) { if (open.full) open.slots[idx].loadout = cleanLoadout(m.loadout); finishJoin(open, ws, c, idx); return send(ws, { t: 'matched', how: 'joined', code: open.code, n: humans(open).length, max: open.options.size }); }
     }
-    hostNew(ws, c, char, false, undefined, null, typeof m.ff === 'boolean' ? m.ff : undefined);
+    hostNew(ws, c, char, false, undefined, null, typeof m.ff === 'boolean' ? m.ff : undefined, m.keep === true);
   }
   function hostGame(ws, c, m) {
-    if (!rateOk(ws, c)) return;
+    if (!rateOk(ws, c) || !matchOk(ws, c)) return;
     if (c.room) leaveRoom(c, ws, true);
     if (m.name) c.name = cleanName(m.name);
+    if (Number.isInteger(m.color)) c.color = m.color;
     const full = m.full && c.v >= 3 ? m : null;
-    hostNew(ws, c, Math.max(0, Math.min(ROSTER - 1, m.char | 0)), !!m.private, m.stage === undefined ? undefined : m.stage | 0, full, typeof m.ff === 'boolean' ? m.ff : undefined);
+    hostNew(ws, c, Math.max(0, Math.min(ROSTER - 1, m.char | 0)), !!m.private, m.stage === undefined ? undefined : m.stage | 0, full, typeof m.ff === 'boolean' ? m.ff : undefined, m.keep === true);
   }
 
   function leaveRoom(c, ws, permanent) {
@@ -385,7 +442,8 @@ export function createServer(opts = {}) {
     c.room = null;
     if (humans(room).length === 0) {
       // Partie en cours : plus personne -> elle se termine ; une simple coupure laisse un court delai de reprise.
-      if (!room.auto || permanent) closeRoom(room); else room.emptySince = Date.now();
+      if (room.keep) room.emptySince = Date.now(); // lien permanent : le salon reste ouvert (expiration `roomTtl` apres le dernier joueur)
+      else if (!room.auto || permanent) closeRoom(room); else room.emptySince = Date.now();
       return;
     }
     if (!room.started || room.auto) broadcast(room, lobbyView(room));
@@ -404,7 +462,7 @@ export function createServer(opts = {}) {
       ws.close(); return;
     }
     ipCount.set(ip, (ipCount.get(ip) || 0) + 1);
-    const c = { id: crypto.randomBytes(4).toString('hex'), v: 1, token: newToken(), room: null, slot: -1, ip, name: 'Joueur', msgs: 0, since: Date.now(), hello: false, alive: true };
+    const c = { id: crypto.randomBytes(4).toString('hex'), v: 1, token: newToken(), room: null, slot: -1, ip, name: 'Joueur', color: -1, msgs: 0, since: Date.now(), hello: false, alive: true };
     clients.set(ws, c);
     ws.on('pong', () => { c.alive = true; });
     ws.on('message', (data) => {
@@ -431,6 +489,7 @@ export function createServer(opts = {}) {
     if (banned.get(room.code)?.has(c.ip)) return send(ws, { t: 'error', msg: 'Tu as ete expulse de ce salon' });
     if (room.full && c.v < 3) return send(ws, { t: 'error', msg: 'Partie complete : mets le jeu a jour pour la rejoindre', fatal: true });
     if (c.room) leaveRoom(c, ws, true);
+    if (Number.isInteger(m.color)) c.color = m.color;
     if (room.full && room.started) {
       // Partie hebergee en cours : on prend la place IA (comme join_any), l'equipement est transmis dans le message.
       const idx2 = takeAi(room, ws, c, int(m.char, 0, ROSTER - 1), Date.now());
@@ -462,15 +521,21 @@ export function createServer(opts = {}) {
     switch (m.t) {
       case 'hello':
         if (!COMPAT_VERSIONS.includes(m.v)) return send(ws, { t: 'error', msg: 'Version incompatible : mets le jeu a jour', fatal: true });
-        c.v = m.v; c.name = cleanName(m.name); c.hello = true;
+        c.v = m.v; c.name = cleanName(m.name); c.hello = true; if (Number.isInteger(m.color)) c.color = m.color;
         if (m.token && /^[0-9a-f]{24}$/.test(m.token)) c.token = m.token;
         return send(ws, { t: 'welcome', v: PROTOCOL_VERSION, id: c.id, token: c.token });
       case 'join_any': return joinAny(ws, c, m);
       case 'host': return hostGame(ws, c, m);
       case 'list': return send(ws, { t: 'rooms', rooms: publicList() });
       case 'create': {
+        if (!matchOk(ws, c)) return;
         if (c.room) leaveRoom(c, ws, true);
-        const room = makeRoom(!!m.public);
+        evictOwned(c.ip);
+        if (roomsOfIp(c.ip) >= MAX_ROOMS_PER_IP && !isLocal(c.ip)) return send(ws, { t: 'error', msg: 'Trop de parties ouvertes depuis cette connexion', code: 'limit' });
+        if (rooms.size >= maxRooms) return send(ws, { t: 'error', msg: 'Serveur plein, reessaie dans un instant', code: 'full' });
+        const room = makeRoom(!!m.public); // salon d'attente : PRIVE par defaut (lien), public seulement si demande
+        room.keep = m.keep === true; room.ownerIp = c.ip;
+        if (m.size !== undefined) room.options.size = int(m.size, 1, MAX_SLOTS, 2);
         const idx = attach(room, ws, c, c.name);
         return send(ws, { ...lobbyView(room), you: idx, token: c.token });
       }
@@ -484,6 +549,10 @@ export function createServer(opts = {}) {
         return send(ws, { ...lobbyView(room), you: idx, token: c.token });
       }
       case 'join': return joinRoom(ws, c, m.code, m);
+      case 'peek': { // etat de salons connus (reprise de la derniere partie) : existe-t-il encore, qui est la, reste-t-il de la place
+        const codes = (Array.isArray(m.codes) ? m.codes : [m.code]).slice(0, MAX_PEEK).map(cleanCode).filter((x) => x.length >= 4);
+        return send(ws, { t: 'peeked', rooms: codes.map((code) => peekRoom(code)) });
+      }
       case 'rejoin': {
         const room = rooms.get(cleanCode(m.code));
         if (!room) return send(ws, { t: 'error', msg: 'Reprise impossible', detail: 'Cette partie est terminee.', rejoin: true, code: 'gone' });
@@ -517,6 +586,7 @@ export function createServer(opts = {}) {
         if (room.started) return;
         s.char = Math.max(0, Math.min(99, m.char | 0));
         s.ready = !!m.ready;
+        if (Number.isInteger(m.color)) { c.color = m.color; s.color = pickColor(room, c.slot, m.color); }
         if (m.name) { s.name = uniqueName(room, cleanName(m.name), c.slot); c.name = s.name; }
         return broadcast(room, lobbyView(room));
       case 'options':
@@ -525,11 +595,33 @@ export function createServer(opts = {}) {
         if (typeof m.ff === 'boolean') room.ff = m.ff;
         if (typeof m.public === 'boolean') room.public = m.public;
         return broadcast(room, lobbyView(room));
-      case 'start':
+      case 'start': // l'hote lance quand il veut, sans attendre les autres (ceux qui arrivent ensuite prennent une place IA en cours de partie)
         if (room.started || c.slot !== hostSlot(room)) return;
         if (typeof m.ff === 'boolean') room.ff = m.ff;
-        if (humans(room).some(([x]) => !x.ready && x !== s)) return send(ws, { t: 'error', msg: 'Tout le monde doit etre pret' });
         return startGame(room);
+      case 'report': { // signaler un joueur : assez de signalements distincts et il quitte le salon (public ou prive)
+        const t = room.slots[m.slot | 0];
+        const nowR = Date.now();
+        if (!t || !t.ws || t === s) return;
+        if (nowR - (s.lastReport || 0) < REPORT_GAP_MS) return send(ws, { t: 'error', msg: 'Doucement, un signalement a la fois', code: 'report_rate' });
+        s.lastReport = nowR;
+        if (!reports.has(room.code)) reports.set(room.code, new Map());
+        const byTarget = reports.get(room.code);
+        const key = m.slot | 0;
+        if (!byTarget.has(key)) byTarget.set(key, new Set());
+        const who = byTarget.get(key); who.add(c.token);
+        send(ws, { t: 'reported', slot: key });
+        const others = humans(room).length - 1; // electeurs possibles (la cible exclue)
+        if (who.size >= Math.max(2, Math.ceil(others / 2)) || (others === 1 && who.size >= 1 && room.public)) {
+          if (!banned.has(room.code)) banned.set(room.code, new Set());
+          if (banned.get(room.code).size < MAX_BANNED) banned.get(room.code).add(t.ip);
+          const kws = t.ws; const kc = clients.get(kws);
+          send(kws, { t: 'kicked', reason: 'reports' });
+          byTarget.delete(key);
+          if (kc) leaveRoom(kc, kws, true);
+        }
+        return;
+      }
       case 'kick': {
         if (c.slot !== hostSlot(room)) return;
         const k = room.slots[m.slot | 0];
@@ -584,6 +676,11 @@ export function createServer(opts = {}) {
         if (!room.started || s.mode !== 'ai' || s.ws !== ws) return;
         s.mode = 'human'; s.lastMove = Date.now(); s.lastBits = 0;
         return control(room, c.slot, highest(room) + rejoinMargin(room), { ai: false, name: s.name });
+      }
+      case 'color': { // changement de couleur en cours de partie : annonce a tous (marqueur au-dessus du heros)
+        if (!Number.isInteger(m.color) || Date.now() - (s.lastColor || 0) < 500) return;
+        s.lastColor = Date.now(); c.color = m.color; s.color = pickColor(room, c.slot, m.color);
+        return broadcast(room, lobbyView(room));
       }
       case 'loadout': { // equipement change en cours de partie (partie complete) : applique a une image future identique pour tous
         if (!room.full || !room.started || s.mode !== 'human') return;
@@ -649,7 +746,7 @@ export function createServer(opts = {}) {
         }
         continue;
       }
-      if (humans(room).length === 0 && (room.auto ? now - room.emptySince > graceMs : now - room.created > holdMs)) closeRoom(room);
+      if (humans(room).length === 0 && (room.keep ? now - (room.emptySince || room.created) > roomTtl : room.auto ? now - room.emptySince > graceMs : now - room.created > holdMs)) closeRoom(room);
     }
   }, 1000);
   timer.unref?.();

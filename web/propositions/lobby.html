@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lobby et invitation - AI Fighter 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#221834;--paper:#fff3e0;--acc:#d8456b;--accbtn:#c03a5e}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.45 Nunito,system-ui,sans-serif;padding:16px}
+h1{font:700 22px Silkscreen,monospace;margin:0 0 4px}
+h1::after{content:"";display:block;width:56px;height:6px;border-radius:3px;background:var(--acc);margin-top:8px}
+h2{font:700 16px Silkscreen,monospace;margin:4px 0}
+p{margin:6px 0}
+.lead{max-width:760px}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:18px;margin-top:18px}
+.c{background:#fff;border-radius:26px;padding:14px;box-shadow:6px 6px 0 var(--acc);position:relative}
+.c.ok{outline:4px solid #2e9b5b}.c.no{outline:4px solid var(--acc)}
+.c img{width:100%;border-radius:16px;background:var(--paper);display:block}
+.row{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+button{font:700 15px Nunito,sans-serif;padding:11px 16px;min-height:44px;border-radius:24px;border:0;background:#eadfcf;color:var(--ink);cursor:pointer}
+button.v{background:#2e9b5b;color:#fff}button.x{background:var(--accbtn);color:#fff}
+button:focus-visible,textarea:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+textarea{width:100%;border-radius:14px;border:2px solid #eadfcf;padding:8px;font:inherit;margin-top:8px;background:#fffaf2;color:var(--ink)}
+.gen{margin-top:22px;background:var(--accbtn);color:#fff;font-size:17px}
+#o{white-space:pre-wrap;background:var(--ink);color:var(--paper);padding:14px;border-radius:18px;margin-top:14px;font:14px/1.5 ui-monospace,Consolas,monospace}
+.note{background:#fff;border-radius:18px;padding:10px 14px;margin-top:14px;max-width:760px;border-left:8px solid var(--acc)}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<h1>Lobby et invitation</h1>
+<p class="lead">Captures du vrai moteur (ecrans en charte Encre / Papier / Accent). Pour chaque ecran : Valider ou A refaire, une remarque si tu veux, puis « Generer mon texte » et colle-le dans le chat.</p>
+<div class="note"><b>Ce qui change :</b> un seul ecran pour choisir <b>PRIVEE</b> (lien, QR, code) ou <b>PUBLIQUE</b> (des joueurs te rejoignent tout seuls, jusqu'a 8, l'IA complete) ; bouton <b>Inviter</b> avec feuille de partage native ; <b>Reprendre ma partie</b> en 1 tap (le lien ne change plus, salon garde 30 min) ; salon d'attente qui explique tout ; premiere connexion avec pseudo drole, heros et couleur (8 couleurs + 8 formes, sans rouge).</div>
+<div class="g" id="g"></div>
+<button class="gen" onclick="out()">Generer mon texte</button>
+<div id="o" aria-live="polite"></div>
+<script>
+var C=[
+{k:"choix",n:"1. Choix PRIVEE / PUBLIQUE",img:"lobby_choix.gif",d:"Un ecran, deux grosses cartes avec une phrase d'explication. En haut, « Reprendre ma partie (avec Alex, Sam) » si une partie recente est encore ouverte."},
+{k:"accueil",n:"2. Premiere connexion",img:"lobby_accueil.gif",d:"Pseudo drole propose (modifiable), heros avec apercu anime sans aura, couleur parmi 8 teintes (une forme par couleur pour le daltonisme)."},
+{k:"invite",n:"3. Inviter (telephone)",img:"lobby_invite.gif",d:"QR plein ecran sur fond blanc, code a 5 caracteres a dicter, Partager (feuille native WhatsApp / SMS / Messenger / Telegram), Copier le lien."},
+{k:"invite_pc",n:"4. Inviter (PC / tablette)",img:"lobby_invite_pc.gif",d:"Meme feuille en paysage : QR a gauche, actions a droite. NFC et Prevenir mes amis apparaissent seulement si le navigateur sait les faire."},
+{k:"reprise",n:"5. Reprendre ma partie",img:"lobby_reprise.gif",d:"Mes dernieres parties : OUVERTE 2/8 ou terminee (verifie aupres du serveur), un tap pour revenir au MEME salon avec le meme code."},
+{k:"salon",n:"6. Salon d'attente",img:"lobby_salon.gif",d:"Qui est la (forme + couleur, pseudo, heros, pret), un texte qui explique, Inviter, Lancer sans attendre, heros et couleur modifiables."}
+];
+var g=document.getElementById('g'),st={};
+C.forEach(function(c){var d=document.createElement('div');d.className='c';d.id='c_'+c.k;
+d.innerHTML='<img src="'+c.img+'" alt="'+c.n+'"><h2>'+c.n+'</h2><p>'+c.d+'</p><div class="row"><button class="v" data-k="'+c.k+'" data-v="1">Valider</button><button class="x" data-k="'+c.k+'" data-v="-1">A refaire</button></div><textarea id="t_'+c.k+'" rows="2" placeholder="Commentaire (optionnel)" aria-label="Commentaire sur '+c.n+'"></textarea>';
+g.appendChild(d);});
+g.addEventListener('click',function(e){var b=e.target;if(!b.dataset||!b.dataset.k)return;var v=+b.dataset.v;st[b.dataset.k]=v;document.getElementById('c_'+b.dataset.k).className='c '+(v>0?'ok':'no');});
+function out(){var L=C.map(function(c){var v=st[c.k];var t=document.getElementById('t_'+c.k).value.trim();return (v>0?'VALIDE':v<0?'A REFAIRE':'NON VU')+' : '+c.n+(t?' - '+t:'');});document.getElementById('o').textContent='Retours lobby :\n'+L.join('\n');}
+</script>
+</body>
+</html>

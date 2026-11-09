@@ -33,6 +33,9 @@ button:focus-visible,.sw:focus-visible,.chip:focus-visible{outline:3px solid var
 .b{font:700 10px Silkscreen;padding:3px 8px;border-radius:99px;background:var(--ink);color:var(--paper)}
 .r0{background:#6b6b7a}.r1{background:#2f7fd1}.r2{background:#8b4fd6}.r3{background:#e08a00}
 .abus{background:var(--ab);color:var(--ink)}
+.dm{background:#2a8f78}.dline{margin:0;font-size:12.5px;color:#1c5a4b;font-weight:800}
+.concept{background:rgba(42,143,120,.18);border:2px solid #2a8f78;border-radius:14px;padding:12px 14px;margin:10px 0}.concept b{font-family:Silkscreen,monospace}
+.sheetbig img{width:100%;border-radius:10px;display:block;margin:6px 0}
 .desc{margin:0;font-size:14px}.ref{font-size:11px;color:var(--ink2);margin:0}
 .act{display:flex;gap:6px;margin-top:auto;flex-wrap:wrap}
 .act button{flex:1;background:var(--ink);color:var(--paper);padding:8px 6px;font-size:10px}
@@ -48,6 +51,9 @@ textarea.note{min-height:0;height:auto;margin-top:8px;font:13px/1.4 system-ui,sa
 </style></head><body>
 <h1>ROGUELITE : OBJETS ET ETAGES</h1>
 <p class="lead">Chaque animation est une vraie capture du moteur en temps reel (les objets sans animation propre sont marques « concept »). Les objets s'ajoutent a vos coups, ils ne les remplacent pas. Les neuf pouvoirs demandes (cris du dragon, de feu, de gel et du temps, canon charge, arme de boss, dash aerien, saut mural, armure a capsules) sont maintenant reels dans le mode Roguelite (beta) : leurs fiches montrent le GIF du moteur et six images-cles ; les six armes de boss ne se tirent pas au hasard, un boss vaincu les propose.</p>
+
+<div class="concept"><b>NOUVEAU : LES DAEMONS PORTENT LES POUVOIRS.</b> En roguelite, le heros n'a plus aucun pouvoir magique propre : il garde ses coups, ses armes et ses garde-fous. Chaque pouvoir magique est un petit monstre (un daemon) que l'on adopte en choisissant la carte. Quand on appuie sur la touche du pouvoir, le heros fait un geste de commande et c'est le DAEMON qui vient se placer devant lui, se charge, puis lance le pouvoir depuis sa gueule, ses mains ou ses cornes. Une jauge sous le daemon montre sa recharge ; quatre daemons au plus (B, Avant, Arriere, Haut + B) ; certains duos se renforcent (feu + vent = incendie, glace + foudre = gel paralysant, feu + terre = lave, foudre + vent = orage, lune + ombre = eclipse) ; les etoiles d'attachement rendent le pouvoir plus fort. Chaque GIF ci-dessous est une capture du vrai moteur : regardez le daemon, pas le heros. Verdict conseille a donner : « Animation a refaire » si le daemon ne lance pas clairement le pouvoir.
+<div class="sheetbig" id="dmsheet"><a href="roguelite/dm_planche.jpg" target="_blank"><img src="roguelite/dm_planche.jpg" alt="Planche contact : les 22 daemons porteurs avec leur pouvoir" onerror="this.parentNode.style.display='none'"></a></div></div>
 
 <h2>Options de partie</h2>
 <div class="panel">
@@ -112,7 +118,9 @@ function renderCards(){
     var b=el("div","body");b.appendChild(el("h3","",i.name));
     var m=el("div","meta");m.appendChild(el("span","b",i.catName));m.appendChild(el("span","b r"+i.rarity,i.rarityName));if(i.abusif)m.appendChild(el("span","b abus","ABUSIF"));if(BW.test(i.id))m.appendChild(el("span","b","OFFERTE APRES UN BOSS"));if(i.soon)m.appendChild(el("span","b","BIENTOT"));if(!i.unique)m.appendChild(el("span","b","cumulable"));
     b.appendChild(m);b.appendChild(el("p","desc",i.desc));
-    if(i.scene&&i.scene.indexOf("rl_")===0){var sl=document.createElement("a");sl.href="roguelite/it_"+i.scene+"_sheet.jpg";sl.target="_blank";sl.title="Images-cles (clic : agrandir)";var si=new Image();si.loading="lazy";si.alt="Images-cles : "+i.name;si.src=sl.href;si.style.cssText="width:100%;display:block;border-radius:8px";si.onerror=function(){sl.style.display="none"};sl.appendChild(si);b.appendChild(sl)}b.appendChild(el("p","ref","Contenu du jeu : "+i.content));
+    if(i.daemon){var d=i.daemon;m.appendChild(el("span","b dm","DAEMON PORTEUR"));
+      b.appendChild(el("p","dline",d.name+", "+d.species+" de "+d.elem+" ("+d.trait+") : c'est LUI qui lance ce pouvoir quand on appuie sur la touche. Recharge "+d.cd+" s ; ses etoiles d'attachement le renforcent."))}
+    if(i.scene&&(i.scene.indexOf("rl_")===0||i.scene.indexOf("dm_")===0)){var sl=document.createElement("a");sl.href="roguelite/it_"+i.scene+"_sheet.jpg";sl.target="_blank";sl.title="Images-cles (clic : agrandir)";var si=new Image();si.loading="lazy";si.alt="Images-cles : "+i.name;si.src=sl.href;si.style.cssText="width:100%;display:block;border-radius:8px";si.onerror=function(){sl.style.display="none"};sl.appendChild(si);b.appendChild(sl)}b.appendChild(el("p","ref","Contenu du jeu : "+i.content));
     var a=el("div","act");[["k","Garder"],["r","Refuser"],["a","Trop abuse"],["f","Animation a refaire"]].forEach(function(x){var bt=el("button","",x[1]);bt.dataset.v=x[0];bt.onclick=function(){setV(i.id,x[0])};a.appendChild(bt)});
     b.appendChild(a);
     var ta=document.createElement("textarea");ta.className="note";ta.rows=2;ta.placeholder="Commentaire : animation pas folle, probleme, idee...";ta.value=st.notes[i.id]||"";

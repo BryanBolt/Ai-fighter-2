@@ -352,6 +352,7 @@ miniquad_add_plugin({
         if (kind === 0 && location.protocol.indexOf("http") === 0) s = (location.protocol === "https:" ? "wss://" : "ws://") + location.host + "/";
         if (kind === 1) s = new URLSearchParams(location.search).get("salon") || "";
         if (kind === 3 && new URLSearchParams(location.search).get("labo")) s = "1";
+        if (kind === 4) s = window.afhNfcCode || "";
         if (kind === 2 && location.protocol.indexOf("http") === 0) s = location.origin + location.pathname.replace(/index\.html$/, "");
       } catch (e) {}
       var b = new TextEncoder().encode(s);
@@ -370,6 +371,59 @@ miniquad_add_plugin({
       try { if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(url).catch(legacy); done = 1; } else legacy(); } catch (e) { legacy(); }
       try { if (navigator.share && navigator.maxTouchPoints > 0) navigator.share({ title: "AI Fighter 2", text: "Viens jouer avec moi !", url: url }).catch(function () {}); } catch (e) {}
       return done;
+    };
+    // Invitation (v2) : flags 1 = copier le lien, 2 = feuille de partage native (navigator.share : WhatsApp, SMS, Messenger, Telegram...), 4 = prevenir le cercle d'amis (push).
+    importObject.env.afh_share2 = function (p, l, tp, tl, flags) {
+      var url = UTF8ToString(p, l), text = UTF8ToString(tp, tl), shared = 0;
+      if (flags & 4) { try { if (window.afhPushInvite) window.afhPushInvite(url); } catch (e) {} }
+      if (flags & 1) {
+        var legacy = function () { try { var t = document.createElement("textarea"); t.value = url; t.style.position = "fixed"; t.style.opacity = "0"; document.body.appendChild(t); t.select(); document.execCommand("copy"); document.body.removeChild(t); } catch (e) {} };
+        try { if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).catch(legacy); else legacy(); } catch (e) { legacy(); }
+      }
+      if (flags & 2) { try { if (navigator.share) { navigator.share({ title: "AI Fighter 2", text: text, url: url }).catch(function () {}); shared = 1; } } catch (e) {} }
+      return shared;
+    };
+    // Capacites et NFC. kind 0 : bits (1 = Web NFC, 2 = cercle d'amis actif, 4 = navigator.share) ; 1 : ecrire un lien sur une etiquette NFC ; 2 : lire une etiquette (code de salon) ; 3 : vider le code lu.
+    // Web NFC : Android Chrome seulement, page en https ; il lit / ecrit des ETIQUETTES (pas de telephone a telephone).
+    window.afhNfcCode = "";
+    importObject.env.afh_lobby = function (kind, p, l) {
+      try {
+        if (kind === 0) {
+          var circle = ""; try { circle = localStorage.getItem("afh_circle") || ""; } catch (e) {}
+          return (("NDEFReader" in window && window.isSecureContext) ? 1 : 0) | ((window.afhPushKey && circle) ? 2 : 0) | (navigator.share ? 4 : 0);
+        }
+        if (kind === 1 && "NDEFReader" in window) {
+          var url = UTF8ToString(p, l);
+          new NDEFReader().write({ records: [{ recordType: "url", data: url }] }).catch(function () {});
+        }
+        if (kind === 2 && "NDEFReader" in window) {
+          var rd = new NDEFReader();
+          rd.scan().then(function () {
+            rd.onreading = function (ev) {
+              for (var i = 0; i < ev.message.records.length; i++) {
+                var r = ev.message.records[i];
+                if (r.recordType === "url" || r.recordType === "text") {
+                  var t = new TextDecoder().decode(r.data), m = /[?&]salon=([A-Za-z0-9]+)/.exec(t);
+                  if (m) window.afhNfcCode = m[1];
+                }
+              }
+            };
+          }).catch(function () {});
+        }
+        if (kind === 3) window.afhNfcCode = "";
+      } catch (e) {}
+      return 0;
+    };
+    // Mode photo : le jeu fournit un PNG, la page le propose en telechargement.
+    importObject.env.afh_download = function (np, nl, dp, dl) {
+      try {
+        var name = UTF8ToString(np, nl);
+        var blob = new Blob([new Uint8Array(wasm_memory.buffer, dp, dl).slice()], { type: "image/png" });
+        var a = document.createElement("a");
+        a.href = URL.createObjectURL(blob); a.download = name; a.style.display = "none";
+        document.body.appendChild(a); a.click();
+        setTimeout(function () { URL.revokeObjectURL(a.href); document.body.removeChild(a); }, 2000);
+      } catch (e) {}
     };
     importObject.env.afh_storage_set =function (kp, kl, vp, vl) {
       try { localStorage.setItem(UTF8ToString(kp, kl), UTF8ToString(vp, vl)); return 1; } catch (e) { return 0; }

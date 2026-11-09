@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Propositions : replay, photo, run du jour</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b;--ok:#2f8f5b;--ligne:#4a3a66}
+*{box-sizing:border-box}
+body{margin:0;background:var(--encre);color:var(--papier);font-family:Nunito,system-ui,sans-serif;line-height:1.5}
+header,main,footer{max-width:960px;margin:0 auto;padding:16px}
+h1,h2{font-family:Silkscreen,monospace;font-weight:700;letter-spacing:.02em}
+h1{font-size:1.6rem;color:var(--accent);margin:.4em 0}
+h2{font-size:1.15rem;margin:0 0 .5em}
+.card{background:#2d2144;border:2px solid var(--ligne);border-radius:12px;padding:14px;margin:18px 0;box-shadow:4px 4px 0 #000}
+.card.ok{border-color:var(--ok)} .card.redo{border-color:var(--accent)}
+img{width:100%;height:auto;border-radius:8px;border:2px solid var(--ligne);background:#000}
+.grid{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+figcaption,.note{font-size:.88rem;opacity:.85}
+.limits{border-left:4px solid var(--accent);padding:4px 10px;margin:8px 0;background:#261b3b}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+button{font:700 .95rem Nunito,sans-serif;padding:10px 14px;min-height:44px;border-radius:999px;border:2px solid var(--papier);background:transparent;color:var(--papier);cursor:pointer}
+button[aria-pressed=true].v{background:var(--ok);border-color:var(--ok);color:#fff}
+button[aria-pressed=true].r{background:var(--accent);border-color:var(--accent);color:#fff}
+button.gen{background:var(--papier);color:var(--encre);border-color:var(--papier)}
+textarea{width:100%;min-height:60px;margin-top:8px;border-radius:8px;border:2px solid var(--ligne);background:var(--papier);color:var(--encre);font:inherit;padding:8px}
+#sortie{min-height:180px}
+code{background:#000;padding:1px 5px;border-radius:4px}
+@media (prefers-reduced-motion:reduce){img{animation:none}}
+</style>
+</head>
+<body>
+<header>
+<h1>REPLAY, PHOTO, RUN DU JOUR</h1>
+<p>Six fonctions ajoutees sans toucher a la simulation. Les images ci-dessous sont de vraies captures du moteur (pas des maquettes). Pour chacune : <b>Valider</b>, <b>A refaire</b>, ou un commentaire, puis « Generer mon texte ».</p>
+</header>
+<main id="cartes"></main>
+<footer>
+<div class="card"><h2>Mon texte</h2>
+<div class="row"><button class="gen" id="gen">Generer mon texte</button><button id="copie">Copier</button></div>
+<textarea id="sortie" readonly placeholder="Clique sur « Generer mon texte »"></textarea></div>
+<p class="note">Tes choix sont gardes sur cet appareil (localStorage), rien n'est envoye.</p>
+</footer>
+<script>
+var F = [
+ {id:"replay", t:"1. Replay des 8 dernieres secondes", img:["img/replay.gif","img/replay_a.png"], cap:"Camera auto : zoom sur l'impact, ralenti automatique, bandeau « Rejeu verifie » (empreinte identique). Pastille « Replay : touche R » apres un KO final, une super ou un combo >= 15 ; ou depuis la Pause.", lim:"Solo hors-ligne seulement (en ligne, rien n'est enregistre : aucun risque de desynchronisation). Un historique de 9 a 12 s au plus (4 instantanes)."},
+ {id:"libre", t:"2. Camera libre", img:["img/free.png"], cap:"Glisser pour deplacer, molette ou pincement pour zoomer (tactile compris). Meme replay, cadrage choisi par le joueur.", lim:"Deplacement et zoom ; pas de rotation de camera."},
+ {id:"photo", t:"3. Mode photo", img:["img/photo1.png","img/photo4.png"], cap:"Pause + cadrage libre, HUD masque (ou affiche), filtres sobres : Chaud, Froid, Vignette, Cinema. Capture PNG : fichier natif, telechargement sur le web (petit crochet JS ajoute a web/index.html).", lim:"Filtres = teintes et vignette, pas de noir et blanc. Sur le web : PNG reduit a 1280 px de large."},
+ {id:"export", t:"4. Export du replay", img:["img/export.gif"], cap:"Natif : bouton « Sequence PNG » (30 images/s, un pas exact par image) puis tools/seq_to_gif.py assemble le GIF. Le GIF de cette page vient de cet export.", lim:"Web : pas d'export de sequence (seulement la photo). Le GIF n'est pas encode par le jeu lui-meme."},
+ {id:"run", t:"5. Run du jour", img:["img/daily.png"], cap:"Graine = hachage de la date : meme heros, stage et 3 bonus de depart pour tout le monde. Meilleur score du jour, tableau de scores LOCAL (10 meilleurs). Le run n'ecrase pas la campagne ni ne debloque de stage.", lim:"Date UTC (comme le defi du jour existant), pas la date locale."},
+ {id:"defis", t:"6. Defis quotidiens et hebdomadaires", img:["img/daily.png"], cap:"3 objectifs tires de la graine du jour et 3 de la semaine (« finir 2 etages sans etre touche », « enchainer 40 coups », « vaincre un boss avec un seul special »...), progression sauvegardee, prime en or.", lim:"Credites a la fin d'un combat ; quitter en plein combat ne credite rien."}
+];
+var KEY="afh_replay_avis", S={};
+try{S=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+var root=document.getElementById("cartes");
+F.forEach(function(f){
+  var s=S[f.id]=S[f.id]||{v:"",c:""};
+  var d=document.createElement("section"); d.className="card";
+  var imgs=f.img.map(function(u){return '<figure style="margin:0"><img src="'+u+'" alt="" loading="lazy"></figure>'}).join("");
+  d.innerHTML='<h2>'+f.t+'</h2><div class="grid">'+imgs+'</div><p>'+f.cap+'</p><div class="limits">Limite honnete : '+f.lim+'</div>'+
+   '<div class="row"><button class="v" aria-pressed="false">Valider</button><button class="r" aria-pressed="false">A refaire</button></div>'+
+   '<textarea aria-label="Commentaire" placeholder="Commentaire (optionnel)"></textarea>';
+  var bv=d.querySelector(".v"), br=d.querySelector(".r"), ta=d.querySelector("textarea");
+  function paint(){bv.setAttribute("aria-pressed",s.v==="ok");br.setAttribute("aria-pressed",s.v==="redo");d.className="card"+(s.v==="ok"?" ok":s.v==="redo"?" redo":"")}
+  bv.onclick=function(){s.v=s.v==="ok"?"":"ok";save();paint()};
+  br.onclick=function(){s.v=s.v==="redo"?"":"redo";save();paint()};
+  ta.value=s.c; ta.oninput=function(){s.c=ta.value;save()}; paint(); root.appendChild(d);
+});
+var out=document.getElementById("sortie");
+document.getElementById("gen").onclick=function(){
+  var L=["Retour sur les propositions replay / photo / run du jour :",""];
+  F.forEach(function(f){var s=S[f.id]||{};L.push("- "+f.t+" : "+(s.v==="ok"?"VALIDE":s.v==="redo"?"A REFAIRE":"sans avis")+(s.c?" - "+s.c:""))});
+  out.value=L.join("\n");
+};
+document.getElementById("copie").onclick=function(){out.select();try{document.execCommand("copy")}catch(e){}};
+</script>
+</body>
+</html>

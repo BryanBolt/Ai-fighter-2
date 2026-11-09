@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nemesis de Kogen Corp - proposition</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#221834;--paper:#fff3e0;--acc:#d8456b;--card:#fffaf2;--line:#e9d3b4;--ok:#2f8f5b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/1.55 Nunito,system-ui,sans-serif}
+.wrap{max-width:980px;margin:0 auto;padding:20px 16px 80px}
+h1,h2,h3,.pix{font-family:Silkscreen,monospace;font-weight:700;letter-spacing:.02em}
+h1{font-size:34px;margin:8px 0 4px;color:var(--acc)} h2{font-size:22px;margin:38px 0 10px;border-bottom:3px solid var(--acc);padding-bottom:6px} h3{font-size:16px;margin:0 0 4px}
+.lead{font-size:19px;max-width:70ch}
+.card{background:var(--card);border:2px solid var(--ink);border-radius:10px;padding:14px 16px;margin:12px 0;box-shadow:4px 4px 0 var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:14px}
+.tag{display:inline-block;background:var(--ink);color:var(--paper);font:700 12px Silkscreen,monospace;padding:2px 8px;border-radius:4px;margin:0 6px 4px 0}
+.tag.a{background:var(--acc)} .q{margin:4px 0;padding-left:10px;border-left:4px solid var(--acc)} .q small{display:block;font:700 11px Silkscreen,monospace;color:var(--acc)}
+img,video{max-width:100%;border:2px solid var(--ink);border-radius:8px;display:block}
+.cap{font-size:14px;margin:4px 0 14px;opacity:.85}
+table{border-collapse:collapse;width:100%;font-size:15px} td,th{border:1px solid var(--line);padding:5px 8px;text-align:left} th{background:var(--ink);color:var(--paper);font-family:Silkscreen,monospace;font-size:12px}
+button,select,input,textarea{font:700 15px Nunito,sans-serif;color:var(--ink)}
+button{background:var(--card);border:2px solid var(--ink);border-radius:8px;padding:8px 14px;cursor:pointer;box-shadow:2px 2px 0 var(--ink)}
+button:hover{background:#ffe2ea} button.on.ok{background:var(--ok);color:#fff} button.on.no{background:var(--acc);color:#fff}
+input,select,textarea{background:#fff;border:2px solid var(--ink);border-radius:8px;padding:7px 9px;width:100%}
+textarea{min-height:64px;font-weight:400}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:end} .row>*{flex:1 1 150px}
+.vb{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px} .vb button{flex:0 0 auto}
+.out{background:var(--ink);color:var(--paper);border-radius:10px;padding:14px 16px;margin-top:12px;min-height:60px}
+.out b{color:#ff9db8}
+footer{margin-top:40px;font-size:14px;opacity:.8}
+@media(max-width:520px){h1{font-size:26px}}
+</style></head><body><div class="wrap">
+<div class="pix" style="color:var(--acc);font-size:13px">AI FIGHTER 2 / KOGEN CORP / PROPOSITION</div>
+<h1>NEMESIS DE KOGEN CORP</h1>
+<p class="lead">Un sbire d'elite te met KO, ou t'echappe presque vaincu... et REVIENT plus tard : un nom (« Marc de la Compta »), un titre (« Gardien des tableurs »), une replique qui se souvient, une cicatrice ou un accessoire visible, un trait de combat, une recompense a sa defaite. Leger, lisible, equitable, deterministe.</p>
+
+<h2>1. Comment ca marche</h2>
+<div class="card"><ul>
+<li><b>Naissance</b> : une defaite fait naitre un nemesis (il se souvient de l'etage et de l'ennemi) ; ou un sbire d'elite debute sur un etage generique (1 chance sur 3 par stage).</li>
+<li><b>Retour</b> : un nemesis non regle revient des que tu rejoues un stage egal ou posterieur ; il <b>remplace</b> un ennemi, jamais l'etage 1, jamais un etage de boss, <b>un seul par stage</b>, un seul a l'ecran.</li>
+<li><b>Il te bat</b> : il gagne un accessoire de victoire (cravate, badge, monocle...). <b>Il s'enfuit</b> (sous 18 % de vie, premiere fois) : il garde une cicatrice (pansement sur le nez, lunettes fendues...). Il revient plus costaud, mais avec des plafonds.</li>
+<li><b>Tu le vaincs</b> : prime d'or unique (40 a 160), trophee, fiche archivee dans le <b>Tableau des nemesis</b> (Titre &gt; Personnaliser).</li>
+<li><b>Equite</b> : PV entre 60 et 150 ; degats au plus x1,30 de l'ennemi remplace ; vitesse au plus x1,25 ; aucune apparition en plus.</li>
+<li><b>Deterministe</b> : tout est tire de la graine du profil et de l'identifiant du nemesis (aucun hasard systeme, le hasard de la simulation n'est pas touche). En ligne : desactive (identique pour tous = aucun). Sauvegardes anciennes : champ optionnel, rien ne casse.</li>
+</ul></div>
+<div class="vb" data-sec="Concept"></div>
+
+<h2>2. Captures reelles du jeu</h2>
+<div class="grid">
+<div><img src="nemesis/intro.gif" alt="intro d'un nemesis" loading="lazy"><div class="cap"><b>Intro</b> : un nouveau nemesis (trait Tireur) entre en scene, plaque + bandeau de replique.</div></div>
+<div><img src="nemesis/retour.gif" alt="retour d'un nemesis" loading="lazy"><div class="cap"><b>Retour</b> : il revient avec sa cicatrice et sa replique qui se souvient.</div></div>
+<div><img src="nemesis/beat.gif" alt="nemesis rancunier" loading="lazy"><div class="cap"><b>Rancunier</b> : il t'avait battu, il porte son accessoire de victoire (trait Invocateur).</div></div>
+<div><img src="nemesis/board1.png" alt="tableau des nemesis" loading="lazy"><div class="cap"><b>Tableau des nemesis</b> : fiches, trait, cicatrice, derniere replique.</div></div>
+</div>
+<div class="vb" data-sec="Rendu"></div>
+
+<h2>3. Exemples generes par le moteur</h2>
+<p>Ces 8 fiches sortent du vrai code du jeu (graines 7, 19, 31...). Memes graines = memes nemesis, partout.</p>
+<div class="grid" id="ex"></div>
+<div class="vb" data-sec="Noms, titres et repliques"></div>
+
+<h2>4. Generer mon texte</h2>
+<div class="card">
+<div class="row">
+<label>Ton heros<input id="g_hero" value="Kaze" maxlength="16"></label>
+<label>Graine (nombre)<input id="g_id" type="number" value="1234" min="0" max="2147483647"></label>
+<label>Situation<select id="g_gr"><option value="0">Debut (inconnu)</option><option value="1">Il t'a battu</option><option value="2" selected>Il s'est enfui</option></select></label>
+<label>Stage<select id="g_st"></select></label>
+<label>Etage<select id="g_fl"><option value="1">2</option><option value="2" selected>3</option><option value="3">4</option></select></label>
+</div>
+<div class="vb"><button id="g_go">Generer</button><button id="g_rnd">Une graine au hasard</button></div>
+<div class="out" id="g_out">Appuie sur Generer. C'est exactement l'algorithme du jeu : la meme graine donne le meme nemesis en jeu.</div>
+</div>
+
+<h2>5. Les six traits</h2>
+<div class="card"><table><tr><th>Trait</th><th>Effet (borne)</th></tr>
+<tr><td>Bretteur</td><td>allonge +12 %, coups plus vifs, degats -5 %, un peu plus agressif</td></tr>
+<tr><td>Lourd</td><td>+20 % PV, lourde +15 %, defense +1, plus lent (x0,9)</td></tr>
+<tr><td>Rapide</td><td>vitesse x1,18, -15 % PV, demarrages plus courts</td></tr>
+<tr><td>Tireur</td><td>garde ses distances, boules de Ki de 3 a 4,5 degats</td></tr>
+<tr><td>Invocateur</td><td>appelle UN stagiaire fragile (26 PV) a mi-vie</td></tr>
+<tr><td>Gardien</td><td>bouclier de depart de 30, defense +2, un peu plus lent</td></tr></table>
+<p>Rang (rencontres) : +5 % PV et +4 % degats par rencontre, plafonne a 3 rangs, puis bornes globales (voir 1).</p></div>
+<div class="vb" data-sec="Traits et equilibre"></div>
+
+<h2>6. Ton avis</h2>
+<div class="card">
+<label>Commentaire general<textarea id="gen" placeholder="Ce que tu veux garder, changer, ajouter..."></textarea></label>
+<div class="vb"><button id="copy">Copier mon retour</button><button id="reset">Tout effacer</button></div>
+<div class="out" id="sum"></div></div>
+<footer>Charte : Encre #221834 / Papier #fff3e0 / Accent #d8456b - Silkscreen + Nunito. Page statique, rien n'est envoye : ton retour reste dans ton navigateur jusqu'a ce que tu le copies.</footer>
+</div>
+<script>
+const D={"T": {"FIRST": ["Marc", "Gerard", "Brigitte", "Jean-Michel", "Patrick", "Sandrine", "Didier", "Corinne", "Bernard", "Valerie", "Thierry", "Nadine", "Christophe", "Martine", "Alain", "Odile", "Philippe", "Josiane", "Gilles", "Evelyne", "Francis", "Colette", "Herve", "Monique", "Yannick", "Mireille", "Denis", "Sylviane", "Regis", "Huguette", "Laurent", "Ginette", "Maxime", "Chantal", "Dominique", "Roselyne", "Norbert", "Pascale", "Rodolphe", "Jocelyne", "Eric", "Veronique", "Fabrice", "Arlette", "Stephane", "Lucette", "Gaetan", "Bernadette", "Olivier", "Cecile", "Bruno", "Solange", "Cedric", "Ghislaine", "Lionel", "Noemie", "Jerome", "Agnes", "Ludovic", "Anne-Sophie", "Kevin", "Isabelle", "Armand", "Paulette"], "DEPT": ["de la Compta", "du Courrier", "des RH", "de la Reprographie", "de la Cafeteria", "de la Logistique", "du Support", "de l'Archivage", "de la Qualite", "du Parking", "de l'Accueil", "des Achats", "de la Securite", "du Standard", "de la Maintenance", "du Marketing", "de la Formation", "du Contentieux"], "TITLES": ["Gardien des tableurs", "Terreur de l'imprimante", "Seigneur des post-it", "Maitre du badge", "Fleau des open spaces", "Baron de la photocopieuse", "Roi de la reunion", "Chevalier du rappel", "Archiduc des notes de frais", "Tyran de la machine a cafe", "Veilleur du parking", "Prince des pointeuses", "Ogre des echeances", "Sentinelle du couloir", "Marquis du mail groupe", "Grand Inquisiteur du planning", "Dompteur du fax", "Briseur de grilles de salaire", "Empereur de la pause", "Colosse du classeur", "Faucheur de budgets", "Ombre de l'ascenseur", "Gouverneur du tourniquet", "Duc des heures sup", "Spectre du lundi matin", "Bourreau des powerpoints", "Vizir des doublons", "Fossoyeur de conges", "Geolier de l'extranet", "Chambellan des agrafes", "Rempart du 3e etage", "Hydre de l'open space", "Loup de la reorganisation", "Orage des mises a jour", "Moine du silence", "Cerbere du vestiaire", "Pharaon du reporting", "Gladiateur de la cantine", "Corsaire des tickets", "Sorcier du tableur", "Titan du recyclage", "Amiral de la visio", "Faucon du chrono", "Dragon des deadlines"], "TRAITS": ["Bretteur", "Lourd", "Rapide", "Tireur", "Invocateur", "Gardien"], "TRAIT_BLURB": ["allonge +12 %, coups plus vifs", "plus de PV, coups lourds, plus lent", "tres rapide, moins de PV", "garde ses distances et tire", "appelle un stagiaire a mi-vie", "bouclier de depart, defense en plus"], "SCARS": ["pansement sur le nez", "lunettes fendues", "oeil au beurre noir", "bras en echarpe", "cravate coupee", "joue griffee", "front bande", "menton fendu"], "SCAR_PART": ["mon nez", "mes lunettes", "mon oeil", "mon bras", "ma cravate", "ma joue", "mon front", "mon menton"], "ACCS": ["cravate rouge", "badge dore", "monocle", "bandeau", "mug fetiche", "casque de chantier", "medaille d'employe du mois", "lunettes noires"]}, "L": {"INTRO_A": ["Halte !", "Bonjour, je suis {nom}.", "Reunion exceptionnelle.", "Ah, enfin quelqu'un.", "Ne bouge pas, j'ai un creneau.", "Badge, s'il vous plait.", "Je suis {nom}, {titre}.", "Pas si vite, {hero}.", "Vous n'avez pas rendez-vous.", "Excusez-moi, c'est personnel."], "INTRO_B": ["Cet etage est sous ma responsabilite.", "Je n'ai jamais perdu un dossier ni un combat.", "On regle ca avant la pause ?", "Mon planning est plein, mais pour toi, je ferai un trou.", "Tu vas savoir ce que veut dire 'urgent'.", "Ici, c'est moi qui valide les sorties.", "J'ai demande a la direction de ne pas etre derange.", "Je suis venu faire respecter le reglement interieur.", "On m'a dit de te retenir jusqu'a 18 h."], "WIN_A": ["Et voila.", "Dossier classe.", "Fin de la reunion.", "Voila ce qui arrive.", "Pas de rattrapage.", "C'est note.", "Tu vois, {hero} ?", "Rien de personnel.", "Au suivant.", "Bien joue... pour moi."], "WIN_B": ["Je m'en souviendrai a l'etage {etage} de {lieu}.", "Reviens quand tu auras de l'entrainement.", "Je mets ca dans ton dossier.", "Tu peux repasser demain, je serai la.", "Ca fera une bonne anecdote a la cantine.", "Je garde ton badge en souvenir.", "Prends un cafe, tu en as besoin.", "Je t'avais prevenu, c'etait dans le mail.", "Allez, retourne a ton poste."], "DEFEAT_A": ["Impossible...", "Je demande un recomptage.", "Aie.", "C'est... acceptable.", "Bravo.", "Je rends mon badge.", "Tu as gagne, {hero}.", "Quelle reorganisation...", "Je prends ma retraite.", "Note."], "DEFEAT_B": ["Dis a la direction que j'ai fait de mon mieux.", "Je retourne au {lieu}, on ne s'y reverra pas.", "Mon titre de {titre} est a toi.", "Tu es meilleur que mes statistiques.", "Je crois que je vais prendre des conges.", "Au moins, l'ascenseur marche.", "Je n'ai meme pas eu le temps de finir mon cafe.", "Promis, je ne reviens pas... sans mon avocat.", "Garde ma carte de visite, tu en auras besoin."], "FLEE_A": ["Je dois repondre a un appel !", "Pause !", "Je vais chercher mon chef !", "Une urgence !", "Je reviens !", "Tu ne m'auras pas !", "Retraite strategique !", "Trop tard, j'ai un train !", "Hors perimetre !", "Je prends mon quart d'heure !"], "FLEE_B": ["{nom} n'oublie jamais, retiens-le !", "On se reverra, {hero} !", "Ce n'est que partie remise, {titre} n'oublie rien !", "Je reviens plus fort, avec un badge niveau 3 !", "Ne crois pas que c'est fini !", "J'ai encore des jours de conges a poser sur ta tete !", "Je note tout, tu sais !", "La prochaine fois, je viens avec des renforts !", "Garde la monnaie, je reviens !"], "REUNION_A": ["Tiens, tiens.", "Ca faisait longtemps, {hero}.", "Je t'attendais.", "{nom} est de retour.", "Surprise !", "Tu croyais m'avoir oublie ?", "Ah, te revoila.", "Bonjour, {hero}. Souviens-toi.", "Regarde-moi bien.", "On a un compte a regler."], "REUNION_BEAT": ["Je t'ai mis KO a l'etage {etage} de {lieu}, et ca ne s'oublie pas.", "Je porte toujours en souvenir de ma victoire : {obj}.", "Tu es tombe devant moi a l'etage {etage}, tu te rappelles ?", "La derniere fois, tu as fini par terre.", "Apres notre combat, on m'a offert : {obj}.", "J'ai bien revise ton style depuis {lieu}.", "J'ai encore ton badge, tu veux le recuperer ?", "Cette fois encore, je vais te raccompagner a l'ascenseur.", "Au dernier round, c'etait moi. Au prochain aussi."], "REUNION_ESCAPED": ["Tu as abime {blessure} a l'etage {etage} !", "Regarde {blessure} ! C'est a cause de toi, a {lieu} !", "J'ai garde la cicatrice depuis l'etage {etage}.", "Tu vois {blessure} ? Merci, {hero}.", "Je me suis fait soigner expres pour te retrouver.", "Tu m'as laisse filer a {lieu}, mauvaise idee.", "Depuis l'etage {etage}, je ne dors plus.", "Je n'ai pas oublie ce que tu as fait a {blessure}.", "Mon medecin dit que c'est de ta faute, a {lieu}."], "REUNION_FRESH": ["Nous n'avons pas fini notre reunion.", "On m'a dit que tu passerais par {lieu}.", "J'ai ton dossier sur mon bureau.", "J'ai du temps de libre ce matin.", "Tu es en retard sur ton planning.", "J'ai prepare une presentation de ta defaite.", "J'ai pris des notes sur tes coups.", "Ma pause est terminee, la tienne aussi.", "On reprend la ou on s'est arretes."]}, "STAGES": ["Ruelle du quartier est", "Dojo souterrain Tsukikage", "Salle des serveurs", "Parking niveau -3", "Open space Kogen Corp", "Seminaire de l'Eveil", "Etage presidentiel", "Toits de la tour Kogen", "Senat", "Temple de l'Eveil", "Toit-jardin du team building", "Parc de la tour", "Chantier de l'aile Est"]}, EX=[{"id": "7", "name": "Pascale du Parking", "title": "Marquis du mail groupe", "trait": "Rapide", "stage": "Salle des serveurs", "floor": 3, "grudge": 0, "meets": 0, "scar": "", "acc": "", "lines": ["Badge, s'il vous plait. Ici, c'est moi qui valide les sorties.", "Rien de personnel. Je garde ton badge en souvenir.", "Tu as gagne, Kaze. Dis a la direction que j'ai fait de mon mieux.", "Trop tard, j'ai un train ! Je reviens plus fort, avec un badge niveau 3 !", "Tiens, tiens. J'ai du temps de libre ce matin."]}, {"id": "19", "name": "Alain de la Qualite", "title": "Fleau des open spaces", "trait": "Invocateur", "stage": "Open space Kogen Corp", "floor": 3, "grudge": 2, "meets": 1, "scar": "pansement sur le nez", "acc": "", "lines": ["Ah, te revoila. Mon medecin dit que c'est de ta faute, a Open space Kogen Corp.", "Rien de personnel. Je garde ton badge en souvenir.", "Impossible... Je crois que je vais prendre des conges.", "Je reviens ! Alain de la Qualite n'oublie jamais, retiens-le !", "Ah, te revoila. Mon medecin dit que c'est de ta faute, a Open space Kogen Corp."]}, {"id": "31", "name": "Arlette du Support", "title": "Loup de la reorganisation", "trait": "Bretteur", "stage": "Dojo souterrain Tsukikage", "floor": 3, "grudge": 1, "meets": 1, "scar": "", "acc": "mug fetiche", "lines": ["Regarde-moi bien. Apres notre combat, on m'a offert : mug fetiche.", "Dossier classe. Je garde ton badge en souvenir.", "Quelle reorganisation... Tu es meilleur que mes statistiques.", "Pause ! J'ai encore des jours de conges a poser sur ta tete !", "Regarde-moi bien. Apres notre combat, on m'a offert : mug fetiche."]}, {"id": "42", "name": "Solange de la Formation", "title": "Faucheur de budgets", "trait": "Lourd", "stage": "Salle des serveurs", "floor": 2, "grudge": 2, "meets": 1, "scar": "cravate coupee", "acc": "", "lines": ["Regarde-moi bien. Mon medecin dit que c'est de ta faute, a Salle des serveurs.", "Rien de personnel. Je m'en souviendrai a l'etage 2 de Salle des serveurs.", "Note. Au moins, l'ascenseur marche.", "Tu ne m'auras pas ! On se reverra, Kaze !", "Regarde-moi bien. Mon medecin dit que c'est de ta faute, a Salle des serveurs."]}, {"id": "105", "name": "Patrick des RH", "title": "Faucon du chrono", "trait": "Bretteur", "stage": "Ruelle du quartier est", "floor": 3, "grudge": 1, "meets": 1, "scar": "", "acc": "mug fetiche", "lines": ["On a un compte a regler. Je t'ai mis KO a l'etage 3 de Ruelle du quartier est, et ca ne s'oublie pas.", "Voila ce qui arrive. Je m'en souviendrai a l'etage 3 de Ruelle du quartier est.", "Je rends mon badge. Tu es meilleur que mes statistiques.", "Je dois repondre a un appel ! Je reviens plus fort, avec un badge niveau 3 !", "On a un compte a regler. Je t'ai mis KO a l'etage 3 de Ruelle du quartier est, et ca ne s'oublie pas."]}, {"id": "2026", "name": "Norbert du Standard", "title": "Gouverneur du tourniquet", "trait": "Gardien", "stage": "Dojo souterrain Tsukikage", "floor": 2, "grudge": 0, "meets": 0, "scar": "", "acc": "", "lines": ["Reunion exceptionnelle. Ici, c'est moi qui valide les sorties.", "Dossier classe. Tu peux repasser demain, je serai la.", "Quelle reorganisation... Au moins, l'ascenseur marche.", "Une urgence ! Ne crois pas que c'est fini !", "Norbert du Standard est de retour. J'ai prepare une presentation de ta defaite."]}, {"id": "777", "name": "Yannick de la Reprographie", "title": "Dompteur du fax", "trait": "Bretteur", "stage": "Salle des serveurs", "floor": 3, "grudge": 2, "meets": 1, "scar": "menton fendu", "acc": "", "lines": ["Bonjour, Kaze. Souviens-toi. Regarde mon menton ! C'est a cause de toi, a Salle des serveurs !", "Tu vois, Kaze ? Ca fera une bonne anecdote a la cantine.", "Tu as gagne, Kaze. Promis, je ne reviens pas... sans mon avocat.", "Je prends mon quart d'heure ! J'ai encore des jours de conges a poser sur ta tete !", "Bonjour, Kaze. Souviens-toi. Regarde mon menton ! C'est a cause de toi, a Salle des serveurs !"]}, {"id": "4242", "name": "Patrick du Courrier", "title": "Veilleur du parking", "trait": "Rapide", "stage": "Salle des serveurs", "floor": 2, "grudge": 1, "meets": 1, "scar": "", "acc": "lunettes noires", "lines": ["Surprise ! Je porte toujours en souvenir de ma victoire : lunettes noires.", "Bien joue... pour moi. Je mets ca dans ton dossier.", "Tu as gagne, Kaze. Dis a la direction que j'ai fait de mon mieux.", "Je reviens ! Patrick du Courrier n'oublie jamais, retiens-le !", "Surprise ! Je porte toujours en souvenir de ma victoire : lunettes noires."]}];
+const M=(1n<<64n)-1n;
+function mix(a,b){a=BigInt(a)&M;b=BigInt(b)&M;let t=(b+0x7F4A7C159E3779B9n)&M;t=((t<<23n)|(t>>41n))&M;let z=((a*0x9E3779B97F4A7C15n)&M)^t;z=((z^(z>>30n))*0xBF58476D1CE4E5B9n)&M;z=((z^(z>>27n))*0x94D049BB133111EBn)&M;return z^(z>>31n);}
+const pick=(h,s,n)=>Number(mix(h,s)%BigInt(n));
+function rec(id,stage,floor,grudge,hero){const h=mix(0x4E454D4553495321n,id);const r={id,first:pick(h,1,64),dept:pick(h,2,18),title:pick(h,3,44),tr:pick(h,4,6),stage,floor,grudge,meets:grudge?1:0,scar:0,acc:0,hero:(hero||'').replace(/[^\x20-\x7e]/g,'').slice(0,16)};
+ if(grudge==1)r.acc=1+pick(h,5,8); if(grudge==2)r.scar=1+pick(h,6,8); return r;}
+function fill(t,r){const T=D.T;return t.replaceAll('{nom}',T.FIRST[r.first]+' '+T.DEPT[r.dept]).replaceAll('{titre}',T.TITLES[r.title]).replaceAll('{lieu}',D.STAGES[r.stage]||"l'etage").replaceAll('{etage}',String(r.floor+1)).replaceAll('{blessure}',T.SCAR_PART[(Math.max(r.scar,1)-1)%8]).replaceAll('{hero}',r.hero||'toi').replaceAll('{obj}',r.acc?T.ACCS[r.acc-1]:'badge dore');}
+function tabs(c,r){const L=D.L;return [[L.INTRO_A,L.INTRO_B],[L.WIN_A,L.WIN_B],[L.DEFEAT_A,L.DEFEAT_B],[L.FLEE_A,L.FLEE_B],[L.REUNION_A,r.grudge==1?L.REUNION_BEAT:r.grudge==2?L.REUNION_ESCAPED:L.REUNION_FRESH]][c];}
+function line(c,r){if(c==0&&r.grudge!=0)c=4;const h=mix(mix(r.id,c+1),r.meets);const [a,b]=tabs(c,r);const k=Number(h%1000003n)%(a.length*b.length);return fill(a[Math.floor(k/b.length)]+' '+b[k%b.length],r);}
+const NAMES=['Intro','Victoire sur le joueur','Defaite','Fuite','Retrouvailles'];
+const esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+function cardHtml(r){const T=D.T;const q=[0,1,2,3,4].map(c=>`<div class="q"><small>${NAMES[c]}${c==0&&r.grudge!=0?' (retour)':''}</small>${esc(line(c,r))}</div>`).join('');
+ return `<div class="card"><h3>${esc(T.FIRST[r.first]+' '+T.DEPT[r.dept])}</h3><div><span class="tag a">${esc(T.TITLES[r.title])}</span><span class="tag">${T.TRAITS[r.tr]}</span><span class="tag">${['Debut','Il t\'a battu','S\'est enfui'][r.grudge]}</span>${r.scar?`<span class="tag">cicatrice : ${T.SCARS[r.scar-1]}</span>`:''}${r.acc?`<span class="tag">accessoire : ${T.ACCS[r.acc-1]}</span>`:''}</div>${q}</div>`;}
+document.getElementById('ex').innerHTML=EX.map(e=>{const r=rec(Number(e.id),D.STAGES.indexOf(e.stage),e.floor-1,e.grudge,'Kaze');r.meets=e.meets;return cardHtml(r);}).join('');
+const sel=document.getElementById('g_st');sel.innerHTML=D.STAGES.map((s,i)=>`<option value="${i}">${s}</option>`).join('');
+function gen(){const r=rec(Number(document.getElementById('g_id').value||0)&0x7FFFFFFF,Number(sel.value),Number(document.getElementById('g_fl').value),Number(document.getElementById('g_gr').value),document.getElementById('g_hero').value);document.getElementById('g_out').innerHTML=cardHtml(r);}
+document.getElementById('g_go').onclick=gen;document.getElementById('g_rnd').onclick=()=>{document.getElementById('g_id').value=Math.floor(Math.random()*2147483647);gen();};gen();
+// --- validation locale
+const KEY='nemesis_retour_v1';let st={};try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}summ();};
+document.querySelectorAll('.vb').forEach(el=>{const s=el.dataset.sec;st[s]=st[s]||{v:'',c:''};
+ el.innerHTML=`<button class="ok">Valider</button><button class="no">A refaire</button><input placeholder="Commentaire sur : ${s}" style="flex:1 1 220px">`;
+ const [b1,b2]=el.querySelectorAll('button'),inp=el.querySelector('input');inp.value=st[s].c;
+ const paint=()=>{b1.classList.toggle('on',st[s].v=='ok');b2.classList.toggle('on',st[s].v=='no');};paint();
+ b1.onclick=()=>{st[s].v=st[s].v=='ok'?'':'ok';paint();save();};b2.onclick=()=>{st[s].v=st[s].v=='no'?'':'no';paint();save();};inp.oninput=()=>{st[s].c=inp.value;save();};});
+const gen_=document.getElementById('gen');gen_.value=(st._g||'');gen_.oninput=()=>{st._g=gen_.value;save();};
+function text(){let t='RETOUR NEMESIS KOGEN CORP\n';for(const [k,v] of Object.entries(st)){if(k=='_g')continue;t+=`- ${k} : ${v.v=='ok'?'VALIDE':v.v=='no'?'A REFAIRE':'(pas de choix)'}${v.c?' - '+v.c:''}\n`;}if(st._g)t+='Commentaire : '+st._g+'\n';return t;}
+function summ(){document.getElementById('sum').innerHTML='<b>Ton retour</b><br>'+esc(text()).replace(/\n/g,'<br>');}
+document.getElementById('copy').onclick=async()=>{try{await navigator.clipboard.writeText(text());document.getElementById('copy').textContent='Copie !';}catch(e){window.prompt('Copie ce texte :',text());}};
+document.getElementById('reset').onclick=()=>{st={};try{localStorage.removeItem(KEY)}catch(e){}location.reload();};
+summ();
+</script></body></html>

@@ -1,0 +1,29 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Objets : jeter et boire</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b;--carte:#32264a}
+body{margin:0;font:16px Nunito,system-ui,sans-serif;background:var(--encre);color:var(--papier);padding:16px;max-width:1100px;margin:auto}
+h1{font:700 24px Silkscreen,monospace;margin:4px 0 8px;color:var(--papier)}h2{font:700 15px Silkscreen,monospace;margin:10px 0 4px}
+p{margin:4px 0 10px;line-height:1.4}.c{background:var(--carte);border-radius:12px;padding:14px;margin:14px 0;border:3px solid transparent}
+.c.ok{border-color:#4cd07d}.c.no{border-color:var(--accent)}
+.n{color:var(--accent);font-weight:700;font-family:Silkscreen,monospace;font-size:13px;background:var(--papier);padding:2px 6px;border-radius:6px;margin-left:6px}
+img{max-width:100%;border-radius:8px;background:#000;display:block}.row{display:flex;flex-wrap:wrap;gap:12px;margin-top:8px}.row figure{margin:0;flex:1 1 360px;max-width:420px}
+figcaption{font:13px Silkscreen,monospace;margin-top:4px;opacity:.85}
+button{font:700 15px Nunito,sans-serif;padding:10px 14px;border-radius:8px;border:0;margin:8px 6px 0 0;color:var(--papier);background:#5a4a78;cursor:pointer}
+button.v{background:#2e9b5b}button.x{background:var(--accent)}button.g{background:var(--accent);font-family:Silkscreen,monospace;margin-top:14px}
+textarea{width:100%;box-sizing:border-box;border-radius:6px;border:0;padding:8px;margin-top:8px;background:var(--encre);color:var(--papier);font:inherit}
+#o{white-space:pre-wrap;background:#150f22;padding:12px;border-radius:8px;margin-top:12px}
+</style></head><body>
+<h1>Objets : jeter et boire</h1>
+<p>Captures du vrai moteur (Kaze, scene scriptee). Pour chaque point : planche de decomposition, GIF temps reel, GIF ralenti x0,25. Valide ou demande a refaire (avec une remarque), puis « Generer mon texte » et colle-le dans le chat.</p>
+<div id="g"></div><button class="g" onclick="out()">Generer mon texte</button><div id="o"></div>
+<script>var C=[{"key": "jeter", "name": "Geste JETER : un seul bouton (Saisie) quand on tient un objet", "n": "geste", "d": "Clavier G, manette R3, TACTILE : le bouton Saisie devient « Jeter » (dore) des qu'un objet est en main. Sans direction : vers l'ennemi. Stick HAUT : cloche (passe au-dessus de la garde). Stick BAS : on lache l'objet aux pieds, intact et ramassable. Stick ARRIERE : lancer dans le dos. Course tenue : lancer fort. La Lourde garde son ancien role (lancer droit). Sequence du GIF : avant, cloche, lacher, ramasser.", "board": "objets_planche_jeter.png", "real": "objets_jeter_reel.gif", "slow": "objets_jeter_ralenti.gif"}, {"key": "lait", "name": "Bouteille de lait : ramasser, boire, vide, lancer, casse, tesson, 3 coups, casse finale", "n": "cycle", "d": "Ki avec une bouteille pleine : on s'arrete 52 images (bras leve, tete en arriere, 4 gorgees, le lait baisse), +20 % de vie (28 PV au moins), pas de Ki, vulnerable : un coup recu interrompt. Vide, elle se jette (Saisie) : degats legers + etourdissement, elle se brise en eclats de verre et laisse un TESSON au sol. Le tesson : estoc, entaille, grand coup, il se brise a la 3e frappe (22 de degats de base).", "board": "objets_planche_lait.png", "real": "objets_lait_reel.gif", "slow": "objets_lait_ralenti.gif"}],st={};
+var g=document.getElementById('g');
+C.forEach(function(c){var d=document.createElement('div');d.className='c';d.id='c_'+c.key;
+d.innerHTML='<h2>'+c.name+'<span class="n">'+c.n+'</span></h2><p>'+c.d+'</p><img src="'+c.board+'" alt="Planche de decomposition">'
++'<div class="row"><figure><img src="'+c.real+'" alt=""><figcaption>Temps reel</figcaption></figure><figure><img src="'+c.slow+'" alt=""><figcaption>Ralenti x0,25</figcaption></figure></div>'
++'<button class="v" data-k="'+c.key+'" data-v="1">Valider</button><button class="x" data-k="'+c.key+'" data-v="-1">A refaire</button>'
++'<textarea id="t_'+c.key+'" rows="2" placeholder="Remarque (geste, direction, rythme de la boisson, casse du tesson...)"></textarea>';g.appendChild(d);});
+g.addEventListener('click',function(e){var b=e.target;if(!b.dataset||!b.dataset.k)return;var v=+b.dataset.v;st[b.dataset.k]=v;document.getElementById('c_'+b.dataset.k).className='c '+(v>0?'ok':'no');});
+function out(){var L=C.map(function(c){var v=st[c.key];var t=document.getElementById('t_'+c.key).value.trim();return (v>0?'VALIDE':v<0?'A REFAIRE':'NON VU')+' : '+c.name+' ('+c.n+')'+(t?' - '+t:'');});document.getElementById('o').textContent=L.join('\n');}
+</script></body></html>

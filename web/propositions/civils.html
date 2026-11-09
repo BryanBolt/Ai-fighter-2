@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Animations civiles</title>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b}
+body{margin:0;background:var(--papier);color:var(--encre);font-family:Nunito,sans-serif;padding:16px;max-width:1300px;margin:auto}
+h1,h2,h3{font-family:Silkscreen,monospace;margin:.3em 0}
+.dec{border:3px solid var(--encre);border-radius:10px;background:#fff;padding:12px;margin:18px 0}
+.tag{display:inline-block;font-family:Silkscreen,monospace;font-size:12px;border:2px solid var(--encre);border-radius:6px;padding:2px 7px;margin-left:8px;background:var(--papier)}
+.sheet{width:100%;border:2px solid var(--encre);border-radius:8px;display:block;background:var(--papier)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-top:12px}
+.card{border:2px solid var(--encre);border-radius:8px;padding:8px;background:var(--papier)}
+.card img{width:100%;border:2px solid var(--encre);display:block;background:var(--papier)}
+.card p{font-size:14px;margin:6px 0}
+button{font-family:Silkscreen,monospace;border:2px solid var(--encre);background:#fff;padding:7px 11px;margin:4px 4px 0 0;cursor:pointer;border-radius:6px;color:var(--encre)}
+button.ok.on{background:#3b9c5a;color:#fff}button.ko.on{background:var(--accent);color:#fff}
+input.c{width:100%;box-sizing:border-box;border:2px solid var(--encre);border-radius:6px;padding:6px;margin-top:6px;font-family:Nunito,sans-serif;background:#fff;color:var(--encre)}
+textarea{width:100%;min-height:220px;font-family:Nunito,sans-serif;border:2px solid var(--encre);border-radius:6px;padding:8px;box-sizing:border-box;background:#fff;color:var(--encre)}
+.gen{background:var(--accent);color:#fff}
+.note{background:#fff;border-left:6px solid var(--accent);padding:8px 12px;margin:10px 0}
+.desc{font-size:15px;margin:6px 0}
+</style></head><body>
+<h1>ANIMATIONS CIVILES</h1>
+<div class="note">Les passants du fond n'utilisent plus les cycles de combat : ils ont une bibliotheque propre (src/civil.rs) construite sur le MEME rig que les combattants (epaules abaissees, cou raccorde, memes proportions), mais avec des demarches de civils. Les jambes sont calculees par cinematique inverse : la phase du pas suit la distance parcourue, donc le pied d'appui est immobile par rapport au sol (pas de glissade), le bassin monte au milieu de l'appui, les bras balancent en opposition aux jambes et la tete reste stable. Chaque individu a sa morphologie (taille, longueur de pas, posture, amplitude des bras), deterministe par graine. Les points roses de chaque planche sont les articulations du rig ; les disques rouges marquent les pieds au sol. Les GIF montrent le squelette que le jeu dessine (meme calcul que le moteur, bonhomme a plat des passants) a vitesse reelle du decor, puis au ralenti x0,25 sur la fenetre la plus mouvementee, puis a cote d'un combattant (cycle d'origine). Les passants ne sont jamais frappables.</div>
+<div id="root"></div>
+<h2>Mon texte</h2>
+<button class="gen" id="gen">Generer mon texte</button>
+<textarea id="out" readonly></textarea>
+<script>
+const D=[["marche", "Marche normale detendue", "demarche", "Buste droit, pas courts, bras qui balancent peu, tete stable. Le pied d'appui recule exactement a la vitesse du sol (aucune glissade).", "Le combattant marche/court avec son cycle d'origine (anim.rs)"], ["pressee", "Marche pressee (salaryman)", "demarche", "Salaryman : pas longs, buste penche, serviette tenue bras tendu, coup d'oeil a la montre de temps en temps.", "Le combattant marche/court avec son cycle d'origine (anim.rs)"], ["flanerie", "Flanerie", "demarche", "Pas lents et courts, bras presque morts, la tete tourne pour regarder autour.", "Le combattant marche/court avec son cycle d'origine (anim.rs)"], ["marche_telephone", "Marche au telephone", "demarche", "Marche ralentie, un bras replie qui tient le telephone a l'oreille, tete inclinee vers lui.", "Le combattant marche/court avec son cycle d'origine (anim.rs)"], ["marche_cafe", "Marche avec un cafe", "demarche", "Gobelet tenu devant la poitrine (bras presque fixe), gorgee de temps en temps, tete en arriere.", "Le combattant marche/court avec son cycle d'origine (anim.rs)"], ["marche_parapluie", "Marche sous le parapluie", "demarche", "Un bras leve tient le parapluie, l'autre balance ; buste legerement redresse.", "Le combattant marche/court avec son cycle d'origine (anim.rs)"], ["marche_sac", "Marche avec un sac a l'epaule", "demarche", "La main tient la bretelle sur l'epaule (bras rigide), le buste suit le poids du sac, l'autre bras balance.", "Le combattant marche/court avec son cycle d'origine (anim.rs)"], ["marche_colis", "Marche avec un colis", "demarche", "Les deux bras portent le colis contre la poitrine, buste renverse en contrepoids, pas courts et prudents.", "Le combattant marche/court avec son cycle d'origine (anim.rs)"], ["marche_chien", "Marche avec un chien en laisse", "demarche", "Bras tendu vers l'avant tenant la laisse, le chien tire par a-coups : le bras et le buste suivent.", "Le combattant marche/court avec son cycle d'origine (anim.rs)"], ["marche_journal", "Marche en lisant le journal", "demarche", "Marche lente, journal tenu a deux mains, tete baissee sur la page.", "Le combattant marche/court avec son cycle d'origine (anim.rs)"], ["marche_enfant", "Marche d'enfant (ballon)", "demarche", "Petit gabarit, pas courts et vifs, grands balancements des bras, rebond marque ; une main tient le ballon.", "Le combattant marche/court avec son cycle d'origine (anim.rs)"], ["jogging", "Jogging civil", "demarche", "Foulee courte, bras plies a 80 degres, vrai temps de vol, buste legerement penche. Rien d'un sprint de combattant.", "Le combattant marche/court avec son cycle d'origine (anim.rs)"], ["panique", "Course de panique", "demarche", "Bras qui battent sans rythme commun, foulee desordonnee, tete rejetee, aucune garde.", "Le combattant marche/court avec son cycle d'origine (anim.rs)"], ["arret", "S'arreter (decelerer, pieds joints)", "transition", "Le pied avant se pose, le bassin glisse par-dessus en decelerant, le pied arriere vient le rejoindre : pieds joints.", "Le combattant est montre en garde (anim.rs)"], ["s_asseoir", "S'asseoir", "transition", "Le buste plonge pour deplacer le poids, les pieds ne bougent pas, les mains aident sur les cuisses.", "Le combattant est montre en garde (anim.rs)"], ["se_lever", "Se lever", "transition", "L'inverse : mains sur les cuisses, buste en avant, puis on se redresse sur des pieds immobiles.", "Le combattant est montre en garde (anim.rs)"], ["se_baisser", "Se baisser pour se couvrir", "transition", "Reflexe de protection : le corps descend, le dos s'arrondit, les bras se croisent sur la tete.", "Le combattant est montre en garde (anim.rs)"], ["attente", "Attente (appui, poids, heure)", "posture", "Appui sur une jambe, le poids passe d'un pied a l'autre, un pied tape, un regard sur l'heure.", "Le combattant est montre en garde (anim.rs)"], ["boire_cafe", "Boire son cafe debout", "posture", "Debout, gobelet a la main, gorgee reguliere ; le poids change de jambe.", "Le combattant est montre en garde (anim.rs)"], ["fumer", "Fumer", "posture", "La main monte a la bouche, bouffee, le bras retombe ; l'autre main soutient le coude.", "Le combattant est montre en garde (anim.rs)"], ["journal", "Lire le journal debout", "posture", "Journal a deux mains, tete baissee, la page frissonne ; le poids change.", "Le combattant est montre en garde (anim.rs)"], ["telephoner", "Parler au telephone", "posture", "Telephone a l'oreille, l'autre main ponctue la conversation, tete qui s'incline.", "Le combattant est montre en garde (anim.rs)"], ["discuter", "Discuter (gestes)", "posture", "Deux mains qui parlent a des rythmes differents, tete qui hoche, buste vers l'interlocuteur.", "Le combattant est montre en garde (anim.rs)"], ["tai_chi", "Tai-chi", "posture", "Appui profond, le poids passe d'une jambe a l'autre, grands arcs lents des deux bras.", "Le combattant est montre en garde (anim.rs)"], ["balayer", "Balayer", "posture", "Buste incline, les deux mains tiennent le balai et le poussent d'avant en arriere ; pieds poses.", "Le combattant est montre en garde (anim.rs)"], ["applaudir", "Applaudir", "posture", "Mains qui s'ouvrent et se rejoignent devant la poitrine, genoux qui rebondissent un peu, tete qui suit.", "Le combattant est montre en garde (anim.rs)"], ["photographier", "Photographier", "posture", "Appareil devant les yeux, le corps se penche pour cadrer, declic.", "Le combattant est montre en garde (anim.rs)"], ["assis", "Assis (bancs)", "posture", "Assis sur un banc, mains sur les cuisses, la tete se tourne, un pied qui bouge.", "Le combattant est montre en garde (anim.rs)"], ["se_couvrir", "Se couvrir (tremblement)", "posture", "Accroupi, bras sur la tete, tremblement (boucle de la reaction precedente).", "Le combattant est montre en garde (anim.rs)"]];
+const st={},cm={};
+const root=document.getElementById('root');
+D.forEach(([k,label,kind,desc,cmp],n)=>{
+ const sec=document.createElement('div');sec.className='dec';
+ sec.innerHTML='<h2>'+(n+1)+'. '+label+'<span class="tag">'+kind+'</span></h2><p class="desc">'+desc+'</p><img class="sheet" loading="lazy" src="civils/'+k+'.png" alt="Decomposition '+label+'">'
+  +'<div class="grid">'
+  +'<div class="card"><h3>Vitesse reelle</h3><img loading="lazy" src="civils/'+k+'.gif" alt="'+label+'"></div>'
+  +'<div class="card"><h3>Ralenti x0,25</h3><img loading="lazy" src="civils/'+k+'_lent.gif" alt="'+label+' ralenti"></div>'
+  +'<div class="card"><h3>Civil / combattant</h3><img loading="lazy" src="civils/'+k+'_cmp.gif" alt="'+label+' comparaison"><p>'+cmp+'</p></div>'
+  +'</div><div><button class="ok">Valider</button><button class="ko">A refaire</button><input class="c" placeholder="Commentaire"></div>';
+ const [ok,ko]=sec.querySelectorAll('button');const inp=sec.querySelector('input');
+ ok.onclick=()=>{st[k]='ok';ok.classList.add('on');ko.classList.remove('on')};
+ ko.onclick=()=>{st[k]='ko';ko.classList.add('on');ok.classList.remove('on')};
+ inp.oninput=()=>{cm[k]=inp.value};
+ root.appendChild(sec)});
+document.getElementById('gen').onclick=()=>{
+ let l=['Retours sur les animations civiles :'];
+ D.forEach(([k,label])=>{
+  const s=st[k]==='ok'?'VALIDE':st[k]==='ko'?'A REFAIRE':'pas encore juge';
+  l.push('- '+label+' : '+s+(cm[k]?' ('+cm[k]+')':''))});
+ document.getElementById('out').value=l.join('\n')};
+</script></body></html>

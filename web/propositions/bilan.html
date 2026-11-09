@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bilan de fin de combat - AI Fighter 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#221834;--paper:#fff3e0;--accent:#d8456b}
+*{box-sizing:border-box}
+body{margin:0;background:#15101f;color:var(--paper);font:600 15px/1.4 Nunito,system-ui,sans-serif;padding:14px 16px 90px}
+h1,h2,.px{font-family:Silkscreen,monospace;font-weight:700;letter-spacing:.5px}
+h1{font-size:22px;margin:4px 0}.lead{max-width:780px;color:rgba(255,243,224,.8)}
+.top{position:sticky;top:0;z-index:5;background:#15101fee;padding:8px 0 8px 16px;margin:0 -16px 8px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.cnt{font:700 12px Silkscreen;color:var(--accent)}
+.gen{border:0;border-radius:99px;padding:10px 16px;font:800 14px Nunito;background:var(--accent);color:var(--paper);cursor:pointer}
+section h2{font-size:16px;color:var(--accent);margin:26px 0 10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}
+.card{background:rgba(255,243,224,.1);border-radius:16px;padding:10px;border:3px solid transparent}
+.card.ok{border-color:#59c36a}.card.ko{border-color:var(--accent)}
+.card img.g{width:100%;height:auto;border-radius:10px;display:block;background:#000}
+.card h3{font:700 14px Silkscreen;margin:8px 0 2px}.card .n{color:var(--accent)}
+.card p{margin:0 0 6px;font-size:13px;color:rgba(255,243,224,.82)}
+.card .chg{font-size:12px;color:#ffd9a0}
+.card .bil{font:700 11px Silkscreen;color:#8fe39f;margin:4px 0}
+.card details{margin:4px 0 8px}.card summary{cursor:pointer;font-size:12px;color:var(--accent);font-weight:800}
+.card details img{width:100%;border-radius:8px;margin-top:6px}
+.row{display:flex;gap:8px}
+.row button{flex:1;border:0;border-radius:99px;padding:10px;font:800 14px Nunito;cursor:pointer;background:var(--ink);color:var(--paper)}
+.row button.on.v{background:#59c36a;color:#12301a}.row button.on.x{background:var(--accent);color:var(--paper)}
+textarea{width:100%;margin-top:8px;border-radius:10px;border:0;padding:8px;font:600 13px Nunito;background:var(--paper);color:var(--ink);resize:vertical}
+#out{width:100%;min-height:140px;margin-top:12px}
+.note{font-size:13px;color:rgba(255,243,224,.65);max-width:780px}
+</style></head><body>
+<h1>Bilan de fin de combat</h1><p class="lead">Ton retour : « on gagne des trucs, mais on comprend pas ce qu'on gagne, ni ce que ca change ». Cause : les gains etaient des pastilles et des lignes de texte qui s'enchainaient sans explication. Maintenant : un ecran de bilan, un gain par carte (icone, nom, valeur, phrase d'effet, avant / apres), tu touches pour continuer (zones larges, manette OK), ca avance seul tres lentement, tu peux passer, et « Revoir le bilan » reste dans la pause et en fin de stage. Resume final « Ce qui a change ». Vrai moteur, telephone en portrait. Rien n'est deploye.</p>
+<div class="top"><button class="gen" onclick="gen()">Generer mon texte</button><span class="cnt" id="cnt"></span></div>
+<textarea id="out" style="display:none" readonly></textarea>
+<section><div class="grid"><div class="card" data-k="bilan_01" data-n="01" data-name="Fin de vague"><img class="g" src="bilan/bilan_wave.gif" alt="Fin de vague" loading="lazy" style="max-width:400px;margin:auto"><h3><span class="n">01</span> Fin de vague</h3><p>Titre « VAGUE TERMINEE », puis le bonus choisi en UNE carte : icone, nom, 2 / 3, la phrase de son effet (« Degats +15 % ») et la comparaison avant / apres (Degats +15 % -> +30 %). Le joueur touche pour continuer ; sinon ca avance seul, lentement (barre rose).</p><p class="chg">Avant : une banniere de 1,6 s « PUISSANCE ACCRUE ». Maintenant : on lit ce que le bonus change.</p><div class="row"><button class="v" data-k="bilan_01" data-v="1">Valider</button><button class="x" data-k="bilan_01" data-v="-1">A refaire</button></div><textarea rows="2" data-k="bilan_01" placeholder="Commentaire (rythme, texte, icones, ce qui manque...)"></textarea></div>
+<div class="card" data-k="bilan_02" data-n="02" data-name="Fin d'etage"><img class="g" src="bilan/bilan_floor.gif" alt="Fin d'etage" loading="lazy" style="max-width:400px;margin:auto"><h3><span class="n">02</span> Fin d'etage</h3><p>Un etage nettoye : le bonus Vampire et, quand on passe le choix, le soin (+35 PV, jauge avant / apres).</p><p class="chg">Le soin de 35 % n'etait annonce nulle part.</p><div class="row"><button class="v" data-k="bilan_02" data-v="1">Valider</button><button class="x" data-k="bilan_02" data-v="-1">A refaire</button></div><textarea rows="2" data-k="bilan_02" placeholder="Commentaire (rythme, texte, icones, ce qui manque...)"></textarea></div>
+<div class="card" data-k="bilan_03" data-n="03" data-name="Fin de boss"><img class="g" src="bilan/bilan_boss.gif" alt="Fin de boss" loading="lazy" style="max-width:400px;margin:auto"><h3><span class="n">03</span> Fin de boss</h3><p>Boss vaincu : l'or decompose (ennemis, boss, or ramasse, prime), la piece d'equipement avec ses statistiques avant / apres et « equipee automatiquement », le daemon gagne et son pouvoir, le niveau du familier, les succes avec leur prime, le stage debloque, le record de combo, puis « Ce qui a change ».</p><p class="chg">Avant : 4 lignes de texte d'un coup. Maintenant : un gain par carte, badge NOUVEAU, compteur d'or qui monte.</p><div class="row"><button class="v" data-k="bilan_03" data-v="1">Valider</button><button class="x" data-k="bilan_03" data-v="-1">A refaire</button></div><textarea rows="2" data-k="bilan_03" placeholder="Commentaire (rythme, texte, icones, ce qui manque...)"></textarea></div>
+<div class="card" data-k="bilan_04" data-n="04" data-name="Fin de chapitre (histoire)"><img class="g" src="bilan/bilan_chapter.gif" alt="Fin de chapitre (histoire)" loading="lazy" style="max-width:400px;margin:auto"><h3><span class="n">04</span> Fin de chapitre (histoire)</h3><p>Prime du chapitre, piece gagnee (Plastron titane : PV +40, DEF +1), progression du familier, chapitre suivant debloque. Puis l'epilogue de l'histoire.</p><p class="chg">Avant : les gains etaient rappeles sous le titre de l'epilogue, jamais lus.</p><div class="row"><button class="v" data-k="bilan_04" data-v="1">Valider</button><button class="x" data-k="bilan_04" data-v="-1">A refaire</button></div><textarea rows="2" data-k="bilan_04" placeholder="Commentaire (rythme, texte, icones, ce qui manque...)"></textarea></div>
+<div class="card" data-k="bilan_05" data-n="05" data-name="Fin de defi"><img class="g" src="bilan/bilan_defi.gif" alt="Fin de defi" loading="lazy" style="max-width:400px;margin:auto"><h3><span class="n">05</span> Fin de defi</h3><p>Medaille OR (nouveau record) et sa prime, serie du defi du jour (+10 % par jour), record de combo, or decompose, succes.</p><p class="chg">La regle de la prime degressive est expliquee dans la carte Compteurs.</p><div class="row"><button class="v" data-k="bilan_05" data-v="1">Valider</button><button class="x" data-k="bilan_05" data-v="-1">A refaire</button></div><textarea rows="2" data-k="bilan_05" placeholder="Commentaire (rythme, texte, icones, ce qui manque...)"></textarea></div></div></section>
+<p class="note">Banc : AFH_SCREEN=bilan_wave|bilan_floor|bilan_boss|bilan_chapter|bilan_defi ; sources src/bilan.rs (donnees), src/bilan_ui.rs (dessin), tools/bilan_gifs.py.</p>
+<script>
+var KEY='propos2_bilan',S={};try{S=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function paint(){var ok=0,ko=0;document.querySelectorAll('.card').forEach(function(c){var k=c.dataset.k,s=S[k]||{};c.classList.toggle('ok',s.v===1);c.classList.toggle('ko',s.v===-1);
+c.querySelector('.v').classList.toggle('on',s.v===1);c.querySelector('.x').classList.toggle('on',s.v===-1);c.querySelector('textarea').value=s.t||'';if(s.v===1)ok++;if(s.v===-1)ko++});
+document.getElementById('cnt').textContent=ok+' validees / '+ko+' a refaire / '+(document.querySelectorAll('.card').length-ok-ko)+' sans avis'}
+document.addEventListener('click',function(e){var b=e.target.closest('button[data-v]');if(!b)return;var k=b.dataset.k;S[k]=S[k]||{};var v=+b.dataset.v;S[k].v=S[k].v===v?0:v;save();paint()});
+document.addEventListener('input',function(e){if(e.target.tagName!=='TEXTAREA'||!e.target.dataset.k)return;var k=e.target.dataset.k;S[k]=S[k]||{};S[k].t=e.target.value;save()});
+function gen(){var o={ok:[],ko:[],n:[]};document.querySelectorAll('.card').forEach(function(c){var k=c.dataset.k,s=S[k]||{};var lab=c.dataset.n+' '+c.dataset.name;
+if(s.v===1)o.ok.push(lab+(s.t?' ('+s.t+')':''));else if(s.v===-1)o.ko.push(lab+(s.t?' : '+s.t:''));else if(s.t)o.n.push(lab+' : '+s.t)});
+var L=['== Bilan de fin de combat ==','VALIDEES : '+(o.ok.join(' ; ')||'aucune'),'A REFAIRE : '+(o.ko.join(' ; ')||'aucune')];if(o.n.length)L.push('REMARQUES : '+o.n.join(' ; '));
+var t=L.join('\n');var x=document.getElementById('out');x.value=t;x.style.display='block';x.select();try{navigator.clipboard.writeText(t)}catch(e){}}
+paint();
+</script></body></html>

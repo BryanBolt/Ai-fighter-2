@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dialogues mis en scene</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b;--ok:#2f8f5b}
+body{margin:0;background:var(--papier);color:var(--encre);font:16px/1.45 Nunito,system-ui,sans-serif;padding:16px}
+h1,h2{font-family:Silkscreen,monospace;letter-spacing:.02em;margin:0 0 6px}
+h1{font-size:22px}h2{font-size:15px;color:var(--accent)}
+.lead{max-width:780px}
+ul.k{max-width:780px;padding-left:20px;margin:8px 0}ul.k li{margin:3px 0;font-size:14px}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px;margin-top:14px}
+.c{background:#fff;border:2px solid var(--encre);border-radius:12px;padding:10px}
+.c.ok{outline:4px solid var(--ok)}.c.no{outline:4px solid var(--accent)}
+img{width:100%;border-radius:8px;background:var(--encre);display:block}
+img.pl{margin-top:6px}
+p{margin:6px 0;font-size:14px}.why{opacity:.75;font-size:13px}
+button{font:inherit;font-weight:700;padding:9px 12px;border-radius:8px;border:2px solid var(--encre);margin:4px 4px 0 0;background:var(--papier);color:var(--encre);cursor:pointer}
+button.v{background:var(--ok);color:#fff}button.x{background:var(--accent);color:#fff}
+textarea{width:100%;box-sizing:border-box;border:2px solid var(--encre);border-radius:6px;padding:6px;margin-top:6px;font:inherit;background:var(--papier)}
+#o{white-space:pre-wrap;background:var(--encre);color:var(--papier);padding:12px;border-radius:10px;margin-top:14px}
+.gen{background:var(--accent);color:#fff;font-family:Silkscreen,monospace;margin-top:14px}
+.sheet{margin-top:10px;max-width:1200px}
+</style></head><body>
+<h1>Les dialogues, enfin mis en scene</h1>
+<p class="lead">Avant : un panneau de texte devant deux poses figees. Maintenant : le decor du lieu en plan serre, des bonshommes du rig du jeu qui jouent la comedie, une camera qui respire, des bulles a la charte, une machine a ecrire qui prend son temps sur la ponctuation. GIF du vrai moteur en temps reel (400 px, 48 couleurs, 15 i/s) et planche d'images-cles. Pour chaque scene : Valider ou A refaire (+ remarque), puis genere le texte et colle-le dans le chat.</p>
+<ul class="k">
+<li><b>Mise en scene</b> : decor du terrain avec sa parallaxe, halo derriere celui qui parle, ambiance coloree selon l'humeur (rouge colere, bleu tristesse, doré joie).</li>
+<li><b>Acting</b> : respiration, gestes de parole (expliquer, pointer, hausser les epaules, main sur le coeur), surprise qui saute, colere qui tremble, joie qui rebondit ; l'interlocuteur recule, hoche la tete, regarde son vis-a-vis ; entree en marchant, sortie en glissant. Visages en aplats, emotes (« ! », « ? », veine de colere, gouttes, etincelles).</li>
+<li><b>Camera</b> : duo doux qui avance lentement, gros plan et secousse sur un cri ou une surprise, plan large sur les chefs, recadrage sur celui qui parle.</li>
+<li><b>Texte</b> : bulle Papier a ombre Accent (chef : bulle Encre), queue vers le locuteur, apparition a rebond de 0,3 s, lettres a rythme variable (pauses sur . , ! ?, MAJUSCULES lentes, didascalies rapides), mots accentues en couleur / tremblement, blip de voix propre a chaque personnage, repliques longues decoupees en pages courtes.</li>
+<li><b>Interface</b> : plus de croix ni de boutons flottants ; un tap avance, appui long accelere, SUIVANT (devient A L'ACTION / CONTINUER / FIN) et PASSER toujours visibles, progression en points, butin presente a la fin de la scene.</li>
+<li><b>Transitions</b> : carte de chapitre animee (bande Papier, numero geant, gag annonce) a chaque ouverture de chapitre et a l'epilogue.</li>
+</ul>
+<div class="g" id="g"></div>
+<button class="gen" onclick="out()">Generer mon texte</button><div id="o"></div>
+<script>
+var C=[
+{k:"duo",n:"Duo calme",d:"Lundi, machine a cafe : les deux stagiaires entrent en marchant, le heros les ecoute puis repond. Gros plan sur « ... Vous portez MON badge », mots en majuscules accentues.",w:"Chapitre 2, intro. Decor : open space, camera duo."},
+{k:"dispute",n:"Dispute comique",d:"Le chef des stagiaires : carte de chapitre, Dylan (casquette) deboule, narrateur puis repliques qui se renvoient la balle avec gestes et reactions.",w:"Chapitre 3, intro. Dylan est un chef : silhouette un peu plus grande, bulle Encre."},
+{k:"boss",n:"Intro de boss",d:"Le Parrain Salvatore : plan large dans le bureau en marbre, silhouette de chef, bulle Encre, camera qui se resserre quand il parle.",w:"Chapitre 6, intro. Acte 2 annonce sur la carte."},
+{k:"reve",n:"Revelation / reve",d:"Valerie Kogen dit la verite : camera lente, ambiance, narrateur en bulle a trait. Les repliques tristes (...) font baisser la tete et tomber des gouttes.",w:"Chapitre 15, epilogue (SEASON1_END)."},
+{k:"victoire",n:"Victoire et butin",d:"Epilogue d'un chapitre gagne : le heros reflechit, puis la carte BUTIN DU CHAPITRE (or, succes) apparait ligne a ligne avec CONTINUER.",w:"Chapitre 2, epilogue. Les gains ne s'affichent plus en petit sur la meme page."},
+{k:"defaite",n:"Defaite (demonstration)",d:"Le jeu n'a pas de dialogue de defaite : voici ce que donnerait la meme mise en scene (textes de demonstration, non integres).",w:"A valider avant toute integration : textes a toi."}
+,
+{k:"cine_chapter",n:"Cinematique : ouverture de chapitre",d:"Motion design du moteur : volets Accent / Encre, mots qui claquent sur le tempo (120 bpm), numero geant, heros en whip-pan avec pose de puissance, daemon mascotte qui rebondit, anneaux sur les temps. Precedee d'une transition humoristique.",w:"3,6 s de transition + 4 s ; un tap coupe. Effets reduits : carte classique."},
+{k:"cine_boss",n:"Cinematique : arrivee d'un chef",d:"Silhouette immense en trois coupes qui avancent, lignes de vitesse, VS, carte de nom qui claque.",w:"Chapitre 6 (Le Parrain)."},
+{k:"cine_dream",n:"Cinematique : revelation",d:"Bandes glitchees, horloge qui s'emballe (6 h 58), daemon qui flotte, titre qui claque.",w:"Epilogue du chapitre 15."},
+{k:"cine_epilogue",n:"Cinematique : epilogue (l'aube)",d:"Du bleu nuit au jour, le soleil se leve, le heros reste immobile, le daemon s'endort (z).",w:"Fin de l'histoire."},
+{k:"gag_1",n:"Transition 1 : le cafe est froid",d:"Encre, mots qui claquent, daemon qui pulse. Fil rouge : Kevin passe la tete en bas de l'ecran, compteur « nuit 47 ».",w:"Entre les chapitres 1 et 2."},
+{k:"gag_2",n:"Transition 2 : la plante",d:"Fond Accent, bandes qui defilent, le heros tombe et s'ecrase.",w:"Entre les chapitres 2 et 3."},
+{k:"gag_3",n:"Transition 3 : la sortie est a gauche",d:"Glitch Encre, horloge qui tourne trop vite.",w:"Entre les chapitres 3 et 4."},
+{k:"gag_4",n:"Transition 4 : Kevin est encore la",d:"Ecran coupe en deux, daemon qui flotte, anneaux.",w:"Le running gag : Kevin."},
+{k:"gag_5",n:"Transition 5 : le daemon a faim",d:"Il mange tes regrets. Il en reste encore.",w:"Entre les chapitres 6 et 7."},
+{k:"gag_6",n:"Transition 6 : sortie de ravin",d:"Tu cours depuis 47 nuits. Le ravin court aussi.",w:"Entre les chapitres 7 et 8."},
+{k:"gag_7",n:"Transition 7 : ce n'est pas un reve",d:"(C'est un reve.) (Le meme qu'hier.)",w:"Entre les chapitres 9 et 10."},
+{k:"gag_8",n:"Transition 8 : encore lui",d:"Le vrai boss dort. Toi aussi, bientot.",w:"Entre les chapitres 10 et 11. 10 transitions en tout dans le jeu (les suivantes reprennent le cycle)."}
+],st={};
+var g=document.getElementById('g');
+C.forEach(function(c){var d=document.createElement('div');d.className='c';d.id='c_'+c.k;
+d.innerHTML='<img src="dialogues/dlg_'+c.k+'.gif" alt="'+c.n+'" loading="lazy"><img class="pl" src="dialogues/dlg_'+c.k+'_planche.png" alt="images-cles : '+c.n+'" loading="lazy"><h2>'+c.n+'</h2><p>'+c.d+'</p><p class="why">'+c.w+'</p><button class="v" data-k="'+c.k+'" data-v="1">Valider</button><button class="x" data-k="'+c.k+'" data-v="-1">A refaire</button><textarea id="t_'+c.k+'" rows="2" placeholder="Remarque"></textarea>';g.appendChild(d);});
+g.addEventListener('click',function(e){var b=e.target;if(!b.dataset||!b.dataset.k)return;var v=+b.dataset.v;st[b.dataset.k]=v;document.getElementById('c_'+b.dataset.k).className='c '+(v>0?'ok':'no');});
+function out(){var L=C.map(function(c){var v=st[c.k];var t=document.getElementById('t_'+c.k).value.trim();return (v>0?'VALIDE':v<0?'A REFAIRE':'NON VU')+' : '+c.n+(t?' - '+t:'');});document.getElementById('o').textContent='Dialogues :\n'+L.join('\n');}
+</script></body></html>
