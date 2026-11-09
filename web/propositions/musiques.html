@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Musiques des decors - propositions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b;--encre2:#33274d;--ligne:#4a3b69;--ok:#5fcf8f}
+*{box-sizing:border-box}
+body{margin:0;background:var(--encre);color:var(--papier);font-family:'Nunito',system-ui,sans-serif;line-height:1.5}
+.wrap{max-width:980px;margin:0 auto;padding:20px 16px 90px}
+h1{font-family:'Silkscreen',monospace;font-size:26px;margin:8px 0 4px;color:var(--papier);letter-spacing:1px}
+h1 span{color:var(--accent)}
+h2{font-family:'Silkscreen',monospace;font-size:15px;margin:0;color:var(--papier)}
+p.lead{margin:0 0 14px;opacity:.9}
+.note{background:var(--encre2);border:1px solid var(--ligne);border-left:4px solid var(--accent);border-radius:8px;padding:12px 14px;margin:14px 0;font-size:14px}
+.note b{color:var(--accent)}
+table.ref{border-collapse:collapse;width:100%;font-size:13px;margin-top:8px}
+table.ref th,table.ref td{border-bottom:1px solid var(--ligne);padding:4px 6px;text-align:left}
+table.ref th{font-family:'Silkscreen',monospace;font-size:11px;font-weight:400;color:var(--accent)}
+.grid{display:grid;gap:14px;margin-top:16px}
+.card{background:var(--encre2);border:2px solid var(--ligne);border-radius:12px;padding:12px 14px;transition:border-color .15s}
+.card.ok{border-color:var(--ok)}
+.card.redo{border-color:var(--accent)}
+.head{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:baseline;justify-content:space-between}
+.decor{font-size:13px;opacity:.8}
+.tag{font-family:'Silkscreen',monospace;font-size:11px;background:var(--encre);border:1px solid var(--ligne);border-radius:6px;padding:2px 6px;color:var(--papier)}
+.desc{margin:6px 0 8px;font-size:14px}
+audio{width:100%;height:38px;margin:2px 0}
+img.spec{display:block;width:100%;height:auto;border-radius:6px;margin:6px 0;border:1px solid var(--ligne);background:var(--encre)}
+details{margin:4px 0 8px;font-size:13px}
+details summary{cursor:pointer;color:var(--accent)}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+button{font-family:'Silkscreen',monospace;font-size:12px;border:2px solid var(--papier);background:transparent;color:var(--papier);padding:9px 14px;border-radius:8px;cursor:pointer}
+button:hover{background:rgba(255,243,224,.1)}
+button.v.on{background:var(--ok);border-color:var(--ok);color:var(--encre)}
+button.r.on{background:var(--accent);border-color:var(--accent);color:var(--papier)}
+button.main{background:var(--accent);border-color:var(--accent);color:var(--papier)}
+input.com{flex:1 1 220px;min-width:0;background:var(--encre);color:var(--papier);border:1px solid var(--ligne);border-radius:8px;padding:8px 10px;font-family:inherit;font-size:14px}
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--encre2);border-top:2px solid var(--accent);padding:10px 16px;display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;z-index:5}
+.bar .cnt{font-size:13px}
+#out{display:none;margin-top:18px}
+#out textarea{width:100%;min-height:200px;background:var(--encre);color:var(--papier);border:1px solid var(--ligne);border-radius:8px;padding:10px;font-family:ui-monospace,Consolas,monospace;font-size:13px}
+@media (max-width:560px){h1{font-size:20px}.wrap{padding:14px 16px 100px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>MUSIQUES <span>DES DECORS</span></h1>
+<p class="lead"><b style="color:var(--accent)">Orientation :</b> des stage themes dans l'esprit de <b>Mega Man X sur SNES</b> (basses slap tres rythmees, guitares saturees, cuivres synthe, caisses et toms 16 bits, leads vibres, arpeges rapides, echo court type SPC700, motif de 4 a 8 notes que l'on retient), avec la menace sombre de vos morceaux « Final Escalation ». Chaque piste dure environ 3 minutes : intro, theme A, theme B / pont, rupture half-time, reprise variee du motif, final avec escalade (+1 ton), puis boucle propre. L'extrait de 36 s couvre la fin du theme B, la rupture et la reprise ; la piste complete est dessous. Le trait rose du spectrogramme marque l'extrait.</p>
+
+<div class="note"><b>Honnetete :</b> je ne peux pas ecouter. Tout ce qui suit repose sur des mesures (tempo, energie, spectre, stereo, spectrogramme), pas sur l'oreille. Les references et les nouvelles pistes ont ete mesurees avec la meme methode ; c'est a vous de dire si cela sonne juste.
+<table class="ref">
+<tr><th>Mesure</th><th>Final Escalation (4 versions)</th><th>Nouvelles pistes (15)</th></tr>
+<tr><td>Niveau RMS / crete</td><td>-17,5 a -18,7 / -2 a -4 dBFS</td><td>-18,4 a -18,7 / -2 a -4 dBFS (limiteur, jamais de saturation)</td></tr>
+<tr><td>Facteur de crete</td><td>15 dB</td><td>14,5 a 16,6 dB</td></tr>
+<tr><td>Energie &lt;150 / 150-600 / 600-2,5k / 2,5-8k Hz</td><td>33-43 / 18-26 / 28-33 / 8 %</td><td>25-57 / 12-43 / 13-38 / 1-9 %</td></tr>
+<tr><td>Attaques par seconde</td><td>3,2 a 4,6</td><td>3,5 a 5,5</td></tr>
+<tr><td>Regularite (ecart-type de l'energie par 0,25 s)</td><td>2 a 4 dB</td><td>1,5 a 2,3 dB</td></tr>
+<tr><td>Stereo (cote / centre)</td><td>0,40 a 0,51</td><td>0,21 a 0,35 (plus etroit)</td></tr>
+</table></div>
+
+<div class="grid" id="grid"></div>
+
+<div id="out">
+<h2>Texte a copier</h2>
+<p class="lead">Collez-le dans la conversation.</p>
+<textarea id="txt" readonly></textarea>
+<div class="btns"><button class="main" id="copy">Copier</button></div>
+</div>
+</div>
+
+<div class="bar">
+<span class="cnt" id="cnt"></span>
+<button class="main" id="gen">Generer le texte</button>
+<button id="reset">Tout effacer</button>
+</div>
+
+<script>
+var TRACKS = [
+ {n:'title',bpm:120,t:'Titre',d:'Ecran titre',s:"Theme titre : mineur, large et menacant, taiko et cuivres synthe, motif d'ouverture lent. (En jeu l'ecran titre garde le morceau fourni.)"},
+ {n:'muraille',bpm:140,t:'Ruelle',d:'Ruelle du quartier est',s:"Stage d'ouverture a la X : dorien, basse slap tres rythmee, guitare saturee sur l'ostinato de cordes, arpege 8 bits qui rebondit. Motif accrocheur de 7 notes."},
+ {n:'dojo',bpm:136,t:'Dojo',d:'Dojo souterrain Tsukikage',s:'Phrygien : koto pince en motif de 8 notes, taiko 16 bits, galop de cordes et guitare saturee. Menace sombre, tempo energique.'},
+ {n:'neotokyo',bpm:150,t:'Cyberpunk',d:'Salle des serveurs',s:"Le plus 'Mega Man X' : lead pulse ecrase vibre, slap en doubles croches, arpeges rapides, caisse claire 16 bits, guitare saturee. Motif montant de 7 notes."},
+ {n:'forteresse',bpm:132,t:'Forteresse industrielle',d:'Parking niveau -3',s:'Lourd et mecanique : phrygien, cuivres synthe rythmiques, taiko massif, riff de cordes + guitare. Motif en 4 notes pesantes.'},
+ {n:'affaires',bpm:130,t:'Affaires (funk ironique)',d:'Open space Kogen Corp',s:'Funk SNES : dorien syncope, slap tres rythme, cuivres synthe qui claquent, swing leger. Refrain ironique qui reste en tete.'},
+ {n:'magique',bpm:126,t:'Mystique',d:"Seminaire de l'Eveil",s:"Lydien : cloches et lead vibre, echo court SPC700, nappes, tremolo de cordes ; l'echo fait le mystere, la basse reste menacante."},
+ {n:'chateau',bpm:132,t:'Chateau royal',d:'Etage presidentiel',s:"Fanfare heroique de cuivres synthe, marche 16 bits, sauts d'octave aux cordes ; majeur noble mais final sombre."},
+ {n:'toits',bpm:166,t:'Toits (poursuite)',d:'Toits de la tour Kogen',s:'Course-poursuite a 166 bpm : galop, slap en doubles croches, arpeges rapides, guitare saturee. Motif a rebond en 6 notes.'},
+ {n:'parlement',bpm:132,t:'Senat (fanfare sinistre)',d:'Senat',s:"Mineur harmonique : cuivres synthe lourds, marche, cordes en sauts d'octave ; une fanfare de stage de fin de jeu, sinistre."},
+ {n:'secte',bpm:112,t:'Secte (rituel)',d:"Temple de l'Eveil",s:'Rituel : phrygien, tambours lourds, tremolo, cloches echo, grosse nappe ; le plus lent, plus pesant que rapide.'},
+ {n:'foret',bpm:126,t:'Foret',d:'Toit-jardin du team building',s:"Dorien : flute vibree, harpe carree, nappes, taiko qui monte ; stage 'nature' de la serie, guitare et slap discrets."},
+ {n:'prairie',bpm:144,t:'Prairie heroique',d:'Parc de la tour',s:'Majeur heroique : lead 8 bits vibre, fanfare, slap droit, refrain joyeux de 8 notes qui se transforme a chaque reprise.'},
+ {n:'rangers',bpm:150,t:'Rangers',d:"Chantier de l'aile Est",s:'Sentai a la X : tres rapide, galop, cuivres heroiques, guitare saturee, slap 16es, motif de 6 notes en octaves.'},
+ {n:'boss',bpm:168,t:'Boss',d:'Combats de boss',s:'Le plus dense et le plus rapide : mineur harmonique, tout a fond. (En jeu, les boss gardent Final Escalation.)'}
+];
+var KEY='af2_musiques_v1', state={};
+try{state=JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(e){state={}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+var grid=document.getElementById('grid');
+TRACKS.forEach(function(k){
+  var c=document.createElement('div');c.className='card';c.id='c_'+k.n;
+  c.innerHTML='<div class="head"><h2>'+k.t+'</h2><span class="tag">'+k.bpm+' bpm</span></div>'
+   +'<div class="decor">Decor : '+k.d+'</div><p class="desc">'+k.s+'</p>'
+   +'<div class="decor">Extrait de 36 s</div><audio controls preload="none" src="musiques/'+k.n+'.ogg"></audio>'
+   +'<img class="spec" loading="lazy" alt="Spectrogramme de '+k.t+'" src="musiques/'+k.n+'.png">'
+   +'<div class="decor" style="margin-top:6px">Piste complete (~3 min, boucle)</div><audio controls preload="none" src="musiques/'+k.n+'_complet.ogg"></audio>'
+   +'<div class="btns"><button class="v">Valider</button><button class="r">A refaire</button>'
+   +'<input class="com" type="text" placeholder="Remarque (facultatif) : plus rapide, moins grave, plus sombre..."></div>';
+  grid.appendChild(c);
+  var s=state[k.n]||{};var v=c.querySelector('.v'),r=c.querySelector('.r'),i=c.querySelector('.com');
+  i.value=s.c||'';
+  function paint(){var st=(state[k.n]||{}).s;v.classList.toggle('on',st==='ok');r.classList.toggle('on',st==='redo');c.className='card'+(st==='ok'?' ok':st==='redo'?' redo':'');count()}
+  v.onclick=function(){var o=state[k.n]||{};o.s=o.s==='ok'?'':'ok';state[k.n]=o;save();paint()};
+  r.onclick=function(){var o=state[k.n]||{};o.s=o.s==='redo'?'':'redo';state[k.n]=o;save();paint()};
+  i.oninput=function(){var o=state[k.n]||{};o.c=i.value;state[k.n]=o;save()};
+  paint();
+});
+// Une seule piste a la fois.
+document.addEventListener('play',function(e){document.querySelectorAll('audio').forEach(function(a){if(a!==e.target)a.pause()})},true);
+function count(){
+  var ok=0,re=0;TRACKS.forEach(function(k){var s=(state[k.n]||{}).s;if(s==='ok')ok++;if(s==='redo')re++});
+  document.getElementById('cnt').textContent=ok+' validee(s), '+re+' a refaire, '+(TRACKS.length-ok-re)+' sans avis';
+}
+document.getElementById('gen').onclick=function(){
+  var L=['Retour sur les musiques des decors :'];
+  TRACKS.forEach(function(k){
+    var o=state[k.n]||{};var st=o.s==='ok'?'VALIDE':o.s==='redo'?'A REFAIRE':'sans avis';
+    L.push('- '+k.n+' ('+k.t+', '+k.d+') : '+st+(o.c?' - '+o.c:''));
+  });
+  var t=document.getElementById('txt');t.value=L.join('\n');
+  document.getElementById('out').style.display='block';t.scrollIntoView({behavior:'smooth',block:'center'});
+};
+document.getElementById('copy').onclick=function(){
+  var t=document.getElementById('txt');t.select();
+  try{navigator.clipboard.writeText(t.value)}catch(e){document.execCommand('copy')}
+  this.textContent='Copie !';var b=this;setTimeout(function(){b.textContent='Copier'},1500);
+};
+document.getElementById('reset').onclick=function(){
+  if(!confirm('Effacer tous les avis ?'))return;state={};save();
+  document.querySelectorAll('.com').forEach(function(i){i.value=''});
+  TRACKS.forEach(function(k){var c=document.getElementById('c_'+k.n);c.className='card';c.querySelector('.v').classList.remove('on');c.querySelector('.r').classList.remove('on')});count();
+};
+</script>
+</body>
+</html>
