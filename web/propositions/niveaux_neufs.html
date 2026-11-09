@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Niveaux neufs</title>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b}
+*{box-sizing:border-box}
+body{margin:0 auto;background:var(--papier);color:var(--encre);font-family:Nunito,sans-serif;padding:16px;max-width:1300px;line-height:1.45}
+h1,h2,h3{font-family:Silkscreen,monospace;margin:.3em 0}
+h1{font-size:clamp(22px,4vw,34px)}
+.dec{border:3px solid var(--encre);border-radius:10px;background:#fff;padding:12px;margin:18px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px}
+.card{border:2px solid var(--encre);border-radius:8px;padding:8px;background:var(--papier)}
+.card img,.big{width:100%;border:2px solid var(--encre);display:block;background:#222}
+.card p{font-size:14px;margin:6px 0}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 12px;font-size:14px;margin:8px 0 14px}
+dt{font-family:Silkscreen,monospace;color:var(--accent);font-size:12px;padding-top:2px}
+dd{margin:0}
+button{font-family:Silkscreen,monospace;border:2px solid var(--encre);background:#fff;padding:7px 11px;margin:4px 4px 0 0;cursor:pointer;border-radius:6px;color:var(--encre)}
+button.ok.on{background:#3b9c5a;color:#fff}button.ko.on{background:var(--accent);color:#fff}
+input.c{width:100%;border:2px solid var(--encre);border-radius:6px;padding:6px;margin-top:6px;font-family:Nunito,sans-serif;background:#fff;color:var(--encre)}
+textarea{width:100%;min-height:220px;font-family:Nunito,sans-serif;border:2px solid var(--encre);border-radius:6px;padding:8px;background:#fff;color:var(--encre)}
+.gen{background:var(--accent);color:#fff}
+.note{background:#fff;border-left:6px solid var(--accent);padding:8px 12px;margin:10px 0}
+table{border-collapse:collapse;width:100%;font-size:14px;background:#fff}
+td,th{border:2px solid var(--encre);padding:5px 8px;text-align:left;vertical-align:top}
+th{font-family:Silkscreen,monospace;font-size:12px;background:var(--papier)}
+.cl{font-family:Silkscreen,monospace;text-align:center;white-space:nowrap}
+.cA{color:#3b9c5a}.cB{color:#c98a1a}.cC{color:var(--accent)}
+.tbl{overflow-x:auto}
+</style></head><body>
+<h1>NIVEAUX NEUFS</h1>
+<div class="note">Constat : quand on plaque des passants, des animaux ou des objets cassables sur un decor qui n'a pas ete pense pour, les proportions et les angles de vue jurent. Ici, trois lieux inedits concus des le depart avec leur ciel, leurs plans de profondeur, leur vie et leurs reperes de destruction, dans le style des daemons (aplats, formes simples, aucun contour noir) et des bonshommes batons des combattants. Captures du vrai moteur en temps reel (400 px, 48 couleurs). Les trois terrains sont jouables : ils s'ajoutent a la fin de la campagne (stages 14, 15 et 16) sans toucher aux sauvegardes.</div>
+<div id="root"></div>
+<h2>Comparaison d'echelle</h2>
+<div class="note">Meme camera, meme regle : H = la hauteur d'un combattant (130 px a 1280 x 720). A gauche un decor existant, a droite le terrain neuf correspondant. Un passant du plan moyen fait environ 1 H, un passant du fond environ 0,75 H, un comptoir 0,5 H, une porte environ 2 H comme partout dans le jeu.</div>
+<img class="big" src="niveaux/echelle.png" alt="Comparaison d'echelle">
+<div id="cmpv"></div>
+<h2>Planche contact : les 16 decors a trois tailles d'ecran</h2>
+<div class="note">Numeros 0 a 12 : les decors d'origine apres correction de la largeur (plus de bande blanche a droite) et de l'echelle des plans moyens ; 13, 14, 15 : les terrains neufs. Trois tailles : 1280x720, 900x506, portrait 540x960.</div>
+<img class="big" src="niveaux/planche_1280x720.png" alt="Planche 1280x720" loading="lazy">
+<img class="big" src="niveaux/planche_900x506.png" alt="Planche 900x506" loading="lazy" style="margin-top:10px">
+<img class="big" src="niveaux/planche_540x960.png" alt="Planche portrait 540x960" loading="lazy" style="margin-top:10px">
+<h2>Audit des 13 decors existants</h2>
+<div class="note">A = bon pour les nouveautes, B = a ajuster legerement (corrige dans cette livraison : largeur du decor et echelle des plans moyens), C = a refaire. Aucun decor n'est a refaire pour ses proportions ; les nouveautes de vie (passants, animaux, objets cassables) sont a poser en priorite sur A, et c'est dans les trois terrains neufs qu'elles sont pensees des le depart. Detail : tools/audit_niveaux_log.md.</div>
+<div class="tbl"><table><tr><th>#</th><th>Decor</th><th>Classe</th><th>Constat</th></tr><tr><td>0</td><td>Ruelle du quartier est</td><td class="cl cB">B</td><td>Immeubles du fond (defilement 0,35) : fenetres aussi grandes que la tete d'un combattant. Echelle du plan moyen corrigee (x0,77). Trottoir : bon pour passants et pigeons.</td></tr><tr><td>1</td><td>Dojo souterrain</td><td class="cl cA">A</td><td>Un seul plan, piece fermee, echelle des shoji et lanternes coherente avec les combattants.</td></tr><tr><td>2</td><td>Salle des serveurs</td><td class="cl cA">A</td><td>Mur plein et baies a l'echelle ; pas de fond lointain a corriger. Sans ciel : pas de meteo possible.</td></tr><tr><td>3</td><td>Parking niveau -3</td><td class="cl cA">A</td><td>Voiture a 1,5 H, piliers et marquages coherents ; ligne d'horizon tres basse, convient aux animaux au sol.</td></tr><tr><td>4</td><td>Open space</td><td class="cl cB">B</td><td>Skyline (defilement 0,3) surdimensionnee : corrigee (x0,75). La baie vitree convient aux nuages et avions.</td></tr><tr><td>5</td><td>Seminaire de l'Eveil</td><td class="cl cA">A</td><td>Salle fermee, un plan : portes, pupitre et pouffes a l'echelle.</td></tr><tr><td>6</td><td>Etage presidentiel</td><td class="cl cB">B</td><td>Skyline (0,25) corrigee (x0,74). Ciel de nuit en baie : bon pour avions.</td></tr><tr><td>7</td><td>Toits de la tour</td><td class="cl cB">B</td><td>Skyline (0,4) corrigee ; le soleil (ciel, defilement < 0,2) reste tres grand : choix de style, non modifie.</td></tr><tr><td>8</td><td>Senat</td><td class="cl cB">B</td><td>Gradins du fond (0,5) corriges (x0,83) : les rangees de sieges ecrasaient les combattants.</td></tr><tr><td>9</td><td>Temple de l'Eveil</td><td class="cl cA">A</td><td>Mur de briques plein, pas de plan lointain : echelle des portiques et lanternes coherente.</td></tr><tr><td>10</td><td>Toit-jardin du team building</td><td class="cl cB">B</td><td>Skyline (0,3) corrigee (x0,75) ; garde-corps a hauteur de poitrine, bon pour oiseaux.</td></tr><tr><td>11</td><td>Parc de la tour</td><td class="cl cB">B</td><td>Haies du fond (0,4) corrigees ; arbres du premier plan et tour (0,05) inchanges.</td></tr><tr><td>12</td><td>Chantier de l'aile Est</td><td class="cl cA">A</td><td>Mur banche plein, grue au loin (ciel) : echelle des echafaudages coherente ; peu de profondeur pour les nouveautes.</td></tr></table></div>
+<h2>Mon texte</h2>
+<button class="gen" id="gen">Generer mon texte</button>
+<textarea id="out" readonly></textarea>
+<script>
+const L=[{"id": 13, "name": "Marche de nuit sous la pluie", "ref": "Ruelle du quartier est", "pitch": "Un marche de nuit au pied de la tour, sous l'orage : etals de takoyaki, de poissons rouges et de dango, lanternes, enseignes au neon. Stage 14 de la campagne (entrees : rideau de boutique KARAOKE, bar a noren, grand torii rouge pour le boss).", "plans": "Ciel d'orage (tour Kogen lointaine, nuages, avion, eclairs) > immeubles d'enseignes (plus petits car plus loin) > etals du fond (echelle 0,62, soit environ 0,75 H) avec passants sous parapluie > pave mouille > etals au premier plan a hauteur de combattant > flaques sous la pluie.", "vie": "3 passants sous parapluie (plan lointain, environ 0,75 H), un passant du plan moyen (environ 1 H), cuisinier du takoyaki. Animaux : chat noir sur l'auvent, chat roux qui traverse le trottoir, poissons rouges dans les bassins.", "casse": "Caisses de bouteilles marquees FRAGILE, lanternes en papier, pochettes de poissons : meme repere visuel partout (arete claire + eclat). Repere visuel seulement : le lien avec le moteur de destruction du decor (autre branche) reste a faire. Le GIF montre la caisse du jeu qui se brise.", "meteo": "Pluie permanente (pave mouille, anneaux de flaques, rideau de gouttes), eclairs lointains qui eclairent le ciel, evenement de lieu : foudre annoncee (cercle au sol).", "secrets": "Statue de tanuki (clin d'oeil a Dylan), enseignes BAR 13 et KARAOKE, bateau de lanternes qui se balance.", "palette": "Indigo de nuit, neons rose / cyan / jaune, lanternes ambrees, pave bleu-gris.", "armes": "Balai de rue, poele du cuistot. Musique : piste de la Ruelle (provisoire).", "gifs": [["amb", "Ambiance (le heros traverse le marche)", "Parallaxe et echelle : les plans lointains sont plus petits ET plus lents."], ["combat", "Combat (heros IA)", "Echelle des combattants contre les etals : comptoir a mi-corps, auvent au-dessus de la tete."], ["casse", "Destruction (caisse du jeu)", "Une caisse se brise sur le pave mouille."], ["meteo", "Meteo : orage", "Foudre annoncee, flaques, eclairs dans le ciel."]]}, {"id": 14, "name": "Quai de metro Kogen-mae", "ref": "Parking niveau -3", "pitch": "Le quai de la station au pied de la tour : plafond a tubes, mur carrele, tunnel, voie, et une rame qui arrive, ouvre ses portes, repart (cycle de 26 s). Stage 15 (entrees : sortie 3, porte PERSONNEL, tunnel aux phares pour le boss).", "plans": "Plafond et panneau d'affichage > mur carrele et tunnels (plan lent) > fosse, rails et traverses > rame (2 voitures et cabine) > quai a bande jaune tactile avec distributeurs, banc et piliers au premier plan.", "vie": "3 voyageurs qui montent quand les portes s'ouvrent, un passant qui attend, un qui marche vers la sortie, silhouettes dans les vitres. Animaux : pigeon qui picore, rat sur la voie.", "casse": "3 distributeurs KOGEN (une canette tombe de temps en temps), banc (c'est la planche que l'on ramasse), mallette abandonnee. Repere visuel seulement : branchement sur la destruction du decor a faire.", "meteo": "Pas de ciel : courant d'air des rames (papiers qui volent), tube fluo qui clignote, panneau d'affichage qui change de message, evenement de lieu : panne de courant (neons qui lachent).", "secrets": "Salaryman endormi sur le banc (Zzz : il a rate le Rappel), plan VOUS ETES ICI, plaque K7, affiches de sourires d'entreprise, bouton d'urgence.", "palette": "Carrelage vert pale, bleu nuit du plafond, jaune tactile, turquoise de ligne et rouge Kogen.", "armes": "Planche de banc, balai. Musique : piste du Parking (provisoire).", "gifs": [["amb", "Ambiance (le heros longe le quai)", "La rame, les voyageurs et le pigeon vivent a leur echelle."], ["train", "La rame : arrivee, portes, depart", "Cycle complet, des voyageurs montent aux portes."], ["combat", "Combat (heros IA)", "Echelle des combattants contre le quai et la rame."], ["casse", "Destruction (caisse du jeu)", "Une caisse se brise sur le quai."], ["meteo", "Evenement : panne de courant", "Les neons lachent, seuls les combattants eclairent."]]}, {"id": 15, "name": "Cantine de la tour", "ref": "Open space Kogen Corp", "pitch": "L'heure du dejeuner chez Kogen Corp : baie vitree sur le ciel, comptoir du self avec cuisiniers, tables, file d'attente. Stage 16 (entrees : porte vitree, portes de cuisine a hublot, chambre froide du chef pour le boss).", "plans": "Ciel (tour, nuages, avion) vu par la baie : plus lent que le mur > mur, meneaux et rebord > panneaux muraux > comptoir, plats, vitre pare-haleine, cuisiniers (environ 1 H) > salle : tables, convives, file, distributeur de tickets.", "vie": "File de 3 convives plateau en main, 3 convives attables, 3 cuisiniers. Animaux : pigeon sur le rebord de la baie, maneki-neko qui salue sur le comptoir.", "casse": "Piles de plateaux (fragiles), distributeur de tickets, bols et plats du comptoir. Repere visuel seulement : branchement sur la destruction du decor a faire.", "meteo": "Ciel vu par la baie : nuages lents, avion de ligne, reflet de vitre. Interieur : pas de pluie.", "secrets": "Menu UMEBOSHI SURPRISE ???, pancarte le Rappel sonne a 13h, daemon rose qui lorgne un dessert, horloge qui tourne.", "palette": "Creme chaud, bois clair, bleu ciel, rose Kogen.", "armes": "Poele, balai de paille. Musique : piste de l'Open space (provisoire).", "gifs": [["amb", "Ambiance (le heros traverse la salle)", "Les convives, la file et le comptoir sont a l'echelle des combattants."], ["combat", "Combat (heros IA)", "Echelle des combattants contre tables et comptoir."], ["casse", "Destruction (caisse du jeu)", "Une caisse se brise sur le parquet."], ["meteo", "Ciel par la baie", "Nuages, avion et pigeon derriere la vitre."]]}];
+const st={},cm={};
+function mk(id,host){
+ const b=document.createElement('div');
+ b.innerHTML='<button class="ok">Valider</button><button class="ko">A refaire</button><input class="c" placeholder="Commentaire">';
+ const [ok,ko]=b.querySelectorAll('button');const inp=b.querySelector('input');
+ ok.onclick=()=>{st[id]='ok';ok.classList.add('on');ko.classList.remove('on')};
+ ko.onclick=()=>{st[id]='ko';ko.classList.add('on');ok.classList.remove('on')};
+ inp.oninput=()=>{cm[id]=inp.value};
+ host.appendChild(b);
+}
+const root=document.getElementById('root');
+L.forEach(l=>{
+ const sec=document.createElement('div');sec.className='dec';
+ sec.innerHTML='<h2>'+l.name+'</h2><p>'+l.pitch+'</p><dl>'
+  +'<dt>PLANS</dt><dd>'+l.plans+'</dd><dt>VIE</dt><dd>'+l.vie+'</dd><dt>CASSABLE</dt><dd>'+l.casse+'</dd>'
+  +'<dt>METEO</dt><dd>'+l.meteo+'</dd><dt>SECRETS</dt><dd>'+l.secrets+'</dd><dt>PALETTE</dt><dd>'+l.palette+'</dd><dt>ARMES, SON</dt><dd>'+l.armes+'</dd></dl>';
+ const g=document.createElement('div');g.className='grid';
+ l.gifs.forEach(([k,t,d])=>{
+  const id=l.id+'_'+k;const c=document.createElement('div');c.className='card';
+  c.innerHTML='<h3>'+t+'</h3><img loading="lazy" src="niveaux/'+id+'.gif" alt="'+l.name+' '+t+'"><p>'+d+'</p>';
+  mk(id,c);g.appendChild(c)});
+ sec.appendChild(g);
+ const v=document.createElement('div');v.innerHTML='<h3>Verdict : '+l.name+'</h3>';mk('niv'+l.id,v);sec.appendChild(v);
+ root.appendChild(sec)});
+const cv=document.createElement('div');cv.innerHTML='<h3>Verdict : comparaison d\'echelle</h3>';mk('echelle',cv);document.getElementById('cmpv').appendChild(cv);
+document.getElementById('gen').onclick=()=>{
+ const lab=s=>s==='ok'?'VALIDE':s==='ko'?'A REFAIRE':'pas encore juge';
+ let o=['Retours sur les niveaux neufs :'];
+ L.forEach(l=>{o.push('');o.push('## '+l.name+' : '+lab(st['niv'+l.id])+(cm['niv'+l.id]?' ('+cm['niv'+l.id]+')':''));
+  l.gifs.forEach(([k,t])=>{const id=l.id+'_'+k;o.push('- '+t+' : '+lab(st[id])+(cm[id]?' ('+cm[id]+')':''))})});
+ o.push('');o.push('## Comparaison d\'echelle : '+lab(st.echelle)+(cm.echelle?' ('+cm.echelle+')':''));
+ document.getElementById('out').value=o.join('\n')};
+</script></body></html>

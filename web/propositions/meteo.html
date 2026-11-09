@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Meteo et moment de la journee</title>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b}
+body{margin:0;background:var(--papier);color:var(--encre);font-family:Nunito,sans-serif;padding:16px;max-width:1300px;margin:auto}
+h1,h2,h3{font-family:Silkscreen,monospace;margin:.3em 0}
+.dec{border:3px solid var(--encre);border-radius:10px;background:#fff;padding:12px;margin:18px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.card{border:2px solid var(--encre);border-radius:8px;padding:8px;background:var(--papier)}
+.card img{width:100%;border:2px solid var(--encre);display:block;background:#222}
+.card p{font-size:14px;margin:6px 0}
+button{font-family:Silkscreen,monospace;border:2px solid var(--encre);background:#fff;padding:7px 11px;margin:4px 4px 0 0;cursor:pointer;border-radius:6px;color:var(--encre)}
+button.ok.on{background:#3b9c5a;color:#fff}button.ko.on{background:var(--accent);color:#fff}
+input.c{width:100%;box-sizing:border-box;border:2px solid var(--encre);border-radius:6px;padding:6px;margin-top:6px;font-family:Nunito,sans-serif;background:#fff;color:var(--encre)}
+textarea{width:100%;min-height:200px;font-family:Nunito,sans-serif;border:2px solid var(--encre);border-radius:6px;padding:8px;box-sizing:border-box;background:#fff;color:var(--encre)}
+.gen{background:var(--accent);color:#fff}
+.note{background:#fff;border-left:6px solid var(--accent);padding:8px 12px;margin:10px 0}
+</style></head><body>
+<h1>METEO ET MOMENT DE LA JOURNEE</h1>
+<div class="note">Captures du vrai moteur en temps reel (400 px, 48 couleurs). Chaque meteo arrive en douceur (nuage, premieres gouttes : 3 s sans effet), agit environ 30 s, puis repart. Effets de gameplay legers et identiques chez tous les joueurs (ils sont dans la simulation et son empreinte, donc en ligne a 1 a 8 joueurs) : pluie et orage = sol glissant et flaques ; orage = eclair annonce 0,6 s, equitable, jamais mortel ; vent = pousse un peu les projectiles ; brouillard et chaleur = visuels seulement. Cycle jour/nuit au fil des etages (lampadaires et neons qui s'allument). Les terrains interieurs n'ont aucune meteo. Option calme : plus de flash d'eclair, de scintillement ni de neon clignotant. Aucune meteo ne couvre la bande des combattants ni le HUD.</div>
+<div id="root"></div>
+<h2>Mon texte</h2>
+<button class="gen" id="gen">Generer mon texte</button>
+<textarea id="out" readonly></textarea>
+<script>
+const D=[["Ruelle du quartier est (nuit de pluie, 23 h 40)", [["t0_rain", "Pluie", "Un nuage passe, les premieres gouttes tombent (3 s, sans effet), puis le sol glisse : glisse allongee apres un coup, +25 % de vitesse dans une flaque (liseré clair). Neons rose et cyan allumes, lampadaires, voile bleu nuit."]]], ["Toits de la tour Kogen (plein ciel, jour)", [["t7_wind", "Vent", "Bandeau « le vent se leve », traits de vent, manche a air en haut de l'ecran : le sens se lit tout de suite. Pousse legerement les projectiles (0,35 px/image) et les corps en l'air ; papiers et banderole se tendent."]]], ["Toit-jardin du team building (jour, puis vent)", [["t10_heat", "Chaleur (etage 1)", "Voile chaud, soleil, air qui tremble au ras du sol. Purement visuel : aucun effet de gameplay, la lecture des combattants reste intacte."], ["t10_wind", "Vent (etage 2)", "Meme vent, sens inverse a l'etage suivant (le sens alterne comme la rafale d'evenement)."]]], ["Parc de la tour (aube, jour, crepuscule, nuit)", [["t11_fog", "Brouillard (etage 1, aube)", "Brume dans le ciel et l'arriere-plan, bandes qui derivent ; la bande des combattants reste nette. Purement visuel."], ["t11_rain", "Pluie (etage 2, jour)", "Flaques glissantes, ondes, goutte a goutte ; les passants sortent leurs parapluies (vie des decors)."], ["t11_tod0", "Cycle : aube (etage 1)", "Voile rose, derniers lampadaires."], ["t11_tod1", "Cycle : jour (etage 2)", "Lumiere franche, rien d'allume."], ["t11_tod2", "Cycle : crepuscule (etage 3)", "Voile orange, lampadaires qui s'allument."], ["t11_tod3", "Cycle : nuit (etage 4)", "Voile bleu nuit, lampadaires pleins."]]], ["Chantier de l'aile Est (orage, puis vent)", [["t12_storm", "Orage", "Ciel sombre, pluie dense, eclairs lointains. Un cercle jaune annonce 0,6 s l'eclair, il vise tour a tour heros ou ennemis (equitable), 10 degats, jamais mortel (laisse au moins 1 PV). Le flash blanc disparait en mode calme."], ["t12_wind", "Vent (etage 2)", "Rafales sur l'echafaudage, memes regles que les toits."]]], ["Terrain interieur (salle des serveurs) : aucune meteo", [["t2_indoor", "Meteo forcee sans effet", "On force l'orage dans une salle interieure : rien ne se passe (ni pluie, ni eclair, ni voile). Les terrains interieurs n'ont jamais de meteo."]]]];
+const st={},cm={};
+const root=document.getElementById('root');
+D.forEach(([name,cards])=>{
+ const sec=document.createElement('div');sec.className='dec';
+ sec.innerHTML='<h2>'+name+'</h2>';
+ const g=document.createElement('div');g.className='grid';
+ cards.forEach(([id,t,d])=>{
+  const c=document.createElement('div');c.className='card';
+  c.innerHTML='<h3>'+t+'</h3><img loading="lazy" src="meteo/'+id+'.gif" alt="'+t+'"><p>'+d+'</p><button class="ok">Valider</button><button class="ko">A refaire</button><input class="c" placeholder="Commentaire">';
+  const [ok,ko]=c.querySelectorAll('button');const inp=c.querySelector('input');
+  ok.onclick=()=>{st[id]='ok';ok.classList.add('on');ko.classList.remove('on')};
+  ko.onclick=()=>{st[id]='ko';ko.classList.add('on');ok.classList.remove('on')};
+  inp.oninput=()=>{cm[id]=inp.value};
+  g.appendChild(c)});
+ sec.appendChild(g);root.appendChild(sec)});
+document.getElementById('gen').onclick=()=>{
+ let l=['Retours sur la meteo et le moment de la journee :'];
+ D.forEach(([name,cards])=>{cards.forEach(([id,t])=>{
+  const s=st[id]==='ok'?'VALIDE':st[id]==='ko'?'A REFAIRE':'pas encore juge';
+  l.push('- '+name+' / '+t+' : '+s+(cm[id]?' ('+cm[id]+')':''))})});
+ document.getElementById('out').value=l.join('\n')};
+</script></body></html>
