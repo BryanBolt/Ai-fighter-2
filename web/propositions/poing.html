@@ -5,9 +5,9 @@ img{width:100%;border-radius:8px;background:#000}h2{font-size:16px;margin:6px 0 
 button{font:inherit;padding:9px 12px;border-radius:8px;border:0;margin:4px 4px 0 0;color:#fff;background:#555}button.v{background:#2e9b5b}button.x{background:#c03a62}
 textarea{width:100%;box-sizing:border-box;border-radius:6px;border:0;padding:6px;margin-top:6px;background:#15162a;color:#eee}#o{white-space:pre-wrap;background:#111;padding:10px;border-radius:8px;margin-top:12px}</style></head><body>
 <h1>Poing tonnerre avec la pose de poing</h1>
-<p>Vrai moteur, ralenti. Pour chaque coup : Valider ou A refaire (+ remarque), puis genere le texte et colle-le dans le chat.</p>
+<p>Vrai moteur, en temps reel (jab puis Poing tonnerre). Pour chaque coup : Valider ou A refaire (+ remarque), puis genere le texte et colle-le dans le chat.</p>
 <div class="g" id="g"></div><button onclick="out()" style="background:#e0507a;font-weight:700;margin-top:12px">Generer mon texte</button><div id="o"></div>
-<script>var C=[{"key": "p", "name": "Poing tonnerre (ta pose de poing)", "n": "bras avant", "d": "Direct du bras avant lance en fente : buste engage (29 deg), genou avant flechi, jambe arriere qui pousse, bras arriere en garde. Ralenti.", "img": "poing_tonnerre.gif"}],st={};
+<script>var C=[{"key": "p", "name": "Poing tonnerre (ta pose de poing)", "n": "bras avant", "d": "Direct du bras avant lance en fente : buste engage (29 deg), genou avant flechi, jambe arriere qui pousse, bras arriere en garde. ", "img": "poing_tonnerre.gif"}],st={};
 var g=document.getElementById('g');
 C.forEach(function(c){var d=document.createElement('div');d.className='c';d.id='c_'+c.key;
 d.innerHTML='<img src="'+c.img+'" alt=""><h2>'+c.name+' <span class="n">'+c.n+'</span></h2><p>'+c.d+'</p><button class="v" data-k="'+c.key+'" data-v="1">Valider</button><button class="x" data-k="'+c.key+'" data-v="-1">A refaire</button><textarea id="t_'+c.key+'" rows="2" placeholder="Remarque (jambe, rythme, trainee...)"></textarea>';g.appendChild(d);});
