@@ -47,7 +47,7 @@ textarea.note{min-height:0;height:auto;margin-top:8px;font:13px/1.4 system-ui,sa
 @media(max-width:560px){body{padding:10px}}
 </style></head><body>
 <h1>ROGUELITE : OBJETS ET ETAGES</h1>
-<p class="lead">Previsualisation seulement : rien n'est branche au jeu. Chaque animation est une vraie capture du moteur (les objets sans animation propre sont marques « concept »). Les objets s'ajoutent a vos coups, ils ne les remplacent pas.</p>
+<p class="lead">Chaque animation est une vraie capture du moteur en temps reel (les objets sans animation propre sont marques « concept »). Les objets s'ajoutent a vos coups, ils ne les remplacent pas. Les neuf pouvoirs demandes (cris du dragon, de feu, de gel et du temps, canon charge, arme de boss, dash aerien, saut mural, armure a capsules) sont maintenant reels dans le mode Roguelite (beta) : leurs fiches montrent le GIF du moteur et six images-cles ; les six armes de boss ne se tirent pas au hasard, un boss vaincu les propose.</p>
 
 <h2>Options de partie</h2>
 <div class="panel">
@@ -76,6 +76,7 @@ textarea.note{min-height:0;height:auto;margin-top:8px;font:13px/1.4 system-ui,sa
 var ITEMS=window.RL_ITEMS||[],FLOORS=window.RL_FLOORS||[];
 var CATS=[["coup","Nouveaux coups"],["arme","Armes"],["transfo","Transformations"],["pouvoir","Pouvoirs"],["regle","Regles"]];
 var STAGE_IMG=[4,2,12,11,3,10];
+var BW=/^arme_(lames|flammes|eclairs|glace|boule|eventail)$/;
 var st={cats:{},items:{},verdict:{},notes:{}},view="all";
 CATS.forEach(function(c){st.cats[c[0]]=true});ITEMS.forEach(function(i){st.items[i.id]=true});
 try{var s=JSON.parse(localStorage.getItem("rl_state")||"null");if(s){for(var k in s.cats)if(k in st.cats)st.cats[k]=s.cats[k];for(var k2 in s.items)if(k2 in st.items)st.items[k2]=s.items[k2];st.verdict=s.verdict||{};st.notes=s.notes||{}}}catch(e){}
@@ -88,9 +89,9 @@ function renderOptions(){
   CATS.forEach(function(c){var b=el("span","sw"+(st.cats[c[0]]?"":" off"));b.tabIndex=0;b.setAttribute("role","switch");b.setAttribute("aria-checked",st.cats[c[0]]);b.appendChild(el("i"));b.appendChild(document.createTextNode(c[1]));
     var f=function(){st.cats[c[0]]=!st.cats[c[0]];save();renderOptions()};b.onclick=f;b.onkeydown=function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();f()}};cats.appendChild(b)});
   var ch=$("chips");ch.innerHTML="";
-  ITEMS.forEach(function(i){var c=el("span","chip"+(st.items[i.id]?"":" off")+(i.abusif?" ab":""),i.name+(i.abusif?" !":""));c.tabIndex=0;c.title=i.abusif?"Marque abusif":"";
+  ITEMS.forEach(function(i){if(BW.test(i.id))return;var c=el("span","chip"+(st.items[i.id]?"":" off")+(i.abusif?" ab":""),i.name+(i.abusif?" !":""));c.tabIndex=0;c.title=i.abusif?"Marque abusif":"";
     var f=function(){st.items[i.id]=!st.items[i.id];save();renderOptions()};c.onclick=f;c.onkeydown=function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();f()}};ch.appendChild(c)});
-  var n=ITEMS.filter(active).length;$("count").textContent=n+" objets tirables sur "+ITEMS.length;
+  var DR=ITEMS.filter(function(i){return !BW.test(i.id)});var n=DR.filter(active).length;$("count").textContent=n+" objets tirables sur "+DR.length;
   var cards=document.querySelectorAll(".card");
   for(var k=0;k<cards.length;k++){var it=ITEMS[cards[k].dataset.i];cards[k].style.opacity=active(it)?1:.35;cards[k].classList.toggle("hidden",view!=="all"&&it.cat!==view)}
 }
@@ -103,11 +104,12 @@ function renderCards(){
     var c=el("div","card");c.dataset.id=i.id;c.dataset.i=idx;
     var sh=el("div","shot");
     if(i.scene){var im=new Image();im.loading="lazy";im.alt="Animation : "+i.name;im.src="roguelite/it_"+i.scene+".gif";im.onerror=function(){sh.textContent="capture absente"};sh.appendChild(im);sh.appendChild(el("span","tag","MOTEUR"))}
-    else{sh.appendChild(el("span","","CONCEPT - pas de visuel propre"))}
+    else if(i.soon){sh.appendChild(el("span","","BIENTOT - idee a creer, pas encore en jeu (jamais tiree)"))}else{sh.appendChild(el("span","","CONCEPT - pas de visuel propre"))}
     c.appendChild(sh);
     var b=el("div","body");b.appendChild(el("h3","",i.name));
-    var m=el("div","meta");m.appendChild(el("span","b",i.catName));m.appendChild(el("span","b r"+i.rarity,i.rarityName));if(i.abusif)m.appendChild(el("span","b abus","ABUSIF"));if(!i.unique)m.appendChild(el("span","b","cumulable"));
-    b.appendChild(m);b.appendChild(el("p","desc",i.desc));b.appendChild(el("p","ref","Contenu du jeu : "+i.content));
+    var m=el("div","meta");m.appendChild(el("span","b",i.catName));m.appendChild(el("span","b r"+i.rarity,i.rarityName));if(i.abusif)m.appendChild(el("span","b abus","ABUSIF"));if(BW.test(i.id))m.appendChild(el("span","b","OFFERTE APRES UN BOSS"));if(i.soon)m.appendChild(el("span","b","BIENTOT"));if(!i.unique)m.appendChild(el("span","b","cumulable"));
+    b.appendChild(m);b.appendChild(el("p","desc",i.desc));
+    if(i.scene&&i.scene.indexOf("rl_")===0){var sl=document.createElement("a");sl.href="roguelite/it_"+i.scene+"_sheet.jpg";sl.target="_blank";sl.title="Images-cles (clic : agrandir)";var si=new Image();si.loading="lazy";si.alt="Images-cles : "+i.name;si.src=sl.href;si.style.cssText="width:100%;display:block;border-radius:8px";si.onerror=function(){sl.style.display="none"};sl.appendChild(si);b.appendChild(sl)}b.appendChild(el("p","ref","Contenu du jeu : "+i.content));
     var a=el("div","act");[["k","Garder"],["r","Refuser"],["a","Trop abuse"],["f","Animation a refaire"]].forEach(function(x){var bt=el("button","",x[1]);bt.dataset.v=x[0];bt.onclick=function(){setV(i.id,x[0])};a.appendChild(bt)});
     b.appendChild(a);
     var ta=document.createElement("textarea");ta.className="note";ta.rows=2;ta.placeholder="Commentaire : animation pas folle, probleme, idee...";ta.value=st.notes[i.id]||"";
