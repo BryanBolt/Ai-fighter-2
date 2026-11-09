@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Camera du coup final 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b;--vert:#2f9e62}
+*{box-sizing:border-box}
+body{margin:0;background:var(--papier);color:var(--encre);font-family:Nunito,sans-serif;line-height:1.5}
+main{max-width:1040px;margin:0 auto;padding:24px 16px 64px}
+h1,h2,h3{font-family:Silkscreen,monospace;margin:0 0 8px}
+h1{font-size:28px}
+h2{font-size:18px;color:var(--accent);margin-top:28px}
+h3{font-size:16px}
+.lead{max-width:72ch}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:16px;margin:12px 0}
+.card{background:#fff;border:3px solid var(--encre);border-radius:10px;padding:12px;display:flex;flex-direction:column}
+.card.ref{border-color:var(--vert)}
+.tag{display:inline-block;font-family:Silkscreen,monospace;font-size:11px;padding:2px 8px;border-radius:99px;border:2px solid var(--encre);margin-bottom:6px;align-self:flex-start}
+.tag.ref{background:var(--vert);color:#fff;border-color:var(--vert)}
+.tag.new{background:var(--accent);color:#fff;border-color:var(--accent)}
+.card img{width:100%;height:auto;display:block;border:2px solid var(--encre);border-radius:6px;background:var(--encre);aspect-ratio:4/3}
+.card p{margin:8px 0;font-size:14px}
+.row{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+button{font-family:Silkscreen,monospace;font-size:13px;border:3px solid var(--encre);border-radius:8px;padding:8px 12px;background:var(--papier);color:var(--encre);cursor:pointer;flex:1;min-width:90px}
+button.ok.on{background:var(--vert);color:#fff;border-color:var(--vert)}
+button.ko.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+button.sl.on{background:var(--encre);color:var(--papier)}
+button:focus-visible,textarea:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.go{background:var(--accent);color:#fff;border-color:var(--accent);margin-top:20px;width:100%;padding:12px;flex:none}
+textarea{width:100%;font-family:Nunito,sans-serif;font-size:14px;border:3px solid var(--encre);border-radius:8px;padding:8px;background:#fff;color:var(--encre);margin-top:8px}
+textarea.com{min-height:54px}
+#out{min-height:190px;margin-top:12px}
+ul{padding-left:20px;margin:6px 0}
+.note{font-size:13px;opacity:.85}
+</style>
+</head>
+<body>
+<main>
+<h1>Camera du coup final 2</h1>
+<p class="lead">Le dernier ennemi tombe : le jeu fige l'impact, passe en ralenti, et la camera <b>suit le corps expedie</b> (centre, zoom et hauteur) avant de revenir au cadrage normal. Chaque coup envoie le corps a sa maniere : direction, force, rotation, rebond au sol, choc au mur. Un appui apres 0,6 s ecourte le plan. Option <b>Camera du coup final : oui / non</b> dans Options.</p>
+<p class="lead note"><b>En ligne (1 a 8 joueurs)</b> : le plan est decide par la simulation commune (meme hash chez tous). La cible est toujours la victime du dernier coup, quel que soit celui qui frappe (joueur local, joueur distant ou allie IA) : tout le monde voit le meme plan. Un appui qui ecourte le plan est local (rendu seul) et ne bloque personne ; le centre reste borne a l'arene, jamais de camera hors ecran.</p>
+<p class="lead note">Les GIF sont enregistres avec le vrai moteur du jeu, en temps reel (400 px, 48 couleurs). Le bouton <b>Ralenti x0,25</b> rejoue les memes images quatre fois plus lentement pour juger la trajectoire. Poing, pied et super sont deja valides : ils servent de reference et leur comportement n'a pas change.</p>
+
+<h2>Reference (valides, inchanges : poing, pied, super)</h2>
+<div class="grid" id="g1"></div>
+<h2>Nouveaux plans</h2>
+<div class="grid" id="g2"></div>
+
+<button class="go" id="gen">Generer mon texte</button>
+<textarea id="out" readonly placeholder="Ton retour apparait ici : copie-le dans le chat."></textarea>
+</main>
+<script>
+var V=[
+ {id:'poing',ref:1,t:'Poing (dernier coup)',d:'Impact tenu 14 images, zoom serre, trait de frappe. Le corps part droit devant lui, retombe et glisse.'},
+ {id:'pied',ref:1,t:'Pied (dernier coup)',d:'Plan plus large entre attaquant et victime. Meme trajectoire que le poing, cadre plus ouvert.'},
+ {id:'lanceur',t:'Lanceur (dernier coup)',d:'Le corps est catapulte tres haut : la camera monte avec lui, colonne de lumiere a l\'impact, traine derriere le corps, il retombe et rebondit.'},
+ {id:'projection',t:'Projection (dernier coup)',d:'Le corps est ecrase contre le sol : ondes plates et fissures, il rebondit haut une fois, la camera le suit puis retombe.'},
+ {id:'super',ref:1,t:'Super (dernier coup)',d:'Valide : recul du cadre, la rafale et la chute se lisent. Garde sa version actuelle, inchangee.'},
+ {id:'boss',t:'Boss vaincu',d:'Pause dramatique 0,4 s, ralenti, le boss est expedie, fin selon son nom (chute, explosion, desintegration), son nom en grand, retour a l\'ecran de victoire. Moins de 3 s, ecourtable.'}
+];
+var state={},coms={};
+function card(v,host){
+  var c=document.createElement('div');c.className='card'+(v.ref?' ref':'');
+  c.innerHTML='<span class="tag '+(v.ref?'ref':'new')+'">'+(v.ref?'VALIDE - reference':'A juger')+'</span><h3>'+v.t+'</h3>'
+   +'<img src="killcam/'+v.id+'.gif" alt="'+v.t+'" loading="lazy" width="400" height="300"><p>'+v.d+'</p>'
+   +'<div class="row"><button class="sl" aria-pressed="false">Ralenti x0,25</button></div>'
+   +'<div class="row"><button class="ok">Valider</button><button class="ko">A refaire</button></div>'
+   +'<textarea class="com" placeholder="Commentaire (optionnel)" aria-label="Commentaire '+v.t+'"></textarea>';
+  var im=c.querySelector('img'),sl=c.querySelector('.sl'),ok=c.querySelector('.ok'),ko=c.querySelector('.ko'),tx=c.querySelector('.com');
+  sl.onclick=function(){var on=!sl.classList.contains('on');sl.classList.toggle('on',on);sl.setAttribute('aria-pressed',on);im.src='killcam/'+v.id+(on?'_lent':'')+'.gif'};
+  ok.onclick=function(){state[v.id]='ok';ok.classList.add('on');ko.classList.remove('on')};
+  ko.onclick=function(){state[v.id]='ko';ko.classList.add('on');ok.classList.remove('on')};
+  tx.oninput=function(){coms[v.id]=tx.value};
+  host.appendChild(c);
+}
+V.forEach(function(v){card(v,document.getElementById(v.ref?'g1':'g2'))});
+document.getElementById('gen').onclick=function(){
+  var l=['Camera du coup final 2 :'];
+  V.forEach(function(v){
+    var s=state[v.id]==='ok'?'VALIDE':state[v.id]==='ko'?'A REFAIRE':'non vu';
+    l.push('- '+v.t+' : '+s+(coms[v.id]&&coms[v.id].trim()?' | '+coms[v.id].trim().replace(/\s+/g,' '):''));
+  });
+  document.getElementById('out').value=l.join('\n');
+};
+</script>
+</body>
+</html>

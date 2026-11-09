@@ -1,0 +1,227 @@
+[
+ {
+  "id": "sora_3",
+  "name": "Garde brisee",
+  "keys": [
+   "Y",
+   "Y",
+   "Y"
+  ],
+  "desc": "Brise-garde, fente plongeante, fendoir retourne : trois lourdes qui enfoncent la defense.",
+  "damage": 32
+ },
+ {
+  "id": "sora_4",
+  "name": "Passe d'armes",
+  "keys": [
+   "X",
+   "X",
+   "Y",
+   "Y"
+  ],
+  "desc": "Deux coupes pour ouvrir, la double croix puis les lames croisees : la passe complete.",
+  "damage": 36
+ },
+ {
+  "id": "sora_5",
+  "name": "Moulinet du duelliste",
+  "keys": [
+   "X",
+   "Y",
+   "X",
+   "Y",
+   "X"
+  ],
+  "desc": "Cinq coupes en alternance X Y : le moulinet de lame final repousse l'adversaire.",
+  "damage": 49
+ },
+ {
+  "id": "sora_6",
+  "name": "Lanceur de la lune",
+  "keys": [
+   "X",
+   "X",
+   "X",
+   "X",
+   "Y",
+   "Y (air)"
+  ],
+  "desc": "Quatre coupes, la lame ascendante qui soulevent, puis la coupe plongeante qui le ramene au sol.",
+  "damage": 49
+ },
+ {
+  "id": "sora_7",
+  "name": "Lune montante",
+  "keys": [
+   "Y",
+   "X",
+   "Y",
+   "X",
+   "Y",
+   "Y (air)"
+  ],
+  "desc": "Brise-garde, tourbillon, double croix, pivot massif, la lame ascendante qui soulevent et la plongeante en l'air.",
+  "damage": 61
+ },
+ {
+  "id": "sora_8",
+  "name": "Riposte en tourbillon",
+  "keys": [
+   "Y",
+   "Y",
+   "X",
+   "X",
+   "X"
+  ],
+  "desc": "Deux lourdes pour fixer la garde, la taille tournoyante, le tourbillon rasant et le revers pivotant.",
+  "damage": 49
+ },
+ {
+  "id": "sora_9",
+  "name": "Cascade aerienne",
+  "keys": [
+   "X",
+   "Y",
+   "Y",
+   "X",
+   "Y",
+   "X (air)"
+  ],
+  "desc": "Taille, revers descendant, fendoir retourne, pivot massif, lame ascendante puis le tourbillon aerien : la cible ne touche plus le sol.",
+  "damage": 53
+ },
+ {
+  "id": "sora_10",
+  "name": "Cascade du fendoir",
+  "keys": [
+   "X",
+   "X",
+   "X",
+   "Y",
+   "Y"
+  ],
+  "desc": "Taille, revers, revers pivot, coupe descendante et fendoir lourd qui brise la garde.",
+  "damage": 53
+ },
+ {
+  "id": "sora_s1",
+  "name": "Taille",
+  "keys": [
+   "X"
+  ],
+  "desc": "X : coupe horizontale d'ouverture.",
+  "damage": 8
+ },
+ {
+  "id": "sora_s2",
+  "name": "Brise-garde",
+  "keys": [
+   "Y"
+  ],
+  "desc": "Y : coupe verticale lourde, casse la garde.",
+  "damage": 16
+ },
+ {
+  "id": "sora_s3",
+  "name": "Estoc fendant",
+  "keys": [
+   "Av+X"
+  ],
+  "desc": "Avant + X : estoc en fente.",
+  "damage": 9
+ },
+ {
+  "id": "sora_s4",
+  "name": "Bond fendant",
+  "keys": [
+   "Av+Y"
+  ],
+  "desc": "Avant + Y : bond puis coupe en pique.",
+  "damage": 14
+ },
+ {
+  "id": "sora_s5",
+  "name": "Envol",
+  "keys": [
+   "Haut+Y"
+  ],
+  "desc": "Haut + Y : coupe remontante, lanceur.",
+  "damage": 12
+ },
+ {
+  "id": "sora_s6",
+  "name": "Fauche",
+  "keys": [
+   "Bas+X"
+  ],
+  "desc": "Bas + X : coupe basse horizontale.",
+  "damage": 9
+ },
+ {
+  "id": "sora_s7",
+  "name": "Tourbillon de garde",
+  "keys": [
+   "Arr+X"
+  ],
+  "desc": "Arriere + X : tour sur soi qui repousse.",
+  "damage": 9
+ },
+ {
+  "id": "sora_s8",
+  "name": "Croix ecrasante",
+  "keys": [
+   "Bas+Y"
+  ],
+  "desc": "Bas + Y : double coupe en croix, plusieurs touches.",
+  "damage": 15
+ },
+ {
+  "id": "sora_s9",
+  "name": "Coupe de recul",
+  "keys": [
+   "Arr+Y"
+  ],
+  "desc": "Arriere + Y : coupe en reculant.",
+  "damage": 9
+ },
+ {
+  "id": "sora_s10",
+  "name": "Taille montante",
+  "keys": [
+   "Haut+X"
+  ],
+  "desc": "Haut + X : coupe montante rapide.",
+  "damage": 8
+ },
+ {
+  "id": "sora_s11",
+  "name": "Frappe fantome",
+  "keys": [
+   "B"
+  ],
+  "desc": "B : fente eclair qui traverse l'adversaire.",
+  "damage": 14
+ },
+ {
+  "id": "sora_1",
+  "name": "Trois coupes",
+  "keys": [
+   "X",
+   "X",
+   "X"
+  ],
+  "desc": "Taille, revers, revers pivot : trois coupes qui alternent les cotes sans jamais reculer le sabre.",
+  "damage": 26
+ },
+ {
+  "id": "sora_2",
+  "name": "Revers et volte",
+  "keys": [
+   "X",
+   "Y",
+   "X"
+  ],
+  "desc": "Taille, revers descendant, puis la volte tournoyante qui ramene la lame en garde.",
+  "damage": 24
+ }
+]
