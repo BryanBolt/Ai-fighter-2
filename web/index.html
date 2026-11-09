@@ -33,6 +33,66 @@
 <canvas id="glcanvas" tabindex="1"></canvas>
 <div id="loading"><i></i>AI FIGHTER 2<small>chargement, quelques secondes...</small></div>
 <button id="fs" title="Plein ecran" aria-label="Plein ecran">[ ]</button>
+<button id="pf" title="Prevenir mes amis" aria-label="Prevenir mes amis" hidden>Amis</button>
+<div id="pfp" hidden>
+  <b>Prevenir mes amis</b>
+  <p>Un code d'amis commun, puis chaque ami active les notifications : quand tu cliques sur Inviter, il recoit un message.</p>
+  <label>Code d'amis <input id="pfc" maxlength="8" autocomplete="off" autocapitalize="characters" placeholder="ex. K7M2Q"></label>
+  <div><button id="pfn" type="button">Nouveau code</button> <button id="pfa" type="button">Activer</button> <button id="pfx" type="button">Fermer</button></div>
+  <small id="pfm"></small>
+</div>
+<style>
+  #pf { position: absolute; left: max(6px, env(safe-area-inset-left)); top: max(6px, env(safe-area-inset-top)); z-index: 3; opacity: .3; font: 600 12px monospace; border: 1px solid var(--ink); background: var(--paper); color: var(--ink); border-radius: 6px; padding: 6px 8px; }
+  #pf:hover, #pf:focus { opacity: .9; }
+  #pfp { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 5; width: min(320px, 90vw); box-sizing: border-box; padding: 14px; background: var(--paper); color: var(--ink); border: 2px solid var(--ink); border-radius: 8px; font: 14px/1.4 ui-monospace, Menlo, Consolas, monospace; }
+  #pfp[hidden], #pf[hidden] { display: none; }
+  #pfp p, #pfp small { display: block; margin: 8px 0; font-size: 12px; opacity: .8; }
+  #pfp input { width: 100%; box-sizing: border-box; font: inherit; padding: 6px; margin: 4px 0 8px; text-transform: uppercase; }
+  #pfp button { font: inherit; padding: 8px 10px; margin: 2px 2px 0 0; border: 1px solid var(--ink); background: var(--paper); color: var(--ink); border-radius: 6px; }
+</style>
+<script>
+// Notifications push d'invitation : tout est optionnel, la permission n'est demandee que sur un clic.
+(function () {
+  var LS = "afh_circle", EP = "afh_push_ep";
+  function get(k) { try { return localStorage.getItem(k) || ""; } catch (e) { return ""; } }
+  function set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  var $ = function (id) { return document.getElementById(id); };
+  var msg = function (t) { $("pfm").textContent = t; };
+  var ok = ("serviceWorker" in navigator) && ("PushManager" in window) && ("Notification" in window) && location.protocol.indexOf("http") === 0;
+  if (!ok) return;
+  fetch("/push/key").then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
+    if (!j || !j.key) return;
+    window.afhPushKey = j.key; $("pf").hidden = false; $("pfc").value = get(LS);
+  }).catch(function () {});
+  function b64(s) { s = s.replace(/-/g, "+").replace(/_/g, "/"); var r = atob(s + "===".slice((s.length + 3) % 4)); var a = new Uint8Array(r.length); for (var i = 0; i < r.length; i++) a[i] = r.charCodeAt(i); return a; }
+  $("pf").onclick = function () { $("pfp").hidden = false; };
+  $("pfx").onclick = function () { $("pfp").hidden = true; };
+  $("pfn").onclick = function () { var A = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789", c = ""; var r = new Uint8Array(5); crypto.getRandomValues(r); for (var i = 0; i < 5; i++) c += A[r[i] % A.length]; $("pfc").value = c; };
+  $("pfa").onclick = function () {
+    var c = $("pfc").value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+    if (c.length < 5) { msg("Code de 5 caracteres minimum."); return; }
+    msg("Activation...");
+    Notification.requestPermission().then(function (p) {
+      if (p !== "granted") { msg("Notifications refusees par le navigateur."); throw 0; }
+      return navigator.serviceWorker.ready;
+    }).then(function (reg) {
+      return reg.pushManager.getSubscription().then(function (s) { return s || reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64(window.afhPushKey) }); });
+    }).then(function (s) {
+      var name = get("afh_name") || "";
+      return fetch("/push/subscribe", { method: "POST", body: JSON.stringify({ circle: c, subscription: s.toJSON(), name: name }) }).then(function (r) {
+        if (!r.ok) throw new Error("serveur");
+        set(LS, c); set(EP, s.endpoint); msg("C'est fait : partage le code " + c + " a tes amis.");
+      });
+    }).catch(function (e) { if (e !== 0) msg("Impossible d'activer (reessaie dans un instant)."); });
+  };
+  // Appele par le jeu quand il copie le lien d'invitation : previent le cercle (le serveur limite a 1 fois / 30 s).
+  window.afhPushInvite = function (url) {
+    var c = get(LS); if (!c) return;
+    try { var m = /[?&]salon=([A-Za-z0-9]+)/.exec(url); if (!m) return;
+      fetch("/push/invite", { method: "POST", body: JSON.stringify({ circle: c, code: m[1], endpoint: get(EP) }) }).catch(function () {}); } catch (e) {}
+  };
+})();
+</script>
 <script src="mq_js_bundle.js"></script>
 <script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () {}); }); }</script>
 <script>
@@ -102,6 +162,7 @@ miniquad_add_plugin({
     importObject.env.afh_share = function (p, l) {
       var url = UTF8ToString(p, l);
       var done = 0;
+      try { if (window.afhPushInvite) window.afhPushInvite(url); } catch (e) {}
       function legacy() {
         try { var t = document.createElement("textarea"); t.value = url; t.style.position = "fixed"; t.style.opacity = "0"; document.body.appendChild(t); t.select(); done = document.execCommand("copy") ? 1 : 0; document.body.removeChild(t); } catch (e) {}
       }

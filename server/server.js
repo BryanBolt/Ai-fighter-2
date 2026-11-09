@@ -7,6 +7,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { WebSocketServer } from 'ws';
+import { createPush } from './push.js';
 
 export const PROTOCOL_VERSION = 7; // 7 : entree Saisie (nouveau bit d'entree) + coups renommes (SCHEMA_VERSION 8) ; 6 : table des coups changee (grammaire X/Y des 9 autres heros, SCHEMA_VERSION 7) ; 5 : jusqu'a 8 joueurs, vague/PV de depart (solo -> en ligne) ; 4 : table des coups changee (aeriens, realisme, grammaire X/Y ; tir allie, QA). 3 : parties hebergees (jeu complet : loadout, cmd sequences). 2 : join_any / host. Seuls les clients v7 sont acceptes.
 const COMPAT_VERSIONS = [7]; // protocole 7 : les clients 1 a 6 n'ont pas la meme table de coups (et 1 a 4 ne savent pas lire des salons de 8 places), ils doivent se mettre a jour
@@ -43,6 +44,7 @@ export function createServer(opts = {}) {
   const graceMs = opts.graceMs ?? 30000; // partie vide apres une simple coupure : gardee un instant
   const restartMs = opts.restartMs ?? 7000; // ecran de resultats avant la nouvelle partie
   const joinRate = new Map(); // ip -> derniere demande host/join_any
+  const push = createPush({ sender: opts.pushSender ?? null, env: opts.pushEnv ?? process.env, roomExists: (c) => rooms.has(c) });
 
   const rnd = (n) => crypto.randomInt(n);
   const newCode = () => {
@@ -91,6 +93,7 @@ export function createServer(opts = {}) {
       res.end(JSON.stringify({ v: PROTOCOL_VERSION, rooms: rooms.size, players: [...rooms.values()].reduce((n, r) => n + humans(r).length, 0), hosted: [...rooms.values()].filter((r) => r.full).length, conns: clients.size, up: Math.round((Date.now() - bornAt) / 1000) })); return;
     }
     if (url.pathname === '/api/ideas' && req.method === 'POST') { handleIdea(req, res); return; }
+    if (push.handle(req, res, url.pathname)) return;
     // Chemin mal encode (« %E0%A4 », « % ») : 400 au lieu d'une exception non rattrapee qui arretait tout le serveur.
     let p;
     try { p = decodeURIComponent(url.pathname); } catch { res.writeHead(400, { 'content-type': 'text/plain' }); res.end('chemin invalide'); return; }
@@ -610,7 +613,7 @@ export function createServer(opts = {}) {
   }, opts.beatMs ?? 20000);
   beat.unref?.();
 
-  return { server, wss, rooms, close: () => new Promise((r) => { clearInterval(timer); clearInterval(beat); for (const w of wss.clients) w.terminate(); wss.close(() => server.close(() => r())); }) };
+  return { server, wss, rooms, pushCircles: push.circles, close: () => new Promise((r) => { clearInterval(timer); clearInterval(beat); for (const w of wss.clients) w.terminate(); wss.close(() => server.close(() => r())); }) };
 }
 
 // Lancement direct.
