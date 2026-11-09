@@ -5,6 +5,7 @@ import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import zlib from 'node:zlib';
 import { fileURLToPath } from 'node:url';
 import { WebSocketServer } from 'ws';
 import { createPush } from './push.js';
@@ -26,7 +27,8 @@ const ROSTER = 10; // heros du roster en ligne
 const STAGES = 12;
 const FULL_STAGES = 16; // parties hebergees : tous les stages de la campagne
 const MAX_SLOTS = 8;
-const REJOIN_MARGIN = 120; // images d'avance pour tout evenement de controle
+const REJOIN_MIN = 15; // images d'avance minimales pour un evenement de controle (retour quasi immediat)
+const REJOIN_MAX = 590; // plafond (le journal accepte au plus +600 images)
 const HOLD_MS = 20 * 60 * 1000; // une place coupee reste reservee 20 min
 const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // sans caracteres ambigus (0/O, 1/I)
 
@@ -40,7 +42,7 @@ export function createServer(opts = {}) {
   const banned = new Map(); // code -> Set(ip)
   const ideasRate = new Map();
   const maxRooms = opts.maxRooms ?? Number(process.env.MAX_ROOMS || 60);
-  const autoHoldMs = opts.autoHoldMs ?? 15000; // reprise rapide apres une coupure dans une partie en cours
+  const autoHoldMs = opts.autoHoldMs ?? 10 * 60 * 1000; // place d'un joueur parti reservee pour son retour (le heros s'efface au prochain boss, cote clients)
   const graceMs = opts.graceMs ?? 30000; // partie vide apres une simple coupure : gardee un instant
   const restartMs = opts.restartMs ?? 7000; // ecran de resultats avant la nouvelle partie
   const joinRate = new Map(); // ip -> derniere demande host/join_any
@@ -79,7 +81,7 @@ export function createServer(opts = {}) {
   const bornAt = Date.now();
 
   // ---------------------------------------------------------------- HTTP
-  const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.wasm': 'application/wasm', '.json': 'application/json', '.png': 'image/png', '.webmanifest': 'application/manifest+json', '.txt': 'text/plain; charset=utf-8' };
+  const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.wasm': 'application/wasm', '.json': 'application/json', '.png': 'image/png', '.webmanifest': 'application/manifest+json', '.svg': 'image/svg+xml', '.ico': 'image/x-icon', '.css': 'text/css; charset=utf-8', '.ogg': 'audio/ogg', '.webp': 'image/webp', '.map': 'application/json', '.txt': 'text/plain; charset=utf-8' };
   const server = http.createServer((req, res) => {
     let url;
     try { url = new URL(req.url, 'http://x'); } catch { res.writeHead(400, { 'content-type': 'text/plain' }); res.end('requete invalide'); return; }
@@ -105,9 +107,61 @@ export function createServer(opts = {}) {
     if (p.includes('\0') || !(file === rootDir || file.startsWith(rootDir + path.sep)) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) {
       res.writeHead(404, { 'content-type': 'text/plain' }); res.end('introuvable'); return;
     }
-    res.writeHead(200, { 'content-type': MIME[path.extname(file)] || 'application/octet-stream', 'cache-control': 'no-cache' });
-    fs.createReadStream(file).pipe(res);
+    serveStatic(req, res, file);
   });
+
+  // Fichiers du jeu : ETag + Last-Modified (revalidation : 304 sans retelecharger les 10+ Mo du wasm), compression gzip/brotli
+  // des types compressibles gardee en memoire (calculee une fois par version de fichier), erreurs de lecture rattrapees
+  // (un flux sans gestionnaire d'erreur arretait tout le relais), seulement GET/HEAD.
+  const COMPRESSIBLE = new Set(['.html', '.js', '.json', '.wasm', '.webmanifest', '.svg', '.txt', '.css', '.map']);
+  const zcache = new Map(); // "fichier|mtime|taille|codage" -> Promise<Buffer>
+  const ZCACHE_MAX = 12;
+  const BROTLI_MAX = 3 * 1024 * 1024; // au-dela (le wasm) : gzip, bien plus rapide a calculer sur un petit serveur
+  function compressed(file, st, enc) {
+    const key = `${file}|${st.mtimeMs}|${st.size}|${enc}`;
+    let hit = zcache.get(key);
+    if (!hit) {
+      hit = fs.promises.readFile(file).then((buf) => new Promise((ok, ko) => {
+        const done = (e, out) => (e ? ko(e) : ok(out));
+        if (enc === 'br') zlib.brotliCompress(buf, { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 5, [zlib.constants.BROTLI_PARAM_SIZE_HINT]: buf.length } }, done);
+        else zlib.gzip(buf, { level: 6 }, done);
+      }));
+      hit.catch(() => zcache.delete(key));
+      zcache.set(key, hit);
+      while (zcache.size > ZCACHE_MAX) zcache.delete(zcache.keys().next().value);
+    }
+    return hit;
+  }
+  function serveStatic(req, res, file) {
+    if (req.method !== 'GET' && req.method !== 'HEAD') { res.writeHead(405, { 'content-type': 'text/plain', allow: 'GET, HEAD' }); res.end('methode refusee'); return; }
+    let st;
+    try { st = fs.statSync(file); } catch { res.writeHead(404, { 'content-type': 'text/plain' }); res.end('introuvable'); return; }
+    const ext = path.extname(file);
+    const accept = String(req.headers['accept-encoding'] || '');
+    const enc = COMPRESSIBLE.has(ext) && st.size > 1024 ? (/\bbr\b/.test(accept) && st.size <= BROTLI_MAX ? 'br' : /\bgzip\b/.test(accept) ? 'gzip' : '') : '';
+    const etag = `"${st.size.toString(16)}-${Math.round(st.mtimeMs).toString(16)}${enc ? '-' + enc : ''}"`;
+    const head = {
+      'content-type': MIME[ext] || 'application/octet-stream', 'cache-control': 'no-cache', etag, 'last-modified': st.mtime.toUTCString(),
+      'x-content-type-options': 'nosniff', vary: 'Accept-Encoding',
+    };
+    if (ext === '.js' && path.basename(file) === 'sw.js') head['service-worker-allowed'] = '/';
+    const inm = req.headers['if-none-match'];
+    if (inm && inm.split(',').some((t) => t.trim() === etag || t.trim() === 'W/' + etag)) { res.writeHead(304, head); res.end(); return; }
+    const fail = () => { if (!res.headersSent) { try { res.writeHead(500, { 'content-type': 'text/plain' }); } catch { /* deja ferme */ } } res.end(); };
+    if (enc) {
+      compressed(file, st, enc).then((buf) => {
+        res.writeHead(200, { ...head, 'content-encoding': enc, 'content-length': buf.length });
+        res.end(req.method === 'HEAD' ? undefined : buf);
+      }).catch(fail);
+      return;
+    }
+    res.writeHead(200, { ...head, 'content-length': st.size });
+    if (req.method === 'HEAD') { res.end(); return; }
+    const rs = fs.createReadStream(file);
+    rs.on('error', () => { res.destroy(); });
+    res.on('close', () => rs.destroy());
+    rs.pipe(res);
+  }
 
   function handleIdea(req, res) {
     const ip = req.socket.remoteAddress || '?';
@@ -197,6 +251,8 @@ export function createServer(opts = {}) {
     broadcast(room, { t: 'start', ...room.config });
   }
 
+  // Avance d'un evenement de controle : le temps de rejeu du journal chez l'arrivant (~ 1/25 des images deja jouees) pour ne pas figer les autres, au moins 15 images.
+  const rejoinMargin = (room) => Math.max(REJOIN_MIN, Math.min(REJOIN_MAX, Math.round(highest(room) / 25) + 12));
   const highest = (room) => Math.max(-1, ...room.slots.slice(0, room.config.size).map((s) => s.hi));
   function control(room, slot, from, extra) {
     const ev = { t: 'ctl', slot, from, ...extra };
@@ -222,12 +278,14 @@ export function createServer(opts = {}) {
   // Un joueur humain disparait (coupure, depart, AFK, expulsion) : une IA prend sa place des sa derniere entree connue.
   // `dormant` : le heros disparait avec son joueur (parties sans IA) au lieu de continuer a se battre tout seul.
   const noAiRoom = (room) => !!(room.full || room.auto || room.options.noai);
-  function dropToAi(room, slot, dormant = false) {
+  // Parties sans IA (hebergees, automatiques) : l'IA tient la place (`bossDrop`) jusqu'au prochain boss, puis le heros s'efface cote clients ;
+  // si le joueur revient avant (meme jeton), il reprend CE MEME heros immediatement.
+  function dropToAi(room, slot) {
     const s = room.slots[slot];
     if (s.mode !== 'human') return;
     s.mode = 'ai';
     s.dormantDue = false;
-    control(room, slot, s.hi + 1, dormant ? { ai: true, dormant: true } : { ai: true });
+    control(room, slot, s.hi + 1, noAiRoom(room) ? { ai: true, bossDrop: true } : { ai: true });
   }
 
   function closeRoom(room) {
@@ -318,11 +376,9 @@ export function createServer(opts = {}) {
     if (s && s.ws === ws) {
       s.ws = null; s.ready = false;
       if (room.started) {
-        const wasHuman = s.mode === 'human';
-        // Depart definitif d'une partie sans IA : le heros s'efface. Simple coupure : l'IA tient la place le temps de la reprise, puis le heros s'efface.
-        dropToAi(room, c.slot, permanent && noAiRoom(room));
-        if (wasHuman && !permanent && noAiRoom(room)) s.dormantDue = true;
-        s.heldUntil = permanent ? 0 : Date.now() + (room.auto ? autoHoldMs : holdMs);
+        // Depart volontaire ou coupure : meme traitement. L'IA tient la place jusqu'au prochain boss ; le meme jeton reprend le meme heros.
+        dropToAi(room, c.slot);
+        s.heldUntil = (permanent && !noAiRoom(room)) ? 0 : Date.now() + (room.auto ? autoHoldMs : holdMs);
         if (room.auto) broadcast(room, { t: 'presence', ev: 'leave', name: s.name, slot: c.slot });
       } else { s.mode = 'free'; s.name = ''; s.token = null; }
     }
@@ -390,7 +446,7 @@ export function createServer(opts = {}) {
     send(ws, { ...lobbyView(room), you: idx, token: c.token });
     if (room.started) {
       // Arrivee en cours de partie : rejeu du journal cote client, la place est reprise a une image future identique pour tous.
-      const from = highest(room) + REJOIN_MARGIN;
+      const from = highest(room) + rejoinMargin(room);
       const s = room.slots[idx];
       s.mode = 'human'; s.lastMove = Date.now();
       // Place jamais jouee par un humain : sans cela ses premieres entrees (image >> 600) seraient refusees (f > hi + 600).
@@ -527,7 +583,7 @@ export function createServer(opts = {}) {
       case 'resume': { // un joueur remplace par l'IA (AFK) reprend la main
         if (!room.started || s.mode !== 'ai' || s.ws !== ws) return;
         s.mode = 'human'; s.lastMove = Date.now(); s.lastBits = 0;
-        return control(room, c.slot, highest(room) + REJOIN_MARGIN, { ai: false, name: s.name });
+        return control(room, c.slot, highest(room) + rejoinMargin(room), { ai: false, name: s.name });
       }
       case 'loadout': { // equipement change en cours de partie (partie complete) : applique a une image future identique pour tous
         if (!room.full || !room.started || s.mode !== 'human') return;
@@ -535,7 +591,7 @@ export function createServer(opts = {}) {
         const now = Date.now();
         if (!lo || now - s.lastLoadout < 1000 || s.loadouts >= MAX_LOADOUTS) return;
         s.lastLoadout = now; s.loadout = lo; s.loadouts++;
-        return control(room, c.slot, highest(room) + REJOIN_MARGIN, { kind: 'loadout', data: lo });
+        return control(room, c.slot, highest(room) + rejoinMargin(room), { kind: 'loadout', data: lo });
       }
       case 'cmd': { // vote de recompense, chapitre suivant, fin de dialogue : sequence comme une entree
         if (!room.full || !room.started || s.mode !== 'human') return;
@@ -579,8 +635,6 @@ export function createServer(opts = {}) {
       if (room.started) {
         for (let i = 0; i < room.config.size; i++) {
           const s = room.slots[i];
-          // Coupure non revenue a temps (partie sans IA) : le heros s'efface, il reapparaitra a l'arrivee d'un ami.
-          if (s.dormantDue && !s.ws && s.mode === 'ai' && s.heldUntil > 0 && now > s.heldUntil) { s.dormantDue = false; control(room, i, highest(room) + REJOIN_MARGIN, { ai: true, dormant: true }); }
           if (s.ws && s.mode === 'human' && now - s.lastMove > afkMs) { dropToAi(room, i); send(s.ws, { t: 'afk' }); if (room.auto) broadcast(room, { t: 'presence', ev: 'afk', name: s.name, slot: i }, s.ws); s.afkWarned = false; }
           else if (s.ws && s.mode === 'human' && !s.afkWarned && now - s.lastMove > afkMs * 0.7) { s.afkWarned = true; send(s.ws, { t: 'afk_warn', in: Math.max(1, Math.round((afkMs - (now - s.lastMove)) / 1000)) }); }
           else if (s.afkWarned && now - s.lastMove < afkMs * 0.5) s.afkWarned = false;
@@ -618,6 +672,9 @@ export function createServer(opts = {}) {
 
 // Lancement direct.
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  // Une erreur imprevue dans un salon ne doit pas couper tous les autres : on la journalise et le relais continue.
+  process.on('uncaughtException', (e) => console.error('exception non rattrapee :', e && e.stack || e));
+  process.on('unhandledRejection', (e) => console.error('promesse rejetee :', e && e.stack || e));
   const port = Number(process.env.PORT || 8787);
   createServer().server.listen(port, () => console.log(`AI Fighter 2 : serveur en ligne sur le port ${port}`));
 }

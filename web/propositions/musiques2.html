@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Musiques des decors - propositions v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b;--encre2:#33274d;--ligne:#4a3b69;--ok:#5fcf8f}
+*{box-sizing:border-box}
+body{margin:0;background:var(--encre);color:var(--papier);font-family:'Nunito',system-ui,sans-serif;line-height:1.5}
+.wrap{max-width:980px;margin:0 auto;padding:20px 16px 90px}
+h1{font-family:'Silkscreen',monospace;font-size:26px;margin:8px 0 4px;color:var(--papier);letter-spacing:1px}
+h1 span{color:var(--accent)}
+h2{font-family:'Silkscreen',monospace;font-size:15px;margin:0;color:var(--papier)}
+p.lead{margin:0 0 14px;opacity:.9}
+.note{background:var(--encre2);border:1px solid var(--ligne);border-left:4px solid var(--accent);border-radius:8px;padding:12px 14px;margin:14px 0;font-size:14px}
+.note b{color:var(--accent)}
+table.ref{border-collapse:collapse;width:100%;font-size:13px;margin-top:8px}
+table.ref th,table.ref td{border-bottom:1px solid var(--ligne);padding:4px 6px;text-align:left}
+table.ref th{font-family:'Silkscreen',monospace;font-size:11px;font-weight:400;color:var(--accent)}
+.grid{display:grid;gap:14px;margin-top:16px}
+.card{background:var(--encre2);border:2px solid var(--ligne);border-radius:12px;padding:12px 14px;transition:border-color .15s}
+.card.ok{border-color:var(--ok)}
+.card.redo{border-color:var(--accent)}
+.head{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:baseline;justify-content:space-between}
+.decor{font-size:13px;opacity:.8}
+.tag{font-family:'Silkscreen',monospace;font-size:11px;background:var(--encre);border:1px solid var(--ligne);border-radius:6px;padding:2px 6px;color:var(--papier)}
+.desc{margin:6px 0 8px;font-size:14px}
+audio{width:100%;height:38px;margin:2px 0}
+img.spec{display:block;width:100%;height:auto;border-radius:6px;margin:6px 0;border:1px solid var(--ligne);background:var(--encre)}
+details{margin:4px 0 8px;font-size:13px}
+details summary{cursor:pointer;color:var(--accent)}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+button{font-family:'Silkscreen',monospace;font-size:12px;border:2px solid var(--papier);background:transparent;color:var(--papier);padding:9px 14px;border-radius:8px;cursor:pointer}
+button:hover{background:rgba(255,243,224,.1)}
+button.v.on{background:var(--ok);border-color:var(--ok);color:var(--encre)}
+button.r.on{background:var(--accent);border-color:var(--accent);color:var(--papier)}
+button.main{background:var(--accent);border-color:var(--accent);color:var(--papier)}
+input.com{flex:1 1 220px;min-width:0;background:var(--encre);color:var(--papier);border:1px solid var(--ligne);border-radius:8px;padding:8px 10px;font-family:inherit;font-size:14px}
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--encre2);border-top:2px solid var(--accent);padding:10px 16px;display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;z-index:5}
+.bar .cnt{font-size:13px}
+#out{display:none;margin-top:18px}
+#out textarea{width:100%;min-height:200px;background:var(--encre);color:var(--papier);border:1px solid var(--ligne);border-radius:8px;padding:10px;font-family:ui-monospace,Consolas,monospace;font-size:13px}
+@media (max-width:560px){h1{font-size:20px}.wrap{padding:14px 16px 100px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>MUSIQUES <span>V2</span></h1>
+<p class="lead"><b style="color:var(--accent)">Version 2 : lignes melodiques entierement refaites.</b> Chaque decor a sa propre melodie principale originale, en mineur (eolien, harmonique ou phrygien, jamais de majeur), epique et suspense, style combat Mega Man X sur SNES : motif d'accroche de 3 a 8 notes (quinte montante, seconde mineure tendue, triton, sixte mineure), notes repetees staccato qui montent puis retombent, appels de cuivres, montee chromatique de 16es avant chaque refrain, contre-chant de guitare saturee, pedale grave et triton dans la rupture, reprise harmonisee et escalade finale (+1 ton). Basse slap syncopee, echo court SPC700. Environ 3 minutes par piste ; l'extrait de 36 s couvre la fin du theme B, la rupture et la reprise (traits roses sur le spectrogramme).</p>
+
+<div class="note"><b>Honnetete :</b> je ne peux pas ecouter. Tout ce qui suit repose sur des mesures (tempo, energie, spectre, stereo, spectrogramme), pas sur l'oreille. Les references et les nouvelles pistes ont ete mesurees avec la meme methode ; c'est a vous de dire si cela sonne juste.
+<table class="ref">
+<tr><th>Mesure</th><th>Final Escalation (4 versions)</th><th>Nouvelles pistes (15)</th></tr>
+<tr><td>Niveau RMS / crete</td><td>-17,5 a -18,7 / -2 a -4 dBFS</td><td>-18,4 a -18,7 / -2 a -4 dBFS (limiteur, jamais de saturation)</td></tr>
+<tr><td>Facteur de crete</td><td>15 dB</td><td>14,5 a 16,6 dB</td></tr>
+<tr><td>Energie &lt;150 / 150-600 / 600-2,5k / 2,5-8k Hz</td><td>33-43 / 18-26 / 28-33 / 8 %</td><td>25-57 / 12-43 / 13-38 / 1-9 %</td></tr>
+<tr><td>Attaques par seconde</td><td>3,2 a 4,6</td><td>3,5 a 5,5</td></tr>
+<tr><td>Regularite (ecart-type de l'energie par 0,25 s)</td><td>2 a 4 dB</td><td>1,5 a 2,3 dB</td></tr>
+<tr><td>Stereo (cote / centre)</td><td>0,40 a 0,51</td><td>0,21 a 0,35 (plus etroit)</td></tr>
+</table></div>
+
+<div class="grid" id="grid"></div>
+
+<div id="out">
+<h2>Texte a copier</h2>
+<p class="lead">Collez-le dans la conversation.</p>
+<textarea id="txt" readonly></textarea>
+<div class="btns"><button class="main" id="copy">Copier</button></div>
+</div>
+</div>
+
+<div class="bar">
+<span class="cnt" id="cnt"></span>
+<button class="main" id="gen">Generer le texte</button>
+<button id="reset">Tout effacer</button>
+</div>
+
+<script>
+var TRACKS = [
+ {n:'title',bpm:120,t:'Titre',d:'Ecran titre',s:"Mineur harmonique, lent et menacant : appel de quinte montante, descente chromatique vers la tonique, cuivres synthe et taiko. (En jeu l'ecran titre garde le morceau fourni.)"},
+ {n:'muraille',bpm:140,t:'Ruelle',d:'Ruelle du quartier est',s:'Eolien en sol, i-VI-III-VII : notes repetees staccato qui montent (tonique, tierce mineure, quinte) puis retombent ; slap syncope, guitare saturee en contre-chant.'},
+ {n:'dojo',bpm:136,t:'Dojo',d:'Dojo souterrain Tsukikage',s:'Phrygien en mi, i-bII : quinte montante puis seconde mineure tendue vers la tonique ; koto, taiko 16 bits, contre-chant de guitare.'},
+ {n:'neotokyo',bpm:150,t:'Cyberpunk',d:'Salle des serveurs',s:'Eolien en re, i-VII-VI-V (andalouse) : rafales de 16es repetees, saut de quinte, sixte mineure puis triton retombant ; lead pulse ecrase, slap en doubles croches.'},
+ {n:'forteresse',bpm:132,t:'Forteresse industrielle',d:'Parking niveau -3',s:'Phrygien en si, i-bII : 3 notes pesantes (tonique / seconde mineure / quarte), appels de cuivres graves, riff de cordes et guitare lourde.'},
+ {n:'affaires',bpm:130,t:'Affaires (funk ironique)',d:'Open space Kogen Corp',s:'Eolien en la, i-iv-VI-V : motif syncope (tonique, tierce mineure, quarte), slap tres rythme, cuivres synthe ; ironie froide plutot que gaiete.'},
+ {n:'magique',bpm:126,t:'Mystique',d:"Seminaire de l'Eveil",s:"Harmonique en re : montee lente tonique-tierce mineure-sixte jusqu'a la sensible tendue, echo SPC700, cloches, nappes ; suspense."},
+ {n:'chateau',bpm:132,t:'Chateau royal',d:'Etage presidentiel',s:'Eolien en fa, i-VI-III-VII : appels de cuivres (quinte puis octave) et marche ; noble mais sombre, final en escalade.'},
+ {n:'toits',bpm:166,t:'Toits (poursuite)',d:'Toits de la tour Kogen',s:'Eolien en do#, i-VII-VI-V a 166 bpm : notes repetees qui montent en quarte puis quinte, retombent ; poursuite, slap 16es, arpeges rapides.'},
+ {n:'parlement',bpm:132,t:'Senat (fanfare sinistre)',d:'Senat',s:'Harmonique en sol, i-iv-V : fanfare sinistre avec triton (seconde -> sixte mineure), cuivres synthe lourds, marche.'},
+ {n:'secte',bpm:112,t:'Secte (rituel)',d:"Temple de l'Eveil",s:'Phrygien en fa#, i-bII : notes rares et lentes, seconde mineure obsedante, tambours rituels, cloches, grosse nappe.'},
+ {n:'foret',bpm:126,t:'Foret',d:'Toit-jardin du team building',s:'Eolien en la, i-VI-III-VII : arche montante puis descendante, flute vibree et harpe carree, suspense de sous-bois.'},
+ {n:'prairie',bpm:144,t:'Prairie heroique',d:'Parc de la tour',s:'Eolien en do, i-VI-III-VII : appel heroique (quinte, octave) mais en mineur, refrain qui monte a la dixieme ; epique, jamais gentil.'},
+ {n:'rangers',bpm:150,t:'Rangers',d:"Chantier de l'aile Est",s:'Eolien en mi, i-VII-VI-VII a 150 bpm : appels de cuivres en quinte et octave, descente en gamme mineure ; sentai sombre.'},
+ {n:'boss',bpm:168,t:'Boss',d:'Combats de boss',s:'Harmonique en la, i-iv-V-iv : notes repetees tendues, seconde, quinte, sensible ; le plus dense et rapide. (En jeu, les boss gardent Final Escalation.)'}
+];
+var KEY='af2_musiques_v2', state={};
+try{state=JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(e){state={}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+var grid=document.getElementById('grid');
+TRACKS.forEach(function(k){
+  var c=document.createElement('div');c.className='card';c.id='c_'+k.n;
+  c.innerHTML='<div class="head"><h2>'+k.t+'</h2><span class="tag">'+k.bpm+' bpm</span></div>'
+   +'<div class="decor">Decor : '+k.d+'</div><p class="desc">'+k.s+'</p>'
+   +'<div class="decor">Extrait de 36 s</div><audio controls preload="none" src="musiques/'+k.n+'.ogg"></audio>'
+   +'<img class="spec" loading="lazy" alt="Spectrogramme de '+k.t+'" src="musiques/'+k.n+'.png">'
+   +'<div class="decor" style="margin-top:6px">Piste complete (~3 min, boucle)</div><audio controls preload="none" src="musiques/'+k.n+'_complet.ogg"></audio>'
+   +'<div class="btns"><button class="v">Valider</button><button class="r">A refaire</button>'
+   +'<input class="com" type="text" placeholder="Remarque (facultatif) : plus rapide, moins grave, plus sombre..."></div>';
+  grid.appendChild(c);
+  var s=state[k.n]||{};var v=c.querySelector('.v'),r=c.querySelector('.r'),i=c.querySelector('.com');
+  i.value=s.c||'';
+  function paint(){var st=(state[k.n]||{}).s;v.classList.toggle('on',st==='ok');r.classList.toggle('on',st==='redo');c.className='card'+(st==='ok'?' ok':st==='redo'?' redo':'');count()}
+  v.onclick=function(){var o=state[k.n]||{};o.s=o.s==='ok'?'':'ok';state[k.n]=o;save();paint()};
+  r.onclick=function(){var o=state[k.n]||{};o.s=o.s==='redo'?'':'redo';state[k.n]=o;save();paint()};
+  i.oninput=function(){var o=state[k.n]||{};o.c=i.value;state[k.n]=o;save()};
+  paint();
+});
+// Une seule piste a la fois.
+document.addEventListener('play',function(e){document.querySelectorAll('audio').forEach(function(a){if(a!==e.target)a.pause()})},true);
+function count(){
+  var ok=0,re=0;TRACKS.forEach(function(k){var s=(state[k.n]||{}).s;if(s==='ok')ok++;if(s==='redo')re++});
+  document.getElementById('cnt').textContent=ok+' validee(s), '+re+' a refaire, '+(TRACKS.length-ok-re)+' sans avis';
+}
+document.getElementById('gen').onclick=function(){
+  var L=['Retour sur les musiques des decors :'];
+  TRACKS.forEach(function(k){
+    var o=state[k.n]||{};var st=o.s==='ok'?'VALIDE':o.s==='redo'?'A REFAIRE':'sans avis';
+    L.push('- '+k.n+' ('+k.t+', '+k.d+') : '+st+(o.c?' - '+o.c:''));
+  });
+  var t=document.getElementById('txt');t.value=L.join('\n');
+  document.getElementById('out').style.display='block';t.scrollIntoView({behavior:'smooth',block:'center'});
+};
+document.getElementById('copy').onclick=function(){
+  var t=document.getElementById('txt');t.select();
+  try{navigator.clipboard.writeText(t.value)}catch(e){document.execCommand('copy')}
+  this.textContent='Copie !';var b=this;setTimeout(function(){b.textContent='Copier'},1500);
+};
+document.getElementById('reset').onclick=function(){
+  if(!confirm('Effacer tous les avis ?'))return;state={};save();
+  document.querySelectorAll('.com').forEach(function(i){i.value=''});
+  TRACKS.forEach(function(k){var c=document.getElementById('c_'+k.n);c.className='card';c.querySelector('.v').classList.remove('on');c.querySelector('.r').classList.remove('on')});count();
+};
+</script>
+</body>
+</html>
