@@ -5,7 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <link rel="preload" href="ai_fighter_2.wasm" as="fetch" type="application/wasm" crossorigin>
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#f7f6f4">
+<meta name="theme-color" content="#221834">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <title>AI Fighter 2</title>
 <style>
   /* Jeu plein ecran : papier clair, encre sombre, accent rouge sceau. Un seul look, voulu. */
@@ -30,11 +34,14 @@
 <div id="loading"><i></i>AI FIGHTER 2<small>chargement, quelques secondes...</small></div>
 <button id="fs" title="Plein ecran" aria-label="Plein ecran">[ ]</button>
 <script src="mq_js_bundle.js"></script>
+<script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () {}); }); }</script>
 <script>
 // Sauvegarde dans le stockage local du navigateur (appelee par le jeu) et fin du chargement.
 miniquad_add_plugin({
   name: "afh_storage", version: 1,
   register_plugin: function (importObject) {
+    // Vibration du telephone (retour haptique des coups) : navigator.vibrate, Android / Chrome.
+    importObject.env.afh_vibrate = function (ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} };
     importObject.env.afh_ready = function () { var l = document.getElementById("loading"); if (!l) return; l.style.transition = "opacity .25s"; l.style.opacity = "0"; l.style.pointerEvents = "none"; setTimeout(function () { l.hidden = true; }, 300); };
     // Zones sures (encoche, barre de gestes) : lues via une sonde CSS env(safe-area-inset-*), en centiemes de point.
     var probe = document.createElement("div");
