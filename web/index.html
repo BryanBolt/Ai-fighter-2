@@ -155,5 +155,37 @@ document.addEventListener("dblclick", function (e) { e.preventDefault(); });
   document.addEventListener("visibilitychange", function () { if (document.hidden) release(); });
 })();
 </script>
+<script>
+// Doigts « fantomes » : quand le systeme avale le touchend (geste de bord d'ecran Android, sortie du plein ecran, rotation,
+// notification), le jeu croit le doigt toujours pose : le bouton reste « enfonce » et ne peut plus etre re-appuye, le stick
+// reste vole. On suit les doigts reels et on envoie un touchend synthetique a ceux qui ont disparu.
+(function () {
+  var live = {};
+  function track(e) {
+    for (var i = 0; i < e.touches.length; i++) { var t = e.touches[i]; live[t.identifier] = { x: t.clientX, y: t.clientY }; }
+    // Un doigt connu qui n'est plus dans la liste officielle : fini.
+    var ids = {}; for (var j = 0; j < e.touches.length; j++) ids[e.touches[j].identifier] = 1;
+    Object.keys(live).forEach(function (k) { if (!ids[k] && e.type !== "touchend" && e.type !== "touchcancel") flush([k]); });
+  }
+  function drop(e) { for (var i = 0; i < e.changedTouches.length; i++) delete live[e.changedTouches[i].identifier]; }
+  function flush(only) {
+    var c = document.getElementById("glcanvas");
+    var ids = only || Object.keys(live);
+    ids.forEach(function (k) {
+      var p = live[k]; delete live[k];
+      if (!c || !p || typeof Touch === "undefined" || typeof TouchEvent === "undefined") return;
+      try {
+        var t = new Touch({ identifier: +k, target: c, clientX: p.x, clientY: p.y });
+        c.dispatchEvent(new TouchEvent("touchend", { bubbles: true, cancelable: true, changedTouches: [t], touches: [], targetTouches: [] }));
+      } catch (e) {}
+    });
+  }
+  ["touchstart", "touchmove"].forEach(function (n) { window.addEventListener(n, track, { capture: true, passive: true }); });
+  ["touchend", "touchcancel"].forEach(function (n) { window.addEventListener(n, drop, { capture: true, passive: true }); });
+  ["blur", "orientationchange", "fullscreenchange", "pagehide"].forEach(function (n) { window.addEventListener(n, function () { flush(); }); });
+  document.addEventListener("fullscreenchange", function () { flush(); });
+  document.addEventListener("visibilitychange", function () { if (document.hidden) flush(); });
+})();
+</script>
 </body>
 </html>

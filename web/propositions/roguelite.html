@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Roguelite - objets et etages - AI Fighter 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#221834;--paper:#fff3e0;--accent:#d8456b;--ink2:rgba(34,24,52,.62);--paper2:rgba(255,243,224,.1);--ok:#7bd88f;--ko:#ff8a8a;--ab:#ffc857}
+*{box-sizing:border-box}
+body{margin:0;background:#15101f;color:var(--paper);font:600 15px/1.4 Nunito,system-ui,sans-serif;padding:14px;max-width:1200px;margin-inline:auto}
+h1,h2,h3,.px{font-family:Silkscreen,monospace;font-weight:700;letter-spacing:.5px}
+h1{font-size:22px;margin:4px 0}h2{font-size:16px;margin:26px 0 8px;color:var(--accent)}h3{font-size:13px;margin:0}
+p.lead{margin:4px 0 10px;opacity:.85}
+.panel{background:var(--paper2);border-radius:14px;padding:12px 14px;margin:10px 0}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.sw{display:inline-flex;gap:7px;align-items:center;padding:6px 12px;border-radius:99px;border:2px solid var(--paper);cursor:pointer;user-select:none;font:700 12px Silkscreen}
+.sw i{width:12px;height:12px;border-radius:50%;background:var(--ok)}
+.sw.off{opacity:.45;border-style:dashed}.sw.off i{background:var(--ko)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{font:600 12px Nunito;padding:3px 9px;border-radius:99px;background:var(--paper2);cursor:pointer;border:1px solid transparent}
+.chip.off{text-decoration:line-through;opacity:.45}.chip.ab{border-color:var(--ab)}
+button{font:700 12px Silkscreen;color:var(--ink);background:var(--paper);border:0;border-radius:99px;padding:8px 14px;cursor:pointer}
+button.acc{background:var(--accent);color:var(--paper)}
+button:focus-visible,.sw:focus-visible,.chip:focus-visible{outline:3px solid var(--ab);outline-offset:2px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
+.card{background:var(--paper);color:var(--ink);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;border:4px solid transparent}
+.card.k{border-color:var(--ok)}.card.r{border-color:var(--ko)}.card.a{border-color:var(--ab)}
+.card.hidden{display:none}
+.shot{aspect-ratio:16/9;background:var(--ink);display:grid;place-items:center;color:var(--paper);text-align:center;font:700 11px Silkscreen;padding:10px;position:relative}
+.shot img{width:100%;height:100%;object-fit:cover;display:block}
+.shot .tag{position:absolute;left:8px;top:8px;background:var(--ink);color:var(--paper);font:700 10px Silkscreen;padding:3px 7px;border-radius:99px;opacity:.9}
+.body{padding:10px 12px 12px;display:flex;flex-direction:column;gap:6px;flex:1}
+.meta{display:flex;gap:6px;flex-wrap:wrap}
+.b{font:700 10px Silkscreen;padding:3px 8px;border-radius:99px;background:var(--ink);color:var(--paper)}
+.r0{background:#6b6b7a}.r1{background:#2f7fd1}.r2{background:#8b4fd6}.r3{background:#e08a00}
+.abus{background:var(--ab);color:var(--ink)}
+.desc{margin:0;font-size:14px}.ref{font-size:11px;color:var(--ink2);margin:0}
+.act{display:flex;gap:6px;margin-top:auto;flex-wrap:wrap}
+.act button{flex:1;background:var(--ink);color:var(--paper);padding:8px 6px;font-size:10px}
+.act button.on{background:var(--accent)}
+.floors{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+.floor{background:var(--paper);color:var(--ink);border-radius:14px;overflow:hidden}
+.floor img{width:100%;display:block;aspect-ratio:16/9;object-fit:cover;background:var(--ink)}
+.floor ul{margin:0;padding:10px 14px 14px 28px;font-size:13px}
+.floor h3{padding:10px 14px 0}
+textarea{width:100%;min-height:200px;background:#0d0a14;color:var(--paper);border:2px solid var(--paper2);border-radius:10px;padding:10px;font:13px/1.4 ui-monospace,Consolas,monospace}
+.small{font-size:12px;opacity:.75}
+@media(max-width:560px){body{padding:10px}}
+</style></head><body>
+<h1>ROGUELITE : OBJETS ET ETAGES</h1>
+<p class="lead">Previsualisation seulement : rien n'est branche au jeu. Chaque animation est une vraie capture du moteur (les objets sans animation propre sont marques « concept »). Les objets s'ajoutent a vos coups, ils ne les remplacent pas.</p>
+
+<h2>Options de partie</h2>
+<div class="panel">
+  <p class="small" style="margin:0 0 8px">Ce panneau montre ce que fera l'option du lancement : couper une categorie ou un objet precis. Cliquez sur une pastille pour l'activer ou la couper.</p>
+  <div class="row" id="cats"></div>
+  <div class="row" style="margin-top:8px"><button id="noab">Couper tous les abusifs</button><button id="allon">Tout activer</button><span class="small" id="count"></span></div>
+  <div class="chips" id="chips"></div>
+</div>
+
+<h2>Objets (<span id="n">0</span>)</h2>
+<div class="row" id="filters" style="margin-bottom:10px"></div>
+<div class="grid" id="grid"></div>
+
+<h2>Etages tires au sort</h2>
+<p class="lead">Six exemples produits par le generateur (graine + profondeur). Le decor est une capture reelle du theme.</p>
+<div class="floors" id="floors"></div>
+
+<h2>Texte de validation</h2>
+<div class="panel">
+  <div class="row"><button class="acc" id="gen">Generer le texte</button><button id="copy">Copier</button><span class="small" id="msg"></span></div>
+  <textarea id="out" readonly placeholder="Cliquez sur « Generer le texte », puis collez-le dans la conversation."></textarea>
+</div>
+
+<script src="roguelite/data.js"></script>
+<script>
+var ITEMS=window.RL_ITEMS||[],FLOORS=window.RL_FLOORS||[];
+var CATS=[["coup","Nouveaux coups"],["arme","Armes"],["transfo","Transformations"],["pouvoir","Pouvoirs"],["regle","Regles"]];
+var STAGE_IMG=[4,2,12,11,3,10];
+var st={cats:{},items:{},verdict:{}},view="all";
+CATS.forEach(function(c){st.cats[c[0]]=true});ITEMS.forEach(function(i){st.items[i.id]=true});
+try{var s=JSON.parse(localStorage.getItem("rl_state")||"null");if(s){for(var k in s.cats)if(k in st.cats)st.cats[k]=s.cats[k];for(var k2 in s.items)if(k2 in st.items)st.items[k2]=s.items[k2];st.verdict=s.verdict||{}}}catch(e){}
+function save(){try{localStorage.setItem("rl_state",JSON.stringify(st))}catch(e){}}
+function $(id){return document.getElementById(id)}
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
+function active(i){return st.cats[i.cat]&&st.items[i.id]}
+function renderOptions(){
+  var cats=$("cats");cats.innerHTML="";
+  CATS.forEach(function(c){var b=el("span","sw"+(st.cats[c[0]]?"":" off"));b.tabIndex=0;b.setAttribute("role","switch");b.setAttribute("aria-checked",st.cats[c[0]]);b.appendChild(el("i"));b.appendChild(document.createTextNode(c[1]));
+    var f=function(){st.cats[c[0]]=!st.cats[c[0]];save();renderOptions()};b.onclick=f;b.onkeydown=function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();f()}};cats.appendChild(b)});
+  var ch=$("chips");ch.innerHTML="";
+  ITEMS.forEach(function(i){var c=el("span","chip"+(st.items[i.id]?"":" off")+(i.abusif?" ab":""),i.name+(i.abusif?" !":""));c.tabIndex=0;c.title=i.abusif?"Marque abusif":"";
+    var f=function(){st.items[i.id]=!st.items[i.id];save();renderOptions()};c.onclick=f;c.onkeydown=function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();f()}};ch.appendChild(c)});
+  var n=ITEMS.filter(active).length;$("count").textContent=n+" objets tirables sur "+ITEMS.length;
+  var cards=document.querySelectorAll(".card");
+  for(var k=0;k<cards.length;k++){var it=ITEMS[cards[k].dataset.i];cards[k].style.opacity=active(it)?1:.35;cards[k].classList.toggle("hidden",view!=="all"&&it.cat!==view)}
+}
+function setV(id,v){st.verdict[id]=st.verdict[id]===v?null:v;save();paintV(id)}
+function paintV(id){var c=document.querySelector('[data-id="'+id+'"]');if(!c)return;var v=st.verdict[id];c.classList.toggle("k",v==="k");c.classList.toggle("r",v==="r");c.classList.toggle("a",v==="a");
+  c.querySelectorAll(".act button").forEach(function(b){b.classList.toggle("on",b.dataset.v===v)})}
+function renderCards(){
+  var g=$("grid");g.innerHTML="";$("n").textContent=ITEMS.length;
+  ITEMS.forEach(function(i,idx){
+    var c=el("div","card");c.dataset.id=i.id;c.dataset.i=idx;
+    var sh=el("div","shot");
+    if(i.scene){var im=new Image();im.loading="lazy";im.alt="Animation : "+i.name;im.src="roguelite/it_"+i.scene+".gif";im.onerror=function(){sh.textContent="capture absente"};sh.appendChild(im);sh.appendChild(el("span","tag","MOTEUR"))}
+    else{sh.appendChild(el("span","","CONCEPT - pas de visuel propre"))}
+    c.appendChild(sh);
+    var b=el("div","body");b.appendChild(el("h3","",i.name));
+    var m=el("div","meta");m.appendChild(el("span","b",i.catName));m.appendChild(el("span","b r"+i.rarity,i.rarityName));if(i.abusif)m.appendChild(el("span","b abus","ABUSIF"));if(!i.unique)m.appendChild(el("span","b","cumulable"));
+    b.appendChild(m);b.appendChild(el("p","desc",i.desc));b.appendChild(el("p","ref","Contenu du jeu : "+i.content));
+    var a=el("div","act");[["k","Garder"],["r","Refuser"],["a","Trop abuse"]].forEach(function(x){var bt=el("button","",x[1]);bt.dataset.v=x[0];bt.onclick=function(){setV(i.id,x[0])};a.appendChild(bt)});
+    b.appendChild(a);c.appendChild(b);g.appendChild(c);paintV(i.id)});
+  var f=$("filters");f.innerHTML="";[["all","Tous"]].concat(CATS).forEach(function(c){var b=el("button",view===c[0]?"acc":"",c[1]);b.onclick=function(){view=c[0];renderCards();renderOptions();renderFilters()};f.appendChild(b)});
+}
+function renderFilters(){var f=$("filters");f.innerHTML="";[["all","Tous"]].concat(CATS).forEach(function(c){var b=el("button",view===c[0]?"acc":"",c[1]);b.onclick=function(){view=c[0];renderOptions();renderFilters()};f.appendChild(b)})}
+function renderFloors(){
+  var f=$("floors");FLOORS.forEach(function(fl,k){
+    var d=el("div","floor");var im=new Image();im.loading="lazy";im.alt="Decor : "+fl.themeName;im.src="roguelite/stage_"+fl.theme+".jpg";d.appendChild(im);
+    d.appendChild(el("h3","","Exemple "+(k+1)+" - graine "+fl.seed+", profondeur "+fl.depth));
+    var u=el("ul");fl.lines.forEach(function(l){u.appendChild(el("li","",l))});d.appendChild(u);f.appendChild(d)})
+}
+$("noab").onclick=function(){ITEMS.forEach(function(i){if(i.abusif)st.items[i.id]=false});save();renderOptions()};
+$("allon").onclick=function(){CATS.forEach(function(c){st.cats[c[0]]=true});ITEMS.forEach(function(i){st.items[i.id]=true});save();renderOptions()};
+$("gen").onclick=function(){
+  var L=["VALIDATION ROGUELITE - AI Fighter 2"],G={k:[],r:[],a:[],n:[]};
+  ITEMS.forEach(function(i){var v=st.verdict[i.id]||"n";G[v].push(i.name+" ("+i.id+")")});
+  L.push("","GARDER ("+G.k.length+") : "+(G.k.join(", ")||"-"));
+  L.push("REFUSER ("+G.r.length+") : "+(G.r.join(", ")||"-"));
+  L.push("TROP ABUSE - a garder mais coupe par defaut ("+G.a.length+") : "+(G.a.join(", ")||"-"));
+  L.push("SANS AVIS ("+G.n.length+") : "+(G.n.join(", ")||"-"));
+  var offc=CATS.filter(function(c){return !st.cats[c[0]]}).map(function(c){return c[1]});
+  var offi=ITEMS.filter(function(i){return !st.items[i.id]}).map(function(i){return i.id});
+  L.push("","OPTIONS DE PARTIE : categories coupees = "+(offc.join(", ")||"aucune")+" ; objets coupes = "+(offi.join(", ")||"aucun"));
+  L.push("Filtre serialise : v1;cats="+CATS.filter(function(c){return !st.cats[c[0]]}).map(function(c){return c[0]}).join(",")+";off="+offi.sort().join(","));
+  L.push("","ETAGES : "+(FLOORS.length)+" exemples vus (graine/profondeur : "+FLOORS.map(function(f){return f.seed+"/"+f.depth}).join(", ")+")");
+  $("out").value=L.join("\n");$("msg").textContent=""};
+$("copy").onclick=function(){var o=$("out");if(!o.value)$("gen").onclick();o.select();
+  var ok=false;try{ok=document.execCommand("copy")}catch(e){}
+  if(navigator.clipboard){navigator.clipboard.writeText(o.value).then(function(){$("msg").textContent="Copie."},function(){$("msg").textContent=ok?"Copie.":"Selectionne : Ctrl+C."})}else $("msg").textContent=ok?"Copie.":"Selectionne : Ctrl+C."};
+renderCards();renderFilters();renderFloors();renderOptions();
+</script></body></html>
