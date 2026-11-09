@@ -98,12 +98,15 @@ function renderOptions(){
 function setV(id,v){st.verdict[id]=st.verdict[id]===v?null:v;save();paintV(id)}
 function paintV(id){var c=document.querySelector('[data-id="'+id+'"]');if(!c)return;var v=st.verdict[id];c.classList.toggle("k",v==="k");c.classList.toggle("r",v==="r");c.classList.toggle("a",v==="a");c.classList.toggle("f",v==="f");
   c.querySelectorAll(".act button").forEach(function(b){b.classList.toggle("on",b.dataset.v===v)})}
+/* Badges : objets retravailles suite aux retours (NOUVEAU = visuel/effet ajoute, RETRAVAILLE = corrige). */
+var REWORKED={dragon:"RETRAVAILLE",seisme:"RETRAVAILLE",foudre:"RETRAVAILLE",vent:"RETRAVAILLE",glace:"RETRAVAILLE",tornade:"RETRAVAILLE",meteore:"RETRAVAILLE",fouet:"RETRAVAILLE",katana:"RETRAVAILLE",pistolet:"RETRAVAILLE",mitraillette:"RETRAVAILLE",eveil:"RETRAVAILLE",barriere:"RETRAVAILLE",invocation:"RETRAVAILLE",sorcier:"RETRAVAILLE",familier:"RETRAVAILLE",aura_air:"NOUVEAU",pyromane:"NOUVEAU",vampire:"NOUVEAU",epines:"NOUVEAU",explosif:"NOUVEAU",immortel:"RETRAVAILLE",lame_lune:"NOUVEAU",ultime:"RETRAVAILLE"};
 function renderCards(){
   var g=$("grid");g.innerHTML="";$("n").textContent=ITEMS.length;
   ITEMS.forEach(function(i,idx){
     var c=el("div","card");c.dataset.id=i.id;c.dataset.i=idx;
     var sh=el("div","shot");
-    if(i.scene){var im=new Image();im.loading="lazy";im.alt="Animation : "+i.name;im.src="roguelite/it_"+i.scene+".gif";im.onerror=function(){sh.textContent="capture absente"};sh.appendChild(im);sh.appendChild(el("span","tag","MOTEUR"))}
+    if(!i.soon){var im=new Image();im.loading="lazy";im.alt="Animation : "+i.name;im.src="roguelite/rl_"+i.id+".gif";im.onerror=function(){im.onerror=function(){sh.textContent="capture absente"};if(i.scene)im.src="roguelite/it_"+i.scene+".gif";else sh.textContent="CONCEPT - pas de visuel propre"};sh.appendChild(im);sh.appendChild(el("span","tag","MOTEUR"));
+      var bd=REWORKED[i.id];if(bd)sh.appendChild(el("span","tag new",bd))}
     else if(i.soon){sh.appendChild(el("span","","BIENTOT - idee a creer, pas encore en jeu (jamais tiree)"))}else{sh.appendChild(el("span","","CONCEPT - pas de visuel propre"))}
     c.appendChild(sh);
     var b=el("div","body");b.appendChild(el("h3","",i.name));

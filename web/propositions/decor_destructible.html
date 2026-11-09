@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Decor destructible</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b;--ok:#2f8f5b}
+body{margin:0;background:var(--papier);color:var(--encre);font:16px/1.45 Nunito,system-ui,sans-serif;padding:16px}
+h1,h2{font-family:Silkscreen,monospace;letter-spacing:.02em;margin:0 0 6px}
+h1{font-size:22px}h2{font-size:15px;color:var(--accent)}
+.lead{max-width:760px}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px;margin-top:14px}
+.c{background:#fff;border:2px solid var(--encre);border-radius:12px;padding:10px}
+.c.ok{outline:4px solid var(--ok)}.c.no{outline:4px solid var(--accent)}
+img{width:100%;border-radius:8px;background:var(--encre);display:block}
+p{margin:6px 0;font-size:14px}.why{opacity:.75;font-size:13px}
+button{font:inherit;font-weight:700;padding:9px 12px;border-radius:8px;border:2px solid var(--encre);margin:4px 4px 0 0;background:var(--papier);color:var(--encre);cursor:pointer}
+button.v{background:var(--ok);color:#fff}button.x{background:var(--accent);color:#fff}
+textarea{width:100%;box-sizing:border-box;border:2px solid var(--encre);border-radius:6px;padding:6px;margin-top:6px;font:inherit;background:var(--papier)}
+#o{white-space:pre-wrap;background:var(--encre);color:var(--papier);padding:12px;border-radius:10px;margin-top:14px}
+.gen{background:var(--accent);color:#fff;font-family:Silkscreen,monospace;margin-top:14px}
+.sheet{margin-top:10px}
+</style></head><body>
+<h1>Le decor se degrade et sert au combat</h1>
+<p class="lead">Captures du vrai moteur en temps reel (400 px, 48 couleurs). 65 elements structurels, 5 par terrain : vitres et cloisons, piliers, poteaux, ecrans et serveurs, objets suspendus, garde-corps, portes et ascenseurs, tuyaux, tatamis et dalles. Un corps projete les abime (petit bonus de degats, budget fini, jamais sur un boss) ; un coup au sol fait tomber un objet suspendu apres une annonce de 0,6 s qui touche tout le monde. Une interaction n'est appliquee que quand elle a du sens dans le lieu. Pour chaque scene : Valider ou A refaire (+ remarque), puis genere le texte et colle-le dans le chat.</p>
+<h2>Les 13 terrains d'un coup</h2>
+<div class="sheet"><img src="decor_destructible/decor_all_planche.png" alt="planche des 13 terrains, decor abime"></div>
+<div class="g" id="g"></div>
+<button class="gen" onclick="out()">Generer mon texte</button><div id="o"></div>
+<script>
+var C=[
+{k:"vitre",n:"Vitre qui se fissure puis eclate",d:"Open space : un corps projete mollement fissure la cloison (rebond, 2 PV), le second la brise et la traverse (6 PV). Eclats sobres.",w:"Applique : bureaux, vitrine, baie, serre, baraque, paravent. Non applique : parking, parc, toits (aucune vitre)."},
+{k:"pilier",n:"Pilier qui s'ebreche",d:"Senat : trois chocs successifs (5, 4, 3 PV) puis le pilier est au bout de son budget. Pas de spam possible : 30 images entre deux chocs d'un meme corps.",w:"Applique : colonnes, piliers de bois/beton/laque, tronc. Les boss ne subissent rien."},
+{k:"ecran",n:"Baie de serveurs qui etincelle",d:"Salle des serveurs : le corps rebondit, la baie etincelle (5 PV), puis grille et fume au 2e choc.",w:"Applique : serveurs, postes, ecrans de projection/muraux. Non applique : dojo, temple, parc."},
+{k:"chute",n:"Lustre : annonce puis chute",d:"Etage presidentiel : un ecrasement ebranle le lustre. Zone rouge et ! pendant 0,6 s, puis il tombe sur tout le monde dans la zone (9 PV, heros compris). Le heros s'ecarte et l'evite.",w:"Applique : lustres, enseignes, etagere, distributeur, poutrelle, cloche, pergola. Une seule chute par objet, 3 s de delai global."},
+{k:"garde",n:"Garde-corps qui cede",d:"Toits : un corps projete defonce le garde-corps (5 PV) et passe ; la rambarde reste tordue.",w:"Applique : toits, toit-jardin, grille du parc."},
+{k:"porte",n:"Ascenseur ouvert a la volee",d:"Parking : le corps force l'ascenseur, cabine eclairee (3 PV).",w:"Applique : portes, ascenseurs, rideau, portail."},
+{k:"tuyau",n:"Fontaine qui fuit, sol glissant",d:"Parc : la fontaine perce, la flaque grandit puis reflue en tache ; le sol glisse comme sous la pluie pour tout le monde (10 s).",w:"Applique : tuyaux, gouttieres, refroidissement, arrosage, fontaine."},
+{k:"tatami",n:"Tatamis dechires",d:"Dojo : chaque ecrasement dechire un peu plus les nattes (pas de cratere sur le bois).",w:"Applique : dojo et temple. Sur tout autre sol : cratere."},
+{k:"mur",n:"Impact de mur et cratere",d:"Ruelle : la ou un gros coup projete frappe, une cicatrice reste (20 maximum, les plus anciennes palissent puis disparaissent).",w:"Impact de mur : lieux fermes seulement (en plein air : non applique). Cratere : tous sauf dojo et temple."},
+{k:"poteau",n:"Etai qui se tord",d:"Chantier : deux chocs tordent l'etai (4 puis 3 PV).",w:"Applique : lampadaires, barrieres, etais, antennes, treillage."},
+{k:"calme",n:"Option calme",d:"Meme scene que la vitre avec Tremblements = 0 : plus d'eclats ni d'etincelles, les etats (fissure, bris) et l'annonce de chute restent lisibles.",w:"Rendu seulement : la simulation est identique."}
+],st={};
+var g=document.getElementById('g');
+C.forEach(function(c){var d=document.createElement('div');d.className='c';d.id='c_'+c.k;
+d.innerHTML='<img src="decor_destructible/decor_'+c.k+'.gif" alt="'+c.n+'" loading="lazy"><h2>'+c.n+'</h2><p>'+c.d+'</p><p class="why">'+c.w+'</p><button class="v" data-k="'+c.k+'" data-v="1">Valider</button><button class="x" data-k="'+c.k+'" data-v="-1">A refaire</button><textarea id="t_'+c.k+'" rows="2" placeholder="Remarque"></textarea>';g.appendChild(d);});
+g.addEventListener('click',function(e){var b=e.target;if(!b.dataset||!b.dataset.k)return;var v=+b.dataset.v;st[b.dataset.k]=v;document.getElementById('c_'+b.dataset.k).className='c '+(v>0?'ok':'no');});
+function out(){var L=C.map(function(c){var v=st[c.k];var t=document.getElementById('t_'+c.k).value.trim();return (v>0?'VALIDE':v<0?'A REFAIRE':'NON VU')+' : '+c.n+(t?' - '+t:'');});document.getElementById('o').textContent='Decor destructible :\n'+L.join('\n');}
+</script></body></html>
