@@ -1,0 +1,7 @@
+[
+ {"id":"rls_fin","titre":"Fin de run a l'etage 10","texte":"Le gros boss de l'etage 10 termine la run (victoire). Preferes-tu des etages bonus (11-15) apres lui, avec un 2e gros boss a 20 et ses pouvoirs cool ?","page":"decisions.html"},
+ {"id":"rls_solo_bot","titre":"Solo : le bot meurt a l'etage 4,9 en moyenne","texte":"Le bot n'utilise pas les pouvoirs a la main ; duo 2 victoires sur 3, 4 et 8 joueurs 3/3. Garder cette courbe ou adoucir encore le solo ?","page":"decisions.html"},
+ {"id":"rls_mini_boss","titre":"Mini-boss aux etages 3 et 8","texte":"Lutteur (3) et Maitre Noir avec escorte (8), recompense = 3 pouvoirs standards plus forts. Garder 3 et 8, ou ajouter un mini-boss a 2 ?","page":"decisions.html"},
+ {"id":"rls_soin","titre":"Soin apres etage : 60 % / 75 %","texte":"Apres un niveau ordinaire 60 %, apres mini-boss ou boss 75 % (avant : 25 %). Trop genereux avec la vie partagee ?","page":"decisions.html"},
+ {"id":"rls_filtre","titre":"Filtre d'options en solo","texte":"Le tirage de pouvoir solo ignore les categories coupees dans les options (meme catalogue que la coop). Supprimer l'ecran d'options ou le garder ?","page":"decisions.html"}
+]
