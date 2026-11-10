@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Touches hors du jeu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b;--ok:#2f8f5b}
+body{margin:0;background:var(--papier);color:var(--encre);font:16px/1.45 Nunito,system-ui,sans-serif;padding:16px}
+h1,h2{font-family:Silkscreen,monospace;letter-spacing:.02em;margin:0 0 6px}
+h1{font-size:22px}h2{font-size:15px;color:var(--accent)}
+.lead,ul.k{max-width:780px}ul.k{padding-left:20px;margin:8px 0}ul.k li{margin:3px 0;font-size:14px}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:14px;margin-top:14px}
+.c{background:#fff;border:2px solid var(--encre);border-radius:12px;padding:10px}
+.c.ok{outline:4px solid var(--ok)}.c.no{outline:4px solid var(--accent)}
+img{width:100%;border-radius:8px;background:var(--encre);display:block}
+p{margin:6px 0;font-size:14px}.why{opacity:.75;font-size:13px}
+button{font:inherit;font-weight:700;padding:9px 12px;border-radius:8px;border:2px solid var(--encre);margin:4px 4px 0 0;background:var(--papier);color:var(--encre);cursor:pointer}
+button.v{background:var(--ok);color:#fff}button.x{background:var(--accent);color:#fff}
+textarea{width:100%;box-sizing:border-box;border:2px solid var(--encre);border-radius:6px;padding:6px;margin-top:6px;font:inherit;background:var(--papier)}
+#o{white-space:pre-wrap;background:var(--encre);color:var(--papier);padding:12px;border-radius:10px;margin-top:14px}
+.gen{background:var(--accent);color:#fff;font-family:Silkscreen,monospace;margin-top:14px}
+</style></head><body>
+<h1>Les touches ne genent plus le jeu</h1>
+<p class="lead">Regle : aucune touche tactile ne cache jamais le personnage, les ennemis, le terrain, les projectiles ou le HUD. Les commandes vivent dans une bande reservee SOUS l'allee de combat (paysage) ou dans le panneau du bas (portrait) ; si la place manque, c'est le monde qui se resserre. Chaque planche = captures du VRAI moteur, tactile force, sur 10 formats : Fold 4 ferme (1090x344), 19,5:9, 20:9, 16:9 tablette, 16:9 PC, 4:3, Fold 4 ouvert (1056x880), puis 3 portraits (20:9, 19,5:9, tablette). Ordre de lecture : ligne par ligne.</p>
+<ul class="k">
+<li><b>Corrige</b> : « Ramasser » (contextuel) flottait au-dessus du panneau en portrait, donc sur la vue de jeu : il est maintenant range DANS le panneau, entre Pause et Saut.</li>
+<li><b>Corrige</b> : la bulle d'aide « Glisse pour bouger » sortait de l'ecran sous le stick en paysage ; elle reste au-dessus du bandeau, a gauche.</li>
+<li><b>Verifie</b> : dialogues, bilan, kill cam, replay, menus : aucune touche de combat n'y recouvre quoi que ce soit (les menus n'affichent que leurs propres boutons).</li>
+<li><b>Teste en lot</b> : 16 formats (Fold 4, 16:9, 20:9, 4:3, tablettes, ultra-large) x droitier/gaucher x 4 reglages extremes x encoches : aucun bouton, stick ni « Ramasser » sur la zone de jeu ; pieds du plus grand combattant au-dessus des touches, tete dans l'ecran, zone de jeu >= moitie de l'ecran.</li>
+</ul>
+<div class="g" id="g"></div>
+<button class="gen" onclick="out()">Generer mon texte</button><div id="o"></div>
+<script>
+var C=[
+{k:"fight",n:"Combat",d:"Boutons dans le bandeau bas, allee entiere visible, HUD en haut.",w:"Tactile force, 10 formats."},
+{k:"boss",n:"Combat de boss",d:"Le boss et ses attaques restent au-dessus de la bande de commandes.",w:"Banniere d'intro, jauges de boss."},
+{k:"killcam",n:"Kill cam",d:"Le ralenti garde le sol et le combattant au-dessus des touches.",w:"Fin d'etage."},
+{k:"replay",n:"Replay",d:"Meme cadrage que le jeu, commandes toujours dans la bande.",w:"Rejeu d'un combat."},
+{k:"bilan_boss",n:"Bilan",d:"Carte de bilan : pas de touche de combat, seulement ses boutons Passer / Auto / Commencer.",w:"Boss vaincu."},
+{k:"dialogue",n:"Dialogue",d:"Bulle de texte et SUIVANT / PASSER visibles et sans recouvrement.",w:"Acte 4, seminaire."}
+],st={};
+var g=document.getElementById('g');
+C.forEach(function(c){var d=document.createElement('div');d.className='c';d.id='c_'+c.k;
+d.innerHTML='<img src="paysage/'+c.k+'.jpg" alt="'+c.n+'" loading="lazy"><h2>'+c.n+'</h2><p>'+c.d+'</p><p class="why">'+c.w+'</p><button class="v" data-k="'+c.k+'" data-v="1">Valider</button><button class="x" data-k="'+c.k+'" data-v="-1">A refaire</button><textarea id="t_'+c.k+'" rows="2" placeholder="Remarque"></textarea>';g.appendChild(d);});
+g.addEventListener('click',function(e){var b=e.target;if(!b.dataset||!b.dataset.k)return;var v=+b.dataset.v;st[b.dataset.k]=v;document.getElementById('c_'+b.dataset.k).className='c '+(v>0?'ok':'no');});
+function out(){var L=C.map(function(c){var v=st[c.k];var t=document.getElementById('t_'+c.k).value.trim();return (v>0?'VALIDE':v<0?'A REFAIRE':'NON VU')+' : '+c.n+(t?' - '+t:'');});document.getElementById('o').textContent='Touches hors du jeu :\n'+L.join('\n');}
+</script></body></html>

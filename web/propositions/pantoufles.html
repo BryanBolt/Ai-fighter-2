@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pantoufles et dernier coup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b;--ok:#2f8f5b}
+body{margin:0;background:var(--papier);color:var(--encre);font:16px/1.45 Nunito,system-ui,sans-serif;padding:16px}
+h1,h2{font-family:Silkscreen,monospace;letter-spacing:.02em;margin:0 0 6px}
+h1{font-size:22px}h2{font-size:15px;color:var(--accent)}
+.lead{max-width:760px}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px;margin-top:14px}
+.c{background:#fff;border:2px solid var(--encre);border-radius:12px;padding:10px}
+.c.ok{outline:4px solid var(--ok)}.c.no{outline:4px solid var(--accent)}
+img{width:100%;border-radius:8px;background:var(--encre);display:block}
+p{margin:6px 0;font-size:14px}.why{opacity:.75;font-size:13px}
+button{font:inherit;font-weight:700;padding:9px 12px;border-radius:8px;border:2px solid var(--encre);margin:4px 4px 0 0;background:var(--papier);color:var(--encre);cursor:pointer}
+button.v{background:var(--ok);color:#fff}button.x{background:var(--accent);color:#fff}
+textarea{width:100%;box-sizing:border-box;border:2px solid var(--encre);border-radius:6px;padding:6px;margin-top:6px;font:inherit;background:var(--papier)}
+#o{white-space:pre-wrap;background:var(--encre);color:var(--papier);padding:12px;border-radius:10px;margin-top:14px}
+.gen{background:var(--accent);color:#fff;font-family:Silkscreen,monospace;margin-top:14px}
+.sheet{margin-top:10px}
+</style></head><body>
+<h1>Pantoufles et dernier coup</h1>
+<p class="lead">Captures du vrai moteur (400 px, 48 couleurs). Deux nouveautes : l'arme comique « pantoufles » (claques, puis lancer a tres gros degats et forte expulsion) et la regle commune a TOUTES les armes de melee : au dernier point de durabilite, le coup devient un lancer qui brise l'arme sur la cible. Le lancer a distance par Lourde existait deja et reste.</p>
+<h2>Les 14 armes, dernier coup, d'un coup</h2>
+<div class="sheet"><img src="pantoufles/planche_dernier_coup.png" alt="planche : dernier coup de chaque arme"></div>
+<div class="g" id="g"></div>
+<button class="gen" onclick="out()">Generer mon texte</button><div id="o"></div>
+<script>
+var C=[
+{k:"pantoufles",n:"Pantoufles : claques puis lancer",d:"Arme trouvee au sol (rare : environ un lieu sur quatre, une batte sur quatre lachee par un ennemi). En main : claques tres vives (4 images de depart) et larges, la derniere est une grosse claque qui etourdit. LANCER (Lourde) : 34 degats (un sabre lance : 16), la cible decolle et est EXPULSEE, la garde est brisee, gel d impact de 15 images, onde de choc, trainee rose. Elle retombe au sol et se ramasse.",w:"Deterministe (hash d etat), 1 a 8 joueurs, rejoindre/quitter sans effet de bord. L IA les jette de loin quand elle est alignee."},
+{k:"dernier_batte",n:"Dernier coup : Batte",d:"Arme a 3 points : deux coups normaux, puis le dernier point de durabilite devient automatiquement un LANCER qui la brise sur la cible (gros choc, gel d impact, eclats, trainee doree). Un lancer rate se brise au sol.",w:"Meme regle pour toutes les armes de melee ; pas pour les armes a feu, grenades, caisse ni bouteille de lait."},
+{k:"dernier_sabre",n:"Dernier coup : Sabre",d:"Arme a 3 points : deux coups normaux, puis le dernier point de durabilite devient automatiquement un LANCER qui la brise sur la cible (gros choc, gel d impact, eclats, trainee doree). Un lancer rate se brise au sol.",w:"Meme regle pour toutes les armes de melee ; pas pour les armes a feu, grenades, caisse ni bouteille de lait."},
+{k:"dernier_fouet",n:"Dernier coup : Fouet",d:"Arme a 3 points : deux coups normaux, puis le dernier point de durabilite devient automatiquement un LANCER qui la brise sur la cible (gros choc, gel d impact, eclats, trainee doree). Un lancer rate se brise au sol.",w:"Meme regle pour toutes les armes de melee ; pas pour les armes a feu, grenades, caisse ni bouteille de lait."},
+{k:"dernier_kunai",n:"Dernier coup : Kunai",d:"Arme a 3 points : deux coups normaux, puis le dernier point de durabilite devient automatiquement un LANCER qui la brise sur la cible (gros choc, gel d impact, eclats, trainee doree). Un lancer rate se brise au sol.",w:"Meme regle pour toutes les armes de melee ; pas pour les armes a feu, grenades, caisse ni bouteille de lait."},
+{k:"dernier_tesson",n:"Dernier coup : Tesson",d:"Arme a 3 points : deux coups normaux, puis le dernier point de durabilite devient automatiquement un LANCER qui la brise sur la cible (gros choc, gel d impact, eclats, trainee doree). Un lancer rate se brise au sol.",w:"Meme regle pour toutes les armes de melee ; pas pour les armes a feu, grenades, caisse ni bouteille de lait."},
+{k:"dernier_agrafeuse",n:"Dernier coup : Agrafeuse",d:"Arme a 3 points : deux coups normaux, puis le dernier point de durabilite devient automatiquement un LANCER qui la brise sur la cible (gros choc, gel d impact, eclats, trainee doree). Un lancer rate se brise au sol.",w:"Meme regle pour toutes les armes de melee ; pas pour les armes a feu, grenades, caisse ni bouteille de lait."},
+{k:"dernier_balai_paille",n:"Dernier coup : Balai de paille",d:"Arme a 3 points : deux coups normaux, puis le dernier point de durabilite devient automatiquement un LANCER qui la brise sur la cible (gros choc, gel d impact, eclats, trainee doree). Un lancer rate se brise au sol.",w:"Meme regle pour toutes les armes de melee ; pas pour les armes a feu, grenades, caisse ni bouteille de lait."},
+{k:"dernier_balai_cantonnier",n:"Dernier coup : Balai de cantonnier",d:"Arme a 3 points : deux coups normaux, puis le dernier point de durabilite devient automatiquement un LANCER qui la brise sur la cible (gros choc, gel d impact, eclats, trainee doree). Un lancer rate se brise au sol.",w:"Meme regle pour toutes les armes de melee ; pas pour les armes a feu, grenades, caisse ni bouteille de lait."},
+{k:"dernier_tuyau",n:"Dernier coup : Tuyau de gouttiere",d:"Arme a 3 points : deux coups normaux, puis le dernier point de durabilite devient automatiquement un LANCER qui la brise sur la cible (gros choc, gel d impact, eclats, trainee doree). Un lancer rate se brise au sol.",w:"Meme regle pour toutes les armes de melee ; pas pour les armes a feu, grenades, caisse ni bouteille de lait."},
+{k:"dernier_pelle",n:"Dernier coup : Pelle",d:"Arme a 3 points : deux coups normaux, puis le dernier point de durabilite devient automatiquement un LANCER qui la brise sur la cible (gros choc, gel d impact, eclats, trainee doree). Un lancer rate se brise au sol.",w:"Meme regle pour toutes les armes de melee ; pas pour les armes a feu, grenades, caisse ni bouteille de lait."},
+{k:"dernier_barre",n:"Dernier coup : Barre a mine",d:"Arme a 3 points : deux coups normaux, puis le dernier point de durabilite devient automatiquement un LANCER qui la brise sur la cible (gros choc, gel d impact, eclats, trainee doree). Un lancer rate se brise au sol.",w:"Meme regle pour toutes les armes de melee ; pas pour les armes a feu, grenades, caisse ni bouteille de lait."},
+{k:"dernier_chandelier",n:"Dernier coup : Chandelier",d:"Arme a 3 points : deux coups normaux, puis le dernier point de durabilite devient automatiquement un LANCER qui la brise sur la cible (gros choc, gel d impact, eclats, trainee doree). Un lancer rate se brise au sol.",w:"Meme regle pour toutes les armes de melee ; pas pour les armes a feu, grenades, caisse ni bouteille de lait."},
+{k:"dernier_banc",n:"Dernier coup : Banc-planche",d:"Arme a 3 points : deux coups normaux, puis le dernier point de durabilite devient automatiquement un LANCER qui la brise sur la cible (gros choc, gel d impact, eclats, trainee doree). Un lancer rate se brise au sol.",w:"Meme regle pour toutes les armes de melee ; pas pour les armes a feu, grenades, caisse ni bouteille de lait."},
+{k:"dernier_poele",n:"Dernier coup : Poele",d:"Arme a 3 points : deux coups normaux, puis le dernier point de durabilite devient automatiquement un LANCER qui la brise sur la cible (gros choc, gel d impact, eclats, trainee doree). Un lancer rate se brise au sol.",w:"Meme regle pour toutes les armes de melee ; pas pour les armes a feu, grenades, caisse ni bouteille de lait."}
+],st={};
+var g=document.getElementById('g');
+C.forEach(function(c){var d=document.createElement('div');d.className='c';d.id='c_'+c.k;
+d.innerHTML='<img src="pantoufles/'+c.k+'.gif" alt="'+c.n+'" loading="lazy"><h2>'+c.n+'</h2><p>'+c.d+'</p><p class="why">'+c.w+'</p><button class="v" data-k="'+c.k+'" data-v="1">Valider</button><button class="x" data-k="'+c.k+'" data-v="-1">A refaire</button><textarea id="t_'+c.k+'" rows="2" placeholder="Commentaire"></textarea>';g.appendChild(d);});
+g.addEventListener('click',function(e){var b=e.target;if(!b.dataset||!b.dataset.k)return;var v=+b.dataset.v;st[b.dataset.k]=v;document.getElementById('c_'+b.dataset.k).className='c '+(v>0?'ok':'no');});
+function out(){var L=C.map(function(c){var v=st[c.k];var t=document.getElementById('t_'+c.k).value.trim();return (v>0?'VALIDE':v<0?'A REFAIRE':'NON VU')+' : '+c.n+(t?' - '+t:'');});document.getElementById('o').textContent='Pantoufles et dernier coup :\n'+L.join('\n');}
+</script></body></html>
