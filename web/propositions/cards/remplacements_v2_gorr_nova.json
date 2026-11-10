@@ -1,0 +1,38 @@
+[
+ {
+  "id": "rv2_nova17_nom",
+  "titre": "Nova_17 : « Pomme rotative » ou « Paume rotative » ?",
+  "texte": "Renomme comme demande en « Pomme rotative » ; mais le nom d'avant etait deja « Paume rotative » (dictee ?) : confirme, retour en une ligne si c'est « Paume ».",
+  "page": "remplacements_v2_gorr_nova.html"
+ },
+ {
+  "id": "rv2_gorr5_deux",
+  "titre": "Gorr_5 : deux uppercuts = deux bras ?",
+  "texte": "J'ai fait monter les DEUX bras avec un saut de 16 px et une pose d'impact gelee ; si tu voulais deux coups successifs, c'est un autre changement (frames et degats).",
+  "page": "remplacements_v2_gorr_nova.html"
+ },
+ {
+  "id": "rv2_hitstop",
+  "titre": "Sentir plus l'impact : allonger l'arret d'impact",
+  "texte": "Les poses sont maintenant gelees sur le bon geste pendant l'arret (10 a 13 images) ; si ce n'est pas assez, +3 images sur Gorr_3/5 et Nova_23 (non applique, equilibre).",
+  "page": "remplacements_v2_gorr_nova.html"
+ },
+ {
+  "id": "rv2_hitbox",
+  "titre": "Hitbox plus longue que le membre dessine",
+  "texte": "Ces coups gardent leur portee ; le dessin avance le corps pour l'atteindre (ecart reste -0,35 a -0,65 taille) : accepter, ou raccourcir la hitbox (change l'equilibre).",
+  "page": "remplacements_v2_gorr_nova.html"
+ },
+ {
+  "id": "rv2_kage22",
+  "titre": "Kage_22 : meme defaut que Gorr_26",
+  "texte": "Sa ruade jette la jambe derriere sans pivoter (meme cause) ; appliquer le meme correctif (dos tourne, pied vers l'adversaire) ?",
+  "page": "remplacements_v2_gorr_nova.html"
+ },
+ {
+  "id": "rv2_gorr4",
+  "titre": "Gorr_4 : ancienne version restituee",
+  "texte": "Retour a l'ancien Coup de pied frontal ; les images de la refonte restent comme modele interne des autres coups, plus jouees.",
+  "page": "remplacements_v2_gorr_nova.html"
+ }
+]

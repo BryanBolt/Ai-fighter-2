@@ -338,6 +338,12 @@
 // panic Rust (afh_report). Envoi : POST /report (sendBeacon). Aucune donnee personnelle : un identifiant de session aleatoire.
 (function () {
   var KEY = "afh_reports", on = true, crumbs = [], ctx = {}, sent = {}, nSent = 0, shown = false, lastRep = null, ready = false;
+  // Diagnostic de partie en ligne : le jeu (Rust) pose un JSON borne (cle reservee `_diag`) avant chaque rapport ; la page y ajoute la
+  // console (100 dernieres lignes), le service worker et son cache. Envois automatiques (desync, stall) : 3 par type, espaces de 20 s.
+  var diagStr = "", comment = "", con = [], swInfo = "?", multi = {};
+  function conPush(l, a) { try { var m = Array.prototype.join.call(a, " ").replace(/[\u0000-\u001f]/g, " ").slice(0, 120); con.push([Date.now(), l + ": " + m]); if (con.length > 100) con.shift(); } catch (e) {} }
+  ["log", "warn", "info"].forEach(function (l) { var o = console[l]; console[l] = function () { conPush(l, arguments); return o.apply(console, arguments); }; });
+  try { if (window.caches) caches.keys().then(function (k) { swInfo = (k.filter(function (x) { return /^afh-/.test(x); }).join(",") || "aucun cache") + (navigator.serviceWorker && navigator.serviceWorker.controller ? " (sw actif)" : " (sw inactif)"); }); } catch (e) {}
   var sid = ""; try { sid = Array.prototype.map.call(crypto.getRandomValues(new Uint8Array(6)), function (b) { return ("0" + b.toString(16)).slice(-2); }).join(""); } catch (e) { sid = Math.random().toString(16).slice(2, 14); }
   try { if (localStorage.getItem(KEY) === "0") on = false; } catch (e) {}
   var url = "/report";
@@ -366,6 +372,7 @@
     try { e.orient = (screen.orientation && screen.orientation.type) || (innerWidth < innerHeight ? "portrait" : "paysage"); } catch (x) {}
     try { if (navigator.deviceMemory) e.mem = navigator.deviceMemory; } catch (x) {}
     try { if (navigator.connection) e.net = navigator.connection.effectiveType; } catch (x) {}
+    try { e.vis = document.visibilityState; e.online = navigator.onLine; e.sw = swInfo; e.mobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent); } catch (x) {}
     return e;
   }
   function fp(kind, msg, loc) {
@@ -375,7 +382,9 @@
   }
   function build(kind, msg, loc) {
     var b = ctx.build || "", m = /\+p(\d+)/.exec(b);
-    return { kind: kind, msg: String(msg).slice(0, 600), loc: String(loc || "").slice(0, 200), fp: fp(kind, msg, loc || ""), build: b || "web", proto: m ? +m[1] : null, platform: "web", sid: sid, ping: ctx.ping ? +ctx.ping : null, ctx: ctx, env: env(), crumbs: crumbs.slice(-50) };
+    var d = null; try { d = diagStr ? JSON.parse(diagStr) : null; } catch (e) { d = null; }
+    d = d || {}; d.console = con.slice(-100);
+    return { kind: kind, msg: String(msg).slice(0, 600), loc: String(loc || "").slice(0, 200), fp: fp(kind, msg, loc || ""), build: b || "web", proto: m ? +m[1] : null, platform: "web", sid: sid, ping: ctx.ping ? +ctx.ping : null, ctx: ctx, env: env(), crumbs: crumbs.slice(-50), diag: d, comment: comment };
   }
   function post(rep) {
     if (!url) return;
@@ -385,8 +394,16 @@
   }
   // Dedoublonnage par empreinte (une fois par session) et limite de 8 rapports par session. `force` : bouton « Envoyer le rapport ».
   function submit(kind, msg, loc, force) {
+    // Type suffixe de « ! » : envoi voulu par le joueur (bouton « Signaler un probleme »).
+    if (/!$/.test(kind)) { kind = kind.slice(0, -1); force = true; }
     var rep = build(kind, msg, loc);
     lastRep = rep;
+    if (!force && (kind === "desync" || kind === "stall" || kind === "net")) {
+      // Rapports automatiques de diagnostic : 3 par type et par session, espaces d'au moins 20 s.
+      var mk = multi[kind] || (multi[kind] = { n: 0, t: 0 }), now = Date.now();
+      if (!on || mk.n >= 3 || now - mk.t < 20000) return false;
+      mk.n++; mk.t = now; post(rep); return true;
+    }
     if (!force) { if (!on || sent[rep.fp] || nSent >= 8) return false; }
     if (!sent[rep.fp]) { sent[rep.fp] = 1; nSent++; }
     post(rep);
@@ -426,6 +443,7 @@
   var ce = console.error;
   console.error = function () {
     try {
+      conPush("error", arguments);
       var m = Array.prototype.join.call(arguments, " ").slice(0, 300);
       var kind = /webgl|gl context|shader/i.test(m) ? "webgl" : /audiocontext|audio/i.test(m) ? "audio" : /wasm|webassembly/i.test(m) ? "wasm" : "";
       if (kind) { crumb(kind, m); submit(kind, m, "", false); }
@@ -434,7 +452,12 @@
   };
   window.AFH_REPORT = {
     crumb: crumb, submit: submit, fatal: fatal, on: function () { return on; },
-    ctx: function (k, v) { ctx[String(k).slice(0, 32)] = String(v).slice(0, 120); },
+    ctx: function (k, v) {
+      k = String(k);
+      if (k === "_diag") { diagStr = String(v); return; }   // diagnostic Rust (JSON), joint au prochain rapport
+      if (k === "_comment") { comment = String(v).slice(0, 300); return; }
+      ctx[k.slice(0, 32)] = String(v).slice(0, 120);
+    },
     config: function (v) { on = !!v; try { localStorage.setItem(KEY, on ? "1" : "0"); } catch (e) {} },
     ready: function () { ready = true; },
   };

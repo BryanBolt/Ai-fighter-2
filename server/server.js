@@ -11,9 +11,9 @@ import { WebSocketServer } from 'ws';
 import { createScores } from './scores.js';
 import { createVerdicts } from './verdicts.js';
 import { createPush } from './push.js';
-import { createReports } from './reports.js';
+import { createReports, cleanReport } from './reports.js';
 
-export const PROTOCOL_VERSION = 15; // 15 : anti-sandwich (jetons d'attaque, plafond de coups subis, nouveaux etats dans l'empreinte) ; 14 : empreinte de simulation etendue (univers, tournoi), commande tourn, messages watch / emote (spectateur), idle / need_resync ; 13 : pouvoir actif du roguelite (bits 25-27 de l entree) ; 12 : modes de groupe (mode 5, commande group) ; 11 : accessoires COSMETIQUES (message cos, champ cos des joueurs du salon) ; 10 : daemon de chaque joueur au salon (champ `daemon` des messages lobby et room) ; 9 : mode ROGUELITE en coop (mode 3 : run d equipe, cartes personnelles, etages) ; 8 : nunchaku (nouvelle arme ramassable, serie de six coups, Pied = coups de pied avec l'arme) et armes au sol du dojo/temple changees ; 7 : entree Saisie (nouveau bit d'entree) + coups renommes (SCHEMA_VERSION 8) ; 6 : table des coups changee (grammaire X/Y des 9 autres heros, SCHEMA_VERSION 7) ; 5 : jusqu'a 8 joueurs, vague/PV de depart (solo -> en ligne) ; 4 : table des coups changee (aeriens, realisme, grammaire X/Y ; tir allie, QA). 3 : parties hebergees (jeu complet : loadout, cmd sequences). 2 : join_any / host. Seuls les clients v8 sont acceptes.
+export const PROTOCOL_VERSION = 16; // 16 : roguelite coop (un pouvoir aleatoire par etape, vie partagee : le releveur paie 30 % de ses PV, nouveaux champs dans l'empreinte) ; 15 : anti-sandwich (jetons d'attaque, plafond de coups subis, nouveaux etats dans l'empreinte) ; 14 : empreinte de simulation etendue (univers, tournoi), commande tourn, messages watch / emote (spectateur), idle / need_resync ; 13 : pouvoir actif du roguelite (bits 25-27 de l entree) ; 12 : modes de groupe (mode 5, commande group) ; 11 : accessoires COSMETIQUES (message cos, champ cos des joueurs du salon) ; 10 : daemon de chaque joueur au salon (champ `daemon` des messages lobby et room) ; 9 : mode ROGUELITE en coop (mode 3 : run d equipe, cartes personnelles, etages) ; 8 : nunchaku (nouvelle arme ramassable, serie de six coups, Pied = coups de pied avec l'arme) et armes au sol du dojo/temple changees ; 7 : entree Saisie (nouveau bit d'entree) + coups renommes (SCHEMA_VERSION 8) ; 6 : table des coups changee (grammaire X/Y des 9 autres heros, SCHEMA_VERSION 7) ; 5 : jusqu'a 8 joueurs, vague/PV de depart (solo -> en ligne) ; 4 : table des coups changee (aeriens, realisme, grammaire X/Y ; tir allie, QA). 3 : parties hebergees (jeu complet : loadout, cmd sequences). 2 : join_any / host. Seuls les clients v8 sont acceptes.
 const COMPAT_VERSIONS = [PROTOCOL_VERSION]; // derive de PROTOCOL_VERSION : ne peut plus diverger (v8 etait refuse par erreur, ancienne valeur [7]) ; // protocole 7 : les clients 1 a 6 n'ont pas la meme table de coups (et 1 a 4 ne savent pas lire des salons de 8 places), ils doivent se mettre a jour
 const HOSTED_SIZE = 2; // taille par defaut d une partie hebergee (anciens clients) ; le client actuel demande 4 avec `size` (places vides dormantes)
 const HOSTED_MIN = 2; // taille minimale demandable
@@ -67,7 +67,7 @@ export function createServer(opts = {}) {
   const scores = createScores({ file: opts.scoresFile !== undefined ? opts.scoresFile : (process.env.SCORES_FILE || null), now: opts.now });
   const verdicts = createVerdicts({ file: opts.verdictsFile !== undefined ? opts.verdictsFile : (process.env.VERDICTS_FILE || null), key: opts.verdictKey !== undefined ? opts.verdictKey : (process.env.VERDICT_KEY || null), now: opts.now });
   const push = createPush({ sender: opts.pushSender ?? null, env: opts.pushEnv ?? process.env, roomExists: (c) => rooms.has(c) });
-  const errReports = createReports(opts.reports || {}); // rapports d'erreurs anonymes (distinct de `reports` : signalements de joueurs)
+  const errReports = createReports({ protocol: PROTOCOL_VERSION, ...(opts.reports || {}) }); // rapports d'erreurs anonymes (distinct de `reports` : signalements de joueurs)
 
   // Expulsion : par adresse, SAUF si un autre joueur present partage cette adresse (meme foyer, meme wifi, meme operateur mobile) : on bannit alors le jeton, sinon l'hote expulserait aussi ses voisins et lui-meme.
   const banKey = (room, t) => (room.slots.some((x) => x !== t && x.ws && x.ip === t.ip) ? 'tok:' + t.token : t.ip);
@@ -247,6 +247,31 @@ export function createServer(opts = {}) {
     return room;
   }
   const humans = (room) => room.slots.map((s, i) => [s, i]).filter(([s]) => s.ws);
+  // Rapport de desynchro cote SERVEUR (marche meme si aucun client ne peut envoyer le sien) : image, hashs de chaque place,
+  // derniers hashs concordants, places humaines/IA. Aucune IP, aucun pseudo, code du salon remplace par une empreinte. Au plus 3 par salon et 10 min.
+  function reportDesync(room, f, hashesObj) {
+    const now = Date.now();
+    room.descRep = (room.descRep || []).filter((t) => now - t < 600000);
+    if (room.descRep.length >= 3) return;
+    room.descRep.push(now);
+    const counts = new Map(); for (const v of Object.values(hashesObj)) counts.set(v, (counts.get(v) || 0) + 1);
+    const major = [...counts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0];
+    const odd = Object.entries(hashesObj).find(([, v]) => v !== major)?.[0];
+    const size = room.options?.size | 0 || 2;
+    const rep = cleanReport({
+      kind: 'desync', msg: `desynchro (serveur) a l'image ${f}`, loc: 'server', build: `serveur+p${PROTOCOL_VERSION}`, proto: PROTOCOL_VERSION, platform: 'server',
+      sid: 'room-' + crypto.createHash('sha1').update(String(room.code)).digest('hex').slice(0, 8),
+      ctx: { mode: room.mode === 3 ? 'roguelite' : 'mode' + (room.mode | 0), screen: 'server', frame: String(f), run: String(room.run | 0), wave: String(room.wave | 0), full: String(!!room.full), hosted: String(!!room.full) },
+      diag: {
+        server: true, game: 'serveur', proto: PROTOCOL_VERSION, server_proto: PROTOCOL_VERSION,
+        first_div: { frame: f, slot: odd === undefined ? null : Number(odd), hashes: hashesObj }, div_count: 1,
+        frames: (room.hlog || []).slice(-12).map(([ff, o]) => [ff, '', o]),
+        players: room.slots.slice(0, size).map((s, i) => ({ slot: i, online: !!s.ws, ai: s.mode === 'ai' })),
+      },
+      crumbs: [],
+    });
+    if (rep) errReports.store(rep);
+  }
   const lobbyView = (room) => ({
     t: 'room', code: room.code, public: room.public, started: room.started, auto: room.auto, run: room.run, options: { ...room.options, ff: room.ff !== false, ffm: room.ffm, pal: room.pal !== false }, host: hostSlot(room), full: !!room.full, mode: room.mode | 0, chapter: room.chapter | 0, private: !room.public, keep: !!room.keep, ttl: Math.round(roomTtl / 60000),
     players: room.slots.map((s, i) => ({ slot: i, name: s.name, char: s.char, color: s.color, daemon: s.daemon, cos: s.cos || '', ready: s.ready, online: !!s.ws, mode: s.mode })),
@@ -315,7 +340,7 @@ export function createServer(opts = {}) {
       }
       s.hi = -1; s.journal = []; s.lastMove = Date.now(); s.lastInputAt = Date.now(); s.lastBits = 0; s.cmds = 0; s.loadouts = 0; s.afkWarned = false;
     });
-    room.started = true; room.ctl = []; room.hashes = new Map();
+    room.started = true; room.ctl = []; room.hashes = new Map(); room.hlog = [];
     // Revanche apres une defaite : MEME graine (meme terrain, memes vagues) ; nouvelle graine seulement apres une victoire.
     room.seed = (room.keepSeed && room.seed) ? room.seed : ((rnd(0x7fffffff) >>> 0) || 1);
     room.keepSeed = false;
@@ -770,17 +795,22 @@ export function createServer(opts = {}) {
         if (f < 0 || typeof m.h !== 'string' || !/^[0-9a-f]{1,32}$/.test(m.h)) return;
         const h = room.hashes.get(f) || new Map();
         h.set(c.slot, m.h);
+        if (!room.hlog) room.hlog = [];
         room.hashes.set(f, h);
         while (room.hashes.size > 64) room.hashes.delete(room.hashes.keys().next().value);
         const need = room.slots.filter((x) => x.ws && x.mode === 'human').length;
         if (h.size >= need) {
           const ref = h.get(Math.min(...h.keys()));
+          const hashesObj = Object.fromEntries(h);
+          const diverged = [...h.values()].some((v) => v !== ref);
+          room.hlog.push([f, hashesObj]); if (room.hlog.length > 12) room.hlog.shift();
+          if (diverged) reportDesync(room, f, hashesObj);
           for (const [k, v] of h) {
             if (v === ref) continue;
             const sk = room.slots[k]; const nowH = Date.now();
             if (nowH - sk.lastResync < RESYNC_GAP_MS) continue; // pas de tempete de reprises si un client reste en desaccord
             sk.lastResync = nowH;
-            send(sk.ws, { t: 'desync', f });
+            send(sk.ws, { t: 'desync', f, hashes: hashesObj });
             send(sk.ws, { ...resyncPayload(room), you: k, forced: true });
           }
           room.hashes.delete(f);

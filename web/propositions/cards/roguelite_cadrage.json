@@ -1,0 +1,32 @@
+[
+ {
+  "id": "rlc_mini_boss",
+  "titre": "Ajouter de vrais mini-boss",
+  "texte": "Le generateur d'etages n'a que des niveaux et des boss (etages 5 et 10) : veux-tu un mini-boss aux etages 3 et 8, qui donne lui aussi un pouvoir ?",
+  "page": "decisions.html"
+ },
+ {
+  "id": "rlc_cout_releve",
+  "titre": "Cout de la resurrection (vie partagee)",
+  "texte": "Le releveur paie 30 % de ses PV max et garde au moins 1 PV (impossible s'il est trop faible) : 20 %, 30 % ou 40 % ?",
+  "page": "decisions.html"
+ },
+ {
+  "id": "rlc_upgrades",
+  "titre": "Ameliorations +2 niveaux",
+  "texte": "Les 17 objets d'amelioration (Brise-glace, Bobine...) ne sortent plus comme nouveau pouvoir ; veux-tu qu'ils s'ouvrent apres le 3e pouvoir ou qu'ils disparaissent du roguelite ?",
+  "page": "decisions.html"
+ },
+ {
+  "id": "rlc_regles",
+  "titre": "Regles passives (Vampire, Epines...)",
+  "texte": "Elles ne sont plus donnees en roguelite coop (seuls les vrais pouvoirs le sont) : les garder hors du mode ou les offrir en bonus a part ?",
+  "page": "decisions.html"
+ },
+ {
+  "id": "rlc_solo",
+  "titre": "Solo : meme regle ?",
+  "texte": "Le roguelite solo (rl_run.rs) donne encore trois cartes au choix par etage ; l'aligner sur un pouvoir aleatoire unique comme en coop ?",
+  "page": "decisions.html"
+ }
+]

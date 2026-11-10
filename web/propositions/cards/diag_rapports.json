@@ -1,0 +1,26 @@
+[
+ {
+  "id": "diag-1",
+  "titre": "Rapport auto sur desynchro",
+  "texte": "Garder l'envoi automatique (desync, gel > 7 s, connexion perdue) actif par defaut, avec le reglage Options pour le couper ?",
+  "page": "decisions.html"
+ },
+ {
+  "id": "diag-2",
+  "titre": "Gel reseau : seuil",
+  "texte": "Le rapport de gel part a 7 s sans progres (420 images) : plus court (4 s) ou plus long (12 s) ?",
+  "page": "decisions.html"
+ },
+ {
+  "id": "diag-3",
+  "titre": "Disque Render",
+  "texte": "Les rapports disparaissent a chaque deploiement : monter un disque persistant (REPORTS_FILE) ou relever souvent avec fetch_reports.sh ?",
+  "page": "decisions.html"
+ },
+ {
+  "id": "diag-4",
+  "titre": "Hash plus frequent",
+  "texte": "Les hashs sont echanges toutes les 60 images : passer a 30 pour situer plus finement la 1re divergence (trafic x2 sur 'hash', a valider car cela touche le comportement en ligne) ?",
+  "page": "decisions.html"
+ }
+]

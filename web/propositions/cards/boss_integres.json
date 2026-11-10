@@ -1,0 +1,7 @@
+[
+  {"id": "boss_ange", "titre": "L'Ange intégré (V12, V13, V14)", "texte": "Phase 1 anneau simple et ailes repliées, phase 2 aurole fendue et neuf lames, phases 3 et 4 double aurole et sept lames ; le cou est raccourci.", "page": "boss_integres.html"},
+  {"id": "boss_brute", "titre": "Brute intégrée (V18 puis V19)", "texte": "Cornes et cape en phase 1, puis lune et épaulières dès la phase 2 : les deux variantes validées servent de progression.", "page": "boss_integres.html"},
+  {"id": "boss_valerie", "titre": "Valérie Kogen intégrée (V23)", "texte": "Cape et couronne dorée.", "page": "boss_integres.html"},
+  {"id": "boss_kaze_roi", "titre": "Kaze, PDG en roi (V27)", "texte": "Lune imposante à graduations, couronne haute à cinq pointes, anneau d'autorité doré au sol : le président le plus puissant.", "page": "boss_integres.html"},
+  {"id": "boss_rappel", "titre": "Le Rappel intégré (V32)", "texte": "Cape et orbes qui tournent autour de lui.", "page": "boss_integres.html"}
+]

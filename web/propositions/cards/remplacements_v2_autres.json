@@ -1,0 +1,38 @@
+[
+ {
+  "id": "v2autres_rb_zui_5",
+  "titre": "Zui #5 Ruee de l'ivrogne",
+  "texte": "Charge d'epaule : epaule avant, jambe arriere qui pousse, le contact vient de l'epaule.",
+  "page": "remplacements_v2_autres.html"
+ },
+ {
+  "id": "v2autres_rb_zui_31",
+  "titre": "Zui #31 Ruade de la mule",
+  "texte": "Plus de retournement : penche en avant, mains au sol, jambe arriere tendue.",
+  "page": "remplacements_v2_autres.html"
+ },
+ {
+  "id": "v2autres_rb_yume_31",
+  "titre": "Yume #31 Ruade du lit",
+  "texte": "Plus de retournement : bras en ailes, pantoufle droit en arriere.",
+  "page": "remplacements_v2_autres.html"
+ },
+ {
+  "id": "v2autres_rb_yume_15",
+  "titre": "Yume #15 Coude d'oreiller",
+  "texte": "Elle saute apres l'adversaire projete (genou ramene), puis plonge coude en avant.",
+  "page": "remplacements_v2_autres.html"
+ },
+ {
+  "id": "v2autres_ra_kage_22",
+  "titre": "Kage #22 Ruade de l'ombre",
+  "texte": "Buste presque horizontal, mains vers le sol, jambe arriere tendue : on lit une ruade.",
+  "page": "remplacements_v2_autres.html"
+ },
+ {
+  "id": "v2autres_ra_tetsu_5",
+  "titre": "Tetsu #5 Uppercut",
+  "texte": "Charge profonde puis detente totale : talons decolles, poing au menton, buste renverse.",
+  "page": "remplacements_v2_autres.html"
+ }
+]
