@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bestiaire - proposition</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#221834;--paper:#fff3e0;--acc:#d8456b;--card:#fffaf2;--line:#e9d3b4;--ok:#2f8f5b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/1.55 Nunito,system-ui,sans-serif}
+.wrap{max-width:1040px;margin:0 auto;padding:20px 16px 80px}
+h1,h2,.pix{font-family:Silkscreen,monospace;font-weight:700}
+h1{font-size:30px;margin:8px 0 4px;color:var(--acc)} h2{font-size:21px;margin:38px 0 10px;border-bottom:3px solid var(--acc);padding-bottom:6px}
+.card{background:var(--card);border:2px solid var(--ink);border-radius:10px;padding:14px 16px;margin:12px 0;box-shadow:4px 4px 0 var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+img{max-width:100%;border:2px solid var(--ink);border-radius:8px;display:block}
+.cap{font-size:14px;margin:4px 0 10px;opacity:.85}
+.badge{display:inline-block;min-width:26px;text-align:center;border-radius:50%;color:#fff3e0;padding:1px 6px;font-size:14px}
+button,input,textarea{font:700 15px Nunito,sans-serif;color:var(--ink)}
+button{background:var(--card);border:2px solid var(--ink);border-radius:8px;padding:8px 14px;cursor:pointer;box-shadow:2px 2px 0 var(--ink)}
+button.on.ok{background:var(--ok);color:#fff} button.on.no{background:var(--acc);color:#fff}
+input,textarea{background:#fff;border:2px solid var(--ink);border-radius:8px;padding:7px 9px;width:100%}
+.vb{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px} .vb button{flex:0 0 auto}
+table{width:100%;border-collapse:collapse;font-size:15px} td,th{border:2px solid var(--ink);padding:6px 9px;text-align:left;vertical-align:top} th{background:var(--ink);color:var(--paper)}
+.out{background:var(--ink);color:var(--paper);border-radius:10px;padding:14px 16px;margin-top:12px}
+</style></head><body><div class="wrap">
+<div class="pix" style="color:var(--acc);font-size:13px">AI FIGHTER 2 / BESTIAIRE / PROPOSITION</div>
+<h1>BESTIAIRE ET COMPORTEMENTS ENNEMIS</h1>
+<p>13 nouveaux ennemis a ROLE, 16 mini-boss aux comportements distincts (15 gestes differents), des compositions de vagues a synergie et des reactions d'equipe. Tout est en aplats sans contour noir, sur le rig du jeu ; les GIF sont ceux du vrai moteur (heros pilote par l'IA). Tu choisis : Valider / A refaire / commentaire.</p>
+<h2>1. AUDIT DE L'EXISTANT</h2><table><tr><th>Point</th><th>Constat</th></tr>
+<tr><td><b>Roster d&#x27;origine</b></td><td>Six corps (voyou, boxeur, kickboxeur, lutteur, karateka, archer) + ninja, plus quatre boss. Les terrains les rhabillent (nom, teinte, pieces d&#x27;equipement) : le lieu se lit, le ROLE non. Deux ennemis de lieux differents jouent pareil.</td></tr>
+<tr><td><b>Roles manquants</b></td><td>Aucun soigneur, invocateur, charge, esquiveur, piegeur, kamikaze, porteur de drapeau ni tireur verrouille. Seuls existent : tapeur, tireur, lutteur (tank par defaut), rapide.</td></tr>
+<tr><td><b>Telegraphes</b></td><td>Un seul langage : le depart du coup. Aucun geste annonce au sol (anneau, ligne, jauge) ; seuls les boss ont des fenetres de punition.</td></tr>
+<tr><td><b>Contres</b></td><td>Peu de contre evident : on tape le plus proche. Les armes ramassees servent a tout, pas a repondre a un ennemi precis.</td></tr>
+<tr><td><b>Compositions</b></td><td>Les vagues sont des listes fixes par terrain, sans synergie (le tireur et le lutteur ne s&#x27;aident pas). Aucune reaction collective hors tir ami.</td></tr>
+<tr><td><b>Mini-boss</b></td><td>Un reskin plus gros (PV x2,4) : memes gestes que l&#x27;ennemi de base. Une seule mecanique pour 16 terrains.</td></tr>
+<tr><td><b>Coherence lieux</b></td><td>Bonne pour le decor et l&#x27;equipement (stagiaire, cadre, garde du Senat, adepte). Le bestiaire ajoute des variantes par famille de lieu : rue, bureau, dojo, secte / jardin, robots.</td></tr>
+</table>
+<h2>2. LES 13 NOUVEAUX ENNEMIS</h2><p>Chacun a un role distinct, une pastille de role lisible (lettre sur disque plat), un geste annonce et un contre evident. Les armes restent au sol : aucun n'a d'arme native.</p><div class='grid'>
+<div class="card"><div class="pix" style="color:var(--acc)">1. HARCELEUR <span class="badge" style="background:rgb(240, 180, 60)">H</span></div>
+<img src="bestiaire/role_0.webp" alt="Harceleur" loading="lazy"><div class="cap">Terrain de la capture : Ruelle. PV 38, vitesse 3.7.</div>
+<p><b>Ce qu'il fait.</b> Frappe vite puis recule hors de portee.<br><b>Le contre.</b> Ne le poursuis pas : garde, attends sa prochaine approche, ou lance un objet.</p><div class="cap">Noms par lieu : Rue : Livreur a velo / Bureau : Coursier de l&#x27;open space / Dojo : Genin pressé / Secte / jardin : Enfant de choeur turbulent / Robots : Drone-guepe</div><div class="vb" data-sec="Ennemi Harceleur"></div></div>
+<div class="card"><div class="pix" style="color:var(--acc)">2. GARDIEN <span class="badge" style="background:rgb(90, 150, 220)">G</span></div>
+<img src="bestiaire/role_1.webp" alt="Gardien" loading="lazy"><div class="cap">Terrain de la capture : Open space. PV 105, vitesse 1.9.</div>
+<p><b>Ce qu'il fait.</b> Leve son bouclier face a toi.<br><b>Le contre.</b> Contourne-le en profondeur, saisis-le, ou brise sa garde (lourde).</p><div class="cap">Noms par lieu : Rue : Videur du bar / Bureau : Agent d&#x27;accueil blinde / Dojo : Moine au bouclier / Secte / jardin : Garde du bien-etre / Robots : Robot-parapluie</div><div class="vb" data-sec="Ennemi Gardien"></div></div>
+<div class="card"><div class="pix" style="color:var(--acc)">3. LANCEUR <span class="badge" style="background:rgb(230, 120, 70)">L</span></div>
+<img src="bestiaire/role_2.webp" alt="Lanceur" loading="lazy"><div class="cap">Terrain de la capture : Parking -3. PV 40, vitesse 2.3.</div>
+<p><b>Ce qu'il fait.</b> Lance des projectiles en cloche, de loin.<br><b>Le contre.</b> Avance en zigzag ; il panique au contact.</p><div class="cap">Noms par lieu : Rue : Lanceur de bouteilles / Bureau : Lanceur d&#x27;agrafeuses / Dojo : Lanceur de galets / Secte / jardin : Lanceur de pots de fleurs / Robots : Canon a boulons</div><div class="vb" data-sec="Ennemi Lanceur"></div></div>
+<div class="card"><div class="pix" style="color:var(--acc)">4. INFIRMIER <span class="badge" style="background:rgb(90, 200, 130)">+</span></div>
+<img src="bestiaire/role_3.webp" alt="Infirmier" loading="lazy"><div class="cap">Terrain de la capture : Seminaire. PV 42, vitesse 2.7.</div>
+<p><b>Ce qu'il fait.</b> Soigne un camarade blesse (anneau vert).<br><b>Le contre.</b> Interromps-le d&#x27;un coup : le soin est annule. Cible-le en premier.</p><div class="cap">Noms par lieu : Rue : Ambulancier du coin / Bureau : Medecin du travail / Dojo : Herboriste du dojo / Secte / jardin : Guerisseur en synergie / Robots : Robot de maintenance</div><div class="vb" data-sec="Ennemi Infirmier"></div></div>
+<div class="card"><div class="pix" style="color:var(--acc)">5. RECRUTEUR <span class="badge" style="background:rgb(170, 100, 220)">R</span></div>
+<img src="bestiaire/role_4.webp" alt="Recruteur" loading="lazy"><div class="cap">Terrain de la capture : Open space. PV 60, vitesse 2.4.</div>
+<p><b>Ce qu'il fait.</b> Leve les bras et appelle des recrues (plafonnees).<br><b>Le contre.</b> Abats-le : ses recrues disparaissent avec lui.</p><div class="cap">Noms par lieu : Rue : Rabatteur de la rue / Bureau : Chasseur de tetes / Dojo : Maitre d&#x27;apprentis / Secte / jardin : Recruteur de l&#x27;Eveil / Robots : Usine a stagiaires</div><div class="vb" data-sec="Ennemi Recruteur"></div></div>
+<div class="card"><div class="pix" style="color:var(--acc)">6. TAUREAU <span class="badge" style="background:rgb(220, 70, 70)">T</span></div>
+<img src="bestiaire/role_5.webp" alt="Taureau" loading="lazy"><div class="cap">Terrain de la capture : Chantier. PV 95, vitesse 2.1.</div>
+<p><b>Ce qu'il fait.</b> Racle le sol, puis charge en ligne droite.<br><b>Le contre.</b> Pas de cote en profondeur ; s&#x27;il rate, il s&#x27;assomme : punis.</p><div class="cap">Noms par lieu : Rue : Docker en colere / Bureau : Cadre en retard / Dojo : Sumotori / Secte / jardin : Bucheron de l&#x27;Eveil / Robots : Chariot fou</div><div class="vb" data-sec="Ennemi Taureau"></div></div>
+<div class="card"><div class="pix" style="color:var(--acc)">7. MIME <span class="badge" style="background:rgb(200, 200, 215)">M</span></div>
+<img src="bestiaire/role_6.webp" alt="Mime" loading="lazy"><div class="cap">Terrain de la capture : Salle des serveurs. PV 48, vitesse 3.1.</div>
+<p><b>Ce qu'il fait.</b> Esquive le premier coup qu&#x27;il voit venir.<br><b>Le contre.</b> Feinte puis frappe sa recuperation, ou saisis-le.</p><div class="cap">Noms par lieu : Rue : Mime des quais / Bureau : Imitateur du comite / Dojo : Ombre du dojo / Secte / jardin : Esprit de la brume / Robots : Hologramme</div><div class="vb" data-sec="Ennemi Mime"></div></div>
+<div class="card"><div class="pix" style="color:var(--acc)">8. POSEUR <span class="badge" style="background:rgb(150, 120, 80)">P</span></div>
+<img src="bestiaire/role_7.webp" alt="Poseur" loading="lazy"><div class="cap">Terrain de la capture : Toit-jardin. PV 52, vitesse 2.6.</div>
+<p><b>Ce qu'il fait.</b> Pose des filets et des pointes devant lui.<br><b>Le contre.</b> Regarde le sol ; roule ou saute par-dessus.</p><div class="cap">Noms par lieu : Rue : Poseur de pieges de ruelle / Bureau : Saboteur de cables / Dojo : Piegeur du clan / Secte / jardin : Braconnier du jardin / Robots : Tourelle-piege</div><div class="vb" data-sec="Ennemi Poseur"></div></div>
+<div class="card"><div class="pix" style="color:var(--acc)">9. PETARDIER <span class="badge" style="background:rgb(255, 120, 40)">!</span></div>
+<img src="bestiaire/role_8.webp" alt="Petardier" loading="lazy"><div class="cap">Terrain de la capture : Open space. PV 24, vitesse 3.2.</div>
+<p><b>Ce qu'il fait.</b> Fonce, la meche brule 1,2 s puis il explose.<br><b>Le contre.</b> Tue-le de loin, ou saisis-le et jette-le dans le groupe.</p><div class="cap">Noms par lieu : Rue : Petardier du quartier / Bureau : Stagiaire a la rame d&#x27;imprimante / Dojo : Apprenti artificier / Secte / jardin : Fan de feux d&#x27;artifice / Robots : Robot kamikaze</div><div class="vb" data-sec="Ennemi Petardier"></div></div>
+<div class="card"><div class="pix" style="color:var(--acc)">10. ETENDARD <span class="badge" style="background:rgb(230, 190, 60)">E</span></div>
+<img src="bestiaire/role_9.webp" alt="Etendard" loading="lazy"><div class="cap">Terrain de la capture : Parc. PV 62, vitesse 2.3.</div>
+<p><b>Ce qu'il fait.</b> Son drapeau renforce les camarades proches.<br><b>Le contre.</b> Abats-le : les bonus tombent aussitot.</p><div class="cap">Noms par lieu : Rue : Chef de bande / Bureau : Chef de service / Dojo : Porte-banniere / Secte / jardin : Prophete a fanion / Robots : Balise de ralliement</div><div class="vb" data-sec="Ennemi Etendard"></div></div>
+<div class="card"><div class="pix" style="color:var(--acc)">11. CASCADEUR <span class="badge" style="background:rgb(80, 200, 220)">C</span></div>
+<img src="bestiaire/role_10.webp" alt="Cascadeur" loading="lazy"><div class="cap">Terrain de la capture : Toits. PV 56, vitesse 2.8.</div>
+<p><b>Ce qu'il fait.</b> S&#x27;accroupit, puis bondit sur l&#x27;ombre marquee.<br><b>Le contre.</b> Quitte l&#x27;ombre ; il retombe lourdement : punis.</p><div class="cap">Noms par lieu : Rue : Cascadeur du parking / Bureau : Livreur de colis volant / Dojo : Acrobate du toit / Secte / jardin : Sauteur de l&#x27;Eveil / Robots : Robot a ressort</div><div class="vb" data-sec="Ennemi Cascadeur"></div></div>
+<div class="card"><div class="pix" style="color:var(--acc)">12. EMBUSQUE <span class="badge" style="background:rgb(200, 60, 90)">S</span></div>
+<img src="bestiaire/role_11.webp" alt="Embusque" loading="lazy"><div class="cap">Terrain de la capture : Senat. PV 34, vitesse 2.2.</div>
+<p><b>Ce qu'il fait.</b> Vise (ligne rouge), verrouille, tire.<br><b>Le contre.</b> Quitte la ligne apres le verrouillage, ou saute.</p><div class="cap">Noms par lieu : Rue : Tireur de balcon / Bureau : Tireur de la mezzanine / Dojo : Archer embusque / Secte / jardin : Chasseur a l&#x27;affut / Robots : Tourelle laser</div><div class="vb" data-sec="Ennemi Embusque"></div></div>
+<div class="card"><div class="pix" style="color:var(--acc)">13. COGNEUR <span class="badge" style="background:rgb(180, 50, 50)">B</span></div>
+<img src="bestiaire/role_12.webp" alt="Cogneur" loading="lazy"><div class="cap">Terrain de la capture : Temple. PV 110, vitesse 2.1.</div>
+<p><b>Ce qu'il fait.</b> Cogne fort ; rugit puis s&#x27;enrage a mi-vie.<br><b>Le contre.</b> Frappe-le pendant le rugissement ; garde-toi apres.</p><div class="cap">Noms par lieu : Rue : Cogneur de comptoir / Bureau : Directeur des achats / Dojo : Moine guerrier / Secte / jardin : Fanatique / Robots : Robot de demolition</div><div class="vb" data-sec="Ennemi Cogneur"></div></div>
+</div>
+<h2>3. PLANCHE DE VARIANTES : 4 ENNEMIS PHARES x 4 DESIGNS</h2><p>Gardien, Infirmier, Taureau, Embusque : 16 designs en aplats (couleur, carrure, pieces). Le premier de chaque ligne est celui integre par defaut ; dis lequel garder.</p>
+<div class='card'><div class='pix' style='color:var(--acc)'>GARDIEN</div><img src="bestiaire/var_0.png" alt="Gardien" loading="lazy"><div class='grid'>
+<div><b>1. Rempart (jeu)</b><div class="vb" data-sec="Variante 1 - Gardien - Rempart (jeu)"></div></div>
+<div><b>2. Pavois geant</b><div class="vb" data-sec="Variante 2 - Gardien - Pavois geant"></div></div>
+<div><b>3. Quartier-maitre</b><div class="vb" data-sec="Variante 3 - Gardien - Quartier-maitre"></div></div>
+<div><b>4. Moine-bouclier</b><div class="vb" data-sec="Variante 4 - Gardien - Moine-bouclier"></div></div>
+</div></div>
+<div class='card'><div class='pix' style='color:var(--acc)'>INFIRMIER</div><img src="bestiaire/var_1.png" alt="Infirmier" loading="lazy"><div class='grid'>
+<div><b>5. Croix verte (jeu)</b><div class="vb" data-sec="Variante 5 - Infirmier - Croix verte (jeu)"></div></div>
+<div><b>6. Blouse blanche</b><div class="vb" data-sec="Variante 6 - Infirmier - Blouse blanche"></div></div>
+<div><b>7. Herboriste</b><div class="vb" data-sec="Variante 7 - Infirmier - Herboriste"></div></div>
+<div><b>8. Medecin de nuit</b><div class="vb" data-sec="Variante 8 - Infirmier - Medecin de nuit"></div></div>
+</div></div>
+<div class='card'><div class='pix' style='color:var(--acc)'>TAUREAU</div><img src="bestiaire/var_2.png" alt="Taureau" loading="lazy"><div class='grid'>
+<div><b>9. Taureau (jeu)</b><div class="vb" data-sec="Variante 9 - Taureau - Taureau (jeu)"></div></div>
+<div><b>10. Taureau rouge</b><div class="vb" data-sec="Variante 10 - Taureau - Taureau rouge"></div></div>
+<div><b>11. Docker</b><div class="vb" data-sec="Variante 11 - Taureau - Docker"></div></div>
+<div><b>12. Sumo dore</b><div class="vb" data-sec="Variante 12 - Taureau - Sumo dore"></div></div>
+</div></div>
+<div class='card'><div class='pix' style='color:var(--acc)'>EMBUSQUE</div><img src="bestiaire/var_3.png" alt="Embusque" loading="lazy"><div class='grid'>
+<div><b>13. Embusque (jeu)</b><div class="vb" data-sec="Variante 13 - Embusque - Embusque (jeu)"></div></div>
+<div><b>14. Ombre</b><div class="vb" data-sec="Variante 14 - Embusque - Ombre"></div></div>
+<div><b>15. Chasseur</b><div class="vb" data-sec="Variante 15 - Embusque - Chasseur"></div></div>
+<div><b>16. Fantome pale</b><div class="vb" data-sec="Variante 16 - Embusque - Fantome pale"></div></div>
+</div></div>
+<h2>4. MINI-BOSS : 16 COMPORTEMENTS</h2><p>Plus des reskins : chaque mini-boss a son geste (annonce, contre). Huit sont montres, la table donne les seize.</p><div class='grid'>
+<div class='card'><div class='pix' style='color:var(--acc)'>GROS DEDE, ROI DE LA RUELLE</div><img src="bestiaire/mini_0.webp" alt="Gros Dede, roi de la ruelle" loading="lazy"><div class='cap'>Charge en ligne droite, s&#x27;assomme s&#x27;il rate.</div><div class="vb" data-sec="Mini-boss Gros Dede, roi de la ruelle"></div></div>
+<div class='card'><div class='pix' style='color:var(--acc)'>SYSADMIN EN PLEINE CRISE</div><img src="bestiaire/mini_2.webp" alt="Sysadmin en pleine crise" loading="lazy"><div class='cap'>Fenetres pop-up : appelle des recrues.</div><div class="vb" data-sec="Mini-boss Sysadmin en pleine crise"></div></div>
+<div class='card'><div class='pix' style='color:var(--acc)'>MANAGER DE PROXIMITE</div><img src="bestiaire/mini_4.webp" alt="Manager de proximite" loading="lazy"><div class='cap'>Se teleporte dans le dos (marque annoncee).</div><div class="vb" data-sec="Mini-boss Manager de proximite"></div></div>
+<div class='card'><div class='pix' style='color:var(--acc)'>SECRETAIRE DE DIRECTION</div><img src="bestiaire/mini_6.webp" alt="Secretaire de direction" loading="lazy"><div class='cap'>Bond ecrasant sur l&#x27;ombre marquee.</div><div class="vb" data-sec="Mini-boss Secretaire de direction"></div></div>
+<div class='card'><div class='pix' style='color:var(--acc)'>VEILLEUR DES ANTENNES</div><img src="bestiaire/mini_7.webp" alt="Veilleur des antennes" loading="lazy"><div class='cap'>Foudres au sol : deux marques a quitter.</div><div class="vb" data-sec="Mini-boss Veilleur des antennes"></div></div>
+<div class='card'><div class='pix' style='color:var(--acc)'>GARDIEN DU GONG</div><img src="bestiaire/mini_9.webp" alt="Gardien du gong" loading="lazy"><div class='cap'>Onde de gong a sauter.</div><div class="vb" data-sec="Mini-boss Gardien du gong"></div></div>
+<div class='card'><div class='pix' style='color:var(--acc)'>GARDE-CHASSE DE LA TOUR</div><img src="bestiaire/mini_11.webp" alt="Garde-chasse de la tour" loading="lazy"><div class='cap'>Tir verrouille (ligne rouge).</div><div class="vb" data-sec="Mini-boss Garde-chasse de la tour"></div></div>
+<div class='card'><div class='pix' style='color:var(--acc)'>ROI DU WOK</div><img src="bestiaire/mini_13.webp" alt="Roi du wok" loading="lazy"><div class='cap'>Souffle de feu en cone (brulure).</div><div class="vb" data-sec="Mini-boss Roi du wok"></div></div>
+</div><table><tr><th>Terrain</th><th>Mini-boss</th><th>Comportement</th></tr>
+<tr><td>1</td><td>Gros Dede, roi de la ruelle</td><td>Charge en ligne droite, s&#x27;assomme s&#x27;il rate.</td></tr>
+<tr><td>2</td><td>Maitre de salle Onikawa</td><td>Onde qui casse les combos (apres 4 coups subis).</td></tr>
+<tr><td>3</td><td>Sysadmin en pleine crise</td><td>Fenetres pop-up : appelle des recrues.</td></tr>
+<tr><td>4</td><td>Gardien du niveau -3</td><td>Garde de fer, bornee dans le temps.</td></tr>
+<tr><td>5</td><td>Manager de proximite</td><td>Se teleporte dans le dos (marque annoncee).</td></tr>
+<tr><td>6</td><td>Coach certifie Platine</td><td>Se regenere s&#x27;il n&#x27;est pas touche pendant 3 s.</td></tr>
+<tr><td>7</td><td>Secretaire de direction</td><td>Bond ecrasant sur l&#x27;ombre marquee.</td></tr>
+<tr><td>8</td><td>Veilleur des antennes</td><td>Foudres au sol : deux marques a quitter.</td></tr>
+<tr><td>9</td><td>Huissier en chef</td><td>Rugit, puis s&#x27;enrage a mi-vie.</td></tr>
+<tr><td>10</td><td>Gardien du gong</td><td>Onde de gong a sauter.</td></tr>
+<tr><td>11</td><td>Jardinier du bien-etre</td><td>Filets et pointes poses au sol.</td></tr>
+<tr><td>12</td><td>Garde-chasse de la tour</td><td>Tir verrouille (ligne rouge).</td></tr>
+<tr><td>13</td><td>Contremaitre Barnabe</td><td>Charge en ligne droite, s&#x27;assomme s&#x27;il rate.</td></tr>
+<tr><td>14</td><td>Roi du wok</td><td>Souffle de feu en cone (brulure).</td></tr>
+<tr><td>15</td><td>Chef de quai</td><td>Esquive le premier coup vu.</td></tr>
+<tr><td>16</td><td>Maitre queux Gaston</td><td>Soupe revigorante : se soigne.</td></tr>
+</table>
+<h2>5. COMPOSITIONS DE VAGUES</h2><p>Remplacent les sbires les plus faibles d'etages non-boss (jamais l'etage d'entree, jamais l'etage de boss, au moins un ennemi d'origine reste). Regles d'equite : au plus un tireur verrouille, un recruteur, un infirmier ; deux petardiers ; deux ennemis penibles en tout. Paliers selon le terrain.</p><table><tr><th>Composition</th><th>Des le terrain</th><th>Roles</th><th>Pourquoi</th></tr>
+<tr><td><b>Duo de harcelement</b></td><td>2</td><td>Harceleur + Harceleur</td><td>Deux vitesses : on apprend a garder au lieu de poursuivre.</td></tr>
+<tr><td><b>Meche courte</b></td><td>2</td><td>Petardier + Harceleur</td><td>Le petardier se tue de loin ; le harceleur occupe la garde.</td></tr>
+<tr><td><b>Mur et lanceur</b></td><td>3</td><td>Gardien + Lanceur</td><td>Le mur avance, le lanceur tire derriere : il faut contourner.</td></tr>
+<tr><td><b>Piege a clous</b></td><td>4</td><td>Poseur + Harceleur</td><td>Le sol devient dangereux ; on se bat sans reculer.</td></tr>
+<tr><td><b>Taureau et son chef</b></td><td>4</td><td>Taureau + Etendard</td><td>La charge frappe plus fort sous le drapeau : abats le chef.</td></tr>
+<tr><td><b>Infirmerie</b></td><td>5</td><td>Gardien + Infirmier + Lanceur</td><td>Tank + soigneur + lanceur : l&#x27;infirmier d&#x27;abord, le mur ensuite.</td></tr>
+<tr><td><b>Recrutement</b></td><td>5</td><td>Recruteur + Gardien</td><td>Le recruteur appelle ; le gardien le protege : cap sur le recruteur.</td></tr>
+<tr><td><b>Mimes et tireur</b></td><td>6</td><td>Mime + Embusque</td><td>Esquive et visee : bouger en profondeur, feinter.</td></tr>
+<tr><td><b>Acrobates</b></td><td>6</td><td>Cascadeur + Cogneur</td><td>Le bond et la masse : deux timings differents.</td></tr>
+<tr><td><b>Cogneur et sa meute</b></td><td>8</td><td>Cogneur + Harceleur + Recruteur</td><td>La perte d&#x27;un camarade enrage le cogneur : ordre d&#x27;elimination.</td></tr>
+<tr><td><b>Equipe de choc</b></td><td>9</td><td>Etendard + Gardien + Infirmier + Embusque</td><td>Les quatre appuis ensemble : lecture de priorites.</td></tr>
+<tr><td><b>Escouade de bureau</b></td><td>7</td><td>Taureau + Lanceur + Infirmier</td><td>Charge, tir et soin : trois reponses differentes.</td></tr>
+</table>
+<h2>6. REACTIONS COLLECTIVES</h2><table><tr><th>Reaction</th><th>Regle</th></tr>
+<tr><td><b>Peur</b></td><td>Un ennemi a moins de 50 % de PV qui voit tomber un camarade recule 1,2 s (deux fois au plus).</td></tr>
+<tr><td><b>Panique / fuite si seul</b></td><td>Le dernier sbire sous 40 % de PV fuit une fois, 2,5 s, jamais s&#x27;il est acculé dans un coin.</td></tr>
+<tr><td><b>Rage</b></td><td>Le cogneur rugit (45 images, vulnerable) quand un camarade tombe ou a mi-vie : +30 % degats, +25 % vitesse.</td></tr>
+<tr><td><b>Esprit d&#x27;equipe</b></td><td>Gardien qui couvre lanceur et infirmier, infirmier qui soigne (3 fois), drapeau +25 % degats, recruteur.</td></tr>
+<tr><td><b>Releve</b></td><td>Un ennemi inoccupe tend la main a un ami a terre : il se releve plus vite (une fois par ennemi).</td></tr>
+<tr><td><b>Contrat rompu</b></td><td>Les recrues disparaissent des que leur recruteur tombe.</td></tr>
+</table>
+<h2>7. EN LIGNE ET DETERMINISME</h2><p>Tout passe par la simulation (aucune horloge, aucun hasard hors graine du monde), l'etat de role est dans l'empreinte (hash) : deux clients voient la meme chose. De 1 a 8 joueurs : les plafonds de recrues et de soins montent avec le nombre de heros vivants, les PV suivent <code>scale_enemies</code>. Tests en lot : toutes les compositions (solo et 4 joueurs), 13 terrains x 4 graines, 16 mini-boss, toutes sans impasse.</p>
+<h2>VOTRE RETOUR</h2><textarea id="gen" rows="3" placeholder="Commentaire general"></textarea><div class="out"><div id="sum"></div><p><button id="copy">Copier le retour</button> <button id="reset">Tout effacer</button></p></div></div>
+<script>
+const KEY='bestiaire_v1';let st={};try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}summ();};
+const esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+document.querySelectorAll('.vb[data-sec]').forEach(el=>{const s=el.dataset.sec;st[s]=st[s]||{v:'',c:''};
+ el.innerHTML=`<button>Valider</button><button>A refaire</button><input placeholder="Commentaire" style="flex:1 1 200px">`;
+ const [b1,b2]=el.querySelectorAll('button'),inp=el.querySelector('input');inp.value=st[s].c;
+ const paint=()=>{b1.classList.toggle('on',st[s].v=='ok');b1.classList.toggle('ok',1);b2.classList.toggle('on',st[s].v=='no');b2.classList.toggle('no',1);};paint();
+ b1.onclick=()=>{st[s].v=st[s].v=='ok'?'':'ok';paint();save();};b2.onclick=()=>{st[s].v=st[s].v=='no'?'':'no';paint();save();};inp.oninput=()=>{st[s].c=inp.value;save();};});
+const g=document.getElementById('gen');g.value=st._g||'';g.oninput=()=>{st._g=g.value;save();};
+function text(){let t='RETOUR BESTIAIRE\n';for(const [k,v] of Object.entries(st)){if(k=='_g')continue;if(!v.v&&!v.c)continue;t+=`- ${k} : ${v.v=='ok'?'VALIDE':v.v=='no'?'A REFAIRE':'(pas de choix)'}${v.c?' - '+v.c:''}\n`;}if(st._g)t+='Commentaire : '+st._g+'\n';return t;}
+function summ(){document.getElementById('sum').innerHTML=esc(text()).replace(/\n/g,'<br>');}
+document.getElementById('copy').onclick=async()=>{try{await navigator.clipboard.writeText(text());}catch(e){window.prompt('Copie :',text());}};
+document.getElementById('reset').onclick=()=>{st={};try{localStorage.removeItem(KEY)}catch(e){}location.reload();};
+summ();
+</script></body></html>

@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Armes a feu du roguelite</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b;--ok:#2f8f5b}
+body{margin:0;background:var(--papier);color:var(--encre);font:16px/1.45 Nunito,system-ui,sans-serif;padding:16px}
+h1,h2{font-family:Silkscreen,monospace;letter-spacing:.02em;margin:0 0 6px}
+h1{font-size:22px}h2{font-size:15px;color:var(--accent)}
+.lead{max-width:780px}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px;margin-top:14px}
+.c{background:#fff;border:2px solid var(--encre);border-radius:12px;padding:10px}
+.c.ok{outline:4px solid var(--ok)}.c.no{outline:4px solid var(--accent)}
+.tag{display:inline-block;font:700 12px Silkscreen,monospace;padding:2px 8px;border-radius:99px;background:var(--ok);color:#fff;margin-bottom:6px}
+.tag.p{background:var(--encre)}
+img{width:100%;border-radius:8px;background:var(--encre);display:block;margin-bottom:6px}
+p{margin:6px 0;font-size:14px}.why{opacity:.75;font-size:13px}
+button{font:inherit;font-weight:700;padding:9px 12px;border-radius:8px;border:2px solid var(--encre);margin:4px 4px 0 0;background:var(--papier);color:var(--encre);cursor:pointer}
+button.v{background:var(--ok);color:#fff}button.x{background:var(--accent);color:#fff}
+textarea{width:100%;box-sizing:border-box;border:2px solid var(--encre);border-radius:6px;padding:6px;margin-top:6px;font:inherit;background:var(--papier)}
+#o{white-space:pre-wrap;background:var(--encre);color:var(--papier);padding:12px;border-radius:10px;margin-top:14px}
+.gen{background:var(--accent);color:#fff;font-family:Silkscreen,monospace;margin-top:14px}
+table{border-collapse:collapse;margin:10px 0;font-size:14px;max-width:780px}
+td,th{border:2px solid var(--encre);padding:6px 8px;text-align:left;background:#fff}th{background:var(--encre);color:var(--papier)}
+</style></head><body>
+<h1>Armes a feu du roguelite : peu de balles, mais chacune compte</h1>
+<p class="lead">Retour : « elles doivent faire plus de degats si on est aussi limite en munitions ». Plutot qu'un simple chiffre en plus, un vrai gameplay : le chargeur est <b>petit mais se remplit tout seul</b> (recharge lente a la place du stock fixe qui cassait l'arme), chaque balle <b>pese lourd</b>, et chaque arme a <b>son trait</b> lisible (ricochet du revolver, perforation de la mitraillette, derniere balle doree). Les ennemis armes gardent les anciennes regles (balle a 11, l'arme disparait) : l'IA ne change pas. Captures du vrai moteur (400 px, 48 couleurs). 5 idees sont deja dans le jeu (etiquette verte), 6 sont des propositions. Pour chaque carte : Valider ou A refaire (+ remarque), puis genere le texte et colle-le dans le chat.</p>
+<table>
+<tr><th>Arme (roguelite)</th><th>Chargeur</th><th>Degats / balle</th><th>Recharge</th><th>Trait</th></tr>
+<tr><td>Revolver</td><td>4</td><td>44 (avant : 11)</td><td>1 balle / 5 s</td><td>ricochet vers un 2e ennemi (-30 %), derniere balle doree x1,5 perforante</td></tr>
+<tr><td>Mitraillette</td><td>12 (4 rafales de 3)</td><td>20 (avant : 4)</td><td>1 balle / 1,3 s</td><td>perfore toute la file, derniere balle doree</td></tr>
+<tr><td>Fusil a pompe (butin)</td><td>3</td><td>31 par plomb (3 plombs)</td><td>1 cartouche / 8 s</td><td>gerbe courte portee</td></tr>
+<tr><td>Melee (reference)</td><td>durabilite</td><td>14 en moyenne par coup d'arme, 20 le meilleur coup du heros</td><td>-</td><td>mesure par test : chaque balle vaut plus qu'un coup d'arme, le revolver plus que le meilleur coup du heros</td></tr>
+</table>
+<div class="g" id="g"></div>
+<button class="gen" onclick="out()">Generer mon texte</button><div id="o"></div>
+<script>
+var C=[
+{k:"lourdes",n:"1. Balles rares et lourdes",d:"Revolver x4 (11 -> 44), mitraillette x5 (4 -> 20), fusil x3,5 : moins de balles = chaque tir est un evenement. Mesure : plus qu'un coup de melee par balle.",w:"Seuls les heros du roguelite sont concernes ; ennemis et jeu normal inchanges.",img:"pistolet",done:1},
+{k:"recharge",n:"2. Recharge lente a la place du stock fixe",d:"L'arme ne disparait plus a 0 : elle reste en main (declic a vide) et rend une balle toutes les 5 s (revolver), 1,3 s (mitraillette), 8 s (fusil). Plafond = chargeur. Plus de run bloquee sans arme.",w:"Test : jamais cassee, plafond respecte, determinisme du lockstep (champ ajoute au state_hash).",img:"pistolet",done:1},
+{k:"ricochet",n:"3. Ricochet du revolver",d:"La balle qui touche repart UNE fois vers l'ennemi le plus proche (-30 % de degats) : a bout portant dans un groupe, un tir = deux victimes.",w:"Un seul ricochet (test : la 3e cible n'est jamais touchee par la meme balle).",img:"pistolet",done:1},
+{k:"perfore",n:"4. Mitraillette perforante",d:"Les balles traversent toute la file d'ennemis alignes : on se place pour faire un couloir, pas pour viser un seul adversaire.",w:"Rafale de 3 balles espacees ; le gel d'impact existant rythme la scene.",img:"mitraillette",done:1},
+{k:"doree",n:"5. Derniere balle doree",d:"La derniere balle du chargeur fait x1,5 et perfore : on garde un coup de grace, ou on le joue pour finir un boss.",w:"Lisible : le compteur d'arme passe a 1 puis le tir sonne different (etincelle).",img:"pistolet",done:1},
+{k:"charge",n:"6. Tir charge (propose)",d:"Maintenir Attaque avec une arme a feu : jauge de charge de 0,8 s ; relache = tir double (2 balles), repousse et brise la garde. Rafale legere si on tape.",w:"Reutilise la charge du Ki existante (aucun nouveau bouton) ; les bras de l'armure chargent plus vite."},
+{k:"lieu",n:"7. Arme unique par lieu (propose)",d:"Dojo : pistolet a kunais (ricoche sur les murs). Open space : agrafeuse-mitraillette. Neo-Tokyo : arc electrique en chaine. Une par decor, ramassee sur un accessoire casse.",w:"Chaque lieu a deja son theme dans generate_floor ; l'arme depend du theme, pas du hasard."},
+{k:"surchauffe",n:"8. Surchauffe : risque / recompense (propose)",d:"Tirer vite (chargeur vide, sans attendre) fait monter une jauge : a 100 % l'arme s'enraye 2 s. Tirer avec mesure = jamais de panne. Les puristes choisissent le coup precis.",w:"Compromis lisible : rythme libre mais penalisant, jamais de mort a cause d'un tirage."},
+{k:"daemon",n:"9. Balles elementaires par daemon (propose)",d:"Un daemon de feu enflamme les balles (brulure), de glace les gele, de foudre les enchaine : les armes a feu profitent des synergies deja affichees sur les cartes.",w:"Les daemons existants portent deja un element (mind.elem) : on le lit au tir."},
+{k:"boss",n:"10. Canon de boss (propose)",d:"Un boss vaincu (etages 5 et 10) laisse son arme : gros calibre a 2 balles, degats x8, recharge de 20 s. Reutilise l'offre « Arme de boss » existante.",w:"Une seule par run ; donne un vrai moment de puissance avant l'etage final."},
+{k:"parfaite",n:"11. Recharge parfaite (propose)",d:"Un appui bien rythme (garde juste apres le dernier tir) recharge 2 balles d'un coup. Gestes d'adresse recompenses, sans changer la regle de base.",w:"Fenetre de 12 images, indicateur discret sur l'arme ; jamais obligatoire."}
+],st={};
+var g=document.getElementById('g');
+C.forEach(function(c){var d=document.createElement('div');d.className='c';d.id='c_'+c.k;
+d.innerHTML=(c.done?'<span class="tag">DANS LE JEU</span>':'<span class="tag p">PROPOSITION</span>')+(c.img?'<img src="armes_feu_roguelite/'+c.img+'.gif" alt="'+c.n+'" loading="lazy">':'')+'<h2>'+c.n+'</h2><p>'+c.d+'</p><p class="why">'+c.w+'</p><button class="v" data-k="'+c.k+'" data-v="1">Valider</button><button class="x" data-k="'+c.k+'" data-v="-1">A refaire</button><textarea id="t_'+c.k+'" rows="2" placeholder="Remarque"></textarea>';g.appendChild(d);});
+g.addEventListener('click',function(e){var b=e.target;if(!b.dataset||!b.dataset.k)return;var v=+b.dataset.v;st[b.dataset.k]=v;document.getElementById('c_'+b.dataset.k).className='c '+(v>0?'ok':'no');});
+function out(){var L=C.map(function(c){var v=st[c.k];var t=document.getElementById('t_'+c.k).value.trim();return (v>0?'VALIDE':v<0?'A REFAIRE':'NON VU')+' : '+c.n+(t?' - '+t:'');});document.getElementById('o').textContent='Armes a feu du roguelite :\n'+L.join('\n');}
+</script></body></html>

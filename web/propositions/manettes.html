@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Manettes pour tout le monde</title>
+<style>
+:root{--ink:#221834;--paper:#fff3e0;--acc:#d8456b}
+body{margin:0;padding:16px;background:var(--paper);color:var(--ink);font:16px/1.45 system-ui,sans-serif}
+h1{margin:0 0 4px}h2{margin:28px 0 8px;border-bottom:3px solid var(--acc);display:inline-block}
+p{max-width:70ch}
+table{border-collapse:collapse;width:100%;max-width:900px;background:#fffaf2}
+th,td{border:1px solid var(--ink);padding:6px 10px;text-align:left}
+th{background:var(--ink);color:var(--paper)}
+.cap{display:inline-block;background:var(--ink);color:var(--paper);border-radius:10px;padding:12px 16px;margin:6px 8px 6px 0;min-width:230px;vertical-align:top}
+.cap b{color:#ffd9e2}.cap .k{display:inline-block;background:var(--acc);color:#fff;border-radius:6px;padding:0 8px;font-weight:700}
+.cap small{display:block;opacity:.75;margin-bottom:6px}
+.v,.x{font:inherit;padding:8px 16px;border:2px solid var(--ink);border-radius:8px;cursor:pointer;margin-right:8px;background:#fff}
+.v.on{background:#2e7d4f;color:#fff}.x.on{background:var(--acc);color:#fff}
+textarea{display:block;width:100%;max-width:700px;margin:8px 0;font:inherit;border:2px solid var(--ink);border-radius:8px;padding:6px;background:#fff}
+pre{background:var(--ink);color:var(--paper);padding:12px;border-radius:8px;white-space:pre-wrap;max-width:900px}
+</style></head><body>
+<h1>Manettes pour tout le monde</h1>
+<p>Detection de la famille de manette (nom natif, identifiant du navigateur), glyphes adaptes dans toutes les aides, tables de repli pour les manettes non « standard » (Android, vieux DualShock / Joy-Con), reassignation, une main, maintien, assistance, 1 a 4 manettes a chaud. Memes champs de commande : aucun changement de protocole.</p>
+
+<h2>Glyphes par famille (disposition par defaut)</h2>
+<table id="g"></table>
+
+<h2>Captures des aides par famille</h2>
+<p>Maquettes des consignes en jeu (generees depuis la table de glyphes du moteur, memes textes que <code>input::hint</code>).</p>
+<div id="caps"></div>
+
+<h2>Tables de repli (navigateur, disposition non standard)</h2>
+<table id="r"></table>
+<p>La croix des manettes Android est lue sur l'axe « chapeau » (axe 9).</p>
+
+<h2>Options ajoutees (Options &gt; Boutons de la manette)</h2>
+<table>
+<tr><th>Option</th><th>Effet</th></tr>
+<tr><td>Une main</td><td>Saut + Coup = Special ; Saut + Lourde = Super (le stick reste tenu).</td></tr>
+<tr><td>Maintien</td><td>Garder Coup / Lourde / Special rejoue l'action (apres 0,3 s, toutes les 0,25 s).</td></tr>
+<tr><td>Assistance</td><td>Tout appui dure au moins 5 images (tremblements, appuis tres brefs).</td></tr>
+<tr><td>Glyphes</td><td>Auto, ou famille forcee (Generique, Xbox, PlayStation, Switch, 8BitDo).</td></tr>
+<tr><td>Joueurs 1 a 4</td><td>Une manette debranchee libere sa place sans decaler les autres ; une nouvelle prend la premiere place libre. Joueurs 3 et 4 : noms suivis, pas encore de commandes de jeu.</td></tr>
+</table>
+
+<h2>Verdict</h2>
+<div id="vv"></div>
+<button id="gen" class="v">Generer le texte</button>
+<pre id="out"></pre>
+<script>
+var F=["Generique","Xbox","PlayStation","Switch / Joy-Con","8BitDo"];
+var T={0:["A","B","X","Y","LB","RB","LT","RT","Select","Start","L3","R3"],1:["A","B","X","Y","LB","RB","LT","RT","View","Menu","L3","R3"],2:["Croix","Rond","Carre","Triangle","L1","R1","L2","R2","Create","Options","L3","R3"],3:["B","A","Y","X","L","R","ZL","ZR","-","+","L3","R3"],4:["B","A","Y","X","L","R","L2","R2","Select","Start","L3","R3"]};
+var ACT=[["Coup",2],["Lourde / saisie",3],["Saut",0],["Garde",5],["Ki",4],["Special",1],["Super",7],["Courir",6],["Pause",9]];
+var g=document.getElementById("g"),h="<tr><th>Action</th>"+F.map(function(f){return"<th>"+f+"</th>"}).join("")+"</tr>";
+ACT.forEach(function(a){h+="<tr><td>"+a[0]+"</td>"+F.map(function(f,i){return"<td>"+T[i][a[1]]+"</td>"}).join("")+"</tr>"});
+g.innerHTML=h;
+var c="";F.forEach(function(f,i){var t=T[i];c+='<div class="cap"><small>'+f+'</small>Frappe : <span class="k">'+t[2]+'</span> / <span class="k">'+t[3]+'</span><br>Super : <span class="k">'+t[7]+'</span>  Ki : <span class="k">'+t[4]+'</span><br>Pause : <span class="k">'+t[9]+'</span><br><b>INVOCATION PRETE : '+t[4]+' + '+t[1]+'</b></div>'});
+document.getElementById("caps").innerHTML=c;
+var R={android:[0,1,3,4,6,7,8,9,10,11,13,14,-1,-1,-1,-1,12],ps:[1,2,0,3,4,5,6,7,8,9,10,11,-1,-1,-1,-1,12],switch:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]};
+var N=["Bas","Droite","Gauche","Haut","L1/LB","R1/RB","L2/LT","R2/RT","Select","Start","L3","R3","Croix H","Croix B","Croix G","Croix D","Guide"];
+var r="<tr><th>Bouton standard</th><th>android</th><th>ps</th><th>switch</th></tr>";
+N.forEach(function(n,i){r+="<tr><td>"+n+"</td><td>"+(R.android[i]<0?"axe":R.android[i])+"</td><td>"+(R.ps[i]<0?"axe":R.ps[i])+"</td><td>"+R.switch[i]+"</td></tr>"});
+document.getElementById("r").innerHTML=r;
+var S=[["fam","Glyphes par famille"],["opt","Options accessibilite"],["rep","Tables de repli"],["slots","Manettes 1 a 4"]],st={};
+document.getElementById("vv").innerHTML=S.map(function(s){return'<p><b>'+s[1]+'</b><br><button class="v" data-k="'+s[0]+'" data-v="1">Valider</button><button class="x" data-k="'+s[0]+'" data-v="-1">A refaire</button><textarea id="t_'+s[0]+'" rows="2" placeholder="Commentaire"></textarea></p>'}).join("");
+document.addEventListener("click",function(e){var b=e.target;if(b.dataset&&b.dataset.k){st[b.dataset.k]=+b.dataset.v;var p=b.parentNode;[].forEach.call(p.querySelectorAll("button"),function(x){x.classList.remove("on")});b.classList.add("on")}});
+document.getElementById("gen").onclick=function(){document.getElementById("out").textContent="Manettes :\n"+S.map(function(s){return"- "+s[1]+" : "+(st[s[0]]==1?"VALIDE":st[s[0]]==-1?"A REFAIRE":"sans avis")+" "+(document.getElementById("t_"+s[0]).value||"")}).join("\n")};
+</script></body></html>

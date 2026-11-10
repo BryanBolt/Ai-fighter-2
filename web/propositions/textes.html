@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Textes : avant / après</title>
+<style>
+:root{--ink:#221834;--paper:#fff3e0;--acc:#d8456b;--ink2:rgba(34,24,52,.65);--card:rgba(34,24,52,.06)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ink);color:var(--paper);font:600 15px/1.45 Nunito,system-ui,sans-serif}
+main{max-width:860px;margin:0 auto;padding:20px 16px 80px}
+h1{font-size:26px;margin:8px 0}h2{font-size:18px;margin:28px 0 8px;color:var(--acc)}
+p.lead{color:rgba(255,243,224,.75);margin:0 0 12px}
+.card{background:var(--paper);color:var(--ink);border-radius:14px;padding:12px 14px;margin:10px 0}
+.card.ok{outline:3px solid #4caf7a}.card.redo{outline:3px solid var(--acc)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:600px){.row{grid-template-columns:1fr}}
+.lbl{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2)}
+.before{background:var(--card);border-radius:10px;padding:8px 10px;font-family:ui-monospace,Consolas,monospace;font-size:13px}
+.after{background:rgba(216,69,107,.12);border-radius:10px;padding:8px 10px}
+.why{font-size:12px;color:var(--ink2);margin-top:6px}
+.btns{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+button{font:800 13px Nunito,sans-serif;border:0;border-radius:999px;padding:7px 14px;cursor:pointer;background:var(--ink);color:var(--paper)}
+button.v{background:#4caf7a;color:#fff}button.r{background:var(--acc);color:#fff}
+textarea{width:100%;border-radius:10px;border:0;padding:8px;font:600 13px Nunito,sans-serif;background:var(--card);color:var(--ink);margin-top:8px}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px solid rgba(255,243,224,.2);padding:6px 8px;text-align:left}
+#out{display:none;height:200px;background:var(--paper)}
+</style></head><body><main>
+<h1>Qualité des textes</h1>
+<p class="lead">Police Nunito avec accents partout, repli ASCII sur appareil sans glyphe. Un seul mot par notion. Messages courts, sans jargon, avec « quoi faire ». Narration des cinématiques non touchée.</p>
+
+<h2>Glossaire retenu</h2>
+<table>
+<tr><th>Notion</th><th>Mot unique</th><th>Remplace</th></tr>
+<tr><td>Niveau de campagne</td><td>Niveau</td><td>Stage</td></tr>
+<tr><td>Mode roguelite</td><td>Étage</td><td>—</td></tr>
+<tr><td>Groupe d'ennemis / duel</td><td>Vague / Manche</td><td>—</td></tr>
+<tr><td>Allié</td><td>Daemon</td><td>Familier, Compagnon</td></tr>
+<tr><td>Attaque Ki</td><td>Super</td><td>Ultime</td></tr>
+<tr><td>Choix en partie / permanent / ramassé</td><td>Bonus / Relique / Objet</td><td>—</td></tr>
+</table>
+
+<h2>Avant / après</h2>
+<div id="list"></div>
+
+<h2>Retour</h2>
+<button id="exp">Copier mon retour</button>
+<textarea id="out" readonly></textarea>
+</main>
+<script>
+const ITEMS=[
+["Écran de menu","Degats  Heros  Decor  Etage","Dégâts · Héros · Décor · Étage","Les accents reviennent partout où la police les a (Nunito)."],
+["Apostrophes","l'ecran, d'abord","l’écran, d’abord","Apostrophes typographiques entre deux lettres."],
+["Erreur réseau : synchro","Desynchronisation detectee : resynchronisation...","On remet les écrans d'accord, une seconde…","Plus de jargon ; on dit ce qui se passe."],
+["Erreur réseau : serveur","Reprise impossible : serveur injoignable.","Serveur injoignable. Vérifie ta connexion, puis réessaie.","Dit quoi faire."],
+["Erreur réseau : connexion","Connexion impossible","Connexion impossible. Vérifie ta connexion et réessaie.","Idem."],
+["Inactivité","Inactif : l'IA joue a ta place. Appuie sur une touche pour reprendre.","Absent ? L'IA joue pour toi. Appuie sur une touche.","Plus court, plus direct."],
+["Expulsion","Tu as ete expulse du salon.","L'hôte t'a retiré du salon.","Dit qui, sans accuser."],
+["Coupure en partie","Connexion perdue : tentative de reprise...","Connexion perdue. On essaie de te reconnecter…","Phrases actives."],
+["Invitation","Ta partie est ouverte : INVITER pour partager le lien","Ta partie est ouverte. Touche INVITER pour partager le lien.","Une phrase = une idée."],
+["Glossaire : niveau","CHOIX DU STAGE · Terminer 3 stages","CHOIX DU NIVEAU · Terminer 3 niveaux","Stage devient Niveau partout."],
+["Glossaire : daemon","Ton familier passe niveau 2 · Ton compagnon t'observe","Ton daemon passe niveau 2 · Ton daemon t'observe","Un seul mot pour l'allié."],
+["Glossaire : super","ULTIME PRET · Super ultime","SUPER PRÊT · Super","Le « défi ultime » reste (c'est un défi)."],
+["Aide Ki","Astuce : le Ki remonte a chaque coup qui touche ; a 60 Ki, l'ultime est pret","Le Ki se charge à chaque coup. Jauge pleine : lance un Super.","Verbe d'action, 61 caractères."],
+["Défaite","DEFAITE","Aïe. On réessaie ?","Ton léger, jamais moqueur."],
+["Repli ASCII","(appareil sans glyphe)","Degats · Heros · l'ecran","Aucun carré vide : chaque caractère sans glyphe est remplacé."]
+];
+const st={};
+const list=document.getElementById('list');
+ITEMS.forEach((it,i)=>{
+ const d=document.createElement('div');d.className='card';
+ d.innerHTML=`<div class="row"><div><div class="lbl">Avant · ${it[0]}</div><div class="before"></div></div><div><div class="lbl">Après</div><div class="after"></div></div></div><div class="why"></div>
+ <div class="btns"><button class="v">Valider</button><button class="r">À refaire</button></div><textarea rows="1" placeholder="Commentaire"></textarea>`;
+ d.querySelector('.before').textContent=it[1];d.querySelector('.after').textContent=it[2];d.querySelector('.why').textContent=it[3];
+ st[i]={s:'',c:''};
+ d.querySelector('.v').onclick=()=>{st[i].s='ok';d.className='card ok'};
+ d.querySelector('.r').onclick=()=>{st[i].s='redo';d.className='card redo'};
+ d.querySelector('textarea').oninput=e=>st[i].c=e.target.value;
+ list.appendChild(d);
+});
+document.getElementById('exp').onclick=()=>{
+ const o=document.getElementById('out');o.style.display='block';
+ o.value=ITEMS.map((it,i)=>`${i+1}. ${it[0]} : ${st[i].s==='ok'?'VALIDÉ':st[i].s==='redo'?'À REFAIRE':'—'} ${st[i].c}`).join('\n');
+ o.select();try{document.execCommand('copy')}catch(e){}
+};
+</script></body></html>

@@ -2,8 +2,18 @@
 // Strategie : reseau d'abord (version la plus recente), cache seulement en secours hors ligne ; jamais de version perimee
 // tant que le reseau repond. Hors ligne : la derniere copie vue ; une page (navigation) retombe sur index.html, mais une
 // ressource manquante (wasm, son) reste une vraie erreur : lui servir du HTML faisait planter l'instanciation du wasm.
-const CACHE = 'afh-shell-v2';
-self.addEventListener('install', () => { self.skipWaiting(); });
+const CACHE = 'afh-shell-v3';
+// Pre-cache du jeu a l'installation (hors ligne des la 1re visite) : au mieux, fichier par fichier (un echec ne bloque jamais
+// l'installation ; le wasm de ~12 Mo ne retient pas le demarrage : la page le telecharge deja en parallele).
+// Mise a jour sans casser une partie : skipWaiting + claim ne rechargent JAMAIS la page ouverte ; la nouvelle version n'est
+// utilisee qu'a la prochaine ouverture ou au prochain rechargement.
+const CORE = ['/', '/index.html', '/mq_js_bundle.js', '/manifest.webmanifest', '/icon-192.png', '/icon-512.png', '/icon-maskable-512.png', '/ai_fighter_2.wasm', '/music/final_escalation_title.ogg', '/music/level_1.ogg'];
+self.addEventListener('install', (e) => {
+  self.skipWaiting();
+  e.waitUntil((async () => {
+    try { const c = await caches.open(CACHE); await Promise.all(CORE.map((u) => c.add(new Request(u, { cache: 'reload' })).catch(() => {}))); } catch (_) {}
+  })());
+});
 self.addEventListener('activate', (e) => {
   e.waitUntil((async () => {
     // Anciennes versions du cache (nom change) : supprimees, sinon elles occupent le quota du telephone pour rien.

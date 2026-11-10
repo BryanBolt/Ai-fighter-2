@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Armes comiques</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b;--ok:#2f8f5b}
+body{margin:0;background:var(--papier);color:var(--encre);font:16px/1.45 Nunito,system-ui,sans-serif;padding:16px}
+h1,h2,h3{font-family:Silkscreen,monospace;letter-spacing:.02em;margin:0 0 6px}
+h1{font-size:22px}h2{font-size:16px;color:var(--accent);margin-top:26px}h3{font-size:13px}
+.lead{max-width:780px}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin-top:12px}
+.gw{grid-template-columns:repeat(auto-fill,minmax(330px,1fr))}
+.c{background:#fff;border:2px solid var(--encre);border-radius:12px;padding:10px}
+.c.ok{outline:4px solid var(--ok)}.c.no{outline:4px solid var(--accent)}
+.c svg{width:100%;height:auto;background:var(--papier);border-radius:8px;border:2px solid var(--encre);display:block}
+.c img{width:100%;border:2px solid var(--encre);border-radius:6px;background:#ddd;display:block;margin-bottom:4px}
+p{margin:6px 0;font-size:14px}.why{opacity:.75;font-size:13px}
+.tag{display:inline-block;font-family:Silkscreen,monospace;font-size:11px;padding:2px 6px;border-radius:6px;border:2px solid var(--encre);margin-right:6px;background:var(--papier)}
+.tag.d{background:var(--accent);color:#fff}
+button{font:inherit;font-weight:700;padding:9px 12px;border-radius:8px;border:2px solid var(--encre);margin:4px 4px 0 0;background:var(--papier);color:var(--encre);cursor:pointer}
+button.v{background:var(--ok);color:#fff}button.x{background:var(--accent);color:#fff}
+textarea{width:100%;box-sizing:border-box;border:2px solid var(--encre);border-radius:6px;padding:6px;margin-top:6px;font:inherit;background:var(--papier)}
+#o{white-space:pre-wrap;background:var(--encre);color:var(--papier);padding:12px;border-radius:10px;margin-top:14px}
+.gen{background:var(--accent);color:#fff;font-family:Silkscreen,monospace;margin-top:14px}
+table{border-collapse:collapse;font-size:13px;margin-top:8px;background:#fff}td,th{border:2px solid var(--encre);padding:4px 8px;text-align:left}th{background:var(--encre);color:var(--papier)}
+</style></head><body>
+<h1>Armes comiques</h1>
+<p class="lead">Quatre chantiers : <b>la savate</b> (une seule, ridicule), <b>l'expulsion a pleine charge</b> comme la batte (chaque arme a son gag), <b>l'agrafeuse</b> (tir a distance, utile pour de vrai) et <b>l'audit</b> des armes inutiles. Les GIF sont du vrai moteur. Pour chaque carte : Valider ou A refaire (+ remarque), puis genere le texte et colle-le dans le chat.</p>
+
+<h2>1. La savate : 16 variantes de design (une seule savate, aplats, charte)</h2>
+<p class="lead">Dans le jeu, la variante <span class="tag d">PAR DEFAUT</span> est deja integree (charentaise rose usee). Dis laquelle tu preferes : je la mets a la place.</p>
+<div class="g" id="gs"></div>
+
+<h2>2. L'agrafeuse : 16 variantes de design</h2>
+<p class="lead">La variante <span class="tag d">PAR DEFAUT</span> (agrafeuse-pistolet rouge) est integree. Elle tire des rafales de 3 agrafes perforantes qui ricochent une fois sur le mur ; 6 agrafes en reserve, une de rechargee toutes les 0,6 s apres un court delai.</p>
+<div class="g" id="gt"></div>
+
+<h2>3. Gags a pleine charge et agrafeuse en action (GIF du vrai moteur)</h2>
+<p class="lead">Maintenir le bouton de coup : l'arme tremble, puis l'ennemi est expulse (ralenti, onde, cri, etoile « ding » dans le ciel, rebonds sur les murs). Chaque arme a son cri et sa trajectoire. Pour chaque arme : <b>tape</b>, <b>charge a fond</b>, <b>lancer</b>, <b>dernier coup</b> (lancer qui brise l'arme, inchange).</p>
+<div class="g gw" id="ga"></div>
+
+<h2>4. Audit des armes (mesures)</h2>
+<p class="lead">Tableau complet dans <code>tools/audit_armes.md</code> (genere par un test en lot : degats/s, portee, risque, lancer, charge, expulsion, usage IA). Aucune arme ne reste inutile ni ecrasante : chacune a un role.</p>
+<div id="aud"></div>
+
+<button class="gen" onclick="out()">Generer mon texte</button><div id="o"></div>
+<script>
+var st={},C=[];
+function svg(inner){return '<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-linejoin="round">'+inner+'</svg>';}
+function ell(cx,cy,rx,ry,f){return '<ellipse cx="'+cx+'" cy="'+cy+'" rx="'+rx+'" ry="'+ry+'" fill="'+f+'"/>';}
+function poly(p,f){return '<polygon points="'+p+'" fill="'+f+'"/>';}
+function ln(x1,y1,x2,y2,w,c){return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+c+'" stroke-width="'+w+'"/>';}
+function rect(x,y,w,h,f,r){return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="'+(r||3)+'" fill="'+f+'"/>';}
+function circ(x,y,r,f){return '<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="'+f+'"/>';}
+var INK='#221834',PAP='#fff3e0',ACC='#d8456b';
+/* ---- savates : une seule, vue de cote, vers la droite ---- */
+var S=[
+["Charentaise rose usee (defaut)","Rustine, petit trou, semelle creme : la savate de papa.",function(){return ell(100,66,76,14,'#d6be96')+poly('40,64 52,40 100,32 144,50 158,66 40,72','#e25c8c')+ell(130,56,26,15,'#f082aa')+rect(76,42,22,16,PAP,2)+ln(76,42,98,58,2,'#963c5f')+circ(116,40,5,'#3a223c')+ln(40,66,158,66,4,'#b03c68');}],
+["Charentaise tartan bleue","Carreaux : le grand classique du dimanche.",function(){var t='';for(var i=0;i<6;i++){t+=ln(54+i*16,38,54+i*16,70,2,'#e8e8f5');}t+=ln(44,56,150,56,2,'#e8e8f5');return ell(100,68,76,13,'#cbb68e')+poly('40,66 52,40 100,32 144,50 158,68 40,72','#3b5ba5')+t+ell(136,58,18,10,'#4a6fc0');}],
+["Tong de plage orange","Deux lanieres, une semelle : le minimum syndical.",function(){return ell(100,66,78,12,'#f08a2c')+ell(100,62,74,8,'#ffb259')+ln(120,60,92,36,6,'#d8456b')+ln(120,60,150,40,6,'#d8456b')+circ(120,60,6,PAP);}],
+["Claquette de piscine + chaussette","Le look qu'on ne peut pas defendre.",function(){return ell(100,70,76,12,'#2e6bb5')+poly('44,66 56,44 104,42 140,54 154,68','#3a86e0')+ell(60,48,26,14,PAP)+ln(40,44,78,44,4,ACC)+ln(40,50,78,50,4,ACC);}],
+["Mule a pompon","Un pompon beaucoup trop gros.",function(){return ell(100,66,74,13,PAP)+poly('44,64 60,40 108,36 148,54 156,66','#e25c8c')+circ(132,38,15,'#ffd1e0')+circ(128,34,5,'#fff')+ln(44,66,156,66,4,'#b03c68');}],
+["Babouche jaune pointue","Le bout se recourbe, comme il se doit.",function(){return poly('36,70 40,48 84,40 150,52 176,36 168,70','#f2c230')+poly('36,70 168,70 150,76 44,76','#a86a2a')+ln(60,50,120,54,3,'#d89a10')+ln(84,40,84,66,3,'#d89a10');}],
+["Savate trouee, orteil dehors","Le gros orteil prend l'air.",function(){return ell(100,68,76,13,'#cbb68e')+poly('40,66 52,42 100,34 144,50 158,66 40,72','#9a8f86')+ell(144,56,14,11,'#f0c6a0')+ell(150,54,5,4,PAP)+ln(60,60,90,50,2,'#6a6058');}],
+["Pantoufle lapin","Oreilles qui pendent, nez rose.",function(){return ell(100,68,76,13,'#d9d0e8')+poly('40,66 52,44 106,38 148,52 158,66','#f0eaf8')+ell(70,30,8,22,'#f0eaf8')+ell(86,26,8,22,'#e5dbf2')+ell(70,32,4,14,'#f5a0c0')+circ(150,56,5,'#f5a0c0')+circ(124,48,3,INK);}],
+["Sabot de bois","Lourd, jaune, tout en un bloc.",function(){return poly('36,70 38,40 96,34 156,56 168,70','#b07a3a')+poly('36,70 168,70 160,78 40,78','#8a5a22')+ell(100,50,22,8,'#4a2e12')+ln(50,52,150,64,3,'#cc9a56');}],
+["Tong ecrasee, plate comme une crepe","Elle a vu des choses.",function(){return ell(100,70,84,7,'#4aa860')+ln(96,66,76,56,5,ACC)+ln(96,66,118,56,5,ACC)+circ(96,66,5,PAP)+ln(30,72,170,72,3,'#2f7a40');}],
+["Chausson eponge blanc","Duveteux, rien a dire, tres propre.",function(){return ell(100,66,76,14,PAP)+poly('40,64 52,40 100,32 146,50 158,66 40,72','#fff')+ell(130,54,22,12,'#e8f4ff')+ln(60,50,60,62,3,'#dde')+ln(76,44,76,60,3,'#dde')+ln(92,40,92,58,3,'#dde');}],
+["Semelle decollee : elle baille","La bouche s'ouvre a chaque pas.",function(){return poly('40,60 52,38 100,30 146,46 160,58 40,64','#e25c8c')+poly('44,66 160,62 140,74 60,78','#d6be96')+poly('40,64 160,58 160,62 44,68','#3a223c')+ln(70,70,70,66,2,PAP)+ln(120,68,120,64,2,PAP);}],
+["Charentaise grise de papi","Gris sur gris, avec un liseré.",function(){return ell(100,66,76,14,'#b9ac94')+poly('40,64 52,40 100,32 144,50 158,66 40,72','#7d828c')+ell(130,56,24,13,'#9aa0ac')+ln(44,56,150,52,3,'#c8584a');}],
+["Mocassin fourre","Fausse fourrure, vrai ridicule.",function(){return ell(100,68,76,12,'#6a4a2c')+poly('40,66 52,40 108,36 150,52 158,68','#a07850')+ell(72,40,24,10,'#f0e0c0')+ln(56,40,90,40,5,'#e8d0a8');}],
+["Tong a fleur","La fleur est en plastique, bien sur.",function(){return ell(100,66,78,12,'#3aa0c0')+ln(120,60,92,36,6,'#fff')+ln(120,60,150,40,6,'#fff')+circ(120,56,10,ACC)+circ(120,56,4,'#ffd84a');}],
+["Savate rafistolee au scotch","Trois rubans de scotch gris.",function(){return ell(100,68,76,13,'#cbb68e')+poly('40,66 52,42 100,34 144,50 158,66 40,72','#3d8aa8')+rect(70,36,16,34,'#c8c8d0',1)+rect(100,34,16,34,'#c8c8d0',1)+rect(128,44,16,26,'#c8c8d0',1);}]
+];
+var T=[
+["Agrafeuse-pistolet rouge (defaut)","Corps rouge, base d'acier, bande d'agrafes dorees.",function(){return poly('52,70 74,70 80,92 58,92','#3a4150')+poly('50,28 160,34 172,52 50,60','#d8402c')+rect(54,58,112,12,'#9aa3b0',3)+ln(66,44,146,46,6,'#d0b04a')+circ(166,50,6,'#6f7a8a');}],
+["Agrafeuse de bureau classique","Grise, a charniere, la vraie de la salle de pause.",function(){return rect(30,60,140,14,'#6f7a8a',5)+poly('34,58 164,40 170,52 34,64','#9aa3b0')+rect(38,52,100,10,'#d8402c',4)+circ(40,58,6,'#3a4150');}],
+["Agrafeuse industrielle massive","Noire, lourde, boulons apparents.",function(){return rect(30,48,140,28,'#2a2f3b',6)+rect(36,40,110,14,'#3a4150',4)+circ(50,62,4,'#9aa3b0')+circ(100,62,4,'#9aa3b0')+circ(150,62,4,'#9aa3b0')+rect(150,48,24,10,'#d0b04a',2);}],
+["Mini agrafeuse rose","Mignonne, presque inoffensive. Presque.",function(){return rect(60,48,84,22,'#f080a8',8)+rect(64,42,70,10,'#ffb0cc',5)+circ(140,58,5,'#fff')+ln(70,64,130,64,3,'#d8456b');}],
+["Agrafeuse-mitraillette","Long chargeur de bandes, crosse, poignee.",function(){return rect(40,36,130,22,'#d8402c',5)+rect(70,58,16,34,'#3a4150',3)+rect(110,58,50,10,'#d0b04a',2)+poly('40,40 20,48 20,60 40,56','#3a4150')+ln(50,46,150,46,4,'#ff9a88');}],
+["Agrafeuse-revolver","Tambour a bandes d'agrafes.",function(){return poly('60,70 84,70 90,94 66,94','#3a4150')+rect(50,34,120,24,'#9aa3b0',5)+circ(100,46,22,'#d8402c')+circ(100,46,8,'#6f7a8a')+circ(100,32,4,'#d0b04a')+circ(86,52,4,'#d0b04a')+circ(114,52,4,'#d0b04a');}],
+["Agrafeuse-bazooka","Un tube, un cadran, beaucoup de bruit.",function(){return rect(20,32,160,26,'#d8402c',12)+rect(150,28,26,34,'#6f7a8a',6)+rect(60,58,14,28,'#3a4150',3)+circ(40,45,6,'#ffd84a')+ln(80,38,130,38,4,'#ff9a88');}],
+["Agrafeuse-marteau (tacker)","On la balance comme un marteau.",function(){return rect(88,56,16,38,'#8a5a22',4)+rect(40,34,120,26,'#d8402c',6)+rect(140,52,30,10,'#9aa3b0',2)+ln(52,44,130,44,4,'#ff9a88');}],
+["Agrafeuse-crocodile","Machoire ouverte, dents d'agrafes.",function(){var d='';for(var i=0;i<7;i++){d+=poly((46+i*18)+',58 '+(54+i*18)+',58 '+(50+i*18)+',70',PAP);}return poly('30,40 170,24 170,52 30,58','#4aa860')+poly('30,62 170,56 170,76 30,76','#2f7a40')+d+circ(150,34,5,'#ffd84a')+circ(150,34,2,INK);}],
+["Agrafeuse retro bakelite verte","Annees 60, chrome et bakelite.",function(){return rect(34,52,136,22,'#9aa3b0',6)+poly('34,52 160,32 170,46 34,58','#3a9a6a')+rect(40,44,80,8,'#c0e8d4',3)+ln(40,64,160,64,3,'#e8eef4');}],
+["Agrafeuse-canon arc-en-ciel","Bande d'agrafes visible, six couleurs.",function(){var c=['#e04040','#f08a2c','#f2c230','#4aa860','#3a86e0','#8a50c0'],o='';for(var i=0;i<6;i++){o+=rect(56+i*16,40,12,12,c[i],2);}return rect(40,52,130,24,'#3a4150',6)+rect(50,34,110,22,'#e8eef4',5)+o+poly('60,76 84,76 80,94 62,94','#2a2f3b');}],
+["Agrafeuse de Dylan doree (legendaire)","Metal precieux, gravee a son nom.",function(){return poly('52,70 74,70 80,92 58,92','#a07a20')+poly('50,28 160,34 172,52 50,60','#e8c030')+rect(54,58,112,12,'#fff0a0',3)+ln(66,44,146,46,6,'#fff6c8')+circ(166,50,6,'#d8456b')+circ(80,44,4,'#d8456b');}],
+["Agrafeuse a pompe","On pompe avant de tirer.",function(){return rect(30,36,140,18,'#d8402c',5)+rect(70,54,56,16,'#8a5a22',6)+poly('26,40 10,52 10,64 28,56','#8a5a22')+ln(40,45,160,45,3,'#ff9a88');}],
+["Agrafeuse-arbalete","Deux bras tendus, une corde d'agrafes.",function(){return rect(30,44,130,14,'#d8402c',4)+rect(150,20,10,62,'#6f7a8a',4)+ln(155,22,100,50,2,'#d0b04a')+ln(155,80,100,50,2,'#d0b04a')+rect(56,58,14,26,'#3a4150',3);}],
+["Agrafeuse transparente bleu glace","Mecanique apparente, tout a la vue.",function(){return rect(34,50,136,24,'#cfeaff',7)+poly('34,50 160,34 170,46 34,56','#7cc4ff')+circ(70,62,6,'#3a86e0')+circ(100,62,6,'#3a86e0')+circ(130,62,6,'#3a86e0')+ln(46,44,130,40,3,'#fff');}],
+["Agrafeuse a ressort : boing","Le ressort fait tout le spectacle.",function(){var s='<polyline fill="none" stroke="#9aa3b0" stroke-width="5" points="40,52 48,40 56,64 64,40 72,64 80,40 88,64 96,40 104,64 112,40 120,52"/>';return rect(30,64,140,16,'#d8402c',5)+rect(120,36,50,28,'#d8402c',6)+s+circ(36,52,6,'#ffd84a');}]
+];
+function card(group,i,v,tag,html){var k=group+i;C.push({k:k,n:tag+' '+(i+1)+' : '+v[0]});var d=document.createElement('div');d.className='c';d.id='c_'+k;
+d.innerHTML=(i==0?'<span class="tag d">PAR DEFAUT</span>':'<span class="tag">'+(i+1)+'</span>')+'<h3>'+v[0]+'</h3>'+html+'<p class="why">'+v[1]+'</p><button class="v" data-k="'+k+'" data-v="1">Valider</button><button class="x" data-k="'+k+'" data-v="-1">A refaire</button><textarea id="t_'+k+'" rows="1" placeholder="remarque"></textarea>';return d;}
+S.forEach(function(v,i){document.getElementById('gs').appendChild(card('sav',i,v,'Savate',svg(v[2]())));});
+T.forEach(function(v,i){document.getElementById('gt').appendChild(card('agr',i,v,'Agrafeuse',svg(v[2]())));});
+var A=[["bat","Batte","HOME RUN !"],["slipper","Savate","CLAC ! (cloche, tres haut)"],["pan","Poele","BONG ! (rebondit deux fois)"],["straw","Balai de paille","BALAYE ! (rase le sol)"],["street","Balai de cantonnier","DEHORS ! (balaie tout)"],["shovel","Pelle","CATAPULTE ! (envol vertical)"],["pipe","Tuyau de gouttiere","GONG !"],["bench","Banc-planche","STRIKE ! (quilles)"],["crowbar","Barre a mine","LEVIER !"],["candel","Chandelier","FLAMBE ! (l'expulse brule)"],["stapler","Agrafeuse","Rafales perforantes, ricochet, rechargement"]];
+A.forEach(function(a,i){var k='arm'+i;C.push({k:k,n:'Arme : '+a[1]});var m=a[0]=='stapler'?['tir','tir_mur','lancer','dernier']:['tape','charge','lancer','dernier'];var im='';m.forEach(function(x){im+='<figure style="margin:0;display:inline-block;width:49%"><img loading="lazy" src="armes_comiques/'+a[0]+'_'+x+'.gif" alt="'+x+'"><figcaption style="font-size:11px;text-align:center">'+x+'</figcaption></figure>';});
+var d=document.createElement('div');d.className='c';d.id='c_'+k;d.innerHTML='<h3>'+a[1]+'</h3>'+im+'<p>'+a[2]+'</p><button class="v" data-k="'+k+'" data-v="1">Valider</button><button class="x" data-k="'+k+'" data-v="-1">A refaire</button><textarea id="t_'+k+'" rows="1" placeholder="remarque"></textarea>';document.getElementById('ga').appendChild(d);});
+document.body.addEventListener('click',function(e){var b=e.target;if(!b.dataset||!b.dataset.k)return;var v=+b.dataset.v;st[b.dataset.k]=v;document.getElementById('c_'+b.dataset.k).className='c '+(v>0?'ok':'no');});
+fetch('../../tools/audit_armes.md').then(function(r){return r.ok?r.text():''}).then(function(t){if(!t)return;var rows=t.split('\n').filter(function(l){return l[0]=='|'});if(rows.length<3)return;var h='<table>';rows.forEach(function(r,i){if(i==1)return;var c=r.split('|').slice(1,-1);h+='<tr>'+c.map(function(x){return (i?'<td>':'<th>')+x.trim()+(i?'</td>':'</th>')}).join('')+'</tr>';});document.getElementById('aud').innerHTML=h+'</table>';}).catch(function(){});
+function out(){var L=C.map(function(c){var v=st[c.k];var t=document.getElementById('t_'+c.k).value.trim();return (v>0?'VALIDE':v<0?'A REFAIRE':'NON VU')+' : '+c.n+(t?' - '+t:'');});document.getElementById('o').textContent=L.join('\n');}
+</script></body></html>

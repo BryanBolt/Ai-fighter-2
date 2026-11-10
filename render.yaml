@@ -12,3 +12,11 @@ services:
         value: "60000"
       - key: TRUST_PROXY
         value: "1"
+      # Notifications push (invitation d'un ami) : a renseigner dans le tableau de bord Render (sync: false = valeur jamais dans le depot).
+      # Voir tools/README_PERF.md (generation des cles). Sans ces 3 valeurs, le push reste simplement desactive.
+      - key: VAPID_PUBLIC
+        sync: false
+      - key: VAPID_PRIVATE
+        sync: false
+      - key: VAPID_SUBJECT
+        sync: false

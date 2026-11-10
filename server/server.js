@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 import { WebSocketServer } from 'ws';
 import { createPush } from './push.js';
 
-export const PROTOCOL_VERSION = 8; // 8 : nunchaku (nouvelle arme ramassable, serie de six coups, Pied = coups de pied avec l'arme) et armes au sol du dojo/temple changees ; 7 : entree Saisie (nouveau bit d'entree) + coups renommes (SCHEMA_VERSION 8) ; 6 : table des coups changee (grammaire X/Y des 9 autres heros, SCHEMA_VERSION 7) ; 5 : jusqu'a 8 joueurs, vague/PV de depart (solo -> en ligne) ; 4 : table des coups changee (aeriens, realisme, grammaire X/Y ; tir allie, QA). 3 : parties hebergees (jeu complet : loadout, cmd sequences). 2 : join_any / host. Seuls les clients v8 sont acceptes.
+export const PROTOCOL_VERSION = 9; // 9 : mode ROGUELITE en coop (mode 3 : run d equipe, cartes personnelles, etages) ; 8 : nunchaku (nouvelle arme ramassable, serie de six coups, Pied = coups de pied avec l'arme) et armes au sol du dojo/temple changees ; 7 : entree Saisie (nouveau bit d'entree) + coups renommes (SCHEMA_VERSION 8) ; 6 : table des coups changee (grammaire X/Y des 9 autres heros, SCHEMA_VERSION 7) ; 5 : jusqu'a 8 joueurs, vague/PV de depart (solo -> en ligne) ; 4 : table des coups changee (aeriens, realisme, grammaire X/Y ; tir allie, QA). 3 : parties hebergees (jeu complet : loadout, cmd sequences). 2 : join_any / host. Seuls les clients v8 sont acceptes.
 const COMPAT_VERSIONS = [PROTOCOL_VERSION]; // derive de PROTOCOL_VERSION : ne peut plus diverger (v8 etait refuse par erreur, ancienne valeur [7]) ; // protocole 7 : les clients 1 a 6 n'ont pas la meme table de coups (et 1 a 4 ne savent pas lire des salons de 8 places), ils doivent se mettre a jour
 const HOSTED_SIZE = 2; // taille par defaut d une partie hebergee (anciens clients) ; le client actuel demande 4 avec `size` (places vides dormantes)
 const HOSTED_MIN = 2; // taille minimale demandable
@@ -93,7 +93,7 @@ export function createServer(opts = {}) {
   const bornAt = Date.now();
 
   // ---------------------------------------------------------------- HTTP
-  const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.wasm': 'application/wasm', '.json': 'application/json', '.png': 'image/png', '.webmanifest': 'application/manifest+json', '.svg': 'image/svg+xml', '.ico': 'image/x-icon', '.css': 'text/css; charset=utf-8', '.ogg': 'audio/ogg', '.webp': 'image/webp', '.map': 'application/json', '.txt': 'text/plain; charset=utf-8' };
+  const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.wasm': 'application/wasm', '.json': 'application/json', '.png': 'image/png', '.webmanifest': 'application/manifest+json', '.svg': 'image/svg+xml', '.ico': 'image/x-icon', '.css': 'text/css; charset=utf-8', '.ogg': 'audio/ogg', '.webp': 'image/webp', '.gif': 'image/gif', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.wav': 'audio/wav', '.mp4': 'video/mp4', '.map': 'application/json', '.txt': 'text/plain; charset=utf-8' };
   const server = http.createServer((req, res) => {
     let url;
     try { url = new URL(req.url, 'http://x'); } catch { res.writeHead(400, { 'content-type': 'text/plain' }); res.end('requete invalide'); return; }
@@ -116,6 +116,8 @@ export function createServer(opts = {}) {
     // Chemin mal encode (« %E0%A4 », « % ») : 400 au lieu d'une exception non rattrapee qui arretait tout le serveur.
     let p;
     try { p = decodeURIComponent(url.pathname); } catch { res.writeHead(400, { 'content-type': 'text/plain' }); res.end('chemin invalide'); return; }
+    // Propositions hebergees ailleurs (PROPS_ORIGIN, ex. un 2e site Render statique) : redirection, liens inchanges.
+    if (process.env.PROPS_ORIGIN && p.startsWith('/propositions/')) { res.writeHead(302, { location: process.env.PROPS_ORIGIN.replace(/\/+$/, '') + p + url.search, 'cache-control': 'public, max-age=300' }); res.end(); return; }
     if (p === '/') p = '/index.html';
     else if (p.endsWith('/')) p += 'index.html'; // dossiers : /combat_v2/ sert son index.html
     // Dossier de la racine EXACTEMENT (avec separateur) : « web2 » n'est pas dans « web ».
@@ -131,6 +133,7 @@ export function createServer(opts = {}) {
   // des types compressibles gardee en memoire (calculee une fois par version de fichier), erreurs de lecture rattrapees
   // (un flux sans gestionnaire d'erreur arretait tout le relais), seulement GET/HEAD.
   const COMPRESSIBLE = new Set(['.html', '.js', '.json', '.wasm', '.webmanifest', '.svg', '.txt', '.css', '.map']);
+  const MEDIA_LONG = new Set(['.gif', '.webp', '.jpg', '.jpeg', '.png', '.mp4', '.ogg', '.wav']); // medias des propositions : cache long (les pages, elles, restent revalidees)
   const zcache = new Map(); // "fichier|mtime|taille|codage" -> Promise<Buffer>
   const ZCACHE_MAX = 12;
   const BROTLI_MAX = 3 * 1024 * 1024; // au-dela (le wasm) : gzip, bien plus rapide a calculer sur un petit serveur
@@ -158,7 +161,7 @@ export function createServer(opts = {}) {
     const enc = COMPRESSIBLE.has(ext) && st.size > 1024 ? (/\bbr\b/.test(accept) && st.size <= BROTLI_MAX ? 'br' : /\bgzip\b/.test(accept) ? 'gzip' : '') : '';
     const etag = `"${st.size.toString(16)}-${Math.round(st.mtimeMs).toString(16)}${enc ? '-' + enc : ''}"`;
     const head = {
-      'content-type': MIME[ext] || 'application/octet-stream', 'cache-control': 'no-cache', etag, 'last-modified': st.mtime.toUTCString(),
+      'content-type': MIME[ext] || 'application/octet-stream', 'cache-control': MEDIA_LONG.has(ext) && /[\\/]propositions[\\/]/.test(file) ? 'public, max-age=604800, stale-while-revalidate=86400' : 'no-cache', etag, 'last-modified': st.mtime.toUTCString(),
       'x-content-type-options': 'nosniff', vary: 'Accept-Encoding',
     };
     if (ext === '.js' && path.basename(file) === 'sw.js') head['service-worker-allowed'] = '/';

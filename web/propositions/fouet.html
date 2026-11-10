@@ -7,7 +7,7 @@ textarea{width:100%;box-sizing:border-box;border-radius:6px;border:0;padding:6px
 <h1>Fouet en trois avec tes poses</h1>
 <p>Vrai moteur. Pour chaque coup : Valider ou A refaire (+ remarque), puis genere le texte et colle-le dans le chat.</p>
 <div class="g" id="g"></div><button onclick="out()" style="background:#e0507a;font-weight:700;margin-top:12px">Generer mon texte</button><div id="o"></div>
-<script>var C=[{"key": "f", "name": "Fouet en trois : tes 3 poses de pied", "n": "3 pieds", "d": "1er pied : pied direct (ta pose a 92 deg). 2e pied : pied haut (ta pose a 105 deg, bras arriere en balancier). 3e pied : crochet du talon (valide). Temps reel.", "img": "fouet_trois_poses.gif"}],st={};
+<script>var C=[{"key": "f", "name": "Fouet en trois : tes 3 poses de pied", "n": "3 pieds", "d": "1er pied : pied direct (ta pose a 92 deg). 2e pied : pied haut (ta pose a 105 deg, bras arriere en balancier). 3e pied : crochet du talon (valide). Temps reel.", "img": "fouet_trois_poses.webp"}],st={};
 var g=document.getElementById('g');
 C.forEach(function(c){var d=document.createElement('div');d.className='c';d.id='c_'+c.key;
 d.innerHTML='<img src="'+c.img+'" alt=""><h2>'+c.name+' <span class="n">'+c.n+'</span></h2><p>'+c.d+'</p><button class="v" data-k="'+c.key+'" data-v="1">Valider</button><button class="x" data-k="'+c.key+'" data-v="-1">A refaire</button><textarea id="t_'+c.key+'" rows="2" placeholder="Remarque (jambe, rythme, trainee...)"></textarea>';g.appendChild(d);});

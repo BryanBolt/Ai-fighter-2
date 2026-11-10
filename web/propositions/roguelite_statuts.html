@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Roguelite - statuts et reactions - AI Fighter 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#221834;--paper:#fff3e0;--accent:#d8456b;--ink2:rgba(34,24,52,.62);--paper2:rgba(255,243,224,.1);--ok:#7bd88f;--ko:#ff8a8a;--ab:#ffc857}
+*{box-sizing:border-box}
+body{margin:0;background:#15101f;color:var(--paper);font:600 15px/1.4 Nunito,system-ui,sans-serif;padding:14px;max-width:1240px;margin-inline:auto}
+h1,h2,h3,.px{font-family:Silkscreen,monospace;font-weight:700;letter-spacing:.5px}
+h1{font-size:22px;margin:4px 0}h2{font-size:16px;margin:30px 0 8px;color:var(--accent)}h3{font-size:12px;margin:0}
+p.lead{margin:4px 0 10px;opacity:.88}
+.panel{background:var(--paper2);border-radius:14px;padding:12px 14px;margin:10px 0}
+button{font:700 12px Silkscreen;color:var(--ink);background:var(--paper);border:0;border-radius:99px;padding:8px 14px;cursor:pointer}
+button.acc{background:var(--accent);color:var(--paper)}
+button:focus-visible,.cell:focus-visible,.chip:focus-visible{outline:3px solid var(--ab);outline-offset:2px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.card{background:var(--paper);color:var(--ink);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;border:4px solid transparent}
+.card.k{border-color:var(--ok)}.card.r{border-color:var(--ko)}.card.hl{box-shadow:0 0 0 4px var(--ab)}
+.shot{aspect-ratio:6/5;background:var(--ink);display:grid;place-items:center;position:relative}
+.shot img,.shot canvas{width:100%;height:100%;object-fit:cover;display:block}
+.shot .tag{position:absolute;left:8px;top:8px;color:var(--ink);font:700 10px Silkscreen;padding:3px 8px;border-radius:99px}
+.body{padding:10px 12px 12px;display:flex;flex-direction:column;gap:6px;flex:1}
+.desc{margin:0;font-size:13.5px}.ref{font-size:11px;color:var(--ink2);margin:0}
+.act{display:flex;gap:6px;margin-top:auto}
+.act button{flex:1;background:var(--ink);color:var(--paper);padding:8px 6px;font-size:10px}
+.act button.on{background:var(--accent)}
+.act button.pick.on{background:#2a8f78}
+textarea.note{width:100%;height:46px;background:#fff;color:var(--ink);border:2px solid var(--ink2);border-radius:8px;padding:6px;font:13px/1.3 system-ui,sans-serif}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{font:700 11px Nunito;padding:2px 9px;border-radius:99px;color:var(--ink);cursor:pointer;border:0}
+.matrix{overflow:auto;border-radius:14px;background:var(--paper2);padding:8px}
+.matrix table{border-collapse:separate;border-spacing:3px;font-size:11px}
+.matrix th{font:700 9px Silkscreen;padding:2px 4px;white-space:nowrap}
+.matrix th.col{writing-mode:vertical-rl;transform:rotate(180deg);text-align:left}
+.cell{width:30px;height:30px;border-radius:7px;background:rgba(255,243,224,.07);display:grid;place-items:center;font:800 10px Silkscreen;color:var(--ink);cursor:default;border:0;padding:0}
+.cell.on{cursor:pointer}
+.legend{font-size:12px;opacity:.8}
+.vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.vcard .shot{aspect-ratio:1/1}
+.vcard .body{padding:8px 10px 10px}
+.small{font-size:12px;opacity:.75}
+textarea.out{width:100%;min-height:200px;background:#0d0a14;color:var(--paper);border:2px solid var(--paper2);border-radius:10px;padding:10px;font:13px/1.4 ui-monospace,Consolas,monospace}
+.concept{background:rgba(216,69,107,.16);border:2px solid var(--accent);border-radius:14px;padding:12px 14px;margin:10px 0}
+@media(max-width:560px){body{padding:10px}}
+@media (prefers-reduced-motion:reduce){.shot img{animation:none}}
+</style></head><body>
+<h1>ROGUELITE : STATUTS ET REACTIONS</h1>
+<p class="lead">Chaque attaque (coups, pouvoirs des daemons, supers, armes) peut infliger des <b>statuts</b> ; deux statuts qui se rencontrent sur la meme cible declenchent une <b>reaction</b> (nom + icone + effet unique). On DECOUVRE les synergies en jouant. Les ennemis, eux aussi, peuvent te geler, t'endormir ou t'electrocuter (reduit de moitie sur toi). Les boss ont des resistances et aucun controle ne dure jamais indefiniment. Toutes les animations ci-dessous sont des captures du VRAI moteur.</p>
+<div class="concept"><b class="px">GARDE-FOUS D'EQUILIBRAGE.</b> Controles durs (gel, paralysie, sommeil, etourdissement) : duree maxi 2,5 s, rendements decroissants x1 / x0,5 / x0,25, puis 1 s d'immunite apres chaque controle. Boss : sommeil, charme, confusion, peur et levitation sans effet, controles reduits a 0,8 s. Joueur : durees x0,5 a x0,8. Option « Reduire les effets » : on garde les icones et teintes, on coupe les particules. Chaque statut a une FORME et une couleur (daltonisme). Au plus trois icones au-dessus de la tete.</div>
+
+<h2>MATRICE DES REACTIONS</h2>
+<p class="legend">Une case = deux statuts (ou un statut + un coup). Cliquez sur une case coloree pour voir la reaction. Les reactions « statut + coup » (Brise-glace, Coup du sommeil, Reaction en chaine) sont dans la derniere colonne.</p>
+<div class="matrix" id="matrix"></div>
+
+<h2>STATUTS (18)</h2>
+<div class="grid" id="statuts"></div>
+<h2>REACTIONS (16)</h2>
+<div class="grid" id="reacts"></div>
+<h2>OBJETS ET BONUS (41)</h2>
+<p class="lead">Chaque objet ajoute ou ameliore un statut ou une reaction. Les objets « Niveau +2 » rendent une reaction 80 % plus puissante. Les daemons portent aussi un statut selon leur element (feu : brulure, glace : gel, foudre : electrocution, terre : lestage, vent : levitation, lune : sommeil, lumiere : marque, ombre : peur, temps : ralentissement, etoile : confusion).</p>
+<div class="grid" id="items"></div>
+
+<h2>VARIANTES DE STYLE : 3 STATUTS PHARES</h2>
+<p class="lead">Avant d'integrer un style par defaut, voici <b>16 variantes</b> pour chacun des trois statuts phares : <b>Gel</b>, <b>Electrocution</b> et <b>Retournement</b>. La variante n°1 est celle actuellement en jeu (provisoire). Cliquez « Choisir » sur celle que vous voulez (une seule par statut). Aplats sans contour noir, forme + couleur.</p>
+<div id="variants"></div>
+
+<h2>VOTRE VERDICT</h2>
+<p class="lead">Copiez ce texte et collez-le dans le chat.</p>
+<div class="panel"><button class="acc" id="exp">Generer le resume</button> <button id="rst">Tout effacer</button><textarea class="out" id="out" readonly></textarea></div>
+
+<script>
+var D={"statuts": [{"k": "burn", "name": "Brulure", "desc": "Degats dans le temps. Se propage par Contagion, fond la glace, s'eteint dans l'eau.", "boss": "Boss : x0,7", "col": "#ff7320"}, {"k": "poison", "name": "Poison", "desc": "Degats lents mais longs. Double avec Contagion, explose avec le feu.", "boss": "Boss : x0,7", "col": "#8cd933"}, {"k": "freeze", "name": "Gel", "desc": "Bloc de glace : la cible ne fait plus rien. Un coup lourd la brise (x1,7).", "boss": "Boss : x0,3, 0,8 s maxi", "col": "#8ce0ff"}, {"k": "shock", "name": "Electrocution", "desc": "Petits degats, saccades, et des ARCS qui sautent de voisin en voisin (plus loin dans l'eau).", "boss": "Boss : x0,7", "col": "#ffe633"}, {"k": "paralysis", "name": "Paralysie", "desc": "Controle dur tres court. Rendements decroissants : jamais enchainee.", "boss": "Boss : x0,3, 0,8 s maxi", "col": "#f2bf26"}, {"k": "sleep", "name": "Sommeil", "desc": "La cible dort. Le premier coup la reveille mais fait un critique x2.", "boss": "Boss : IMMUNISE", "col": "#8c80f2"}, {"k": "bleed", "name": "Saignement", "desc": "Degats deux fois plus rapides si la cible bouge. Cautere avec le feu.", "boss": "Boss : x0,7", "col": "#d91f33"}, {"k": "stun", "name": "Etourdissement", "desc": "Etoiles sur la tete : la cible ne fait rien un instant.", "boss": "Boss : x0,3, 0,8 s maxi", "col": "#ffcc59"}, {"k": "slow", "name": "Ralentissement", "desc": "La cible n'agit qu'une image sur deux.", "boss": "Boss : x0,5", "col": "#7399cc"}, {"k": "confusion", "name": "Confusion", "desc": "Marche au hasard, puis frappe ses allies (camp inverse par phases).", "boss": "Boss : IMMUNISE", "col": "#d966e6"}, {"k": "charm", "name": "Retournement (charme)", "desc": "L'ennemi combat POUR TOI pendant quelques secondes. Sur un joueur : simple confusion.", "boss": "Boss : IMMUNISE", "col": "#ff73b3"}, {"k": "fear", "name": "Peur", "desc": "L'ennemi fuit en courant, sans attaquer.", "boss": "Boss : IMMUNISE", "col": "#8c4dbf"}, {"k": "blind", "name": "Aveuglement", "desc": "Un coup sur trois part dans le vide.", "boss": "Boss : x0,7", "col": "#bfbfb3"}, {"k": "heavy", "name": "Lestage", "desc": "Plus de saut, deplacements amortis, chute accelere. Chute avec Levitation.", "boss": "Boss : x0,5", "col": "#8c8599"}, {"k": "levitate", "name": "Levitation", "desc": "La cible flotte, sans defense. Tempete de flammes avec le feu.", "boss": "Boss : IMMUNISE", "col": "#b3f2d9"}, {"k": "mark", "name": "Marque", "desc": "+18 % de degats subis, et la cible attire les ennemis. Foudre guidee avec le choc.", "boss": "Boss : x0,7", "col": "#f22640"}, {"k": "wet", "name": "Mouille", "desc": "Aucun degat, mais conduit la foudre (Chaine) et gele plus fort. Eteint le feu.", "boss": "Boss : x0,7", "col": "#338cf2"}, {"k": "contagion", "name": "Contagion", "desc": "Brulure, poison et saignement passent au voisin le plus proche. A la mort aussi.", "boss": "Boss : x0,7", "col": "#99bf40"}], "reacts": [{"name": "Brise-glace", "a": "freeze", "b": "", "text": "Un coup lourd sur une cible gelee : degats x1,7 et le bloc vole en eclats."}, {"name": "Fracas", "a": "freeze", "b": "shock", "text": "Le gel se brise sous le choc : explosion d'eclats qui font saigner."}, {"name": "Chaine", "a": "wet", "b": "shock", "text": "La foudre court dans l'eau : arcs vers tous les ennemis proches, paralysie."}, {"name": "Tempete de flammes", "a": "burn", "b": "levitate", "text": "Le vent attise le feu : anneau de flammes qui embrase tout autour."}, {"name": "Vapeur", "a": "freeze", "b": "burn", "text": "La glace fond en vapeur : nuage qui ralentit et aveugle."}, {"name": "Explosion toxique", "a": "poison", "b": "burn", "text": "Le poison s'enflamme : explosion verte qui empoisonne les voisins."}, {"name": "Coup du sommeil", "a": "sleep", "b": "", "text": "Frapper un dormeur : coup critique x2 et reveil brutal."}, {"name": "Reaction en chaine", "a": "confusion", "b": "", "text": "Une explosion sur un confus en declenche une seconde."}, {"name": "Cautere", "a": "bleed", "b": "burn", "text": "Le feu ferme la plaie : le saignement restant est converti en degats."}, {"name": "Surcharge", "a": "paralysis", "b": "shock", "text": "Un paralyse electrocute encaisse tout d'un coup, puis s'etourdit."}, {"name": "Gel profond", "a": "wet", "b": "freeze", "text": "Mouille puis gele : la glace dure 60 % plus longtemps."}, {"name": "Chute", "a": "levitate", "b": "heavy", "text": "Un ennemi en l'air alourdi s'ecrase : degats et etourdissement."}, {"name": "Foudre guidee", "a": "mark", "b": "shock", "text": "La cible marquee attire un eclair du ciel."}, {"name": "Hysterie", "a": "confusion", "b": "fear", "text": "Confus et terrifie : il frappe son voisin de panique."}, {"name": "Epidemie", "a": "contagion", "b": "poison", "text": "Le poison se propage a tous les voisins."}, {"name": "Evaporation", "a": "wet", "b": "burn", "text": "L'eau eteint le feu : buee qui aveugle un court instant."}], "items": [{"id": "givre", "name": "Poing de givre", "rar": "Commun", "desc": "Tes coups peuvent GELER (bloc de glace). Un coup lourd sur un gele = Brise-glace, degats x1,7.", "abus": false, "uni": false}, {"id": "braise", "name": "Braise", "rar": "Commun", "desc": "Tes coups peuvent ENFLAMMER : degats dans le temps. Le feu s'eteint dans l'eau et fond la glace.", "abus": false, "uni": false}, {"id": "etincelle", "name": "Etincelle", "rar": "Commun", "desc": "Tes coups peuvent ELECTROCUTER : des arcs sautent d'ennemi en ennemi (plus loin dans l'eau).", "abus": false, "uni": false}, {"id": "venin", "name": "Crocs de venin", "rar": "Commun", "desc": "Tes coups peuvent EMPOISONNER. Poison + feu = Explosion toxique.", "abus": false, "uni": false}, {"id": "lame_fine", "name": "Lame saignante", "rar": "Commun", "desc": "Tes coups peuvent faire SAIGNER (deux fois plus vite si la cible bouge). Saignement + feu = Cautere.", "abus": false, "uni": false}, {"id": "soporifique", "name": "Poudre soporifique", "rar": "Rare", "desc": "Tes coups peuvent ENDORMIR. Frapper un dormeur : coup critique x2 (Coup du sommeil), mais il se reveille.", "abus": false, "uni": false}, {"id": "marteau_etoile", "name": "Marteau a etoiles", "rar": "Commun", "desc": "Tes coups peuvent ETOURDIR (etoiles sur la tete) : l'ennemi ne fait plus rien un instant.", "abus": false, "uni": false}, {"id": "eau_vive", "name": "Gourde d'eau vive", "rar": "Commun", "desc": "Tes coups MOUILLENT. Mouille + foudre = Chaine ; mouille + gel = Gel profond ; mouille + feu = buee.", "abus": false, "uni": false}, {"id": "bottes_boue", "name": "Bottes de boue", "rar": "Commun", "desc": "Tes coups RALENTISSENT l'ennemi de moitie (il avance une image sur deux).", "abus": false, "uni": false}, {"id": "encens", "name": "Encens brouillant", "rar": "Rare", "desc": "Tes coups peuvent rendre CONFUS : l'ennemi marche au hasard puis frappe ses allies.", "abus": false, "uni": false}, {"id": "philtre", "name": "Philtre de charme", "rar": "Epique", "desc": "Faible chance de RETOURNER un ennemi : il combat pour toi quelques secondes. Les boss y resistent.", "abus": true, "uni": false}, {"id": "masque_peur", "name": "Masque d'epouvante", "rar": "Rare", "desc": "Tes coups peuvent TERRIFIER : l'ennemi prend la fuite sans attaquer.", "abus": false, "uni": false}, {"id": "poussiere", "name": "Poussiere aveuglante", "rar": "Commun", "desc": "Tes coups peuvent AVEUGLER : un coup sur trois de l'ennemi part dans le vide.", "abus": false, "uni": false}, {"id": "gants_plomb", "name": "Gants de plomb", "rar": "Commun", "desc": "Tes coups peuvent LESTER : l'ennemi ne saute plus et ralentit. Souleve + lourd = Chute.", "abus": false, "uni": false}, {"id": "plume_zephyr", "name": "Plume de zephyr", "rar": "Rare", "desc": "Tes coups peuvent SOULEVER l'ennemi (il flotte, sans defense). Souleve + brulure = Tempete de flammes.", "abus": false, "uni": false}, {"id": "lunette", "name": "Lunette de marquage", "rar": "Commun", "desc": "Tes coups MARQUENT : la cible prend +18 % de degats et attire les ennemis et les tirs.", "abus": false, "uni": false}, {"id": "spores", "name": "Spores contagieuses", "rar": "Rare", "desc": "Tes coups peuvent rendre CONTAGIEUX : brulure, poison et saignement passent aux voisins.", "abus": false, "uni": false}, {"id": "aiguille", "name": "Aiguille de paralysie", "rar": "Epique", "desc": "Tes coups peuvent PARALYSER un court instant (jamais enchaine : rendements decroissants).", "abus": false, "uni": false}, {"id": "brise_glace", "name": "Brise-glace", "rar": "Rare", "desc": "Brise-glace +2 niveaux (+80 % de degats) et tes coups peuvent geler.", "abus": false, "uni": true}, {"id": "bobine", "name": "Bobine Tesla", "rar": "Rare", "desc": "Chaine +2 niveaux : plus de degats. Tes coups peuvent electrocuter.", "abus": false, "uni": true}, {"id": "eventail_ardent", "name": "Eventail ardent", "rar": "Epique", "desc": "Tempete de flammes +2 niveaux. Tes coups peuvent soulever.", "abus": false, "uni": true}, {"id": "alambic", "name": "Alambic", "rar": "Rare", "desc": "Vapeur et Evaporation +2 niveaux, et tes coups peuvent mouiller.", "abus": false, "uni": true}, {"id": "poudre_toxique", "name": "Poudre toxique", "rar": "Rare", "desc": "Explosion toxique +2 niveaux. Tes coups peuvent empoisonner.", "abus": false, "uni": true}, {"id": "reveil_brutal", "name": "Reveil brutal", "rar": "Rare", "desc": "Coup du sommeil +2 niveaux (critique x2,8). Tes coups peuvent endormir.", "abus": false, "uni": true}, {"id": "pandore", "name": "Boite de Pandore", "rar": "Epique", "desc": "Reaction en chaine +2 niveaux : une explosion sur un confus en declenche d'autres.", "abus": false, "uni": true}, {"id": "fer_cautere", "name": "Fer a cautere", "rar": "Commun", "desc": "Cautere +2 niveaux. Tes coups peuvent faire saigner.", "abus": false, "uni": true}, {"id": "condensateur", "name": "Condensateur", "rar": "Epique", "desc": "Surcharge +2 niveaux. Tes coups peuvent paralyser un instant.", "abus": false, "uni": true}, {"id": "glace_noire", "name": "Glace noire", "rar": "Rare", "desc": "Gel profond +2 niveaux. Tes coups peuvent mouiller.", "abus": false, "uni": true}, {"id": "enclume", "name": "Enclume volante", "rar": "Rare", "desc": "Chute +2 niveaux. Tes coups peuvent lester.", "abus": false, "uni": true}, {"id": "paratonnerre", "name": "Paratonnerre", "rar": "Epique", "desc": "Foudre guidee +2 niveaux : la cible marquee attire l'eclair. Tes coups marquent.", "abus": false, "uni": true}, {"id": "cris_panique", "name": "Cris de panique", "rar": "Rare", "desc": "Hysterie +2 niveaux : confus et terrifie, l'ennemi frappe son voisin. Tes coups font peur.", "abus": false, "uni": true}, {"id": "patient_zero", "name": "Patient zero", "rar": "Epique", "desc": "Epidemie +2 niveaux : le poison gagne tout le groupe. Tes coups rendent contagieux.", "abus": false, "uni": true}, {"id": "aura_givre", "name": "Aura de givre", "rar": "Rare", "desc": "Aura : les ennemis proches sont RALENTIS en permanence.", "abus": false, "uni": true}, {"id": "nuage_orage", "name": "Nuage d'orage", "rar": "Rare", "desc": "Aura : une pluie MOUILLE les ennemis proches. Prepare le terrain pour la foudre.", "abus": false, "uni": true}, {"id": "halo_confus", "name": "Halo de confusion", "rar": "Epique", "desc": "Aura : les ennemis tout proches deviennent CONFUS un instant.", "abus": true, "uni": true}, {"id": "epines_feu", "name": "Epines ardentes", "rar": "Commun", "desc": "Quand on te frappe, l'attaquant S'ENFLAMME.", "abus": false, "uni": true}, {"id": "armure_givre", "name": "Armure de givre", "rar": "Rare", "desc": "Quand on te frappe, l'attaquant est RALENTI.", "abus": false, "uni": true}, {"id": "dernier_souffle", "name": "Dernier souffle", "rar": "Rare", "desc": "A leur mort, les ennemis propagent le POISON aux voisins.", "abus": false, "uni": true}, {"id": "super_foudre", "name": "Super electrique", "rar": "Epique", "desc": "Tes supers ELECTROCUTENT toutes leurs cibles a coup sur.", "abus": false, "uni": true}, {"id": "super_glace", "name": "Super de glace", "rar": "Epique", "desc": "Tes supers GELENT toutes leurs cibles a coup sur.", "abus": false, "uni": true}, {"id": "sablier", "name": "Sablier de verre", "rar": "Rare", "desc": "Tous tes statuts durent 40 % plus longtemps (jamais au-dela des plafonds).", "abus": false, "uni": true}]};
+var st={v:{},n:{},pick:{}};
+try{var s=JSON.parse(localStorage.getItem("rls_state")||"null");if(s)st=s}catch(e){}
+function save(){try{localStorage.setItem("rls_state",JSON.stringify(st))}catch(e){}}
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
+function nameOf(k){for(var i=0;i<D.statuts.length;i++)if(D.statuts[i].k==k)return D.statuts[i].name;return k}
+function colOf(k){for(var i=0;i<D.statuts.length;i++)if(D.statuts[i].k==k)return D.statuts[i].col;return"#999"}
+function verdictBar(id,card){
+  var a=el("div","act");
+  [["k","Valider"],["r","A refaire"]].forEach(function(x){var b=el("button","",x[1]);b.onclick=function(){st.v[id]=(st.v[id]==x[0]?"":x[0]);save();paint()};b.dataset.v=x[0];a.appendChild(b)});
+  var t=el("textarea","note");t.placeholder="Commentaire";t.value=st.n[id]||"";t.oninput=function(){st.n[id]=t.value;save()};
+  card.appendChild(a);card.appendChild(t);
+  card._paint=function(){card.classList.toggle("k",st.v[id]=="k");card.classList.toggle("r",st.v[id]=="r");a.querySelectorAll("button").forEach(function(b){b.classList.toggle("on",st.v[id]==b.dataset.v)})};
+  cards.push(card);
+}
+var cards=[];
+function paint(){cards.forEach(function(c){c._paint&&c._paint()})}
+// Statuts
+D.statuts.forEach(function(s){
+  var c=el("div","card");c.id="st_"+s.k;
+  var sh=el("div","shot");var im=new Image();im.loading="lazy";im.alt="Statut "+s.name;im.src="roguelite_statuts/st_"+s.k+".gif";sh.appendChild(im);
+  var tg=el("span","tag",s.name);tg.style.background=s.col;sh.appendChild(tg);c.appendChild(sh);
+  var b=el("div","body");b.appendChild(el("h3","",s.name));b.appendChild(el("p","desc",s.desc));b.appendChild(el("p","ref",s.boss));
+  var inf=D.items.filter(function(i){return i.desc.toLowerCase().indexOf(s.name.toLowerCase().slice(0,6))>=0&&!i.id.match(/^(aura|super)/)}).slice(0,3).map(function(i){return i.name});
+  if(inf.length)b.appendChild(el("p","ref","Objets : "+inf.join(", ")));
+  c.appendChild(b);verdictBar("st_"+s.k,b);document.getElementById("statuts").appendChild(c)});
+// Reactions
+D.reacts.forEach(function(r,n){
+  var c=el("div","card");c.id="re_"+n;
+  var sh=el("div","shot");var im=new Image();im.loading="lazy";im.alt="Reaction "+r.name;im.src="roguelite_statuts/re_"+n+".gif";sh.appendChild(im);
+  var tg=el("span","tag",r.name);tg.style.background=colOf(r.a);sh.appendChild(tg);c.appendChild(sh);
+  var b=el("div","body");b.appendChild(el("h3","",r.name));
+  var ch=el("div","chips");[r.a,r.b].filter(Boolean).forEach(function(k){var x=el("span","chip",nameOf(k));x.style.background=colOf(k);ch.appendChild(x)});if(!r.b){var x=el("span","chip","un coup");x.style.background="#ccc";ch.appendChild(x)}
+  b.appendChild(ch);b.appendChild(el("p","desc",r.text));
+  c.appendChild(b);verdictBar("re_"+n,b);document.getElementById("reacts").appendChild(c)});
+// Items
+var RC=["Commun","Rare","Epique"];
+D.items.forEach(function(i){
+  var c=el("div","card");var b=el("div","body");
+  b.appendChild(el("h3","",i.name));b.appendChild(el("p","ref",i.rar+(i.abus?" - abusif (coupe par defaut)":"")+(i.uni?" - unique":" - cumulable")));b.appendChild(el("p","desc",i.desc));
+  c.appendChild(b);verdictBar("it_"+i.id,b);document.getElementById("items").appendChild(c)});
+// Matrice
+(function(){
+  var K=D.statuts.map(function(s){return s.k});var map={};
+  D.reacts.forEach(function(r,n){if(r.a&&r.b){map[r.a+"|"+r.b]=n;map[r.b+"|"+r.a]=n}});
+  var t=el("table");var h=el("tr");h.appendChild(el("th"));K.forEach(function(k){var th=el("th","col",nameOf(k));th.style.color=colOf(k);h.appendChild(th)});h.appendChild(el("th","col","+ coup"));t.appendChild(h);
+  K.forEach(function(a){var tr=el("tr");var th=el("th","",nameOf(a));th.style.color=colOf(a);th.style.textAlign="right";tr.appendChild(th);
+    K.forEach(function(b){var td=el("td");var c=el("button","cell");var n=map[a+"|"+b];if(n!=null){c.classList.add("on");c.textContent=(n+1);c.style.background="linear-gradient(135deg,"+colOf(a)+" 50%,"+colOf(b)+" 50%)";c.title=D.reacts[n].name;c.onclick=function(){var e=document.getElementById("re_"+n);e.scrollIntoView({behavior:"smooth",block:"center"});e.classList.add("hl");setTimeout(function(){e.classList.remove("hl")},1600)}}else c.disabled=true;td.appendChild(c);tr.appendChild(td)});
+    var td=el("td");var c=el("button","cell");var ns=[];D.reacts.forEach(function(r,n){if(!r.b&&r.a==a)ns.push(n)});
+    if(ns.length){c.classList.add("on");c.textContent=ns.map(function(n){return n+1}).join("/");c.style.background=colOf(a);c.title=ns.map(function(n){return D.reacts[n].name}).join(", ");c.onclick=function(){var e=document.getElementById("re_"+ns[0]);e.scrollIntoView({behavior:"smooth",block:"center"})}}else c.disabled=true;
+    td.appendChild(c);tr.appendChild(td);t.appendChild(tr)});
+  document.getElementById("matrix").appendChild(t)})();
+// ----- Variantes de style (canvas, aplats sans contour noir)
+var TAU=Math.PI*2;
+function rnd(a,b){var z=Math.sin(a*127.1+b*311.7)*43758.5453;return z-Math.floor(z)}
+var P={
+ block:function(g,o,t){g.fillStyle=o.c1;g.globalAlpha=.45;g.fillRect(70,40,60,120);g.globalAlpha=.5;g.fillStyle=o.c2;g.beginPath();g.moveTo(70,40);g.lineTo(100,40);g.lineTo(70,80);g.fill();g.globalAlpha=1},
+ hex:function(g,o,t){g.fillStyle=o.c1;g.globalAlpha=.5;g.beginPath();for(var i=0;i<6;i++){var a=i*TAU/6+.5;g.lineTo(100+Math.cos(a)*62,100+Math.sin(a)*70)}g.fill();g.globalAlpha=.6;g.fillStyle=o.c2;g.beginPath();g.moveTo(100,100);for(var i=0;i<3;i++){var a=i*TAU/6+.5;g.lineTo(100+Math.cos(a)*60,100+Math.sin(a)*68)}g.fill();g.globalAlpha=1},
+ spikes:function(g,o,t){g.fillStyle=o.c1;for(var i=0;i<9;i++){var x=66+i*8,h=30+rnd(i,o.s)*50;g.globalAlpha=.7;g.beginPath();g.moveTo(x-5,160);g.lineTo(x,160-h);g.lineTo(x+5,160);g.fill()}g.globalAlpha=1},
+ ring:function(g,o,t){g.strokeStyle=o.c1;g.lineWidth=5;g.globalAlpha=.8;g.beginPath();g.ellipse(100,100,52+6*Math.sin(t*3),70,0,0,TAU);g.stroke();g.globalAlpha=1},
+ orbit:function(g,o,t){g.fillStyle=o.c1;for(var i=0;i<o.n;i++){var a=t*o.sp+i*TAU/o.n;g.beginPath();g.arc(100+Math.cos(a)*58,100+Math.sin(a)*34*1.6,o.r,0,TAU);g.fill()}},
+ arcs:function(g,o,t){g.strokeStyle=o.c1;g.lineWidth=o.w;g.lineCap="round";var f=Math.floor(t*10);for(var k=0;k<o.n;k++){var a=rnd(f,k+o.s)*TAU,x=100+Math.cos(a)*30,y=100+Math.sin(a)*40;g.beginPath();g.moveTo(x,y);for(var j=1;j<5;j++){a+=(rnd(f,k*9+j)-.5)*1.3;x+=Math.cos(a)*16;y+=Math.sin(a)*16;g.lineTo(x,y)}g.stroke()}},
+ zig:function(g,o,t){g.strokeStyle=o.c1;g.lineWidth=o.w;g.lineJoin="round";var f=Math.floor(t*12);g.beginPath();for(var j=0;j<9;j++){g.lineTo(100+(j%2?18:-18)+(rnd(f,j)-.5)*8,30+j*17)}g.stroke()},
+ cage:function(g,o,t){g.strokeStyle=o.c1;g.lineWidth=3;for(var i=0;i<4;i++){var x=62+i*25;g.globalAlpha=.4+.5*rnd(Math.floor(t*14),i);g.beginPath();g.moveTo(x,36);g.lineTo(x,164);g.stroke()}g.globalAlpha=1},
+ hearts:function(g,o,t){g.fillStyle=o.c1;for(var i=0;i<o.n;i++){var k=(t*.5+i/o.n)%1,x=100+Math.sin(k*6+i)*26,y=150-k*120,r=8+3*i%3;g.globalAlpha=1-k;heart(g,x,y,r)}g.globalAlpha=1},
+ halo:function(g,o,t){g.fillStyle=o.c1;for(var i=0;i<6;i++){var a=t*1.2+i*TAU/6;heart(g,100+Math.cos(a)*40,34+Math.sin(a)*8,7)}},
+ spiral:function(g,o,t){g.strokeStyle=o.c1;g.lineWidth=4;g.lineCap="round";g.beginPath();for(var j=0;j<40;j++){var a=t*3+j*.4,r=j*1.1;g.lineTo(100+Math.cos(a)*r,36+Math.sin(a)*r*.35)}g.stroke()},
+ strings:function(g,o,t){g.strokeStyle=o.c1;g.lineWidth=2;for(var i=0;i<3;i++){var x=80+i*20;g.beginPath();g.moveTo(x,0);g.lineTo(100+(i-1)*10+Math.sin(t*3+i)*6,70);g.stroke()}},
+ petals:function(g,o,t){g.fillStyle=o.c1;for(var i=0;i<o.n;i++){var k=(t*.4+i/o.n)%1,x=30+rnd(i,3)*140+Math.sin(k*8)*14,y=k*190;g.globalAlpha=1-k*.6;g.beginPath();g.ellipse(x,y,6,3,k*6,0,TAU);g.fill()}g.globalAlpha=1},
+ drips:function(g,o,t){g.fillStyle=o.c1;for(var i=0;i<4;i++){var k=(t*.6+i*.27)%1;g.globalAlpha=1-k;g.beginPath();g.arc(76+i*16,60+k*100,4,0,TAU);g.fill()}g.globalAlpha=1},
+ pulse:function(g,o,t){var k=(t*.8)%1;g.strokeStyle=o.c1;g.lineWidth=5;g.globalAlpha=1-k;g.beginPath();g.arc(100,100,20+k*70,0,TAU);g.stroke();g.globalAlpha=1},
+ floor:function(g,o,t){g.strokeStyle=o.c1;g.lineWidth=4;g.beginPath();g.ellipse(100,168,46,13,0,0,TAU);g.stroke();for(var i=0;i<6;i++){var a=t*1.5+i*TAU/6;g.fillStyle=o.c1;g.beginPath();g.arc(100+Math.cos(a)*46,168+Math.sin(a)*13,3,0,TAU);g.fill()}},
+ tint:function(g,o,t){g.globalAlpha=.35;g.fillStyle=o.c1;g.fillRect(74,38,52,124);g.globalAlpha=1},
+ flakes:function(g,o,t){g.fillStyle=o.c1;for(var i=0;i<14;i++){var k=(t*.3+i/14)%1;g.globalAlpha=1-k;g.beginPath();g.arc(30+rnd(i,5)*140,k*190,2.5,0,TAU);g.fill()}g.globalAlpha=1},
+ flip:function(g,o,t){g.fillStyle=o.c1;g.beginPath();g.moveTo(80,22);g.lineTo(120,22);g.lineTo(100+Math.sin(t*4)*4,44);g.fill()}
+};
+function heart(g,x,y,r){g.beginPath();g.arc(x-r*.5,y-r*.3,r*.6,0,TAU);g.arc(x+r*.5,y-r*.3,r*.6,0,TAU);g.fill();g.beginPath();g.moveTo(x-r*1.05,y-r*.05);g.lineTo(x+r*1.05,y-r*.05);g.lineTo(x,y+r*1.1);g.fill()}
+function dummy(g,tint){g.fillStyle="#f4c995";g.beginPath();g.arc(100,52,14,0,TAU);g.fill();g.fillStyle=tint||"#6c5b9a";g.fillRect(84,68,32,52);g.fillStyle="#3b2f5a";g.fillRect(86,120,12,40);g.fillRect(102,120,12,40)}
+var BG="#2b2140";
+var V={
+ freeze:[["Bloc classique (en jeu)",["block","flakes"],"#8ce0ff","#ffffff"],["Cristal hexagonal",["hex","flakes"],"#6ec6ff","#dff6ff"],["Stalagmites de glace",["spikes","floor"],"#9fe3ff","#ffffff"],["Anneau de givre",["ring","flakes"],"#bdefff","#fff"],["Eclats en orbite",["orbit"],"#c8f3ff","#fff"],["Cocon pale",["tint","block"],"#cfeeff","#fff"],["Pointes + sol gele",["spikes","tint"],"#7ad0ff","#fff"],["Hexagone bleu profond",["hex","ring"],"#3d8bd9","#9fd8ff"],["Neige tombante",["flakes","tint"],"#e6f9ff","#fff"],["Anneau au sol",["floor","block"],"#9fe3ff","#fff"],["Flocons orbitaux",["orbit","tint"],"#ffffff","#fff"],["Gouttes de fonte",["block","drips"],"#8ce0ff","#fff"],["Double anneau",["ring","pulse"],"#9fe3ff","#fff"],["Cage de glace",["cage","tint"],"#a8ecff","#fff"],["Pointes + neige",["spikes","flakes"],"#b6f0ff","#fff"],["Pulsation glacee",["pulse","hex"],"#7fd3ff","#e8fbff"]],
+ shock:[["Arcs vifs (en jeu)",["arcs"],"#ffe633","#fff",3,3],["Eclair vertical",["zig"],"#ffe633","#fff",5],["Cage electrique",["cage","arcs"],"#ffe633","#fff",2,2],["Etincelles en orbite",["orbit"],"#fff176","#fff"],["Anneau d'orage",["ring","arcs"],"#ffd400","#fff",2,2],["Arcs epais",["arcs"],"#ffcf1a","#fff",6,2],["Pulsation statique",["pulse","arcs"],"#fff176","#fff",2,3],["Double eclair",["zig","arcs"],"#ffe633","#fff",3,2],["Halo de bolts",["halo","zig"],"#ffe633","#fff",3],["Teinte jaune + arcs",["tint","arcs"],"#ffe633","#fff",2,4],["Sol electrifie",["floor","arcs"],"#fff176","#fff",2,3],["Pluie d'etincelles",["flakes","zig"],"#ffe633","#fff",3],["Cage fine + orbite",["cage","orbit"],"#ffd400","#fff"],["Arcs fins x6",["arcs"],"#fff59d","#fff",1.5,6],["Eclair + anneau",["zig","ring"],"#ffe633","#fff",3],["Pulsation + sol",["pulse","floor"],"#ffe633","#fff"]],
+ charm:[["Coeurs montants (en jeu)",["hearts","tint"],"#ff73b3","#fff"],["Halo de coeurs",["halo","tint"],"#ff73b3","#fff"],["Spirale rose",["spiral"],"#ff73b3","#fff"],["Fils de marionnette",["strings","tint"],"#ff9ccb","#fff"],["Anneau au sol",["floor","hearts"],"#ff73b3","#fff"],["Petales de rose",["petals"],"#ff6b9d","#fff"],["Pulsation rose",["pulse","tint"],"#ff73b3","#fff"],["Coeurs en orbite",["orbit"],"#ff73b3","#fff"],["Coeurs + petales",["hearts","petals"],"#ff8fbf","#fff"],["Fanion de camp",["flip","tint"],"#ff73b3","#fff"],["Spirale + coeurs",["spiral","hearts"],"#ff5fa2","#fff"],["Halo + anneau",["halo","floor"],"#ff73b3","#fff"],["Fils + coeurs",["strings","hearts"],"#ff9ccb","#fff"],["Double pulsation",["pulse","spiral"],"#ff73b3","#fff"],["Teinte douce + petales",["tint","petals"],"#ff9ccb","#fff"],["Orbite + sol",["orbit","floor"],"#ff73b3","#fff"]]
+};
+var VT={freeze:"GEL",shock:"ELECTROCUTION",charm:"RETOURNEMENT (CHARME)"};
+var vc=document.getElementById("variants"),anim=[];
+Object.keys(V).forEach(function(k){
+  vc.appendChild(el("h3","",VT[k]));var gr=el("div","vgrid");gr.style.margin="8px 0 22px";
+  V[k].forEach(function(v,n){
+    var id=k+"_"+(n+1);var c=el("div","card vcard");var sh=el("div","shot");var cv=document.createElement("canvas");cv.width=200;cv.height=200;sh.appendChild(cv);
+    var tg=el("span","tag","#"+(n+1));tg.style.background=v[2];sh.appendChild(tg);c.appendChild(sh);
+    var b=el("div","body");b.appendChild(el("h3","",v[0]));
+    var bt=el("button","pick","Choisir");bt.style.cssText="background:var(--ink);color:var(--paper);margin-top:4px";bt.onclick=function(){st.pick[k]=(st.pick[k]==n+1?0:n+1);save();pickPaint()};bt.dataset.k=k;bt.dataset.n=n+1;b.appendChild(bt);
+    var t=el("textarea","note");t.placeholder="Commentaire";t.value=st.n["var_"+id]||"";t.oninput=function(){st.n["var_"+id]=t.value;save()};b.appendChild(t);c.appendChild(b);gr.appendChild(c);
+    var o={c1:v[2],c2:v[3],w:v[4]||3,n:v[5]||6,s:n,sp:1.3,r:5};anim.push({cv:cv,k:k,v:v,o:o})});
+  vc.appendChild(gr)});
+function pickPaint(){document.querySelectorAll("button.pick").forEach(function(b){var on=st.pick[b.dataset.k]==+b.dataset.n;b.classList.toggle("on",on);b.textContent=on?"Choisi":"Choisir";b.style.background=on?"#2a8f78":"var(--ink)"})}
+var reduce=window.matchMedia&&matchMedia("(prefers-reduced-motion:reduce)").matches;
+function frame(ms){var t=reduce?.6:ms/1000;anim.forEach(function(a){var g=a.cv.getContext("2d");g.clearRect(0,0,200,200);g.fillStyle=BG;g.fillRect(0,0,200,200);g.fillStyle="#3b2f5a";g.beginPath();g.ellipse(100,170,50,10,0,0,TAU);g.fill();dummy(g,a.k=="charm"?"#c06a8a":a.k=="freeze"?"#5b7a9a":"#6c5b9a");a.v[1].forEach(function(p){if(P[p])P[p](g,a.o,t+a.o.s*.37)})});if(!reduce)requestAnimationFrame(frame)}
+requestAnimationFrame(frame);pickPaint();
+document.getElementById("exp").onclick=function(){
+  var L=["VERDICT STATUTS ET REACTIONS"];var ok=[],ko=[];
+  Object.keys(st.v).forEach(function(i){if(st.v[i]=="k")ok.push(i);if(st.v[i]=="r")ko.push(i)});
+  L.push("Valides : "+(ok.join(", ")||"aucun"));L.push("A refaire : "+(ko.join(", ")||"aucun"));
+  L.push("Styles choisis : "+Object.keys(VT).map(function(k){return k+"="+(st.pick[k]||"aucun")}).join(", "));
+  Object.keys(st.n).forEach(function(i){if(st.n[i])L.push("["+i+"] "+st.n[i])});
+  document.getElementById("out").value=L.join("\n")};
+document.getElementById("rst").onclick=function(){if(confirm("Tout effacer ?")){st={v:{},n:{},pick:{}};save();location.reload()}};
+paint();
+</script></body></html>
