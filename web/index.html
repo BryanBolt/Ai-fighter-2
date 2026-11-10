@@ -478,6 +478,7 @@ miniquad_add_plugin({
         if (kind === 1) s = new URLSearchParams(location.search).get("salon") || "";
         if (kind === 3 && new URLSearchParams(location.search).get("labo")) s = "1";
         if (kind === 4) s = window.afhNfcCode || "";
+        if (kind === 5) s = (new URLSearchParams(location.search).get("defi") || "").slice(0, 40); // defi entre amis : ?defi=CODE.GRAINE
         if (kind === 2 && location.protocol.indexOf("http") === 0) s = location.origin + location.pathname.replace(/index\.html$/, "");
       } catch (e) {}
       var b = new TextEncoder().encode(s);

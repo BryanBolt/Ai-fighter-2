@@ -8,9 +8,10 @@ import crypto from 'node:crypto';
 import zlib from 'node:zlib';
 import { fileURLToPath } from 'node:url';
 import { WebSocketServer } from 'ws';
+import { createScores } from './scores.js';
 import { createPush } from './push.js';
 
-export const PROTOCOL_VERSION = 10; // 10 : daemon de chaque joueur au salon (champ `daemon` des messages lobby et room) ; 9 : mode ROGUELITE en coop (mode 3 : run d equipe, cartes personnelles, etages) ; 8 : nunchaku (nouvelle arme ramassable, serie de six coups, Pied = coups de pied avec l'arme) et armes au sol du dojo/temple changees ; 7 : entree Saisie (nouveau bit d'entree) + coups renommes (SCHEMA_VERSION 8) ; 6 : table des coups changee (grammaire X/Y des 9 autres heros, SCHEMA_VERSION 7) ; 5 : jusqu'a 8 joueurs, vague/PV de depart (solo -> en ligne) ; 4 : table des coups changee (aeriens, realisme, grammaire X/Y ; tir allie, QA). 3 : parties hebergees (jeu complet : loadout, cmd sequences). 2 : join_any / host. Seuls les clients v8 sont acceptes.
+export const PROTOCOL_VERSION = 11; // 11 : accessoires COSMETIQUES (message cos, champ cos des joueurs du salon) ; 10 : daemon de chaque joueur au salon (champ `daemon` des messages lobby et room) ; 9 : mode ROGUELITE en coop (mode 3 : run d equipe, cartes personnelles, etages) ; 8 : nunchaku (nouvelle arme ramassable, serie de six coups, Pied = coups de pied avec l'arme) et armes au sol du dojo/temple changees ; 7 : entree Saisie (nouveau bit d'entree) + coups renommes (SCHEMA_VERSION 8) ; 6 : table des coups changee (grammaire X/Y des 9 autres heros, SCHEMA_VERSION 7) ; 5 : jusqu'a 8 joueurs, vague/PV de depart (solo -> en ligne) ; 4 : table des coups changee (aeriens, realisme, grammaire X/Y ; tir allie, QA). 3 : parties hebergees (jeu complet : loadout, cmd sequences). 2 : join_any / host. Seuls les clients v8 sont acceptes.
 const COMPAT_VERSIONS = [PROTOCOL_VERSION]; // derive de PROTOCOL_VERSION : ne peut plus diverger (v8 etait refuse par erreur, ancienne valeur [7]) ; // protocole 7 : les clients 1 a 6 n'ont pas la meme table de coups (et 1 a 4 ne savent pas lire des salons de 8 places), ils doivent se mettre a jour
 const HOSTED_SIZE = 2; // taille par defaut d une partie hebergee (anciens clients) ; le client actuel demande 4 avec `size` (places vides dormantes)
 const HOSTED_MIN = 2; // taille minimale demandable
@@ -54,6 +55,7 @@ export function createServer(opts = {}) {
   const roomTtl = opts.roomTtlMs ?? ROOM_TTL_MS;
   const matchLog = new Map(); // ip -> horodatages des demandes de partie (fenetre glissante d'une minute)
   const reports = new Map(); // code -> Map(slot cible -> Set(jetons des signaleurs))
+  const scores = createScores({ file: opts.scoresFile !== undefined ? opts.scoresFile : (process.env.SCORES_FILE || null), now: opts.now });
   const push = createPush({ sender: opts.pushSender ?? null, env: opts.pushEnv ?? process.env, roomExists: (c) => rooms.has(c) });
 
   const rnd = (n) => crypto.randomInt(n);
@@ -94,6 +96,7 @@ export function createServer(opts = {}) {
 
   // ---------------------------------------------------------------- HTTP
   const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.wasm': 'application/wasm', '.json': 'application/json', '.png': 'image/png', '.webmanifest': 'application/manifest+json', '.svg': 'image/svg+xml', '.ico': 'image/x-icon', '.css': 'text/css; charset=utf-8', '.ogg': 'audio/ogg', '.webp': 'image/webp', '.gif': 'image/gif', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.wav': 'audio/wav', '.mp4': 'video/mp4', '.map': 'application/json', '.txt': 'text/plain; charset=utf-8' };
+  const httpIp = (req) => { const f = trustProxy ? String(req.headers['x-forwarded-for'] || '').split(',').pop().trim() : ''; return (f || req.socket.remoteAddress || '').toString(); };
   const server = http.createServer((req, res) => {
     let url;
     try { url = new URL(req.url, 'http://x'); } catch { res.writeHead(400, { 'content-type': 'text/plain' }); res.end('requete invalide'); return; }
@@ -112,6 +115,7 @@ export function createServer(opts = {}) {
       res.end(JSON.stringify(peekRoom(code))); return;
     }
     if (url.pathname === '/api/ideas' && req.method === 'POST') { handleIdea(req, res); return; }
+    if (scores.handle(req, res, url, httpIp(req))) return;
     if (push.handle(req, res, url.pathname)) return;
     // Chemin mal encode (« %E0%A4 », « % ») : 400 au lieu d'une exception non rattrapee qui arretait tout le serveur.
     let p;
@@ -204,7 +208,7 @@ export function createServer(opts = {}) {
   }
 
   // ---------------------------------------------------------------- Salons
-  const emptySlot = () => ({ color: 0, ws: null, name: '', char: 0, ready: false, token: null, mode: 'free', hi: -1, journal: [], lastMove: Date.now(), lastBits: 0, heldUntil: 0, ip: '', loadout: null, cmds: 0, lastLoadout: 0, loadouts: 0, lastChat: 0, lastResync: 0, afkWarned: false, dormantDue: false, daemon: 255 });
+  const emptySlot = () => ({ color: 0, ws: null, name: '', char: 0, ready: false, token: null, mode: 'free', hi: -1, journal: [], lastMove: Date.now(), lastBits: 0, heldUntil: 0, ip: '', loadout: null, cmds: 0, lastLoadout: 0, loadouts: 0, lastChat: 0, lastResync: 0, afkWarned: false, dormantDue: false, daemon: 255, cos: '' });
   function makeRoom(isPublic) {
     const room = {
       code: newCode(), public: !!isPublic, started: false, created: Date.now(), lastAct: Date.now(), auto: false, run: 0, wave: 0, emptySince: 0, restartTimer: null, stageBase: rnd(STAGES),
@@ -220,7 +224,7 @@ export function createServer(opts = {}) {
   const humans = (room) => room.slots.map((s, i) => [s, i]).filter(([s]) => s.ws);
   const lobbyView = (room) => ({
     t: 'room', code: room.code, public: room.public, started: room.started, auto: room.auto, run: room.run, options: { ...room.options, ff: room.ff !== false, ffm: room.ffm, pal: room.pal !== false }, host: hostSlot(room), full: !!room.full, private: !room.public, keep: !!room.keep, ttl: Math.round(roomTtl / 60000),
-    players: room.slots.map((s, i) => ({ slot: i, name: s.name, char: s.char, color: s.color, daemon: s.daemon, ready: s.ready, online: !!s.ws, mode: s.mode })),
+    players: room.slots.map((s, i) => ({ slot: i, name: s.name, char: s.char, color: s.color, daemon: s.daemon, cos: s.cos || '', ready: s.ready, online: !!s.ws, mode: s.mode })),
   });
   const broadcast = (room, msg, except = null) => { for (const [s] of humans(room)) if (s.ws !== except) send(s.ws, msg); };
   // Liste publique : seulement les salons habites, les plus remplis (puis les plus recents) d'abord, bornee.
@@ -247,7 +251,7 @@ export function createServer(opts = {}) {
     const idx = room.slots.findIndex((s, i) => i < limit && !s.ws && s.heldUntil < now && (!room.started || s.mode === 'ai'));
     if (idx < 0) return -1;
     const s = room.slots[idx];
-    s.ws = ws; s.name = uniqueName(room, cleanName(name), idx); s.token = c.token; s.ip = c.ip; s.heldUntil = 0; s.color = pickColor(room, idx, c.color); s.daemon = 255;
+    s.ws = ws; s.name = uniqueName(room, cleanName(name), idx); s.token = c.token; s.ip = c.ip; s.heldUntil = 0; s.color = pickColor(room, idx, c.color); s.daemon = 255; s.cos = '';
     s.ready = false; s.lastMove = now; s.afkWarned = false;
     c.room = room; c.slot = idx;
     if (!room.started) s.mode = 'human';
@@ -362,7 +366,7 @@ export function createServer(opts = {}) {
     if (!cands.length) return -1;
     cands.sort((a, b) => ((a[0].heldUntil > now) - (b[0].heldUntil > now)) || ((b[0].char === char) - (a[0].char === char)));
     const [s, idx] = cands[0];
-    s.ws = ws; s.name = uniqueName(room, cleanName(c.name), idx); s.token = c.token; s.ip = c.ip; s.heldUntil = 0; s.color = pickColor(room, idx, c.color); s.ready = false; s.lastMove = now; s.afkWarned = false;
+    s.ws = ws; s.name = uniqueName(room, cleanName(c.name), idx); s.token = c.token; s.ip = c.ip; s.heldUntil = 0; s.color = pickColor(room, idx, c.color); s.cos = ''; s.ready = false; s.lastMove = now; s.afkWarned = false;
     c.room = room; c.slot = idx;
     return idx;
   }
@@ -532,6 +536,13 @@ export function createServer(opts = {}) {
       case 'join_any': return joinAny(ws, c, m);
       case 'host': return hostGame(ws, c, m);
       case 'list': return send(ws, { t: 'rooms', rooms: publicList() });
+      // Dimension sociale (sans compte, sans salon) : classements, oubli, presence des amis. Voir scores.js.
+      case 'score_submit': return send(ws, { t: 'score_result', ...scores.submit(c.ip, m) });
+      case 'scores_get': return send(ws, { t: 'scores', ...scores.query(m) });
+      case 'score_forget': return send(ws, { t: 'score_forgot', ...scores.forget(m.pid) });
+      case 'presence_set': return send(ws, { t: 'presence_ack', ...scores.presenceSet(m) });
+      case 'presence_get': return send(ws, { t: 'friends', ...scores.presenceGet(m) });
+      case 'presence_clear': return send(ws, { t: 'presence_ack', ...scores.presenceClear(m) });
       case 'create': {
         if (!matchOk(ws, c)) return;
         if (c.room) leaveRoom(c, ws, true);
@@ -687,6 +698,12 @@ export function createServer(opts = {}) {
         s.mode = 'human'; s.lastMove = Date.now(); s.lastBits = 0;
         return control(room, c.slot, highest(room) + rejoinMargin(room), { ai: false, name: s.name });
       }
+      case 'cos': { // accessoires cosmetiques : texte court a alphabet restreint, relaye tel quel (purement visuel)
+        const code = typeof m.c === 'string' ? m.c : '';
+        if (code.length > 96 || !/^[a-z0-9_.,]*$/.test(code) || Date.now() - (s.lastCos || 0) < 300) return;
+        s.lastCos = Date.now(); s.cos = code;
+        return broadcast(room, lobbyView(room));
+      }
       case 'color': { // changement de couleur en cours de partie : annonce a tous (marqueur au-dessus du heros)
         if (!Number.isInteger(m.color) || Date.now() - (s.lastColor || 0) < 500) return;
         s.lastColor = Date.now(); c.color = m.color; s.color = pickColor(room, c.slot, m.color);
@@ -776,7 +793,7 @@ export function createServer(opts = {}) {
   }, opts.beatMs ?? 20000);
   beat.unref?.();
 
-  return { server, wss, rooms, pushCircles: push.circles, close: () => new Promise((r) => { clearInterval(timer); clearInterval(beat); for (const w of wss.clients) w.terminate(); wss.close(() => server.close(() => r())); }) };
+  return { server, wss, rooms, scores, pushCircles: push.circles, close: () => new Promise((r) => { clearInterval(timer); clearInterval(beat); scores.flush(); for (const w of wss.clients) w.terminate(); wss.close(() => server.close(() => r())); }) };
 }
 
 // Lancement direct.
