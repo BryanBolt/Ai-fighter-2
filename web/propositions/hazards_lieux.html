@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dangers de lieu</title>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b}
+body{margin:0;background:var(--papier);color:var(--encre);font-family:Nunito,sans-serif;padding:16px}
+h1,h2{font-family:Silkscreen,monospace;margin:.3em 0}
+h2{font-size:15px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px}
+.card{border:3px solid var(--encre);border-radius:10px;padding:12px;background:#fff}
+.card img{width:100%;border:2px solid var(--encre);background:var(--papier);min-height:120px}
+.card p{margin:.4em 0;font-size:14px}
+button{font-family:Silkscreen,monospace;border:2px solid var(--encre);background:#fff;padding:8px 12px;margin:4px 4px 0 0;cursor:pointer;border-radius:6px}
+button.ok.on{background:#3b9c5a;color:#fff}button.ko.on{background:var(--accent);color:#fff}
+input.c{width:100%;box-sizing:border-box;margin-top:6px;border:2px solid var(--encre);border-radius:6px;padding:6px;font-family:Nunito,sans-serif}
+textarea{width:100%;min-height:160px;font-family:Nunito,sans-serif;border:2px solid var(--encre);border-radius:6px;padding:8px;box-sizing:border-box}
+.gen{background:var(--accent);color:#fff}
+.bar{position:sticky;top:0;background:var(--papier);padding:6px 0;border-bottom:2px solid var(--encre);margin-bottom:10px;z-index:2}
+</style></head><body>
+<h1>DANGERS DE LIEU</h1>
+<p>Un danger signature par lieu (47) : annonce 1 a 2 s, optionnel, jamais mortel pour un joueur, jamais un boss. Un ennemi deja projete prend 1,8 fois plus : KO de decor. Valide, renvoie ou commente chaque lieu, puis genere ton texte.</p>
+<div class="bar"><span id="cnt"></span> <button class="gen" id="gen">Generer mon texte</button></div>
+<div class="grid" id="g"></div>
+<h2>Mon texte</h2>
+<textarea id="out" readonly></textarea>
+<script>
+const items=[["ruelle", "POT DE FLEURS !", "Chute - Une locataire arrose ses geraniums. Avec le pot."], ["dojo", "SAC DE SABLE !", "Chute - Le sac d'entrainement se decroche. Il en a marre."], ["serveurs", "COURT-CIRCUIT !", "Eruption - Le stagiaire a branche la bouilloire sur la baie."], ["parking", "CADDIE EN FUITE !", "Balayage - Un caddie de supermarche, sans pilote ni remords."], ["open_space", "RANGEE DE CHAISES !", "Balayage - La reunion de 9 h : cinq chaises a roulettes en formation."], ["seminaire", "LE LUSTRE !", "Chute - Le team building a ete tres, tres energique."], ["etage_pdg", "CHAMPAGNE !", "Eruption - Le bouchon saute. Le PDG applaudit. Pas pour vous."], ["toits", "RAFALE ET EXTRACTEUR !", "Courant - Le vent pousse tout le monde vers le ventilateur d'extraction."], ["senat", "RUEE VERS LE BUFFET !", "Balayage - Fin de seance : plus personne ne vote, tout le monde mange."], ["temple", "LA GRANDE CLOCHE !", "Chute - Elle sonnait toute seule. Elle a decide de tomber."], ["toit_jardin", "ARROSAGE AUTOMATIQUE !", "Courant - Le jardinier a programme l'arrosage. Pas le public."], ["parc", "CHIEN LACHE !", "Balayage - Il est gentil ! Il n'a juste jamais appris a freiner."], ["chantier", "CHARGE SUSPENDUE !", "Chute - La grue a eu un instant d'inattention. Et un seau de beton."], ["marche_nuit", "WOK FLAMBE !", "Eruption - Le cuisinier a vu une flamme et a dit : plus haut."], ["quai_metro", "APPEL D'AIR DE LA RAME !", "Courant - Reculez derriere la ligne jaune. Ou pas : c'est drole."], ["cantine", "CHARIOT DE PLATEAUX !", "Balayage - Le plat du jour, sur roulettes, a 40 km/h."], ["paradis", "FOUDRE DIVINE !", "Chute - Un ange a marche sur un cable. Tout le monde en subit les consequences."], ["marais", "BULLES DE MARAIS !", "Eruption - Ca monte, ca gargouille, ca sent. Eclatez-les de loin."], ["foret", "SANGLIER PRESSE !", "Balayage - Il est en retard pour son rendez-vous. Vous etes sur son chemin."], ["enfers", "FLAMMES FARCEUSES !", "Eruption - Les flammes font coucou. Puis elles font ouille."], ["ombres", "VAGUE D'OMBRE !", "Balayage - Votre ombre s'est echappee et revient avec des amies."], ["arbre", "BRANCHE QUI CASSE !", "Chute - Le gros orme a une opinion sur votre bagarre."], ["cascade", "COURANT DE LA CASCADE !", "Courant - Le courant entraine tout le monde vers les rochers."], ["montagne", "BOULE DE ROCHER !", "Balayage - Elle roule. Elle est tres motivee. Elle ne regarde pas."], ["robots", "CHAINE DE MONTAGE !", "Courant - Vous etes la piece suivante. La presse vous attend."], ["souk", "CHAMEAU PRESSE !", "Balayage - Il a un rendez-vous, il crache, il ne s'excuse pas."], ["cafe", "MACHINE A CAFE !", "Eruption - Le buse vapeur a eu son premier cafe aussi."], ["bar", "TONNEAU ROULANT !", "Balayage - La tournee generale... de tonneaux."], ["aeroport", "TAPIS ROULANT !", "Courant - Le tapis des bagages est dans le mauvais sens, et le portique a faim."], ["hokkaido", "AVALANCHE DU TOIT !", "Chute - Le toit s'est decharge de sa neige. Sur vous."], ["shibuya", "PASSAGE PIETON !", "Balayage - Le feu est vert. Mille personnes traversent en meme temps."], ["eiffel", "ASCENSEUR !", "Eruption - Il monte. Il monte tres vite. Il ne s'arrete pas au 2e."], ["montmartre", "PETIT TRAIN TOURISTIQUE !", "Balayage - Il vous a pris pour une attraction, a 4 euros par tete."], ["seine", "CRUE DE LA SEINE !", "Courant - Les quais deviennent un toboggan vers la peniche."], ["louvre", "TABLEAU QUI SE DECROCHE !", "Chute - La Joconde sourit toujours. Son cadre, beaucoup moins."], ["newyork", "BOUCHE D'EGOUT !", "Eruption - Il y a toujours de la vapeur qui sort de quelque part."], ["londres", "BUS ROUGE A IMPERIALE !", "Balayage - Il klaxonne poliment. Puis il passe a travers."], ["rome", "LE LION DU COLISEE !", "Balayage - La grille s'ouvre. Il avait juste faim de gloire."], ["caire", "TEMPETE DE SABLE !", "Courant - Le sable pousse tout le monde vers les sables mouvants."], ["rio", "BLOCO DE CARNAVAL !", "Balayage - Le bloc de samba ne s'arrete pour personne, surtout pas pour vous."], ["sydney", "KANGOUROU PRESSE !", "Balayage - Il court a l'entracte de l'Opera : il a oublie son billet."], ["agra", "ELEPHANT DE CEREMONIE !", "Balayage - Il defile en retard. Il ne regarde pas ses pieds. Ni les votres."], ["foire", "ROUE DE LA FORTUNE !", "Balayage - La grande roue s'est decrochee. Gagnant : le prochain a sauter."], ["serre", "PLANTE CARNIVORE !", "Eruption - Elle reclame un deuxieme dejeuner. Vous etes sur la carte."], ["surf", "LA GROSSE VAGUE !", "Courant - Enfin la vague parfaite ! Elle emmene tout le monde sur les rochers."], ["ferme", "VACHE EN FUITE !", "Balayage - Elle a vu l'affiche du cinema de la grange. Elle est en retard."], ["macaques", "SOURCE CHAUDE !", "Eruption - Les macaques sortent en courant : l'eau vient de passer a 90 degres."]];
+const st={},cm={};
+const g=document.getElementById('g');
+function upd(){const n=Object.keys(st).length;document.getElementById('cnt').textContent=n+' / '+items.length+' juges'}
+items.forEach(([id,t,d])=>{const c=document.createElement('div');c.className='card';
+c.innerHTML=`<h2>${t}</h2><img loading="lazy" src="hazards_lieux/${id}.gif" alt="${t}"><p>${d}</p><button class="ok">Valider</button><button class="ko">A refaire</button><input class="c" placeholder="Commentaire">`;
+const [ok,ko]=c.querySelectorAll('button');const inp=c.querySelector('input');
+ok.onclick=()=>{st[id]='ok';ok.classList.add('on');ko.classList.remove('on');upd()};
+ko.onclick=()=>{st[id]='ko';ko.classList.add('on');ok.classList.remove('on');upd()};
+inp.oninput=()=>{cm[id]=inp.value};
+g.appendChild(c)});upd();
+document.getElementById('gen').onclick=()=>{
+const l=items.map(([id,t])=>`- ${t} (${id}) : ${st[id]==='ok'?'VALIDE':st[id]==='ko'?'A REFAIRE':'pas encore juge'}${cm[id]?' - '+cm[id]:''}`);
+document.getElementById('out').value="Retours sur les dangers de lieu :\n"+l.join("\n")};
+</script></body></html>

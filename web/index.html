@@ -383,6 +383,8 @@ miniquad_add_plugin({
       new Uint8Array(wasm_memory.buffer, dst, mm.buf.length).set(mm.buf); mm.buf = new Uint8Array(0); mm.st = 4;
     };
     importObject.env.afh_vibrate =function (ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} };
+    // Motif de vibration (haptique par niveau) : vibre / pause alternes en ms, zeros de fin ignores.
+    importObject.env.afh_vibrate_pat = function (a, b, c, d, e) { try { var p = [a, b, c, d, e]; while (p.length && p[p.length - 1] === 0) p.pop(); if (navigator.vibrate && p.length) navigator.vibrate(p); } catch (x) {} };
     importObject.env.afh_ready = function () { var l = document.getElementById("loading"); if (!l) return; l.style.transition = "opacity .25s"; l.style.opacity = "0"; l.style.pointerEvents = "none"; setTimeout(function () { l.hidden = true; }, 300); };
     // Zones sures (encoche, barre de gestes) : lues via une sonde CSS env(safe-area-inset-*), en centiemes de point.
     var probe = document.createElement("div");

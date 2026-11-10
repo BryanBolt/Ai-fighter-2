@@ -1,0 +1,80 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Tactile de haut niveau - AI Fighter 2</title>
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b}
+body{margin:0;font:16px system-ui,sans-serif;background:var(--papier);color:var(--encre);padding:14px;line-height:1.35}
+h1{font-size:22px;margin:0 0 4px}h2{font-size:17px;margin:8px 0 2px}h3{font-size:18px;margin:18px 0 4px}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-top:12px}
+.c{background:#fff;border:3px solid var(--encre);border-radius:16px;padding:10px;box-shadow:5px 5px 0 var(--accent)}
+.c.ok{outline:4px solid #2e9b5b}.c.no{outline:4px solid var(--accent)}
+img{width:100%;border-radius:10px;background:var(--encre);display:block}
+p{margin:4px 0;font-size:14px}.tag{display:inline-block;background:var(--encre);color:var(--papier);border-radius:999px;padding:2px 10px;font-size:12px;font-weight:700}
+table{border-collapse:collapse;width:100%;background:#fff;border:3px solid var(--encre);border-radius:12px;overflow:hidden;font-size:14px}
+th,td{border-bottom:1px solid var(--encre);padding:6px 8px;text-align:left;vertical-align:top}th{background:var(--encre);color:var(--papier)}
+button{font:inherit;font-weight:700;padding:10px 14px;border-radius:999px;border:2px solid var(--encre);margin:4px 6px 0 0;cursor:pointer;background:var(--papier);color:var(--encre)}
+button.v{background:#2e9b5b;color:#fff}button.x{background:var(--accent);color:#fff}
+textarea{width:100%;box-sizing:border-box;border-radius:10px;border:2px solid var(--encre);padding:6px;margin-top:6px;background:var(--papier);color:var(--encre);font:inherit}
+#o{white-space:pre-wrap;background:var(--encre);color:var(--papier);padding:12px;border-radius:12px;margin-top:14px}
+.go{background:var(--accent);color:#fff;margin-top:14px}
+</style></head><body>
+<h1>Tactile de haut niveau</h1>
+<p>Captures du vrai moteur, une par disposition. Les gestes S'AJOUTENT aux boutons (jamais a leur place) et se coupent d'un reglage. Les boutons restent TOUJOURS dans la bande reservee sous la zone de jeu, quoi que le joueur deplace ou agrandisse (matrice de tests : 16 formats x 4 presets x gauche / droite x editions extremes). Pour chaque carte : Valider ou A refaire (+ remarque), puis genere le texte et colle-le dans le chat.</p>
+
+<h3>Gestes</h3>
+<table>
+<tr><th>Geste</th><th>Effet</th><th>Apercu</th></tr>
+<tr><td>Glisser depuis Coup / Lourde / Special / Ki dans une direction</td><td>Le coup dirige : le bouton + la direction tenus ensemble (comme au clavier). Bas = attaque basse.</td><td>Halo + fleche + mot (&laquo; Coup gauche &raquo;), plein et pulse quand le geste est valide</td></tr>
+<tr><td>Glisser depuis Saut</td><td>Saut dirige</td><td>idem</td></tr>
+<tr><td>Glisser depuis Garde</td><td>Roulade (garde + direction)</td><td>&laquo; Roulade droite &raquo;</td></tr>
+<tr><td>Balayage libre vers le haut (hors boutons, hors stick)</td><td>Saut</td><td>Fleche + mot</td></tr>
+<tr><td>Balayage libre gauche / droite</td><td>Roulade</td><td>idem</td></tr>
+<tr><td>Balayage libre vers le bas</td><td>Garde basse</td><td>idem</td></tr>
+<tr><td>Double tap hors boutons</td><td>Saisie</td><td>-</td></tr>
+<tr><td>Tap / maintien sur un bouton</td><td>Comme avant (maintien = coup charge)</td><td>-</td></tr>
+</table>
+
+<h3>Haptique (navigator.vibrate, Android / Chrome)</h3>
+<table>
+<tr><th>Evenement</th><th>Motif (ms, niveau normal)</th></tr>
+<tr><td>Coup donne</td><td>6 a 18 (tic discret)</td></tr>
+<tr><td>Coup encaisse</td><td>22 a 60 (franc, selon la puissance)</td></tr>
+<tr><td>Garde</td><td>10</td></tr>
+<tr><td>Parade</td><td>16 - pause 28 - 22 (double tic net)</td></tr>
+<tr><td>Garde brisee</td><td>40 - 40 - 30</td></tr>
+<tr><td>Danger annonce (un coup va toucher)</td><td>12 - 35 - 12 (avant l'impact)</td></tr>
+<tr><td>Super lance</td><td>18 - 30 - 30 - 30 - 60 (montee)</td></tr>
+<tr><td>Fin de super / K.O.</td><td>60-40-60-40-110 / 90</td></tr>
+<tr><td>Phase de boss</td><td>70 - 60 - 70</td></tr>
+<tr><td>Bouton pose</td><td>4 (niveaux normal et fort)</td></tr>
+</table>
+<p>Intensite reglable : coupee / legere (x0,55) / normale / forte (x1,5), segments plafonnes a 120 ms. Coupee aussi par l'option Vibrations.</p>
+
+<div class="g" id="g"></div>
+<button class="go" onclick="out()">Generer mon texte</button><div id="o"></div>
+<script>
+var C=[
+{key:"fold_droitier",name:"Fold 4 ferme, droitier",n:"1090x344",d:"Bande reservee sous le combat ; stick a gauche, boutons a droite.",img:"tactile/fold_droitier.png"},
+{key:"fold_gaucher",name:"Fold 4 ferme, gaucher",n:"preset Gaucher",d:"Miroir complet : stick a droite, boutons a gauche.",img:"tactile/fold_gaucher.png"},
+{key:"fold_une_main",name:"Fold 4 ferme, une main",n:"preset Une main",d:"Le stick vient a cote des boutons (stick fixe).",img:"tactile/fold_une_main.png"},
+{key:"fold_pouces",name:"Fold 4 ferme, deux pouces",n:"preset Deux pouces",d:"Boutons et stick agrandis 120 %, stick fixe.",img:"tactile/fold_pouces.png"},
+{key:"tel_droitier",name:"Telephone 20:9 paysage",n:"844x390",d:"Disposition d'origine.",img:"tactile/tel_droitier.png"},
+{key:"tel_gestes",name:"Apercu des gestes",n:"halo + fleche + mot",d:"Quatre apercus de demonstration : Coup gauche, Lourde bas, Saut droite, Roulade gauche.",img:"tactile/tel_gestes.png"},
+{key:"tel_stick_croix",name:"Stick en croix (8 directions), commandes a 60 %",n:"mode croix",d:"Le stick ne donne que des directions franches ; zone morte et sensibilite reglables.",img:"tactile/tel_stick_croix.png"},
+{key:"tel_transparent",name:"Gaucher, transparence 35 %",n:"opacite",d:"Les commandes s'effacent pour laisser voir le jeu.",img:"tactile/tel_transparent.png"},
+{key:"portrait_droitier",name:"Telephone portrait, droitier",n:"390x844",d:"Panneau de commandes sous la zone de combat.",img:"tactile/portrait_droitier.png"},
+{key:"portrait_gaucher",name:"Telephone portrait, gaucher",n:"390x844",d:"Miroir.",img:"tactile/portrait_gaucher.png"},
+{key:"portrait_pouces",name:"Portrait, deux pouces + Coup 140 %",n:"taille par bouton",d:"Chaque bouton se redimensionne seul dans l'editeur.",img:"tactile/portrait_pouces.png"},
+{key:"portrait_gestes",name:"Portrait : apercu des gestes",n:"390x844",d:"Meme apercu en portrait.",img:"tactile/portrait_gestes.png"},
+{key:"fold_ouvert",name:"Fold 4 ouvert, deux pouces",n:"1056x880",d:"Presque carre : la bande reste sous le combat.",img:"tactile/fold_ouvert_pouces.png"},
+{key:"tablette",name:"Tablette 4:3, gaucher",n:"1024x768",d:"Boutons proportionnels.",img:"tactile/tablette_gaucher.png"},
+{key:"pc",name:"Ecran tactile PC, deux pouces",n:"1280x720",d:"Meme logique.",img:"tactile/pc_pouces.png"},
+{key:"ed1",name:"Editeur, page 1 : disposition",n:"deplacer / taille / opacite / main",d:"Glisser un bouton pour le deplacer : il ne peut JAMAIS quitter la bande reservee.",img:"tactile/editeur_page1.png"},
+{key:"ed2",name:"Editeur, page 2 : gestes, stick, haptique",n:"preset / gestes / stick / zone morte / sensibilite / haptique / anti-faux-clic",d:"Une page : un reglage par ligne, - et + a gauche et a droite.",img:"tactile/editeur_page2.png"},
+{key:"ed3",name:"Editeur page 2, portrait",n:"390x844",d:"Colonne centree, paires de boutons.",img:"tactile/editeur_portrait_page2.png"},
+{key:"antimis",name:"Anti-faux-clic (texte)",n:"Pause maintenue / second toucher",d:"Pause tactile : anneau a maintenir 0,3 s. Recommencer / Menu principal : un premier toucher arme (&laquo; Toucher encore pour confirmer &raquo;), le second dans les 3 s confirme. Clavier et manette : inchanges. Coupable.",img:""}
+],st={};
+var g=document.getElementById('g');
+C.forEach(function(c){var d=document.createElement('div');d.className='c';d.id='c_'+c.key;
+d.innerHTML=(c.img?'<img src="'+c.img+'" alt="" onerror="this.style.display=\'none\'">':'')+'<h2>'+c.name+' <span class="tag">'+c.n+'</span></h2><p>'+c.d+'</p><button class="v" data-k="'+c.key+'" data-v="1">Valider</button><button class="x" data-k="'+c.key+'" data-v="-1">A refaire</button><textarea id="t_'+c.key+'" rows="2" placeholder="Remarque"></textarea>';g.appendChild(d);});
+g.addEventListener('click',function(e){var b=e.target;if(!b.dataset||!b.dataset.k)return;var v=+b.dataset.v;st[b.dataset.k]=v;document.getElementById('c_'+b.dataset.k).className='c '+(v>0?'ok':'no');});
+function out(){var L=C.map(function(c){var v=st[c.key];var t=document.getElementById('t_'+c.key).value.trim();return (v>0?'VALIDE':v<0?'A REFAIRE':'NON VU')+' : '+c.name+' ('+c.n+')'+(t?' - '+t:'');});document.getElementById('o').textContent=L.join('\n');}
+</script></body></html>

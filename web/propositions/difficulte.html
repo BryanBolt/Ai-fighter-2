@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Difficulte adaptative et assistances</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b;--ok:#2f8f5b}
+body{margin:0;background:var(--papier);color:var(--encre);font:16px/1.45 Nunito,system-ui,sans-serif;padding:16px}
+h1,h2{font-family:Silkscreen,monospace;letter-spacing:.02em;margin:0 0 6px}
+h1{font-size:22px}h2{font-size:15px;color:var(--accent)}h3{font-size:16px;margin:20px 0 6px}
+.lead{max-width:780px}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px;margin-top:14px}
+.c{background:#fff;border:2px solid var(--encre);border-radius:12px;padding:10px}
+.c.ok{outline:4px solid var(--ok)}.c.no{outline:4px solid var(--accent)}
+p{margin:6px 0;font-size:14px}.why{opacity:.75;font-size:13px}
+button{font:inherit;font-weight:700;padding:9px 12px;border-radius:8px;border:2px solid var(--encre);margin:4px 4px 0 0;background:var(--papier);color:var(--encre);cursor:pointer}
+button.v{background:var(--ok);color:#fff}button.x{background:var(--accent);color:#fff}
+textarea{width:100%;box-sizing:border-box;border:2px solid var(--encre);border-radius:6px;padding:6px;margin-top:6px;font:inherit;background:var(--papier)}
+#o{white-space:pre-wrap;background:var(--encre);color:var(--papier);padding:12px;border-radius:10px;margin-top:14px}
+.gen{background:var(--accent);color:#fff;font-family:Silkscreen,monospace;margin-top:14px}
+table{border-collapse:collapse;margin:10px 0;font-size:14px;max-width:780px;width:100%}
+td,th{border:2px solid var(--encre);padding:6px 8px;text-align:left;background:#fff}th{background:var(--encre);color:var(--papier)}
+.bar{display:flex;align-items:center;gap:8px;margin:4px 0;max-width:780px;font-size:13px}
+.bar b{width:150px;flex:none}.bar i{display:block;height:16px;border-radius:4px;background:var(--encre)}.bar i.a{background:var(--accent)}
+.bar span{white-space:nowrap}
+</style></head><body>
+<h1>Difficulte adaptative et assistances</h1>
+<p class="lead">Objectif : un jeu captivant pour tous les niveaux sans frustration (jouable par tout le monde, TDAH-friendly, aucun tutoriel bloquant). Tout est dans <b>Options &gt; Accessibilite</b> (lignes Niveau, Adaptation, Aide parade, Mode passe, Danger renforce, P1 a P5). Code : <code>src/difficulte.rs</code> ; mesures completes : <code>tools/difficulte_metrics.md</code> ; tests : <code>src/difficulte_tests.rs</code>.</p>
+
+<h3>1. Quatre niveaux nommes (effets mesures)</h3>
+<table>
+<tr><th>Niveau</th><th>Degats ennemis</th><th>PV ennemis</th><th>Attaquants a la fois</th><th>Reflexe de garde</th><th>Patience avant d'attaquer</th></tr>
+<tr><td>Detente</td><td>x0,7</td><td>x0,85</td><td>1</td><td>+2 images</td><td>5 s</td></tr>
+<tr><td>Normal</td><td>x1,0</td><td>x1,0</td><td>2</td><td>0</td><td>3,5 s</td></tr>
+<tr><td>Defi</td><td>x1,3</td><td>x1,15</td><td>3</td><td>-1</td><td>2,5 s</td></tr>
+<tr><td>Brutal</td><td>x1,6</td><td>x1,3</td><td>3 (plafond)</td><td>-2</td><td>1,8 s</td></tr>
+</table>
+<p class="why">Mesure (Kaze, 4 lieux, spam leger, PV effectifs x3 : modele de joueur moyen) : PV restants en fin de combat 92 % en Detente, 78 % en Normal, 24 % en Defi, 25 % en Brutal. Le plafond de 3 attaquants a la fois est respecte a tous les niveaux (maximum mesure : 2 attaquants en melee).</p>
+<div class="bar"><b>Detente</b><i style="width:276px"></i><span>92 % de PV restants</span></div>
+<div class="bar"><b>Normal</b><i style="width:234px"></i><span>78 %</span></div>
+<div class="bar"><b>Defi</b><i class="a" style="width:72px"></i><span>24 %</span></div>
+<div class="bar"><b>Brutal</b><i class="a" style="width:75px"></i><span>25 %</span></div>
+
+<h3>2. Difficulte dynamique, discrete et optionnelle</h3>
+<p class="lead">Un cran de -3 a +3, jamais affiche comme une punition. <b>Trois echecs</b> : un cran plus doux (degats -8 %, coups annonces 3 images plus longtemps, 10 % de soins en plus ; a -2 un attaquant de moins). <b>Trois victoires nettes</b> (plus de 60 % de PV) : un cran de plus (+8 % de degats, 8 % d'elites a PV x1,5 par cran). Deux victoires suffisent pour remonter quand on etait aide. Plancher : -25 % de degats, jamais plus de 12 images de telegraphe en plus. Coop 1 a 8 : l'adaptation est celle de l'EQUIPE, calculee depuis l'etat du monde et des PV moyens (identique chez tous, test de determinisme 1 a 8 joueurs). Desactivable (ligne Adaptation).</p>
+<table>
+<tr><th>Cran</th><th>Victoires</th><th>Touches subies</th><th>PV restants</th></tr>
+<tr><td>-3</td><td>3/4</td><td>213</td><td>64 %</td></tr>
+<tr><td>-2</td><td>3/4</td><td>199</td><td>70 %</td></tr>
+<tr><td>-1</td><td>3/4</td><td>182</td><td>57 %</td></tr>
+<tr><td>0</td><td>2/4</td><td>139</td><td>78 %</td></tr>
+<tr><td>+1</td><td>2/4</td><td>250</td><td>36 %</td></tr>
+<tr><td>+2</td><td>2/4</td><td>220</td><td>51 %</td></tr>
+<tr><td>+3</td><td>2/4</td><td>199</td><td>48 %</td></tr>
+</table>
+<p class="why">Lecture : l'aide fait passer le joueur moyen de 2 a 3 victoires sur 4 ; la domination durcit nettement (PV restants de 78 % a 36-51 %). Petit echantillon (4 lieux) : tendance, pas une courbe lisse.</p>
+
+<h3>3. Assistances</h3>
+<ul class="lead"><li><b>Aide parade / esquive</b> par palier : fenetre de parade 8, 10, 12 puis 14 images ; esquive parfaite jusqu'a 9 images plus tot (test : une garde levee depuis 9 images pare au palier 1, 13 images au palier 3).</li>
+<li><b>Mode passe</b> : degats subis x0,6 et telegraphes +6 images, sans l'annoncer ; pas d'ecran de defaite : le combat repart de la vague en cours, avec un peu plus d'aide a chaque echec. Mesure (niveau Defi, joueur modeste) : 64 % de PV restants contre 25 %.</li>
+<li><b>Danger renforce</b> : radar des coups ennemis (indicateur avant le depart du coup).</li>
+<li><b>Auto-face</b> et aide de saisie existent deja dans la meme page.</li></ul>
+
+<h3>4. Rythme de combat</h3>
+<p class="lead">Silence maximal mesure entre deux echanges : 5,6 s sur les quatre niveaux ; au-dela de 8 s, la meute devient impatiente et passe a l'offensive. Plafond de 3 attaquants a la fois (jetons, jamais 4).</p>
+
+<h3>5. Cartes a valider</h3>
+<div class="g" id="g"></div>
+<button class="gen" onclick="out()">Generer mon texte</button><div id="o"></div>
+<script>
+var C=[
+{k:"n",n:"Quatre niveaux : Detente / Normal / Defi / Brutal",d:"Remplace facile / normal / difficile. Brutal ajoute x1,6 de degats, reflexe -2 et patience courte, sans depasser 3 attaquants.",w:"Valider si les noms et l'ecart te conviennent."},
+{k:"a",n:"Adaptation discrete (activee par defaut)",d:"3 echecs : un peu moins de degats, coups plus lisibles, plus de soins. 3 victoires nettes : elites. Equipe en coop. Desactivable.",w:"Question : active par defaut ou seulement sur demande ?"},
+{k:"p",n:"Aide parade / esquive en 3 paliers",d:"Fenetre de parade jusqu'a 14 images, esquive plus tolerante. Reglage clair, desactive par defaut.",w:"Valider ou demander plus de paliers."},
+{k:"m",n:"Mode passe (sans game over)",d:"Degats subis reduits sans le dire, le combat repart de la vague en cours. Hors defis scriptes, roguelite et coop en ligne.",w:"A refaire si tu veux le dire ouvertement au joueur."},
+{k:"d",n:"Danger renforce",d:"Radar des coups ennemis pour tous les heros du joueur.",w:"Valider si le signal te semble lisible."},
+{k:"r",n:"Rythme : impatience apres 8 s, 3 attaquants max",d:"La meute presse si rien ne se passe depuis 8 s ; jamais 4 attaquants a la fois.",w:"Valider ou changer le delai."},
+{k:"p1",n:"P1 Lire le spam (option)",d:"3 coups identiques en 90 images : le sbire garde 60 % du temps. Mesure : 78 % -> 73 % de PV restants pour le spam leger.",w:"Reste une option tant que tu ne valides pas."},
+{k:"p2",n:"P2 Parade de 8 a 10 images (option)",d:"Fenetre de 0,17 s. Teste : parade a 9 images, plus a 11.",w:"Risque : parades accidentelles."},
+{k:"p3",n:"P3 Esquive = ouverture (option)",d:"Apres une esquive parfaite : 20 images de degats +25 %.",w:"Risque : chevauche l'Adrenaline."},
+{k:"p4",n:"P4 Rang de style (option)",d:"Rang S : Ki +30 % ; SSS : un super coute 15 Ki de moins.",w:"Risque : boucle de victoire."},
+{k:"p5",n:"P5 Jeton 3 tardif (option)",d:"Au niveau Defi, le troisieme attaquant n'arrive qu'a partir de la vague 6.",w:"Risque : pics de degats."}
+],st={};
+var g=document.getElementById('g');
+C.forEach(function(c){var d=document.createElement('div');d.className='c';d.id='c_'+c.k;
+d.innerHTML='<h2>'+c.n+'</h2><p>'+c.d+'</p><p class="why">'+c.w+'</p><button class="v" data-k="'+c.k+'" data-v="1">Valider</button><button class="x" data-k="'+c.k+'" data-v="-1">A refaire</button><textarea id="t_'+c.k+'" rows="2" placeholder="Remarque"></textarea>';g.appendChild(d);});
+g.addEventListener('click',function(e){var b=e.target;if(!b.dataset||!b.dataset.k)return;var v=+b.dataset.v;st[b.dataset.k]=v;document.getElementById('c_'+b.dataset.k).className='c '+(v>0?'ok':'no');});
+function out(){var L=C.map(function(c){var v=st[c.k];var t=document.getElementById('t_'+c.k).value.trim();return (v>0?'VALIDE':v<0?'A REFAIRE':'NON VU')+' : '+c.n+(t?' - '+t:'');});document.getElementById('o').textContent='Difficulte adaptative :\n'+L.join('\n');}
+</script></body></html>
