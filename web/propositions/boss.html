@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Boss, mini-boss et L'Ange - proposition</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#221834;--paper:#fff3e0;--acc:#d8456b;--card:#fffaf2;--line:#e9d3b4;--ok:#2f8f5b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/1.55 Nunito,system-ui,sans-serif}
+.wrap{max-width:980px;margin:0 auto;padding:20px 16px 80px}
+h1,h2,.pix{font-family:Silkscreen,monospace;font-weight:700}
+h1{font-size:32px;margin:8px 0 4px;color:var(--acc)} h2{font-size:21px;margin:36px 0 10px;border-bottom:3px solid var(--acc);padding-bottom:6px}
+.card{background:var(--card);border:2px solid var(--ink);border-radius:10px;padding:14px 16px;margin:12px 0;box-shadow:4px 4px 0 var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:14px}
+img{max-width:100%;border:2px solid var(--ink);border-radius:8px;display:block}
+.cap{font-size:14px;margin:4px 0 14px;opacity:.85}
+button,input,textarea{font:700 15px Nunito,sans-serif;color:var(--ink)}
+button{background:var(--card);border:2px solid var(--ink);border-radius:8px;padding:8px 14px;cursor:pointer;box-shadow:2px 2px 0 var(--ink)}
+button.on.ok{background:var(--ok);color:#fff} button.on.no{background:var(--acc);color:#fff}
+input,textarea{background:#fff;border:2px solid var(--ink);border-radius:8px;padding:7px 9px;width:100%}
+.vb{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px} .vb button{flex:0 0 auto}
+.out{background:var(--ink);color:var(--paper);border-radius:10px;padding:14px 16px;margin-top:12px}
+</style></head><body><div class="wrap">
+<div class="pix" style="color:var(--acc);font-size:13px">AI FIGHTER 2 / BOSS / PROPOSITION</div>
+<h1>ETAGE DE BOSS, MINI-BOSS, L'ANGE</h1>
+
+<h2>1. Etage de boss lisible</h2>
+<div class="card"><ul>
+<li><b>Silence</b> : la musique se coupe en fondu des que le boss est annonce.</li>
+<li><b>Transition</b> : vignette d'encre, onde accent, petit zoom, bandeau « ETAGE DU BOSS », puis carte de nom (meme grammaire que les transitions du jeu).</li>
+<li><b>Reprise</b> sur le morceau de boss a la fin de l'introduction.</li>
+<li><b>Passer</b> : une touche (apres 0,6 s) accelere la meme logique hors ligne ; en ligne, seul MON affichage et MA musique changent (aucune desynchro, 1 a 8 joueurs, rejoindre en cours : on entend la musique normale).</li>
+<li>Option « Reduire les effets » : plus d'onde, vignette reduite.</li>
+</ul></div>
+<div class="vb" data-sec="Etage de boss"></div>
+
+<h2>1b. GIF de l introduction</h2><img src="boss/intro_boss.gif" alt="intro de boss" loading="lazy"><div class="cap">Muette : vignette, onde, barres, zoom, icone de passage. Voir aussi <a href="boss_variantes.html">les 32 variantes de design</a>.</div><h2>2. Mini-boss</h2>
+<div class="card">Rare (25 % au depart, +2 % par terrain, 55 % max), tire de la graine : jamais l'etage 1, jamais un etage de boss. Version plus forte d'un ennemi (PV x2,4, degats x1,2, plus grand), nom propre au lieu (« Manager de proximite » a l'open space, « Maitre queux Gaston » a la cantine), epaulieres et crete dorees, plaque avec barre de vie, prime d'or versee par la simulation. IA = celle des ennemis (ai_intent).</div>
+<img src="boss/miniboss.gif" alt="mini-boss" loading="lazy"><div class="cap">Capture du vrai moteur.</div>
+<div class="vb" data-sec="Mini-boss"></div>
+
+<h2>3. Design des vrais boss</h2>
+<div class="card">Chaque boss a une silhouette distincte en aplats sans contour noir : capes (Salvatore, Valerie, Kaze PDG...), cornes, couronnes, orbes, croissant de lune, antennes, casque, toque. A partir de la phase 2, une aura de puissance (anneau et traits montants).</div>
+<div class="vb" data-sec="Design des boss"></div>
+
+<h2>4. Boss final : L'Ange</h2>
+<div class="card">Stickman <b>entierement blanc</b> : le blanc contient toutes les couleurs, il a pousse la purete trop loin et veut tout fusionner. Aureole (qui se fend en deux arcs des la phase 3), ailes en lames, decor qui se decolore au fil des phases (75 / 50 / 25 %). Mecanique « Effacement » : ses gros coups laissent des traces blanches au sol qui deviennent des colonnes de lumiere. Dernier etage de la Cantine de la tour (fin de campagne), dialogues courts dans story.rs. Pas de chapitre final de run coop dans cette branche : integre a la campagne.</div>
+<div class="grid"><div><img src="boss/ange_phase1.gif" alt="phase 1" loading="lazy"><div class="cap">Phase 1.</div></div><div><img src="boss/ange_phase4.gif" alt="phase 4" loading="lazy"><div class="cap">Phase finale : decor decolore.</div></div></div>
+<div class="vb" data-sec="L'Ange"></div>
+
+<h2>5. Victoire sur un boss : quand gagne-t-on ?</h2>
+<div class="card">Ecran de choix apres chaque etage : un bonus (plus rares apres un boss) ou Passer (+35 % PV). Un bandeau l'explique, avec une astuce la premiere fois de la session. Or, equipement et daemon arrivent au bilan de fin de stage.</div>
+<div class="vb" data-sec="Victoire et bonus"></div>
+
+<h2>6. Ton avis</h2>
+<div class="card"><textarea id="gen" placeholder="Commentaire general"></textarea>
+<div class="vb"><button id="copy">Copier mon retour</button><button id="reset">Tout effacer</button></div><div class="out" id="sum"></div></div>
+<footer>Charte : Encre #221834 / Papier #fff3e0 / Accent #d8456b. Page statique : le retour reste dans ton navigateur.</footer>
+</div>
+<script>
+const KEY='boss_v1';let st={};try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}summ();};
+const esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+document.querySelectorAll('.vb[data-sec]').forEach(el=>{const s=el.dataset.sec;st[s]=st[s]||{v:'',c:''};
+ el.innerHTML=`<button>Valider</button><button>A refaire</button><input placeholder="Commentaire : ${s}" style="flex:1 1 220px">`;
+ const [b1,b2]=el.querySelectorAll('button'),inp=el.querySelector('input');inp.value=st[s].c;
+ const paint=()=>{b1.classList.toggle('on',st[s].v=='ok');b1.classList.toggle('ok',1);b2.classList.toggle('on',st[s].v=='no');b2.classList.toggle('no',1);};paint();
+ b1.onclick=()=>{st[s].v=st[s].v=='ok'?'':'ok';paint();save();};b2.onclick=()=>{st[s].v=st[s].v=='no'?'':'no';paint();save();};inp.oninput=()=>{st[s].c=inp.value;save();};});
+const g=document.getElementById('gen');g.value=st._g||'';g.oninput=()=>{st._g=g.value;save();};
+function text(){let t='RETOUR BOSS\n';for(const [k,v] of Object.entries(st)){if(k=='_g')continue;t+=`- ${k} : ${v.v=='ok'?'VALIDE':v.v=='no'?'A REFAIRE':'(pas de choix)'}${v.c?' - '+v.c:''}\n`;}if(st._g)t+='Commentaire : '+st._g+'\n';return t;}
+function summ(){document.getElementById('sum').innerHTML=esc(text()).replace(/\n/g,'<br>');}
+document.getElementById('copy').onclick=async()=>{try{await navigator.clipboard.writeText(text());}catch(e){window.prompt('Copie :',text());}};
+document.getElementById('reset').onclick=()=>{st={};try{localStorage.removeItem(KEY)}catch(e){}location.reload();};
+summ();
+</script></body></html>

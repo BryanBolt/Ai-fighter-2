@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Histoire : incoherences a trancher</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#221834;--paper:#fff3e0;--acc:#d8456b;--card:#fffaf2;--ok:#2f8f5b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/1.55 Nunito,system-ui,sans-serif}
+.wrap{max-width:900px;margin:0 auto;padding:20px 16px 80px}
+h1,.pix{font-family:Silkscreen,monospace;font-weight:700} h1{font-size:30px;color:var(--acc);margin:8px 0}
+.card{background:var(--card);border:2px solid var(--ink);border-radius:10px;padding:14px 16px;margin:12px 0;box-shadow:4px 4px 0 var(--ink)}
+button,input,textarea{font:700 15px Nunito,sans-serif;color:var(--ink)}
+button{background:var(--card);border:2px solid var(--ink);border-radius:8px;padding:8px 14px;cursor:pointer;box-shadow:2px 2px 0 var(--ink)}
+button.on.ok{background:var(--ok);color:#fff} button.on.no{background:var(--acc);color:#fff}
+input,textarea{background:#fff;border:2px solid var(--ink);border-radius:8px;padding:7px 9px;width:100%}
+.vb{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px} .out{background:var(--ink);color:var(--paper);border-radius:10px;padding:14px 16px;margin-top:12px}
+</style></head><body><div class="wrap">
+<div class="pix" style="color:var(--acc);font-size:13px">AI FIGHTER 2 / HISTOIRE / A TRANCHER</div>
+<h1>INCOHERENCES RELEVEES</h1>
+<p>Rien n'a ete modifie : chaque point attend ta decision. Le « reve » reste subtil : on evite de le souligner.</p>
+<div id="list"></div>
+<div class="card"><textarea id="gen" placeholder="Commentaire general"></textarea><div class="vb"><button id="copy">Copier mon retour</button><button id="reset">Tout effacer</button></div><div class="out" id="sum"></div></div>
+</div>
+<script>
+const ITEMS=[
+["Boss final multiple","Valerie Kogen est presentee comme « la tour du boss final », puis Kaze PDG, puis Le Rappel : trois boss finaux. Et L'Ange ferme la campagne libre. Quel est LE boss final ?"],
+["Ending : « aucun boss »","L'epilogue dit « Aucune vague. Aucun boss » alors que le Rappel vient d'etre vaincu : la cloture peut sembler contradictoire."],
+["Le reve trop explicite","Plusieurs repliques disent « le reve », « le cauchemar », « le reveil » en toutes lettres (Narrateur, Mira, ENDING). A rendre plus ambigu et visuel, sans texte."],
+["Nom du heros","« HERO », Kaze, Leon Lecompte : le heros joue peut etre un autre combattant (Gorr, Sora...) mais les dialogues parlent de Leon et de Kaze comme du meme homme."],
+["Kaze joueur et Kaze boss","Kaze PDG et Kaze miroir (nuit blanche) sont le heros lui-meme, mais le heros jouable peut ne pas etre Kaze."],
+["Mira au talkie","Mira parle au talkie depuis un lieu jamais montre ; la scene du talkie n'est pas expliquee visuellement."],
+["Quarante-huit nuits","Le compte « quarante-huit nuits » ne colle pas au nombre de chapitres ni aux saisons."],
+["Gag « Aucun gag aujourd'hui »","Annonce un gag qui n'existe pas ; ton comique different des chapitres graves."],
+["Campagne libre vs histoire","L'Ange est un boss de la campagne libre, hors histoire : faut-il le relier au reve (couleurs effacees) ou le laisser ambigu ?"],
+["Cinematiques avec texte","Les dix transitions existantes (dlg_cine, cartes de chapitre) portent du texte : a rendre purement visuelles."]
+];
+const KEY='histoire_inco_v1';let st={};try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}summ();};
+const esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+document.getElementById('list').innerHTML=ITEMS.map((x,i)=>`<div class="card"><b>${i+1}. ${esc(x[0])}</b><p>${esc(x[1])}</p><div class="vb" data-sec="${esc(x[0])}"></div></div>`).join('');
+document.querySelectorAll('.vb[data-sec]').forEach(el=>{const s=el.dataset.sec;st[s]=st[s]||{v:'',c:''};
+ el.innerHTML=`<button>Valider</button><button>A refaire</button><input placeholder="Commentaire" style="flex:1 1 220px">`;
+ const [b1,b2]=el.querySelectorAll('button'),inp=el.querySelector('input');inp.value=st[s].c;
+ const paint=()=>{b1.classList.toggle('on',st[s].v=='ok');b1.classList.add('ok');b2.classList.toggle('on',st[s].v=='no');b2.classList.add('no');};paint();
+ b1.onclick=()=>{st[s].v=st[s].v=='ok'?'':'ok';paint();save();};b2.onclick=()=>{st[s].v=st[s].v=='no'?'':'no';paint();save();};inp.oninput=()=>{st[s].c=inp.value;save();};});
+const g=document.getElementById('gen');g.value=st._g||'';g.oninput=()=>{st._g=g.value;save();};
+function text(){let t='RETOUR INCOHERENCES HISTOIRE\n';for(const [k,v] of Object.entries(st)){if(k=='_g')continue;t+=`- ${k} : ${v.v=='ok'?'VALIDE':v.v=='no'?'A REFAIRE':'(pas de choix)'}${v.c?' - '+v.c:''}\n`;}if(st._g)t+='Commentaire : '+st._g+'\n';return t;}
+function summ(){document.getElementById('sum').innerHTML=esc(text()).replace(/\n/g,'<br>');}
+document.getElementById('copy').onclick=async()=>{try{await navigator.clipboard.writeText(text());}catch(e){window.prompt('Copie :',text());}};
+document.getElementById('reset').onclick=()=>{st={};try{localStorage.removeItem(KEY)}catch(e){}location.reload();};
+summ();
+</script></body></html>

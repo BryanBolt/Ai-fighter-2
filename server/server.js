@@ -216,7 +216,7 @@ export function createServer(opts = {}) {
   }
   const humans = (room) => room.slots.map((s, i) => [s, i]).filter(([s]) => s.ws);
   const lobbyView = (room) => ({
-    t: 'room', code: room.code, public: room.public, started: room.started, auto: room.auto, run: room.run, options: { ...room.options, ff: room.ff !== false }, host: hostSlot(room), full: !!room.full, private: !room.public, keep: !!room.keep, ttl: Math.round(roomTtl / 60000),
+    t: 'room', code: room.code, public: room.public, started: room.started, auto: room.auto, run: room.run, options: { ...room.options, ff: room.ff !== false, ffm: room.ffm, pal: room.pal !== false }, host: hostSlot(room), full: !!room.full, private: !room.public, keep: !!room.keep, ttl: Math.round(roomTtl / 60000),
     players: room.slots.map((s, i) => ({ slot: i, name: s.name, char: s.char, color: s.color, ready: s.ready, online: !!s.ws, mode: s.mode })),
   });
   const broadcast = (room, msg, except = null) => { for (const [s] of humans(room)) if (s.ws !== except) send(s.ws, msg); };
@@ -284,7 +284,7 @@ export function createServer(opts = {}) {
     });
     room.started = true; room.ctl = []; room.hashes = new Map();
     room.seed = (rnd(0x7fffffff) >>> 0) || 1;
-    room.config = { seed: room.seed, size, run: room.run, stage: room.options.stage | 0, full: !!room.full, mode: room.mode | 0, chapter: room.chapter | 0, wave: room.run === 0 ? (room.startWave | 0) : 0, hp: room.run === 0 ? (room.startHp | 0) : 0, ff: room.ff !== false, slots: room.slots.slice(0, size).map((s, i) => ({ slot: i, char: s.char, name: s.name, ai: s.mode === 'ai' })) };
+    room.config = { seed: room.seed, size, run: room.run, stage: room.options.stage | 0, full: !!room.full, mode: room.mode | 0, chapter: room.chapter | 0, wave: room.run === 0 ? (room.startWave | 0) : 0, hp: room.run === 0 ? (room.startHp | 0) : 0, ff: room.ff !== false, ffm: room.ffm, pal: room.pal !== false, slots: room.slots.slice(0, size).map((s, i) => ({ slot: i, char: s.char, name: s.name, ai: s.mode === 'ai' })) };
     broadcast(room, { t: 'start', ...room.config });
   }
 
@@ -593,11 +593,15 @@ export function createServer(opts = {}) {
         if (room.started || c.slot !== hostSlot(room)) return;
         room.options = { size: Math.max(1, Math.min(MAX_SLOTS, (m.size | 0) || 2)), stage: Math.max(0, Math.min(11, m.stage | 0)), noai: m.noai === true };
         if (typeof m.ff === 'boolean') room.ff = m.ff;
+        if (Number.isInteger(m.ffm)) { room.ffm = Math.max(0, Math.min(2, m.ffm)); room.ff = room.ffm > 0; }
+        if (typeof m.pal === 'boolean') room.pal = m.pal;
         if (typeof m.public === 'boolean') room.public = m.public;
         return broadcast(room, lobbyView(room));
       case 'start': // l'hote lance quand il veut, sans attendre les autres (ceux qui arrivent ensuite prennent une place IA en cours de partie)
         if (room.started || c.slot !== hostSlot(room)) return;
         if (typeof m.ff === 'boolean') room.ff = m.ff;
+        if (Number.isInteger(m.ffm)) { room.ffm = Math.max(0, Math.min(2, m.ffm)); room.ff = room.ffm > 0; }
+        if (typeof m.pal === 'boolean') room.pal = m.pal;
         return startGame(room);
       case 'report': { // signaler un joueur : assez de signalements distincts et il quitte le salon (public ou prive)
         const t = room.slots[m.slot | 0];
@@ -692,7 +696,7 @@ export function createServer(opts = {}) {
       }
       case 'cmd': { // vote de recompense, chapitre suivant, fin de dialogue : sequence comme une entree
         if (!room.full || !room.started || s.mode !== 'human') return;
-        if (!['reward_pick', 'chapter_next', 'skip_dialog'].includes(m.cmd) || s.cmds >= MAX_CMDS) return;
+        if (!['reward_pick', 'chapter_next', 'skip_dialog', 'arena'].includes(m.cmd) || s.cmds >= MAX_CMDS) return;
         const arg = int(m.arg, 0, 200);
         s.cmds++;
         return control(room, c.slot, highest(room) + CMD_MARGIN, { kind: 'cmd', cmd: m.cmd, arg });

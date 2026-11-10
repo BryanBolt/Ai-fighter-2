@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tirs amis et arene</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b;--ok:#2f8f5b}
+body{margin:0;background:var(--papier);color:var(--encre);font:16px/1.45 Nunito,system-ui,sans-serif;padding:16px}
+h1,h2{font-family:Silkscreen,monospace;letter-spacing:.02em;margin:0 0 6px}
+h1{font-size:22px}h2{font-size:15px;color:var(--accent)}
+.lead{max-width:780px}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px;margin-top:14px}
+.c{background:#fff;border:2px solid var(--encre);border-radius:12px;padding:10px}
+.c.ok{outline:4px solid var(--ok)}.c.no{outline:4px solid var(--accent)}
+img{width:100%;border-radius:8px;background:var(--encre);display:block}
+p{margin:6px 0;font-size:14px}.why{opacity:.75;font-size:13px}
+button{font:inherit;font-weight:700;padding:9px 12px;border-radius:8px;border:2px solid var(--encre);margin:4px 4px 0 0;background:var(--papier);color:var(--encre);cursor:pointer}
+button.v{background:var(--ok);color:#fff}button.x{background:var(--accent);color:#fff}
+textarea{width:100%;box-sizing:border-box;border:2px solid var(--encre);border-radius:6px;padding:6px;margin-top:6px;font:inherit;background:var(--papier)}
+#o{white-space:pre-wrap;background:var(--encre);color:var(--papier);padding:12px;border-radius:10px;margin-top:14px}
+.gen{background:var(--accent);color:#fff;font-family:Silkscreen,monospace;margin-top:14px}
+table{border-collapse:collapse;margin:10px 0;font-size:14px;max-width:780px}
+td,th{border:2px solid var(--encre);padding:6px 8px;text-align:left;background:#fff}th{background:var(--encre);color:var(--papier)}
+</style></head><body>
+<h1>Tirs amis, prise d'un ami et ARENE de fin de run</h1>
+<p class="lead">Captures du vrai moteur (400 px, 48 couleurs). Idee : se taper dessus doit etre PREVU et SYMPA. Un reglage clair choisi par l'hote et visible par tous dans le salon, un petit « Oups ! » sans punition, jamais de KO d'un ami hors arene, un garde-fou contre les harceleurs (jamais de blocage), la possibilite de saisir / porter / jeter un ami (et de se debattre), et apres la victoire une ARENE opt-in : vote, compte a rebours, manches, podium, revanche, retour a la run sans rien perdre. Aussi : la charge de Ki est maintenant lisible en deux temps (HUD « 1/2 Charge le Ki... » puis « 2/2 KI MAX ! la TRANSFORMATION monte »), non capturee ici. Pour chaque scene : Valider ou A refaire (+ remarque), puis genere le texte et colle-le dans le chat.</p>
+<table>
+<tr><th>Reglage</th><th>Degats entre amis</th><th>Mortel ?</th><th>Pour qui</th></tr>
+<tr><td>OFF</td><td>0 (les coups traversent)</td><td>non</td><td>coop pure, enfants, debutants</td></tr>
+<tr><td>REDUITS (25 %)</td><td>25 %</td><td>jamais (1 PV mini)</td><td>defaut : on s'amuse, sans rancune</td></tr>
+<tr><td>ON</td><td>100 % (35 % des PV max par coup au plus)</td><td>jamais (1 PV mini)</td><td>amis qui s'assument ; garde-fou si on insiste</td></tr>
+<tr><td>ARENE</td><td>80 %, PV egalises</td><td>oui (c'est le but)</td><td>duel opt-in apres la victoire</td></tr>
+</table>
+<div class="g" id="g"></div>
+<button class="gen" onclick="out()">Generer mon texte</button><div id="o"></div>
+<script>
+var C=[
+{k:"reglage",n:"Reglage des tirs amis dans le salon",d:"L'hote choisit OFF / REDUITS / ON (ligne « Tirs amis » + explication d'une phrase, visible par tous). Reste modifiable dans les options.",w:"Transport reseau : champ ffm ; les anciens clients gardent le booleen ff (comportement historique).",img:"png"},
+{k:"oups",n:"Oups ! (tir ami reduit, sans punition)",d:"Un coup perdu sur un ami : 25 % des degats, jamais mortel, petite bulle « Oups ! » et c'est tout.",w:"En ON : a 10 coups « Doucement J2 », a 20 le garde-fou ramene ses tirs a 25 %. Aucun blocage."},
+{k:"pal",n:"Prendre, porter et jeter un ami ; se debattre",d:"Bouton Saisie pres d'un ami : on le porte (marche ralentie), Saisie ou coup = jet SANS degat. Plus loin dans la scene : l'ami martele ses touches et se libere.",w:"Anti-abus : 5 s de port maximum, 4 s avant d'etre repris, reglage de salon pour couper ; une IA temporaire peut etre deplacee mais jamais blessee."},
+{k:"arene",n:"ARENE : vote, 3-2-1, manches (4 joueurs, bots)",d:"Apres la victoire : proposition, vote OUI / NON (majorite), compte a rebours, melee a PV egalises, ralenti au KO, spectateurs, manche suivante.",w:"Les IA, ennemis et places absentes restent a l'ecart ; la run reprend ensuite intacte."},
+{k:"podium",n:"Podium anime et revanche",d:"Colonnes qui montent, confettis, classement complet (manches, KO, chutes), REVANCHE ou RETOUR A LA RUN (vote, 30 s).",w:"Sans reponse : retour a la run. Camera, clavier, manette et boutons tactiles.",img:"png"}
+],st={};
+var g=document.getElementById('g');
+C.forEach(function(c){var d=document.createElement('div');d.className='c';d.id='c_'+c.k;
+d.innerHTML='<img src="friendly_fire/'+c.k+'.'+(c.img||'gif')+'" alt="'+c.n+'" loading="lazy"><h2>'+c.n+'</h2><p>'+c.d+'</p><p class="why">'+c.w+'</p><button class="v" data-k="'+c.k+'" data-v="1">Valider</button><button class="x" data-k="'+c.k+'" data-v="-1">A refaire</button><textarea id="t_'+c.k+'" rows="2" placeholder="Remarque"></textarea>';g.appendChild(d);});
+g.addEventListener('click',function(e){var b=e.target;if(!b.dataset||!b.dataset.k)return;var v=+b.dataset.v;st[b.dataset.k]=v;document.getElementById('c_'+b.dataset.k).className='c '+(v>0?'ok':'no');});
+function out(){var L=C.map(function(c){var v=st[c.k];var t=document.getElementById('t_'+c.k).value.trim();return (v>0?'VALIDE':v<0?'A REFAIRE':'NON VU')+' : '+c.n+(t?' - '+t:'');});document.getElementById('o').textContent='Tirs amis et arene :\n'+L.join('\n');}
+</script></body></html>
