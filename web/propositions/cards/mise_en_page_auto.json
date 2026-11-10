@@ -1,0 +1,4 @@
+[{"id":"mpa1","titre":"Moteur de mise en page","texte":"Fait et teste sur 9 formats sans capture ; pret pour les ecrans et le composant 3 cartes du roguelite.","page":"mise_en_page_auto.html"},
+{"id":"mpa2","titre":"Deux portes au titre","texte":"Proposition : Creer une partie en ligne et Rejoindre un ami directement au titre, plus d'ecran Menu en ligne. A valider.","page":"mise_en_page_auto.html"},
+{"id":"mpa3","titre":"Clavier de code a l'ecran","texte":"32 touches de 48 pt pour saisir le code sans clavier : a valider avant branchement.","page":"mise_en_page_auto.html"},
+{"id":"mpa4","titre":"Reglages a part","texte":"Visibilite supprimee (prive par defaut, public = partie rapide) ; heros, couleur, decor, tirs amis dans Reglages de la partie.","page":"mise_en_page_auto.html"}]

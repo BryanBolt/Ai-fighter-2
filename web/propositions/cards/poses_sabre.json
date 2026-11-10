@@ -1,0 +1,7 @@
+[
+ {"id": "poses_sabre_bond", "titre": "Bond fendant : detente et portee corrigees", "texte": "Saut d'articulation 46 px -> 17 px et sabre dessine a la portee (R3 passe) : exception retiree.", "page": "poses_sabre.html"},
+ {"id": "poses_sabre_arc", "titre": "Arc aerien : poignet borne", "texte": "La lame suit le bras au lieu de tourner trois fois : poignet max 106 deg (limite 115), 55 deg/image (limite 70) ; a valider a l'oeil (plus de tourbillon complet).", "page": "poses_sabre.html"},
+ {"id": "poses_sabre_taille", "titre": "Taille aerienne : raccord d'atterrissage lisse", "texte": "Saut de 40 px -> 11 px a l'atterrissage ; la pose glisse vers la reception (tous les coups aeriens, rendu seul).", "page": "poses_sabre.html"},
+ {"id": "poses_sabre_dette", "titre": "KNOWN_ISSUES vide", "texte": "Les 3 entrees Sora retirees ; les 6 autres etaient perimees (0 defaut mesure sur tous les heros) : liste vide, ne plus l'elargir.", "page": "poses_sabre.html"},
+ {"id": "poses_sabre_garde", "titre": "Garde-fou de visee sur les autres heros", "texte": "Touche Sora (9 coups) et Bo (4 coups de baton), aucun autre heros ; pas de defaut ajoute, bout-cible +0 a +12 px pour Bo.", "page": "poses_sabre.html"}
+]

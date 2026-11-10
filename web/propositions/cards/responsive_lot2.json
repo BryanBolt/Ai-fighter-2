@@ -1,0 +1,5 @@
+[
+{"id":"resp2_finale","titre":"Ecrans de fin en portrait","texte":"Cortege, generique, bilan, Yume, apres-jeu occupent maintenant toute la zone utile : valider la planche avant/apres.","page":"responsive.html"},
+{"id":"resp2_textw","titre":"Mesure de texte commune","texte":"view::text_w mesure la police par defaut sans accents (debordements possibles) : le corriger pour tout le jeu changerait tous les menus, a valider.","page":"responsive.html"},
+{"id":"resp2_lint","titre":"Reste du lint","texte":"23 appels bruts restent dans menu_bar, touch_ui (qui construisent le Frame), labo et main : a garder tels quels ?","page":"responsive.html"}
+]

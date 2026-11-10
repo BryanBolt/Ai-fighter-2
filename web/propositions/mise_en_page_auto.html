@@ -1,0 +1,66 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mise en page automatique</title>
+<style>:root{--ink:#221834;--paper:#fff3e0;--acc:#c03a5e}body{font:16px system-ui;background:var(--paper);color:var(--ink);margin:0;padding:16px}h1{font-size:24px}h2{margin-top:32px}
+table{border-collapse:collapse;width:100%;max-width:980px}td,th{border:1px solid #0002;padding:8px;text-align:left;vertical-align:top}th{background:#2218340f}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start}figure{margin:0}figure img{display:block;max-width:260px;height:auto;border-radius:8px;border:1px solid #0003}figcaption{font-size:14px}.na{width:160px;padding:30px 8px;background:#0001;border-radius:8px;font-size:14px}
+.big img{max-width:420px}.good{color:#0a6b2d;font-weight:700}</style></head><body>
+<h1>Mise en page automatique : mobile d'abord</h1>
+<p>Un moteur déclaratif (<code>src/ui_layout.rs</code>) calcule tous les rectangles. Chaque écran décrit ses éléments et leur priorité ; une matrice de 9 formats vérifie, sans capture, qu'il n'y a aucun recouvrement, que tout est dans la zone sûre, que les cibles font 48 pt au moins, que le texte n'est jamais coupé et que le bouton principal est visible. Les images ci-dessous sont des captures du vrai moteur.</p>
+<h2>Pressions depuis le titre (avant / après)</h2><table><tr><th>Parcours</th><th>Avant</th><th>Après</th><th>Détail</th></tr>
+<tr><td>Jouer en solo (nouveau profil)</td><td>1</td><td>1</td><td>HISTOIRE SOLO, puis choix du héros</td></tr>
+<tr><td>Roguelite</td><td>2</td><td>2</td><td>ROGUELITE, puis Roguelite solo</td></tr>
+<tr><td>Créer une partie en ligne (jusqu'à Lancer)</td><td>3</td><td class="good">2</td><td>avant : JOUER ENSEMBLE, PARTIE PRIVÉE, LANCER ; après : CRÉER UNE PARTIE EN LIGNE, LANCER</td></tr>
+<tr><td>Rejoindre par code (5 lettres)</td><td>68</td><td class="good">7</td><td>avant : 2 portes + 5 lettres à faire défiler (~13 appuis chacune) + Rejoindre ; après : REJOINDRE UN AMI, 5 touches, REJOINDRE. Avec « Coller » : 2</td></tr>
+<tr><td>Rejoindre par lien</td><td>0</td><td>0</td><td>le lien ouvre directement la partie</td></tr>
+<tr><td>Options</td><td>2</td><td>2</td><td>OPTIONS, puis Réglages</td></tr>
+<tr><td>Entraînement</td><td>2</td><td>2</td><td>ENTRAÎNEMENT, puis Entraînement et techniques</td></tr>
+<tr><td>Boutique</td><td>3</td><td class="good">1</td><td>avant : OPTIONS, Mon combattant, Boutique ; après : BOUTIQUE au titre</td></tr>
+<tr><td>Rejouer (Continuer / Reprendre en ligne)</td><td>1</td><td>1</td><td>inchangé : une pression</td></tr>
+</table><p>Calculé sur l'arbre des menus (test <code>les_parcours_cles_sont_courts</code> pour l'après) ; le « avant » des lettres est une estimation (non mesurée en jeu).</p>
+<h2>Avant (captures de l'ancien parcours)</h2><div class='row'>
+<figure><img loading="lazy" src="en_ligne_ecrans/onmenu_412x915.png" alt=""><figcaption>onmenu 412x915 (avant)</figcaption></figure>
+<figure><img loading="lazy" src="en_ligne_ecrans/onlobby_412x915.png" alt=""><figcaption>onlobby 412x915 (avant)</figcaption></figure>
+<figure><img loading="lazy" src="en_ligne_ecrans/onconn_412x915.png" alt=""><figcaption>onconn 412x915 (avant)</figcaption></figure>
+</div>
+<h2>Titre</h2><div class='row'>
+<figure><img loading="lazy" src="mise_en_page_auto/320x568/raw/title.png" alt=""><figcaption>320x568</figcaption></figure>
+<figure><img loading="lazy" src="mise_en_page_auto/412x915/raw/title.png" alt=""><figcaption>412x915</figcaption></figure>
+<figure><img loading="lazy" src="mise_en_page_auto/884x1104/raw/title.png" alt=""><figcaption>884x1104</figcaption></figure>
+<figure><img loading="lazy" src="mise_en_page_auto/844x390/raw/title.png" alt=""><figcaption>844x390</figcaption></figure>
+<figure><img loading="lazy" src="mise_en_page_auto/1280x720/raw/title.png" alt=""><figcaption>1280x720</figcaption></figure>
+</div>
+<h2>Rejoindre un ami</h2><div class='row'>
+<figure><img loading="lazy" src="mise_en_page_auto/320x568/raw/onmenu.png" alt=""><figcaption>320x568</figcaption></figure>
+<figure><img loading="lazy" src="mise_en_page_auto/412x915/raw/onmenu.png" alt=""><figcaption>412x915</figcaption></figure>
+<figure><img loading="lazy" src="mise_en_page_auto/884x1104/raw/onmenu.png" alt=""><figcaption>884x1104</figcaption></figure>
+<figure><img loading="lazy" src="mise_en_page_auto/844x390/raw/onmenu.png" alt=""><figcaption>844x390</figcaption></figure>
+<figure><img loading="lazy" src="mise_en_page_auto/1280x720/raw/onmenu.png" alt=""><figcaption>1280x720</figcaption></figure>
+</div>
+<h2>Ta partie</h2><div class='row'>
+<figure><img loading="lazy" src="mise_en_page_auto/320x568/raw/onlobby.png" alt=""><figcaption>320x568</figcaption></figure>
+<figure><img loading="lazy" src="mise_en_page_auto/412x915/raw/onlobby.png" alt=""><figcaption>412x915</figcaption></figure>
+<figure><img loading="lazy" src="mise_en_page_auto/884x1104/raw/onlobby.png" alt=""><figcaption>884x1104</figcaption></figure>
+<figure><img loading="lazy" src="mise_en_page_auto/844x390/raw/onlobby.png" alt=""><figcaption>844x390</figcaption></figure>
+<figure><img loading="lazy" src="mise_en_page_auto/1280x720/raw/onlobby.png" alt=""><figcaption>1280x720</figcaption></figure>
+</div>
+<h2>Réglages de la partie</h2><div class='row'>
+<figure><img loading="lazy" src="mise_en_page_auto/320x568/raw/onrules.png" alt=""><figcaption>320x568</figcaption></figure>
+<figure><img loading="lazy" src="mise_en_page_auto/412x915/raw/onrules.png" alt=""><figcaption>412x915</figcaption></figure>
+<figure><img loading="lazy" src="mise_en_page_auto/884x1104/raw/onrules.png" alt=""><figcaption>884x1104</figcaption></figure>
+<figure><img loading="lazy" src="mise_en_page_auto/844x390/raw/onrules.png" alt=""><figcaption>844x390</figcaption></figure>
+<figure><img loading="lazy" src="mise_en_page_auto/1280x720/raw/onrules.png" alt=""><figcaption>1280x720</figcaption></figure>
+</div>
+<h2>Connexion</h2><div class='row'>
+<figure><img loading="lazy" src="mise_en_page_auto/320x568/raw/onconn.png" alt=""><figcaption>320x568</figcaption></figure>
+<figure><img loading="lazy" src="mise_en_page_auto/412x915/raw/onconn.png" alt=""><figcaption>412x915</figcaption></figure>
+<figure><img loading="lazy" src="mise_en_page_auto/884x1104/raw/onconn.png" alt=""><figcaption>884x1104</figcaption></figure>
+<figure><img loading="lazy" src="mise_en_page_auto/844x390/raw/onconn.png" alt=""><figcaption>844x390</figcaption></figure>
+<figure><img loading="lazy" src="mise_en_page_auto/1280x720/raw/onconn.png" alt=""><figcaption>1280x720</figcaption></figure>
+</div>
+<h2>Partie terminée</h2><div class='row'>
+<figure><img loading="lazy" src="mise_en_page_auto/320x568/raw/onerr.png" alt=""><figcaption>320x568</figcaption></figure>
+<figure><img loading="lazy" src="mise_en_page_auto/412x915/raw/onerr.png" alt=""><figcaption>412x915</figcaption></figure>
+<figure><img loading="lazy" src="mise_en_page_auto/884x1104/raw/onerr.png" alt=""><figcaption>884x1104</figcaption></figure>
+<figure><img loading="lazy" src="mise_en_page_auto/844x390/raw/onerr.png" alt=""><figcaption>844x390</figcaption></figure>
+<figure><img loading="lazy" src="mise_en_page_auto/1280x720/raw/onerr.png" alt=""><figcaption>1280x720</figcaption></figure>
+</div>
+<h2>Composant « 3 cartes »</h2><p><code>ui_layout::three_cards(base_id, [(titre, détail, pastille); 3])</code> : trois cartes en colonne sur écran étroit, en rangée sur écran large ; chaque carte est une cible tactile (ids base, base+1, base+2). À poser dans un <code>Spec</code> puis <code>Game::ui_run</code>.</p></body></html>

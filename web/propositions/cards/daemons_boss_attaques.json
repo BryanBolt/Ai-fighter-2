@@ -1,0 +1,7 @@
+[
+ {"id":"dba-1","titre":"Hannya, Kirin et Bakeneko attaquent","texte":"Chaque daemon de boss a maintenant 3 coups annoncés 30 images à l'avance (zone marquée au sol, nom affiché) : valider le principe et les dégâts (3 à 5 PV par coup).","page":"daemons_boss_attaques.html"},
+ {"id":"dba-2","titre":"Cadences changées","texte":"Hannya passe de 600 à 420 images entre deux coups, Kirin de 240 à 300 (son soin reste entre 50 et 70 % des PV, un peu plus lent) : accepter ou ajuster.","page":"daemons_boss_attaques.html"},
+ {"id":"dba-3","titre":"Vol de patte du Bakeneko","texte":"Le vol d'arme devient un des trois coups (un cycle sur trois, seulement si le héros porte une arme à moins de 450) : garder ou le rendre plus rare.","page":"daemons_boss_attaques.html"},
+ {"id":"dba-4","titre":"Garde-fou : aucun daemon de boss sans attaque","texte":"Un test mesure les 13 daemons de boss contre un héros immobile : tout daemon silencieux fait échouer les tests.","page":"daemons_boss_attaques.html"},
+ {"id":"dba-5","titre":"Autres daemons de boss","texte":"Les 10 autres daemons de boss gardent leur coup unique (par cycle) : leur donner aussi 2 à 3 coups annoncés est une suite possible.","page":"daemons_boss_attaques.html"}
+]

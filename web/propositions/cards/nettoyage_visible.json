@@ -1,0 +1,8 @@
+[
+{"id":"nv_reduire_effets","titre":"Un seul reglage de confort ?","texte":"Options propose « Tremblements de l'ecran » et, dans Accessibilite, « Moins d'effets » : meme intention, deux endroits. Fusionner (garder le curseur et faire de « Moins d'effets » son cran 0) ?","page":"nettoyage_visible.html"},
+{"id":"nv_physique_membres","titre":"Physique des membres : garder ?","texte":"Reglage technique (raideur, amortissement) a effet purement visuel, lie au mode Ragdoll annexe : le retirer des Options avec lui, ou le laisser ?","page":"nettoyage_visible.html"},
+{"id":"nv_jouer_hors_ligne","titre":"« Jouer hors ligne » chevauche l'ecran En ligne","texte":"Touche le lobby (hors de mon perimetre) : a trancher avec l'architecte multijoueur avant tout retrait.","page":"nettoyage_visible.html"},
+{"id":"nv_aides","titre":"Cinq parcours d'aide","texte":"Aide a l'apprentissage, Conseils, Premier jour, onboarding et teach : un parcours unique est possible mais c'est un choix de design (environ 2 000 lignes).","page":"nettoyage_visible.html"},
+{"id":"nv_defis_entrainements","titre":"Trois systemes de defis, deux entrainements","texte":"Challenges, Epreuves et Run du jour ; Premier jour et entrainement libre : lesquels garder ? Chaque retrait change des sauvegardes et des ecrans.","page":"nettoyage_visible.html"},
+{"id":"nv_ecrans_debug","titre":"Ecrans de dev encore atteignables","texte":"Anims, Gear, Studio, Ragdoll, Labo : plus de lien depuis les menus du joueur ? Si oui, les passer derriere une compilation « dev ».","page":"nettoyage_visible.html"}
+]

@@ -1,0 +1,32 @@
+[
+ {
+  "id": "mj_inapp",
+  "titre": "Navigateur intégré (WhatsApp/Instagram)",
+  "texte": "Détecter le navigateur intégré et proposer « Ouvrir dans Chrome/Safari » avec le lien copié ?",
+  "page": "multijoueur_refonte.html"
+ },
+ {
+  "id": "mj_ttl",
+  "titre": "Durée de vie d'un salon vide",
+  "texte": "60 s de grâce actuellement : l'ami qui arrive avant toi après fermeture d'appli trouve un salon fermé. Passer à 5 min pour un salon privé non lancé ?",
+  "page": "multijoueur_refonte.html"
+ },
+ {
+  "id": "mj_ecrans",
+  "titre": "Refonte des écrans en ligne",
+  "texte": "Lancer le lot 2 : un écran Jouer avec un ami (code, QR, Partager, présents, Lancer) et un champ Rejoindre ?",
+  "page": "multijoueur_refonte.html"
+ },
+ {
+  "id": "mj_supprimer",
+  "titre": "Supprimer quick/create/options/lobby",
+  "texte": "Retirer l'ancien lobby serveur+client après migration des écrans (protocole 19) ?",
+  "page": "multijoueur_refonte.html"
+ },
+ {
+  "id": "mj_plein",
+  "titre": "Salon plein",
+  "texte": "Au-delà de 8 : « Salon plein, crée le tien » avec bouton, plutôt qu'une file d'attente ?",
+  "page": "multijoueur_refonte.html"
+ }
+]

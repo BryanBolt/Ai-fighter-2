@@ -2,7 +2,7 @@
 // Strategie : reseau d'abord (version la plus recente), cache seulement en secours hors ligne ; jamais de version perimee
 // tant que le reseau repond. Hors ligne : la derniere copie vue ; une page (navigation) retombe sur index.html, mais une
 // ressource manquante (wasm, son) reste une vraie erreur : lui servir du HTML faisait planter l'instanciation du wasm.
-const CACHE = 'afh-shell-v5';
+const CACHE = 'afh-shell-v6';
 // Pre-cache du jeu a l'installation (hors ligne des la 1re visite) : au mieux, fichier par fichier (un echec ne bloque jamais
 // l'installation ; le wasm de ~12 Mo ne retient pas le demarrage : la page le telecharge deja en parallele).
 // Mise a jour sans casser une partie : skipWaiting + claim ne rechargent JAMAIS la page ouverte ; la nouvelle version n'est
@@ -32,6 +32,21 @@ self.addEventListener('activate', (e) => {
 // Une reponse n'est gardee que si elle est complete (200) : un 206 partiel (Range) ou une reponse opaque feraient
 // echouer cache.put, ou pire, serviraient plus tard un morceau de fichier.
 function cacheable(res) { return res && res.status === 200 && res.type === 'basic'; }
+async function wasmCached(req) {
+  try {
+    const old = await caches.match(req, { ignoreSearch: true });
+    const tag = old && old.headers.get('etag');
+    if (!tag) return null;
+    const ctl = new AbortController(); const t = setTimeout(() => ctl.abort(), 6000);
+    try {
+      const res = await fetch(req.url, { headers: { 'If-None-Match': tag }, cache: 'no-cache', signal: ctl.signal });
+      clearTimeout(t);
+      if (res.status === 304) return old;
+      if (cacheable(res)) { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(req, copy)).catch(() => {}); return res; }
+      return old;
+    } catch (_) { clearTimeout(t); return old; }
+  } catch (_) { return null; }
+}
 self.addEventListener('fetch', (e) => {
   const req = e.request;
   if (req.method !== 'GET' || req.headers.has('range')) return;
@@ -41,6 +56,9 @@ self.addEventListener('fetch', (e) => {
   const path = url.pathname;
   if (path.startsWith('/propositions/') || path === '/health' || path.startsWith('/api') || path.startsWith('/push')) return; // pas de cache pour les pages de travail et l'API
   e.respondWith((async () => {
+    // Wasm deja en cache : validation par ETag (requete conditionnelle de quelques octets, 304) puis copie locale. Sur 4G ou page
+    // en arriere-plan, plus de re-telechargement de 6,7 Mo ; la copie venant du Cache API garde aussi le code compile de V8.
+    if (path.endsWith('.wasm')) { const w = await wasmCached(req); if (w) return w; }
     try {
       const res = await fetch(req);
       // 5xx (Render qui se reveille : 502/503/504) : si on a une copie, on la sert plutot que l'erreur ; sinon l'erreur passe (la page reessaie).

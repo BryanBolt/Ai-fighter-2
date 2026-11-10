@@ -281,7 +281,7 @@
   // Chargement anormalement long (reseau coupe a mi-chemin) : on le dit au lieu d'attendre indefiniment.
   setTimeout(function () {
     var l = D.getElementById("loading");
-    if (l && !l.hidden && l.style.opacity !== "0" && !shown) { var s = l.querySelector("small"); if (s) s.textContent = "chargement long... verifie ta connexion, ou recharge la page"; }
+    if (l && !l.hidden && l.style.opacity !== "0" && !shown) { var s = l.querySelector("small"); if (s && !(window.afhLoad && (window.afhLoad.hidden || window.afhLoad.bytes))) s.textContent = "chargement long... verifie ta connexion, ou recharge la page"; }
   }, 25000);
 })();
 </script>
@@ -291,12 +291,36 @@
 (function () {
   var W = window, bar = null, p = { w: [0, 0], m: [0, 0] }, KEY = "afh_wasm_bytes", est = 0;
   try { est = +localStorage.getItem(KEY) || 0; } catch (e) {}
+  // Horloge de chargement partagee (rapport d'erreur, reprise) : seul le temps ou la page est VISIBLE compte. Une page chargee
+  // en arriere-plan n'a ni rendu ni image d'animation : le jeu ne peut pas « demarrer », ce n'est pas une panne.
+  var L = W.afhLoad = { vis: 0, since: Date.now(), hidden: !!document.hidden, prog: 0, bytes: 0, total: 0, done: false, t0: Date.now() };
+  L.visMs = function () { return L.vis + (L.hidden ? 0 : Date.now() - L.since); };
+  L.mark = function () { L.prog = L.visMs(); L.progWall = Date.now(); };
+  // Echec declare seulement si : page visible depuis 25 s ET aucun octet recu depuis 12 s (ou, apres le telechargement, 25 s de
+  // compilation/demarrage visibles), ou plafond de 150 s visibles.
+  L.stalled = function () { var v = L.visMs(); return v >= 150000 || (v >= 25000 && v - L.prog >= (L.done ? 25000 : 12000)); };
+  document.addEventListener("visibilitychange", function () {
+    var now = Date.now();
+    if (document.hidden) { if (!L.hidden) L.vis += now - L.since; L.hidden = true; } else { if (L.hidden) L.since = now; L.hidden = false; }
+    paint();
+  });
+  function mb(n) { return (n / 1048576).toFixed(1).replace(".", ","); }
+  function msg() {
+    if (L.hidden) return "Page en arriere-plan : le jeu demarre des que tu reviens ici.";
+    if (L.done) return "Demarrage du jeu...";
+    if (!L.bytes) return "Connexion au serveur...";
+    var t = L.total || est;
+    return "Telechargement " + mb(L.bytes) + (t ? " / " + mb(t) : "") + " Mo" + (L.visMs() - L.prog > 8000 ? " (connexion lente, ca continue...)" : "");
+  }
   function paint() {
+    var l = document.getElementById("loading");
+    if (l && !l.hidden && l.style.opacity !== "0" && W.afhSay) W.afhSay(msg());
     bar = bar || document.getElementById("ld-bar"); if (!bar) return;
     var wf = p.w[1] ? p.w[0] / p.w[1] : Math.min(.92, p.w[0] / (est || 6e6));
     var mf = p.m[1] ? p.m[0] / p.m[1] : 0;
     bar.style.width = Math.round(Math.max(.04, Math.min(1, wf * .8 + mf * .2)) * 100) + "%";
   }
+  setInterval(function () { if (!L.hidden) paint(); }, 1000);
   if (!W.fetch || !W.ReadableStream || !W.Response) return;
   var F = W.fetch.bind(W);
   W.fetch = function (u, o) {
@@ -307,14 +331,14 @@
       try {
         if (!r.ok || !r.body || !r.body.getReader) return r;
         var total = +r.headers.get("content-length") || 0, got = 0, rd = r.body.getReader();
-        p[k] = [0, total];
+        p[k] = [0, total]; if (k === "w") { L.total = total; L.mark(); }
         var rs = new ReadableStream({
           pull: function (c) {
             return rd.read().then(function (x) {
-              if (x.done) { p[k] = [1, 1]; if (k === "w") { try { localStorage.setItem(KEY, String(got)); } catch (e) {} setTimeout(function () { try { W.afhWarm && W.afhWarm(); } catch (e) {} }, 3000); } paint(); c.close(); return; }
+              if (x.done) { p[k] = [1, 1]; if (k === "w") { L.done = true; L.mark(); try { localStorage.setItem(KEY, String(got)); } catch (e) {} setTimeout(function () { try { W.afhWarm && W.afhWarm(); } catch (e) {} }, 3000); } paint(); c.close(); return; }
               got += x.value.length;
               if (total && got > total) total = 0; // reponse compressee : la taille annoncee ne vaut plus
-              p[k] = [got, total]; paint(); c.enqueue(x.value);
+              p[k] = [got, total]; if (k === "w") { L.bytes = got; L.total = total; L.mark(); } paint(); c.enqueue(x.value);
             });
           },
           cancel: function (e) { return rd.cancel(e); }
@@ -463,7 +487,16 @@
   };
   if (!gpu() || gpu() === "aucun WebGL") { crumb("webgl", "pas de contexte WebGL"); submit("webgl", "WebGL indisponible : pas de contexte", "", false); }
   // Rien ne demarre apres 25 s : bug au lancement (wasm bloque, fichier manquant, memoire).
-  setTimeout(function () { if (!ready) { crumb("wasm", "pas de demarrage apres 25 s"); submit("wasm", "le jeu ne demarre pas apres 25 s", "", false); } }, 25000);
+  // Delai adaptatif : le chronometre ne tourne que page visible et se repousse tant que des octets arrivent (voir afhLoad).
+  (function watch() {
+    if (ready) return;
+    var L = window.afhLoad;
+    if (!L || L.stalled()) {
+      var d = L ? " (visible " + Math.round(L.visMs() / 1000) + " s sur " + Math.round((Date.now() - L.t0) / 1000) + " s, " + L.bytes + "/" + L.total + " octets" + (L.done ? ", wasm recu" : "") + ")" : "";
+      crumb("wasm", "pas de demarrage" + d); submit("wasm", "le jeu ne demarre pas apres 25 s visibles" + d, "", false); return;
+    }
+    setTimeout(watch, 2000);
+  })();
   crumb("page", "chargement " + location.pathname);
 })();
 </script>
@@ -820,6 +853,17 @@ high_dpi = !((navigator.maxTouchPoints > 0 || 'ontouchstart' in window) && windo
     if (!m) { m = document.createElement("div"); m.id = "ld-msg"; m.style.cssText = "position:absolute;left:0;right:0;bottom:12%;text-align:center;color:#fff3e0;font:600 15px/1.4 ui-monospace,Menlo,Consolas,monospace;padding:0 16px"; l.appendChild(m); }
     m.textContent = t;
   }
+  window.afhSay = say;
+  // Reprise a la reapparition de la page : le telechargement lance en arriere-plan est souvent suspendu ou coupe par le systeme.
+  // Si le wasm n'est pas recu et que rien n'avance depuis 8 s, on relance une fois ou deux (compteur propre, sans toucher aux 503).
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden || !loading()) return;
+    var L = window.afhLoad; if (!L || L.done) return;
+    var r = 0; try { r = +sessionStorage.getItem("afh_resume") || 0; } catch (e) {}
+    if (r >= 2 || Date.now() - (L.progWall || L.t0) < 8000) return;
+    try { sessionStorage.setItem("afh_resume", String(r + 1)); } catch (e) {}
+    say("Reprise du chargement..."); setTimeout(function () { location.reload(); }, 300);
+  });
   function retry() {
     if (!loading()) return;
     if (tries >= 8) { say("Le serveur ne repond pas. Recharge la page dans un instant."); return; }
@@ -830,8 +874,7 @@ high_dpi = !((navigator.maxTouchPoints > 0 || 'ontouchstart' in window) && windo
   var ce = console.error;
   console.error = function () { ce.apply(console, arguments); if (loading()) retry(); };
   window.addEventListener("unhandledrejection", function () { if (loading()) retry(); });
-  setTimeout(function () { if (loading()) say("Connexion lente, le chargement continue..."); }, 25000);
-  window.addEventListener("load", function () { setTimeout(function () { if (!loading()) { try { sessionStorage.removeItem("afh_load_tries"); } catch (e) {} } }, 4000); });
+  window.addEventListener("load", function () { setTimeout(function () { if (!loading()) { try { sessionStorage.removeItem("afh_load_tries"); sessionStorage.removeItem("afh_resume"); } catch (e) {} } }, 4000); });
 })();
 load("ai_fighter_2.wasm");
 (function () {

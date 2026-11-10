@@ -1,32 +1,7 @@
 [
- {
-  "id": "aes-1",
-  "titre": "Paliers d'annonce des coups",
-  "texte": "Garder les paliers adoucis de main (sbires 8/9/11 images, boss 5/6/7) ou revenir aux paliers stricts de l'audit (8/10/13 et 5/8/10) : plus lisible mais change l'equilibre.",
-  "page": "decisions.html"
- },
- {
-  "id": "aes-2",
-  "titre": "Boss daemons sans attaque",
-  "texte": "Hannya, Kirin et Bakeneko n'attaquent pas : proposer de leur donner 2 a 3 coups propres annonces (non corriges ici, aucune mesure faite).",
-  "page": "decisions.html"
- },
- {
-  "id": "aes-3",
-  "titre": "Posture des boss de terrain v2",
-  "texte": "Les boss v2 sans fiche partagent la personnalite Shogun : accepter ou commander une personnalite propre par boss.",
-  "page": "decisions.html"
- },
- {
-  "id": "aes-4",
-  "titre": "Sbires v2 par premier coup",
-  "texte": "Les sbires des terrains v2 prennent la personnalite de leur type de base (reconnu a leur premier coup) : valider ou exiger des postures par terrain.",
-  "page": "decisions.html"
- },
- {
-  "id": "aes-5",
-  "titre": "Dette de poses partagees",
-  "texte": "Sauts d'articulation et coup bas (poses partagees avec les heros) non corriges : a traiter dans un lot poses avec validation visuelle.",
-  "page": "decisions.html"
- }
+ {"id":"aes-1","titre":"Paliers d'annonce des coups","texte":"Garder les paliers adoucis de main (sbires 8/9/11 images, boss 5/6/7) ou revenir aux paliers stricts de l'audit (8/10/13 et 5/8/10) : plus lisible mais change l'equilibre.","page":"tools/audit_ennemis_log.md"},
+ {"id":"aes-2","titre":"Boss daemons sans attaque","texte":"Hannya, Kirin et Bakeneko n'attaquent pas : proposer de leur donner 2 a 3 coups propres annonces (non corriges ici, aucune mesure faite).","page":"tools/audit_ennemis_log.md"},
+ {"id":"aes-3","titre":"Posture des boss de terrain v2","texte":"Les boss v2 sans fiche partagent la personnalite Shogun : accepter ou commander une personnalite propre par boss.","page":"tools/audit_ennemis_log.md"},
+ {"id":"aes-4","titre":"Sbires v2 par premier coup","texte":"Les sbires des terrains v2 prennent la personnalite de leur type de base (reconnu a leur premier coup) : valider ou exiger des postures par terrain.","page":"tools/audit_ennemis_log.md"},
+ {"id":"aes-5","titre":"Dette de poses partagees","texte":"Sauts d'articulation et coup bas (poses partagees avec les heros) non corriges : a traiter dans un lot poses avec validation visuelle.","page":"tools/audit_ennemis_log.md"}
 ]

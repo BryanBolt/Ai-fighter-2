@@ -13,7 +13,7 @@ import { createVerdicts } from './verdicts.js';
 import { createPush } from './push.js';
 import { createReports, cleanReport } from './reports.js';
 
-export const PROTOCOL_VERSION = 17; // 17 : empreinte de build (champ `b` du hello, un salon refuse un build different) ; 16 : roguelite coop (un pouvoir aleatoire par etape, vie partagee : le releveur paie 30 % de ses PV, nouveaux champs dans l'empreinte) ; 15 : anti-sandwich (jetons d'attaque, plafond de coups subis, nouveaux etats dans l'empreinte) ; 14 : empreinte de simulation etendue (univers, tournoi), commande tourn, messages watch / emote (spectateur), idle / need_resync ; 13 : pouvoir actif du roguelite (bits 25-27 de l entree) ; 12 : modes de groupe (mode 5, commande group) ; 11 : accessoires COSMETIQUES (message cos, champ cos des joueurs du salon) ; 10 : daemon de chaque joueur au salon (champ `daemon` des messages lobby et room) ; 9 : mode ROGUELITE en coop (mode 3 : run d equipe, cartes personnelles, etages) ; 8 : nunchaku (nouvelle arme ramassable, serie de six coups, Pied = coups de pied avec l'arme) et armes au sol du dojo/temple changees ; 7 : entree Saisie (nouveau bit d'entree) + coups renommes (SCHEMA_VERSION 8) ; 6 : table des coups changee (grammaire X/Y des 9 autres heros, SCHEMA_VERSION 7) ; 5 : jusqu'a 8 joueurs, vague/PV de depart (solo -> en ligne) ; 4 : table des coups changee (aeriens, realisme, grammaire X/Y ; tir allie, QA). 3 : parties hebergees (jeu complet : loadout, cmd sequences). 2 : join_any / host. Seuls les clients v8 sont acceptes.
+export const PROTOCOL_VERSION = 19; // 19 : roguelite coop : choix d un pouvoir parmi 3 propositions personnelles par etape (palier standard / cool apres un gros boss), minuterie 10 s, choix par defaut, nouveaux champs de cartes dans l empreinte ; 18 : une IA qui remplace un humain parti tient la place jusqu'a la fin du tableau (changement de vague) puis le heros s'efface, dans TOUS les salons ; 17 : empreinte de build (champ `b` du hello, un salon refuse un build different) ; 16 : roguelite coop (un pouvoir aleatoire par etape, vie partagee : le releveur paie 30 % de ses PV, nouveaux champs dans l'empreinte) ; 15 : anti-sandwich (jetons d'attaque, plafond de coups subis, nouveaux etats dans l'empreinte) ; 14 : empreinte de simulation etendue (univers, tournoi), commande tourn, messages watch / emote (spectateur), idle / need_resync ; 13 : pouvoir actif du roguelite (bits 25-27 de l entree) ; 12 : modes de groupe (mode 5, commande group) ; 11 : accessoires COSMETIQUES (message cos, champ cos des joueurs du salon) ; 10 : daemon de chaque joueur au salon (champ `daemon` des messages lobby et room) ; 9 : mode ROGUELITE en coop (mode 3 : run d equipe, cartes personnelles, etages) ; 8 : nunchaku (nouvelle arme ramassable, serie de six coups, Pied = coups de pied avec l'arme) et armes au sol du dojo/temple changees ; 7 : entree Saisie (nouveau bit d'entree) + coups renommes (SCHEMA_VERSION 8) ; 6 : table des coups changee (grammaire X/Y des 9 autres heros, SCHEMA_VERSION 7) ; 5 : jusqu'a 8 joueurs, vague/PV de depart (solo -> en ligne) ; 4 : table des coups changee (aeriens, realisme, grammaire X/Y ; tir allie, QA). 3 : parties hebergees (jeu complet : loadout, cmd sequences). 2 : join_any / host. Seuls les clients v8 sont acceptes.
 const COMPAT_VERSIONS = [PROTOCOL_VERSION]; // derive de PROTOCOL_VERSION : ne peut plus diverger (v8 etait refuse par erreur, ancienne valeur [7]) ; // protocole 7 : les clients 1 a 6 n'ont pas la meme table de coups (et 1 a 4 ne savent pas lire des salons de 8 places), ils doivent se mettre a jour
 const HOSTED_SIZE = 2; // taille par defaut d une partie hebergee (anciens clients) ; le client actuel demande 4 avec `size` (places vides dormantes)
 const HOSTED_MIN = 2; // taille minimale demandable
@@ -37,7 +37,7 @@ const REJOIN_MIN = 15; // images d'avance minimales pour un evenement de control
 const REJOIN_MAX = 590; // plafond (le journal accepte au plus +600 images)
 const HOLD_MS = 20 * 60 * 1000; // une place coupee reste reservee 20 min
 const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // sans caracteres ambigus (0/O, 1/I)
-const ROOM_TTL_MS = 30 * 60 * 1000; // salon « permanent » (lien de reconnexion) : garde 30 min apres le dernier joueur
+const ROOM_TTL_MS = 60 * 1000; // salon sans aucun humain : ferme et nettoye apres 60 s (fenetre de reprise apres coupure ; plus de salon fantome)
 const MAX_MATCH_PER_MIN = 12; // demandes de partie (host / join_any / create / quick) par adresse et par minute
 const REPORT_GAP_MS = 5000; // delai minimal entre deux signalements d'un meme joueur
 const COLORS = 8; // palette de couleurs de joueurs (le client la definit : 8 teintes bien separees, sures pour le daltonisme)
@@ -58,6 +58,7 @@ export function createServer(opts = {}) {
   const ideasRate = new Map();
   const maxRooms = opts.maxRooms ?? Number(process.env.MAX_ROOMS || 60);
   const autoHoldMs = opts.autoHoldMs ?? 10 * 60 * 1000; // place d'un joueur parti reservee pour son retour (le heros s'efface au prochain boss, cote clients)
+  const bgGoneMs = opts.bgGoneMs ?? Number(process.env.BG_GONE_MS || 180000); // joueur absent (page masquee / IA a sa place) : au-dela, annonce « semble parti » (la place reste reprenable)
   const graceMs = opts.graceMs ?? 30000; // partie vide apres une simple coupure : gardee un instant
   const restartMs = opts.restartMs ?? 7000; // ecran de resultats avant la nouvelle partie
   const joinRate = new Map(); // ip -> derniere demande host/join_any
@@ -353,6 +354,7 @@ export function createServer(opts = {}) {
     room.day = room.day || Math.floor(Date.now() / 86400000);
     room.config = { seed: room.seed, day: room.day, size, run: room.run, stage: room.options.stage | 0, full: !!room.full, mode: room.mode | 0, chapter: room.chapter | 0, wave: room.run === 0 ? (room.startWave | 0) : 0, hp: room.run === 0 ? (room.startHp | 0) : 0, ff: room.ff !== false, ffm: room.ffm, pal: room.pal !== false, slots: room.slots.slice(0, size).map((s, i) => ({ slot: i, char: s.char, name: s.name, ai: s.mode === 'ai' })) };
     broadcast(room, { t: 'start', ...room.config });
+    presTick(room, true);
   }
 
   // Avance d'un evenement de controle : le temps de rejeu du journal chez l'arrivant (~ 1/25 des images deja jouees) pour ne pas figer les autres, au moins 15 images.
@@ -392,6 +394,7 @@ export function createServer(opts = {}) {
     const s = room.slots[slot];
     if (s.mode !== 'human') return;
     s.mode = 'ai';
+    s.pAt = Date.now();
     s.dormantDue = false;
     let from = s.hi + 1;
     if (live) {
@@ -400,7 +403,37 @@ export function createServer(opts = {}) {
       for (let i = 0; i < bits.length; i += 8) broadcast(room, { t: 'input', slot, f0: f0 + i, bits: bits.slice(i, i + 8) });
       s.hi = f0 + AI_LEAD - 1; from = s.hi + 1;
     }
-    control(room, slot, from, noAiRoom(room) ? { ai: true, bossDrop: true } : { ai: true });
+    control(room, slot, from, { ai: true, bossDrop: true }); // jamais d'IA permanente : le heros s'efface a la fin du tableau (cote clients, meme image chez tous)
+  }
+
+  // ---- PRESENCE : un seul etat par joueur, deduit de l'etat du relais (jamais de la simulation, donc hors empreinte) et diffuse a TOUS les salons.
+  // on = en ligne ; bg = en arriere-plan / inactif (une IA tient la place, personne n'attend) ; re = connexion perdue, reprise possible (compte a rebours = reservation de la place) ;
+  // gone = parti (reservation expiree, depart volontaire, ou absent trop longtemps). Message additif `pres` (anciens clients : ignore) + `presence` texte (toast).
+  function presState(room, i, now) {
+    const s = room.slots[i];
+    if (!s.token && !s.ws) return null;
+    if (s.ws) {
+      if (s.mode === 'human') return { st: 'on', left: 0 };
+      const away = now - (s.pAt || now);
+      return away >= bgGoneMs ? { st: 'gone', left: 0 } : { st: 'bg', left: bgGoneMs - away };
+    }
+    return !s.bye && s.heldUntil > now ? { st: 're', left: s.heldUntil - now } : { st: 'gone', left: 0 };
+  }
+  const PRES_EV = { bg: 'bg', re: 'lost', gone: 'leave' };
+  function presTick(room, force = false) {
+    if (!room.started || !room.config) return;
+    const now = Date.now(); const snap = []; let changed = force;
+    for (let i = 0; i < room.config.size; i++) {
+      const s = room.slots[i]; const p = presState(room, i, now);
+      if (!p) { if (s.pSent) changed = true; s.pSent = null; continue; }
+      snap.push({ s: i, st: p.st, left: p.left });
+      if (p.st !== s.pSent) {
+        changed = true;
+        if (s.pSent) broadcast(room, { t: 'presence', ev: p.st === 'on' ? 'back' : PRES_EV[p.st], name: s.name, slot: i }, s.ws);
+        s.pSent = p.st;
+      }
+    }
+    if (changed) broadcast(room, { t: 'pres', p: snap });
   }
 
   function closeRoom(room) {
@@ -505,7 +538,7 @@ export function createServer(opts = {}) {
     if (Number.isInteger(m.color)) c.color = m.color;
     const now = Date.now();
     for (const r of rooms.values()) {
-      if (!r.started || !r.auto) continue;
+      if (!r.started) continue;
       const back = reclaim(r, ws, c);
       if (back >= 0) return finishJoin(r, ws, c, back);
     }
@@ -537,14 +570,15 @@ export function createServer(opts = {}) {
         // Depart volontaire ou coupure : meme traitement. L'IA tient la place jusqu'au prochain boss ; le meme jeton reprend le meme heros.
         dropToAi(room, c.slot);
         s.heldUntil = (permanent && !noAiRoom(room)) ? 0 : Date.now() + (room.auto ? autoHoldMs : holdMs);
-        if (room.auto) broadcast(room, { t: 'presence', ev: 'leave', name: s.name, slot: c.slot });
+        s.bye = !!permanent; // depart volontaire : « parti » tout de suite (la place reste reprenable par le jeton, mais ce n'est plus une coupure)
+        presTick(room);
       } else { s.mode = 'free'; s.name = ''; s.token = null; }
     }
     c.room = null;
     if (humans(room).length === 0) {
       // Partie en cours : plus personne -> elle se termine ; une simple coupure laisse un court delai de reprise.
       if (room.keep) room.emptySince = Date.now(); // lien permanent : le salon reste ouvert (expiration `roomTtl` apres le dernier joueur)
-      else if (!room.auto || permanent) closeRoom(room); else room.emptySince = Date.now();
+      else if (permanent) closeRoom(room); else room.emptySince = Date.now(); // humain parti volontairement et personne d'autre : ferme tout de suite ; coupure : fenetre de reprise `graceMs`
       return;
     }
     if (!room.started || room.auto) broadcast(room, lobbyView(room));
@@ -609,6 +643,13 @@ export function createServer(opts = {}) {
     if (isBanned(room.code, c)) return send(ws, { t: 'error', msg: 'Tu as ete expulse de ce salon' });
     if (buildClash(room, c)) return sendClash(ws);
     if (room.full && c.v < 3) return send(ws, { t: 'error', msg: 'Partie complete : mets le jeu a jour pour la rejoindre', fatal: true });
+    if (room.started) { // meme jeton = meme place, jamais une place (ou une IA) en plus
+      const back = reclaim(room, ws, c);
+      if (back >= 0) return finishJoin(room, ws, c, back);
+    } else {
+      const ghost = room.slots.findIndex((x, i) => x.token && x.token === c.token && i !== c.slot);
+      if (ghost >= 0) { const g = room.slots[ghost]; const gw = g.ws; g.ws = null; g.mode = 'free'; g.name = ''; g.token = null; if (gw && gw !== ws) { const gc = clients.get(gw); if (gc) { gc.room = null; gc.slot = -1; } send(gw, { t: 'error', msg: 'Connexion reprise depuis un autre appareil', code: 'replaced' }); try { gw.close(); } catch { /* deja fermee */ } } }
+    }
     if (c.room) leaveRoom(c, ws, true);
     if (Number.isInteger(m.color)) c.color = m.color;
     if (room.full && room.started) {
@@ -637,7 +678,9 @@ export function createServer(opts = {}) {
       send(ws, { ...resyncPayload(room), you: idx });
       control(room, idx, from, { ai: false, name: s.name });
       if (room.full && s.loadout) control(room, idx, from, { kind: 'loadout', data: s.loadout });
-      if (room.auto) { broadcast(room, { t: 'presence', ev: 'join', name: s.name, slot: idx }, ws); broadcast(room, lobbyView(room), ws); }
+      const known = !!s.pSent; // deja connu : c'est un retour (annonce « de retour »), pas une arrivee
+      if (room.auto) { if (!known) broadcast(room, { t: 'presence', ev: 'join', name: s.name, slot: idx }, ws); broadcast(room, lobbyView(room), ws); }
+      presTick(room, true);
     } else broadcast(room, lobbyView(room), ws);
   }
 
@@ -830,7 +873,7 @@ export function createServer(opts = {}) {
         s.stalled = true;
         dropToAi(room, c.slot, true);
         send(ws, { t: 'stalled' });
-        if (room.auto) broadcast(room, { t: 'presence', ev: 'stall', name: s.name, slot: c.slot }, ws);
+        presTick(room);
         return;
       }
       case 'need_resync': { // un client qui s'est vu bascule en IA apres avoir deja simule ces images demande l'etat complet (resynchronisation ciblee)
@@ -845,13 +888,14 @@ export function createServer(opts = {}) {
       case 'resume': { // un joueur remplace par l'IA (AFK) reprend la main
         if (!room.started || s.mode !== 'ai' || s.ws !== ws) return;
         s.mode = 'human'; s.lastMove = Date.now(); s.lastBits = 0; s.lastInputAt = Date.now(); s.stalled = false;
-        if (room.auto) broadcast(room, { t: 'presence', ev: 'back', name: s.name, slot: c.slot }, ws);
+
         // Seul (ou avec des places IA) le client a continue de simuler pendant l'absence : la reprise doit tomber APRES son image courante,
         // sinon il attendait une entree d'une image deja passee (gel « En attente des autres joueurs » en jouant seul).
         const tickC = Number.isInteger(m.tick) && m.tick >= 0 && m.tick < 2000000 ? m.tick : 0;
         const fromR = Math.max(highest(room), tickC) + rejoinMargin(room);
         if (s.hi < fromR - 1) s.hi = fromR - 1;
-        return control(room, c.slot, fromR, { ai: false, name: s.name });
+        control(room, c.slot, fromR, { ai: false, name: s.name });
+        return presTick(room);
       }
       case 'cos': { // accessoires cosmetiques : texte court a alphabet restreint, relaye tel quel (purement visuel)
         const code = typeof m.c === 'string' ? m.c : '';
@@ -920,6 +964,7 @@ export function createServer(opts = {}) {
     stats.lagMax = Math.max(stats.lagMax * 0.9, now - lastTick - 1000); lastTick = now; // retard de la boucle d'evenements (CPU sature)
     for (const room of [...rooms.values()]) {
       if (room.started) {
+        presTick(room);
         // Aller-retour le plus lent de la salle, rediffuse a tous (message additif `net`, ignore par les anciens clients) : chacun regle son delai d'entree dessus.
         const worst = Math.max(0, ...humans(room).map(([x]) => (clients.get(x.ws)?.rtt) || 0));
         if (worst > 0 && (Math.abs(worst - (room.netSent ?? -999)) > 15 || now - (room.netAt || 0) > 4000)) { room.netSent = worst; room.netAt = now; broadcast(room, { t: 'net', worst }); }
@@ -937,14 +982,14 @@ export function createServer(opts = {}) {
               stats.stallDrops++;
               console.log(`gel : ${room.code} place ${i} silencieuse depuis ${Math.round((now - room.stallAt) / 1000)} s (image ${minHi}, les autres jusqu'a ${maxHi}) -> IA`);
               dropToAi(room, i); send(s.ws, { t: 'afk', why: 'slow' });
-              if (room.auto) broadcast(room, { t: 'presence', ev: 'afk', name: s.name, slot: i }, s.ws);
+
             }
             room.stallAt = now;
           }
         } else room.stallAt = now;
         for (let i = 0; i < room.config.size; i++) {
           const s = room.slots[i];
-          if (s.ws && s.mode === 'human' && now - s.lastMove > afkMs) { dropToAi(room, i, true); send(s.ws, { t: 'afk' }); if (room.auto) broadcast(room, { t: 'presence', ev: 'afk', name: s.name, slot: i }, s.ws); s.afkWarned = false; }
+          if (s.ws && s.mode === 'human' && now - s.lastMove > afkMs) { dropToAi(room, i, true); send(s.ws, { t: 'afk' }); s.afkWarned = false; }
           else if (s.ws && s.mode === 'human' && !s.afkWarned && now - s.lastMove > afkMs * 0.7) { s.afkWarned = true; send(s.ws, { t: 'afk_warn', in: Math.max(1, Math.round((afkMs - (now - s.lastMove)) / 1000)) }); }
           else if (s.afkWarned && now - s.lastMove < afkMs * 0.5) s.afkWarned = false;
         }
@@ -958,7 +1003,7 @@ export function createServer(opts = {}) {
         }
         continue;
       }
-      if (humans(room).length === 0 && (room.keep ? now - (room.emptySince || room.created) > roomTtl : room.auto ? now - room.emptySince > graceMs : now - room.created > holdMs)) closeRoom(room);
+      if (humans(room).length === 0 && (now - (room.emptySince || room.created) > (room.keep ? roomTtl : graceMs))) closeRoom(room);
     }
   }, 1000);
   timer.unref?.();
@@ -982,7 +1027,7 @@ export function createServer(opts = {}) {
         dropToAi(room, lo[1], true);
         send(lo[0].ws, { t: 'stalled' });
         send(lo[0].ws, { t: 'afk', why: 'slow' }); // anciens clients et test net_quality : meme avis que le gel du relais
-        if (room.auto) broadcast(room, { t: 'presence', ev: 'stall', name: lo[0].name, slot: lo[1] }, lo[0].ws);
+
       }
     }
   }, 150);

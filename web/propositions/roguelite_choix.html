@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Roguelite : choix de pouvoir</title>
+<style>
+:root{--ink:#221834;--paper:#fff3e0;--acc:#d8456b}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.45 system-ui,sans-serif;padding:16px;max-width:980px;margin-inline:auto}
+h1{font-size:26px;margin:.2em 0}h2{font-size:19px;margin:1.4em 0 .4em;border-bottom:3px solid var(--acc);display:inline-block}
+.row{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start}
+figure{margin:0;background:#fff;border:2px solid var(--ink);border-radius:14px;padding:8px}
+figure img{display:block;max-width:100%;height:auto;border-radius:8px}
+figcaption{font-size:14px;margin-top:6px}
+.p{width:min(300px,100%)}.l{width:min(440px,100%)}
+table{border-collapse:collapse;width:100%;font-size:14px}td,th{border:1px solid var(--ink);padding:4px 8px;text-align:left}
+code{background:#fff;padding:0 4px;border-radius:4px}
+</style></head><body>
+<h1>Roguelite : choisir 1 pouvoir parmi 3</h1>
+<p>Captures du vrai moteur (scene <code>AFH_SCREEN=rlchoix</code>, 4 joueurs, tactile). Chaque GIF : le choix qui s'ouvre, puis l'ecran apres l'appui. Les commandes de combat flottantes sont masquees pendant le choix (elles recouvraient les cartes).</p>
+
+<h2>Palier standard (apres un niveau) : petits pouvoirs</h2>
+<div class="row">
+<figure class="p"><img src="roguelite_choix/portrait_standard.webp" alt="portrait standard"><figcaption>Portrait 390x844 : 3 cartes empilees, une pression valide.</figcaption></figure>
+<figure class="l"><img src="roguelite_choix/paysage_standard.webp" alt="paysage standard"><figcaption>Paysage 844x390 : 3 colonnes compactes (rien de cache).</figcaption></figure>
+</div>
+
+<h2>Palier cool (apres un gros boss) : pouvoirs de type daemon</h2>
+<div class="row">
+<figure class="p"><img src="roguelite_choix/portrait_cool.webp" alt="portrait cool"><figcaption>Portrait : portraits de daemons, recharge et effet lisibles.</figcaption></figure>
+<figure class="l"><img src="roguelite_choix/paysage_cool.webp" alt="paysage cool"><figcaption>Paysage.</figcaption></figure>
+</div>
+
+<h2>8 joueurs</h2>
+<div class="row"><figure class="p"><img src="roguelite_choix/portrait_huit_joueurs.webp" alt="8 joueurs"><figcaption>Meme ecran a 8 places (les autres choisissent en parallele ; places 5 a 8 sans daemon porteur : limite du moteur).</figcaption></figure></div>
+
+<h2>Regles</h2>
+<table>
+<tr><th>Point</th><th>Valeur</th></tr>
+<tr><td>Propositions</td><td>3 par joueur, personnelles, tirage (graine, place, etage, palier), sans doublon avec ses pouvoirs</td></tr>
+<tr><td>Palier</td><td>Etage de boss (5, 10...) = cool ; sinon standard</td></tr>
+<tr><td>Minuterie</td><td>10 s, cloture des que tous les humains presents ont choisi, puis 0,67 s</td></tr>
+<tr><td>Par defaut</td><td>Premiere proposition (absent, IA, place libre, minuterie)</td></tr>
+<tr><td>Arrivee / depart pendant le choix</td><td>L'arrivant a ses propres cartes ; un depart garde son choix ou prend le defaut</td></tr>
+<tr><td>Garde</td><td>Dans le kit de depart (socle : Poing, Pied, Saut, Garde)</td></tr>
+<tr><td>Catalogue</td><td>29 standards, 19 cool (voir <code>src/rl_powers.rs</code>)</td></tr>
+</table>
+<p>Decisions a prendre : voir les cartes (<code>cards/roguelite_choix.json</code>).</p>
+</body></html>

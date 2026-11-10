@@ -1,0 +1,8 @@
+[
+  {"id": "presence-ia-delai", "titre": "IA à la place d'un joueur en arrière-plan", "texte": "Aujourd'hui : immédiate (personne n'attend, aucun gel). Alternative : 5 s de grâce avant l'IA (le joueur qui ouvre une notification ne perd pas son héros, mais l'autre peut geler 5 s).", "page": "web/index.html"},
+  {"id": "presence-semble-parti", "titre": "Délai « semble parti » (absent en arrière-plan)", "texte": "Réglé à 3 min (BG_GONE_MS) : après, l'annonce passe à « parti » mais la place reste reprenable. Plus court (60 s) = plus clair, plus long (5 min) = plus tolérant.", "page": "server/server.js"},
+  {"id": "presence-retrait-reel", "titre": "Retirer vraiment le joueur absent ?", "texte": "Aujourd'hui seule l'étiquette change ; la place est réservée 10 min (parties auto) ou le délai du salon, puis libérée. Option : libérer la place dès « parti » pour qu'un ami puisse la prendre.", "page": "server/server.js"},
+  {"id": "presence-affichage", "titre": "Affichage de l'état des autres joueurs", "texte": "Pastille + « Nom : arrière-plan 2:41 / reconnexion 0:42 / parti » au-dessus du héros (ambre, rouge pulsant, gris). Option : une liste fixe en haut à droite en plus.", "page": "src/online_ui.rs"},
+  {"id": "presence-son", "titre": "Son d'arrivée et de départ", "texte": "Un blip de voix très discret (déjà dans le jeu) à chaque départ ou retour. Option : silence total en jeu, toast seul.", "page": "src/online_ui.rs"},
+  {"id": "presence-version", "titre": "Version du protocole", "texte": "Changement additif (messages pres et presence ; anciens clients les ignorent ou affichent le texte). PROTOCOL_VERSION non modifié ; à toi de décider de le passer.", "page": "server/server.js"}
+]

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parcours exhaustif des écrans</title>
+<style>
+:root{--ink:#221834;--paper:#fff3e0;--acc:#d8456b;--ok:#2f8f5b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:Nunito,system-ui,sans-serif;line-height:1.45}
+main{max-width:1100px;margin:0 auto;padding:16px}
+h1,h2{font-family:Silkscreen,monospace;font-weight:400}
+h1{font-size:24px}h2{font-size:18px;border-bottom:3px solid var(--acc);padding-bottom:4px;margin-top:32px}
+.note{background:#fff;border:2px solid var(--ink);border-radius:12px;padding:10px 14px;margin:10px 0}
+.note b{color:var(--acc)}
+img{max-width:100%;height:auto;border:2px solid var(--ink);border-radius:8px;background:var(--ink)}
+.ba{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ba figure{margin:0}.ba figcaption{font-size:14px}
+.tag{display:inline-block;background:var(--ink);color:var(--paper);border-radius:99px;padding:2px 10px;font-size:13px}
+.fix{color:var(--ok);font-weight:700}
+ul{padding-left:20px}
+@media(max-width:600px){.ba{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+<h1>Parcours exhaustif des écrans</h1>
+<p>65 écrans du joueur, 3 formats (portrait 412x915, paysage 844x390, PC 1280x720), captures du vrai moteur. Journal : <code>tools/playtest/parcours_ecrans.md</code>. Cartes : <code>cards/parcours_ecrans.json</code>.</p>
+
+<h2>1. Titre et modes</h2>
+<div class="note"><b>Constats :</b> « Défis procéduraux » (hub Entraînement) et « Run du jour et défis » (hub Roguelite) disent « défis » pour deux choses ; le hub « Plus » mélange Progression, Studio, Némésis et Social ; « Réglages » est à la fois un hub, un titre et un onglet de la garde-robe. Le pacte de punition (portrait) fait chevaucher « ASCENSION : NON » et « RETOUR » (hors lot).</div>
+<img src="parcours_ecrans/1_titre_modes_portrait.jpg" alt="Titre et modes, portrait">
+<img src="parcours_ecrans/1_titre_modes_paysage.jpg" alt="Titre et modes, paysage">
+<img src="parcours_ecrans/1_titre_modes_pc.jpg" alt="Titre et modes, PC">
+
+<h2>2. Réglages et aide</h2>
+<div class="note"><b>Constats :</b> Options, Accessibilité et Physique des membres sont propres ; doublon « Tremblements de l'écran » / « Moins d'effets » (déjà en carte lot 1) ; « Entraînement et techniques » (aide) n'a pas le même nom que « Comment jouer » ; le Banc de sons n'est plus dans Options (OK).</div>
+<img src="parcours_ecrans/2_reglages_aide_portrait.jpg" alt="Réglages et aide, portrait">
+<img src="parcours_ecrans/2_reglages_aide_paysage.jpg" alt="Réglages et aide, paysage">
+<img src="parcours_ecrans/2_reglages_aide_pc.jpg" alt="Réglages et aide, PC">
+
+<h2>3. Pause et bilans</h2>
+<div class="note"><b>Constats :</b> <span class="fix">corrigé</span> phrase du bilan coupée (« Touche l'écran pour »), titres « NIVEAU TERMINE » / « CHAPITRE TERMINE » sans accent. Restent en carte : conseil de défaite coupé en petit paysage, arrière-plan du menu pause d'entraînement trop lisible.</div>
+<img src="parcours_ecrans/3_pause_bilans_portrait.jpg" alt="Pause et bilans, portrait">
+<img src="parcours_ecrans/3_pause_bilans_paysage.jpg" alt="Pause et bilans, paysage">
+<img src="parcours_ecrans/3_pause_bilans_pc.jpg" alt="Pause et bilans, PC">
+
+<h2>4. Boutique, atelier, garde-robe, carnet, daemons</h2>
+<div class="note"><b>Constats :</b> <span class="fix">corrigé</span> « Spécial Spécial », « 1 jours de visite », « LIEU Lieu 1 ». En carte : Spéciaux à l'aspect brut, « Carnet » dit trois fois, Boutique de coups / Progression qui annoncent le même coup.</div>
+<img src="parcours_ecrans/4_boutique_atelier_portrait.jpg" alt="Boutique et ateliers, portrait">
+<img src="parcours_ecrans/4_boutique_atelier_paysage.jpg" alt="Boutique et ateliers, paysage">
+<img src="parcours_ecrans/4_boutique_atelier_pc.jpg" alt="Boutique et ateliers, PC">
+
+<h2>5. Entraînement, studio, physique, replay</h2>
+<div class="note"><b>Constats :</b> deux tutoriels (31 étapes « Premier jour » et 15 étapes « Tutoriel ») ; boutons PASSER / QUITTER / MENU tronqués en portrait ; « Mes créations » montre des noms de fichiers bruts. <span class="fix">corrigé</span> le renvoi de l'étape Pause vers un « carnet » disparu.</div>
+<img src="parcours_ecrans/5_entrainement_studio_portrait.jpg" alt="Entraînement, portrait">
+<img src="parcours_ecrans/5_entrainement_studio_paysage.jpg" alt="Entraînement, paysage">
+<img src="parcours_ecrans/5_entrainement_studio_pc.jpg" alt="Entraînement, PC">
+
+<h2>6. Succès, défis, social</h2>
+<div class="note"><b>Constats :</b> « Succès » (89) et « Trophées » (75) sont la même notion ; « Carnet de lieux » 19/39 (Social) contre 12/47 (fin de jeu) ; six écrans nommés « défi ».</div>
+<img src="parcours_ecrans/6_succes_social_portrait.jpg" alt="Succès et social, portrait">
+<img src="parcours_ecrans/6_succes_social_paysage.jpg" alt="Succès et social, paysage">
+<img src="parcours_ecrans/6_succes_social_pc.jpg" alt="Succès et social, PC">
+
+<h2>Avant / après des corrections</h2>
+<div class="ba">
+<figure><img src="parcours_ecrans/ba/charselect_paysage_avant.jpg" alt=""><figcaption><span class="tag">avant</span> « Kaze » passe sous la pastille Garde-robe</figcaption></figure>
+<figure><img src="parcours_ecrans/ba/charselect_paysage_apres.jpg" alt=""><figcaption><span class="tag">après</span> nom et style centrés à gauche de la pastille</figcaption></figure>
+<figure><img src="parcours_ecrans/ba/bilan_boss_portrait_avant.jpg" alt=""><figcaption><span class="tag">avant</span> « Touche l'écran pour » coupé</figcaption></figure>
+<figure><img src="parcours_ecrans/ba/bilan_boss_portrait_apres.jpg" alt=""><figcaption><span class="tag">après</span> consigne complète</figcaption></figure>
+<figure><img src="parcours_ecrans/ba/stageclear_portrait_avant.jpg" alt=""><figcaption><span class="tag">avant</span> NIVEAU TERMINE !</figcaption></figure>
+<figure><img src="parcours_ecrans/ba/stageclear_portrait_apres.jpg" alt=""><figcaption><span class="tag">après</span> NIVEAU TERMINÉ !</figcaption></figure>
+<figure><img src="parcours_ecrans/ba/progress_portrait_avant.jpg" alt=""><figcaption><span class="tag">avant</span> « 1 jours », « LIEU Lieu 1 »</figcaption></figure>
+<figure><img src="parcours_ecrans/ba/progress_portrait_apres.jpg" alt=""><figcaption><span class="tag">après</span> « 1 jour », « NIVEAU Niveau 1 »</figcaption></figure>
+<figure><img src="parcours_ecrans/ba/combos_paysage_avant.jpg" alt=""><figcaption><span class="tag">avant</span> « Spécial Spécial »</figcaption></figure>
+<figure><img src="parcours_ecrans/ba/combos_paysage_apres.jpg" alt=""><figcaption><span class="tag">après</span> « Spécial »</figcaption></figure>
+</div>
+</main>
+</body>
+</html>

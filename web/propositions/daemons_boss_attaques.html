@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Daemons de boss : coups annoncés</title>
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b;--carte:#fffaf2;--trait:#d9c9b0}
+*{box-sizing:border-box}
+body{margin:0;background:var(--papier);color:var(--encre);font:16px/1.5 system-ui,Segoe UI,sans-serif}
+header,main{max-width:1100px;margin:0 auto;padding:16px}
+h1{font-size:1.7rem;margin:.4em 0 .2em}
+h2{margin:1.6em 0 .3em;border-bottom:3px solid var(--accent);padding-bottom:.2em}
+.lead{max-width:70ch}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.card{background:var(--carte);border:1px solid var(--trait);border-radius:10px;padding:10px}
+.card img{width:100%;height:auto;border-radius:6px;display:block;background:#000}
+.card h3{margin:.4em 0 .1em;font-size:1.05rem}
+.card p{margin:.2em 0;font-size:.92rem}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+td,th{border:1px solid var(--trait);padding:6px 8px;text-align:left}
+th{background:var(--encre);color:var(--papier)}
+.tag{display:inline-block;background:var(--accent);color:#fff;border-radius:999px;padding:0 .6em;font-size:.8rem}
+@media (prefers-color-scheme:dark){:root{--papier:#221834;--encre:#fff3e0;--carte:#2e2347;--trait:#4a3d68}}
+</style>
+</head>
+<body>
+<header>
+<h1>Daemons de boss : Hannya, Kirin et Bakeneko attaquent</h1>
+<p class="lead">Avant : ces trois daemons n'infligeaient rien (mesure : 0 PV perdus en 2600 images pour Hannya ; Kirin ne faisait que soigner, Bakeneko ne faisait que voler une arme). Maintenant : trois coups chacun, annoncés 30 images à l'avance par le daemon qui s'agite et par une zone marquée au sol (nom du coup affiché). Chaque GIF est capturé sur le vrai moteur : annonce, puis coup.</p>
+<p class="lead"><span class="tag">Règles</span> zone verrouillée à l'annonce : on l'évite en bougeant, en roulant ou en sautant ; jamais sur un héros déjà dans une série de coups ou à terre ; aucune annonce si les jetons d'attaque sont pris ; aucun hasard (le coup dépend du numéro du cycle).</p>
+</header>
+<main>
+<h2>Hannya : masque et flamme de jalousie</h2>
+<div class="row">
+<div class="card"><img src="daemons_boss_attaques/hannya_flamme.webp" alt="Flamme de jalousie" loading="lazy"><h3>Flamme de jalousie</h3><p>Couloir marqué à la profondeur du héros ; une flamme part du masque. Dégâts 4. On saute ou on roule.</p></div>
+<div class="card"><img src="daemons_boss_attaques/hannya_pilier.webp" alt="Pilier de rancune" loading="lazy"><h3>Pilier de rancune</h3><p>Zone ronde verrouillée sur l'endroit où se tenait le héros ; un pilier de feu jaillit. Dégâts 5, brûlure, projection. On se déplace.</p></div>
+<div class="card"><img src="daemons_boss_attaques/hannya_ronde.webp" alt="Ronde de chagrin" loading="lazy"><h3>Ronde de chagrin</h3><p>Anneau autour du boss : punit celui qui reste collé. Dégâts 3,5, brûlure.</p></div>
+</div>
+<h2>Kirin : foudre et sabots</h2>
+<div class="row">
+<div class="card"><img src="daemons_boss_attaques/kirin_foudre.webp" alt="Foudre sacrée" loading="lazy"><h3>Foudre sacrée</h3><p>Zone verrouillée ; la foudre tombe du ciel dessus. Dégâts 4,5.</p></div>
+<div class="card"><img src="daemons_boss_attaques/kirin_sabots.webp" alt="Charge de sabots" loading="lazy"><h3>Charge de sabots</h3><p>Couloir marqué ; une onde de sabots court au sol. Dégâts 5. On saute par-dessus.</p></div>
+<div class="card"><img src="daemons_boss_attaques/kirin_pietinement.webp" alt="Piétinement" loading="lazy"><h3>Piétinement</h3><p>Anneau autour du boss. Dégâts 4. Le soin du Kirin (50 à 70 % des PV) est conservé.</p></div>
+</div>
+<h2>Bakeneko : griffes et illusions de chat</h2>
+<div class="row">
+<div class="card"><img src="daemons_boss_attaques/bakeneko_griffes.webp" alt="Griffes de chat" loading="lazy"><h3>Griffes de chat</h3><p>Zone large verrouillée ; trois griffes la balaient. Dégâts 4.</p></div>
+<div class="card"><img src="daemons_boss_attaques/bakeneko_fantomes.webp" alt="Chats fantômes" loading="lazy"><h3>Chats fantômes</h3><p>Trois chats spectraux en file sur le couloir marqué, espacés : on les franchit un par un. Dégâts 2,5 chacun.</p></div>
+<div class="card"><p><span class="tag">GIF non fourni</span> la scène de capture a un héros sans arme : le coup retombe sur les chats fantômes. Vol testé par le code seulement.</p><h3>Vol de patte</h3><p>Si le héros porte une arme et se trouve à moins de 450, le chat la lui vole (sinon : chats fantômes). Aucun dégât.</p></div>
+</div>
+<h2>Réglages et garde-fous</h2>
+<table>
+<tr><th>Daemon</th><th>Cadence</th><th>Annonce</th><th>Mesure (PV perdus en 2600 images, héros immobile)</th></tr>
+<tr><td>Hannya (Ren Takeda)</td><td>420 images (avant : 600)</td><td>30 images</td><td>0,0 avant, 25,5 après</td></tr>
+<tr><td>Kirin (Valérie Kogen)</td><td>300 images (avant : 240)</td><td>30 images</td><td>soin seul avant, 14,0 après</td></tr>
+<tr><td>Bakeneko (Salvatore)</td><td>360 images (inchangé)</td><td>30 images</td><td>vol seul avant, 18,0 après</td></tr>
+</table>
+<p>Tests : <code>boss_daemon_atk</code> (mesure, annonce de 20 images au moins, jetons d'attaque, plafond de coups subis, empreinte, déterminisme) et <code>enemy_audit::every_boss_daemon_acts_against_the_hero</code> (aucun des 13 daemons de boss sans attaque).</p>
+</main>
+</body>
+</html>
