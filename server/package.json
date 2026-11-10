@@ -7,7 +7,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "node --test --test-concurrency=1 test/server.test.js test/online2.test.js test/edge.test.js test/robust.test.js test/lobby.test.js test/push.test.js test/static.test.js test/web_guard.test.js test/web_plugin.test.js test/scores.test.js test/reports.test.js test/verdicts.test.js test/verdicts_client.test.js test/net_quality.test.js test/watch.test.js"
+    "test": "node --test --test-concurrency=1 test/server.test.js test/online2.test.js test/edge.test.js test/robust.test.js test/lobby.test.js test/push.test.js test/static.test.js test/web_guard.test.js test/web_plugin.test.js test/scores.test.js test/reports.test.js test/verdicts.test.js test/verdicts_client.test.js test/net_quality.test.js test/watch.test.js test/build_id.test.js"
   },
   "engines": {
     "node": ">=20"

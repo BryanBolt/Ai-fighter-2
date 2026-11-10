@@ -13,7 +13,7 @@ import { createVerdicts } from './verdicts.js';
 import { createPush } from './push.js';
 import { createReports, cleanReport } from './reports.js';
 
-export const PROTOCOL_VERSION = 16; // 16 : roguelite coop (un pouvoir aleatoire par etape, vie partagee : le releveur paie 30 % de ses PV, nouveaux champs dans l'empreinte) ; 15 : anti-sandwich (jetons d'attaque, plafond de coups subis, nouveaux etats dans l'empreinte) ; 14 : empreinte de simulation etendue (univers, tournoi), commande tourn, messages watch / emote (spectateur), idle / need_resync ; 13 : pouvoir actif du roguelite (bits 25-27 de l entree) ; 12 : modes de groupe (mode 5, commande group) ; 11 : accessoires COSMETIQUES (message cos, champ cos des joueurs du salon) ; 10 : daemon de chaque joueur au salon (champ `daemon` des messages lobby et room) ; 9 : mode ROGUELITE en coop (mode 3 : run d equipe, cartes personnelles, etages) ; 8 : nunchaku (nouvelle arme ramassable, serie de six coups, Pied = coups de pied avec l'arme) et armes au sol du dojo/temple changees ; 7 : entree Saisie (nouveau bit d'entree) + coups renommes (SCHEMA_VERSION 8) ; 6 : table des coups changee (grammaire X/Y des 9 autres heros, SCHEMA_VERSION 7) ; 5 : jusqu'a 8 joueurs, vague/PV de depart (solo -> en ligne) ; 4 : table des coups changee (aeriens, realisme, grammaire X/Y ; tir allie, QA). 3 : parties hebergees (jeu complet : loadout, cmd sequences). 2 : join_any / host. Seuls les clients v8 sont acceptes.
+export const PROTOCOL_VERSION = 17; // 17 : empreinte de build (champ `b` du hello, un salon refuse un build different) ; 16 : roguelite coop (un pouvoir aleatoire par etape, vie partagee : le releveur paie 30 % de ses PV, nouveaux champs dans l'empreinte) ; 15 : anti-sandwich (jetons d'attaque, plafond de coups subis, nouveaux etats dans l'empreinte) ; 14 : empreinte de simulation etendue (univers, tournoi), commande tourn, messages watch / emote (spectateur), idle / need_resync ; 13 : pouvoir actif du roguelite (bits 25-27 de l entree) ; 12 : modes de groupe (mode 5, commande group) ; 11 : accessoires COSMETIQUES (message cos, champ cos des joueurs du salon) ; 10 : daemon de chaque joueur au salon (champ `daemon` des messages lobby et room) ; 9 : mode ROGUELITE en coop (mode 3 : run d equipe, cartes personnelles, etages) ; 8 : nunchaku (nouvelle arme ramassable, serie de six coups, Pied = coups de pied avec l'arme) et armes au sol du dojo/temple changees ; 7 : entree Saisie (nouveau bit d'entree) + coups renommes (SCHEMA_VERSION 8) ; 6 : table des coups changee (grammaire X/Y des 9 autres heros, SCHEMA_VERSION 7) ; 5 : jusqu'a 8 joueurs, vague/PV de depart (solo -> en ligne) ; 4 : table des coups changee (aeriens, realisme, grammaire X/Y ; tir allie, QA). 3 : parties hebergees (jeu complet : loadout, cmd sequences). 2 : join_any / host. Seuls les clients v8 sont acceptes.
 const COMPAT_VERSIONS = [PROTOCOL_VERSION]; // derive de PROTOCOL_VERSION : ne peut plus diverger (v8 etait refuse par erreur, ancienne valeur [7]) ; // protocole 7 : les clients 1 a 6 n'ont pas la meme table de coups (et 1 a 4 ne savent pas lire des salons de 8 places), ils doivent se mettre a jour
 const HOSTED_SIZE = 2; // taille par defaut d une partie hebergee (anciens clients) ; le client actuel demande 4 avec `size` (places vides dormantes)
 const HOSTED_MIN = 2; // taille minimale demandable
@@ -246,6 +246,11 @@ export function createServer(opts = {}) {
     rooms.set(room.code, room);
     return room;
   }
+  // Empreinte de build (hash de la source, identique natif / wasm) : deux builds de meme PROTOCOL_VERSION mais de simulation differente
+  // ne doivent jamais partager un salon. Un client sans empreinte (outil, test) est tolere.
+  const cleanBuild = (b) => (typeof b === 'string' && /^[0-9a-f]{8,32}$/.test(b) ? b : '');
+  function buildClash(room, c) { return !!(room.build && c.build && room.build !== c.build); }
+  function sendClash(ws) { return send(ws, { t: 'error', msg: 'Version differente : recharge la page (Ctrl+F5) pour jouer avec ce salon', code: 'build' }); }
   const humans = (room) => room.slots.map((s, i) => [s, i]).filter(([s]) => s.ws);
   // Rapport de desynchro cote SERVEUR (marche meme si aucun client ne peut envoyer le sien) : image, hashs de chaque place,
   // derniers hashs concordants, places humaines/IA. Aucune IP, aucun pseudo, code du salon remplace par une empreinte. Au plus 3 par salon et 10 min.
@@ -475,7 +480,7 @@ export function createServer(opts = {}) {
     if (rooms.size >= maxRooms) return send(ws, { t: 'error', msg: 'Serveur plein, reessaie dans un instant', code: 'full' });
     evictOwned(c.ip);
     if (roomsOfIp(c.ip) >= MAX_ROOMS_PER_IP && !isLocal(c.ip)) return send(ws, { t: 'error', msg: 'Trop de parties ouvertes depuis cette connexion', code: 'limit' });
-    const room = makeRoom(!priv);
+    const room = makeRoom(!priv); room.build = c.build;
     room.auto = true; room.keep = !!keep; room.ownerIp = c.ip;
     if (typeof ff === 'boolean') room.ff = ff;
     if (full) {
@@ -505,7 +510,7 @@ export function createServer(opts = {}) {
       if (back >= 0) return finishJoin(r, ws, c, back);
     }
     // La partie publique en cours la plus remplie qui a encore une place (a egalite : la plus ancienne).
-    const open = [...rooms.values()].filter((r) => r.auto && r.public && r.started && humans(r).length > 0 && humans(r).length < r.options.size && (!r.full || c.v >= 3) && !isBanned(r.code, c))
+    const open = [...rooms.values()].filter((r) => r.auto && r.public && r.started && humans(r).length > 0 && humans(r).length < r.options.size && (!r.full || c.v >= 3) && !isBanned(r.code, c) && !buildClash(r, c))
       .sort((a, b) => humans(b).length - humans(a).length)[0];
     if (open) {
       const idx = takeAi(open, ws, c, char, now);
@@ -589,6 +594,7 @@ export function createServer(opts = {}) {
     const room = rooms.get(cleanCode(code));
     if (!room || !room.started) return send(ws, { t: 'error', msg: 'Rien a regarder : la partie est introuvable ou pas commencee', code: 'gone' });
     if (banned.get(room.code)?.has(c.ip)) return send(ws, { t: 'error', msg: 'Tu as ete expulse de ce salon' });
+    if (buildClash(room, c)) return sendClash(ws);
     if (c.room) leaveRoom(c, ws, true);
     unwatch(c, ws);
     if (room.watchers.size >= MAX_WATCHERS) return send(ws, { t: 'error', msg: `Trop de spectateurs (${MAX_WATCHERS} max)`, code: 'full' });
@@ -601,6 +607,7 @@ export function createServer(opts = {}) {
     const room = rooms.get(cleanCode(code));
     if (!room) return send(ws, { t: 'error', msg: 'Salon introuvable : la partie est peut-etre terminee', code: 'gone' });
     if (isBanned(room.code, c)) return send(ws, { t: 'error', msg: 'Tu as ete expulse de ce salon' });
+    if (buildClash(room, c)) return sendClash(ws);
     if (room.full && c.v < 3) return send(ws, { t: 'error', msg: 'Partie complete : mets le jeu a jour pour la rejoindre', fatal: true });
     if (c.room) leaveRoom(c, ws, true);
     if (Number.isInteger(m.color)) c.color = m.color;
@@ -638,7 +645,7 @@ export function createServer(opts = {}) {
     switch (m.t) {
       case 'hello':
         if (!COMPAT_VERSIONS.includes(m.v)) return send(ws, { t: 'error', msg: 'Version incompatible : mets le jeu a jour', fatal: true });
-        c.v = m.v; c.name = cleanName(m.name); c.hello = true; if (Number.isInteger(m.color)) c.color = m.color;
+        c.v = m.v; c.build = cleanBuild(m.b); c.name = cleanName(m.name); c.hello = true; if (Number.isInteger(m.color)) c.color = m.color;
         if (m.token && /^[0-9a-f]{24}$/.test(m.token)) c.token = m.token;
         return send(ws, { t: 'welcome', v: PROTOCOL_VERSION, id: c.id, token: c.token });
       case 'join_any': return joinAny(ws, c, m);
@@ -665,7 +672,7 @@ export function createServer(opts = {}) {
         evictOwned(c.ip);
         if (roomsOfIp(c.ip) >= MAX_ROOMS_PER_IP && !isLocal(c.ip)) return send(ws, { t: 'error', msg: 'Trop de parties ouvertes depuis cette connexion', code: 'limit' });
         if (rooms.size >= maxRooms) return send(ws, { t: 'error', msg: 'Serveur plein, reessaie dans un instant', code: 'full' });
-        const room = makeRoom(!!m.public); // salon d'attente : PRIVE par defaut (lien), public seulement si demande
+        const room = makeRoom(!!m.public); room.build = c.build; // salon d'attente : PRIVE par defaut (lien), public seulement si demande
         room.keep = m.keep === true; room.ownerIp = c.ip;
         if (m.size !== undefined) room.options.size = int(m.size, 1, MAX_SLOTS, 2);
         const idx = attach(room, ws, c, c.name);
@@ -676,7 +683,7 @@ export function createServer(opts = {}) {
         const open = [...rooms.values()].filter((r) => r.public && !r.started && humans(r).length < r.options.size)
           .sort((a, b) => humans(b).length - humans(a).length)[0];
         if (open) return joinRoom(ws, c, open.code);
-        const room = makeRoom(true);
+        const room = makeRoom(true); room.build = c.build;
         const idx = attach(room, ws, c, c.name);
         return send(ws, { ...lobbyView(room), you: idx, token: c.token });
       }

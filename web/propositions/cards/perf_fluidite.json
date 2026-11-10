@@ -1,0 +1,6 @@
+[
+ {"id":"pf-1","titre":"Limiteur 120 Hz","texte":"Plafonner le rendu a 60 images/s sur ecrans 120 Hz (batterie/chaleur) : la sim reste a pas fixe ; a faire seulement apres test sur le Fold 4 (risque de clignotement du canvas).","page":"decisions.html"},
+ {"id":"pf-2","titre":"Overlay ?perf=1","texte":"Ouvrir le jeu avec ?perf=1 pour lire fps, ms sim, ms rendu et entites sur le telephone ; m'envoyer une capture pour calibrer les seuils.","page":"decisions.html"},
+ {"id":"pf-3","titre":"Seuils des 2 niveaux d'eco","texte":"Eco 1 sous 41 fps, eco 2 sous 28 fps (decor au quart, 80 particules, 0,6 Mpx) : garder, ou durcir/adoucir apres mesure sur appareil.","page":"decisions.html"},
+ {"id":"pf-4","titre":"Cache de textures des plans lointains","texte":"Pre-rendre les plans lointains en texture : gain faible mesure (decor 0,2-0,9 ms natif) et memoire en plus ; je recommande de ne pas le faire.","page":"decisions.html"}
+]
