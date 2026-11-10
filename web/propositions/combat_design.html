@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Combat design : audit et propositions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b;--ok:#2f8f5b}
+body{margin:0;background:var(--papier);color:var(--encre);font:16px/1.45 Nunito,system-ui,sans-serif;padding:16px}
+h1,h2{font-family:Silkscreen,monospace;letter-spacing:.02em;margin:0 0 6px}
+h1{font-size:22px}h2{font-size:15px;color:var(--accent)}h3{font-size:16px;margin:18px 0 6px}
+.lead{max-width:780px}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px;margin-top:14px}
+.c{background:#fff;border:2px solid var(--encre);border-radius:12px;padding:10px}
+.c.ok{outline:4px solid var(--ok)}.c.no{outline:4px solid var(--accent)}
+img{width:100%;border-radius:8px;background:var(--encre);display:block}
+p{margin:6px 0;font-size:14px}.why{opacity:.75;font-size:13px}
+button{font:inherit;font-weight:700;padding:9px 12px;border-radius:8px;border:2px solid var(--encre);margin:4px 4px 0 0;background:var(--papier);color:var(--encre);cursor:pointer}
+button.v{background:var(--ok);color:#fff}button.x{background:var(--accent);color:#fff}
+textarea{width:100%;box-sizing:border-box;border:2px solid var(--encre);border-radius:6px;padding:6px;margin-top:6px;font:inherit;background:var(--papier)}
+#o{white-space:pre-wrap;background:var(--encre);color:var(--papier);padding:12px;border-radius:10px;margin-top:14px}
+.gen{background:var(--accent);color:#fff;font-family:Silkscreen,monospace;margin-top:14px}
+table{border-collapse:collapse;margin:10px 0;font-size:14px;max-width:780px;width:100%}
+td,th{border:2px solid var(--encre);padding:6px 8px;text-align:left;background:#fff}th{background:var(--encre);color:var(--papier)}
+.bar{display:flex;align-items:center;gap:8px;margin:4px 0;max-width:780px;font-size:13px}
+.bar b{width:150px;flex:none}.bar i{display:block;height:16px;border-radius:4px;background:var(--encre)}.bar i.a{background:var(--accent)}
+.bar span{white-space:nowrap}
+</style></head><body>
+<h1>Combat design : audit chiffre et propositions</h1>
+<p class="lead">Objectif : un combat captivant, lisible et style. J'ai fait jouer l'IA contre toutes les vagues de 13 terrains avec 9 heros (PV illimites pour mesurer les degats subis), puis 7 « styles de joueur » (spam, tortue...) sur trois terrains. Details : <code>tools/combat_design.md</code>, tableaux complets : <code>tools/combat_metrics_avant.md</code> et <code>_apres.md</code>. Un changement est deja applique (lisibilite des coups ennemis) ; cinq autres touchent l'equilibre et attendent ton avis.</p>
+
+<h3>Avant / apres : coups d'ouverture ennemis sous le temps de reaction humain</h3>
+<div class="bar"><b>Avant</b><i class="a" style="width:242px"></i><span>242 coups (Baffe, Jab, Pied frontal... a 8 images = 0,13 s)</span></div>
+<div class="bar"><b>Apres</b><i style="width:2px"></i><span>0 (12 / 15 / 18 images selon la gravite)</span></div>
+
+<h3>Rythme mesure (moyenne des 13 terrains)</h3>
+<table>
+<tr><th>Metrique</th><th>Avant</th><th>Apres</th><th>Lecture</th></tr>
+<tr><td>Duree d'un terrain</td><td>225 s</td><td>224 s</td><td>inchange</td></tr>
+<tr><td>Ecart entre deux echanges</td><td>0,67 s</td><td>0,68 s</td><td>rythme dense, pas de trou de neutre</td></tr>
+<tr><td>Attaquants simultanes (moy. / max)</td><td>1,05 / 3</td><td>1,06 / 3</td><td>les jetons marchent : la meute attend son tour</td></tr>
+<tr><td>Hitstop (arret sur image)</td><td>17,2 %</td><td>17,1 %</td><td>eleve : perimetre « game feel », signale</td></tr>
+<tr><td>PV perdus par terrain (IA)</td><td>708</td><td>629</td><td>-11 % de degats subis, plus lisible</td></tr>
+<tr><td>Coups differents utilises</td><td>15</td><td>15</td><td>diversite intacte ; terrains finis 137 a 140 sur 144</td></tr>
+</table>
+
+<h3>Strategies : laquelle bat le jeu sans effort ? (Kaze, 3 terrains, plafond 3 min)</h3>
+<div class="bar"><b>Spam leger</b><i class="a" style="width:89px"></i><span>89 PV perdus, finit 2/3 : DOMINANTE</span></div>
+<div class="bar"><b>Esquive-tape</b><i style="width:132px"></i><span>132 PV, 1/3</span></div>
+<div class="bar"><b>Tortue (garde)</b><i style="width:182px"></i><span>182 PV, 0/3 : ne gagne pas</span></div>
+<div class="bar"><b>Spam lourd</b><i style="width:255px"></i><span>255 PV, 2/3</span></div>
+<div class="bar"><b>IA mixte</b><i style="width:382px"></i><span>382 PV, 1/3 : l'IA defend mal</span></div>
+<div class="bar"><b>Spam special / saisie</b><i style="width:9px"></i><span>9 / 45 PV, 0/3 : inoffensifs</span></div>
+
+<h3>GIF du vrai moteur : meme combat, avant et apres</h3>
+<div class="g" id="gifs">
+<div class="c"><img src="combat_design/avant.gif" alt="Avant" loading="lazy"><h2>Avant</h2><p>Les sbires frappent en 8 images : le coup arrive sans etre lu.</p></div>
+<div class="c"><img src="combat_design/apres.gif" alt="Apres" loading="lazy"><h2>Apres</h2><p>Meme combat : la pose d'armement est visible (12 a 18 images) avant le coup.</p></div>
+</div>
+
+<h3>Propositions a valider (non appliquees)</h3>
+<div class="g" id="g"></div>
+<button class="gen" onclick="out()">Generer mon texte</button><div id="o"></div>
+<script>
+var C=[
+{k:"p0",n:"Appliquee : plancher de telegraphe des sbires",d:"Chaque coup d'ouverture ennemi demande 12 / 15 / 18 images de depart ; la recuperation raccourcit pour garder le rythme. Les enchainements gardent leur vitesse.",w:"Valider si le rythme te plait, A refaire si tu veux plus ou moins de lisibilite."},
+{k:"p1",n:"P1 Lire le spam",d:"3 coups legers identiques en 90 images : le sbire garde (60 %) ou recule. Le spam leger ne gagne plus gratuitement.",w:"Risque : trop defensif pour un vrai combo (limite au MEME coup repete)."},
+{k:"p2",n:"P2 Parade de 8 a 10 images",d:"Maintenant que les coups sont lisibles, une fenetre de 0,17 s rend la parade apprenable.",w:"Risque : parades accidentelles en garde maintenue (la saisie punit toujours)."},
+{k:"p3",n:"P3 Esquive = ouverture",d:"Une esquive parfaite donne 20 images de degats +25 %, en plus du ralenti.",w:"Risque : chevauche l'Adrenaline (temps de sorciere)."},
+{k:"p4",n:"P4 Rang de style qui change le jeu",d:"Des S : Ki +30 % ; a SSS : un super coute 15 Ki de moins.",w:"Risque : boucle de victoire (a plafonner)."},
+{k:"p5",n:"P5 Jeton 3 reserve aux etages 6+",d:"En difficile, la meute presse a trois seulement tard dans la run.",w:"Risque : pics de degats."}
+],st={};
+var g=document.getElementById('g');
+C.forEach(function(c){var d=document.createElement('div');d.className='c';d.id='c_'+c.k;
+d.innerHTML='<h2>'+c.n+'</h2><p>'+c.d+'</p><p class="why">'+c.w+'</p><button class="v" data-k="'+c.k+'" data-v="1">Valider</button><button class="x" data-k="'+c.k+'" data-v="-1">A refaire</button><textarea id="t_'+c.k+'" rows="2" placeholder="Remarque"></textarea>';g.appendChild(d);});
+g.addEventListener('click',function(e){var b=e.target;if(!b.dataset||!b.dataset.k)return;var v=+b.dataset.v;st[b.dataset.k]=v;document.getElementById('c_'+b.dataset.k).className='c '+(v>0?'ok':'no');});
+function out(){var L=C.map(function(c){var v=st[c.k];var t=document.getElementById('t_'+c.k).value.trim();return (v>0?'VALIDE':v<0?'A REFAIRE':'NON VU')+' : '+c.n+(t?' - '+t:'');});document.getElementById('o').textContent='Combat design :\n'+L.join('\n');}
+</script></body></html>

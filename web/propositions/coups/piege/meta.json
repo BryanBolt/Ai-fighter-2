@@ -1,0 +1,1035 @@
+[
+ {
+  "spec": {
+   "cat": "base",
+   "id": "x1",
+   "title": "Coup de depart X : Tape-filet",
+   "desc": "Le jab d'ouverture de l'arbre (touche X).",
+   "opts": "",
+   "toks": "X",
+   "expect": 0
+  },
+  "name": "piege_x1",
+  "notes": [
+   "Ne touche pas le mannequin dans ce scenario (portee, ou enchainement qui ne part pas)."
+  ],
+  "kf": 7,
+  "sizes": [
+   133549,
+   133549
+  ],
+  "secs": 1.1333333333333333,
+  "steps": 70,
+  "names": [
+   "Tape-filet"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "base",
+   "id": "y1",
+   "title": "Coup de depart Y : Genou de piege",
+   "desc": "Le pied d'ouverture de l'arbre (touche Y).",
+   "opts": "",
+   "toks": "Y",
+   "expect": 3
+  },
+  "name": "piege_y1",
+  "notes": [],
+  "kf": 8,
+  "sizes": [
+   107505,
+   107505
+  ],
+  "secs": 1.3833333333333333,
+  "steps": 96,
+  "names": [
+   "Genou de piege"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "base",
+   "id": "fwd_heavy",
+   "title": "Avant + Y : Pied haut du chasseur",
+   "desc": "Coup directionnel : Avant + Y.",
+   "opts": "",
+   "toks": "FY",
+   "expect": 5
+  },
+  "name": "piege_fwd_heavy",
+  "notes": [],
+  "kf": 8,
+  "sizes": [
+   108349,
+   108349
+  ],
+  "secs": 1.25,
+  "steps": 90,
+  "names": [
+   "Pied haut du chasseur"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "base",
+   "id": "back_heavy",
+   "title": "Arriere + Y : Chausse-trape",
+   "desc": "Coup directionnel : Arriere + Y.",
+   "opts": "",
+   "toks": "BY",
+   "expect": 9
+  },
+  "name": "piege_back_heavy",
+  "notes": [
+   "Longue recuperation (23 images) apres Chausse-trape : le heros reste fige un moment."
+  ],
+  "kf": 9,
+  "sizes": [
+   112804,
+   112804
+  ],
+  "secs": 1.4333333333333333,
+  "steps": 102,
+  "names": [
+   "Chausse-trape"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "base",
+   "id": "back_light",
+   "title": "Arriere + X : Paume de recul",
+   "desc": "Coup directionnel : Arriere + X.",
+   "opts": "",
+   "toks": "BX",
+   "expect": 30
+  },
+  "name": "piege_back_light",
+  "notes": [],
+  "kf": 9,
+  "sizes": [
+   83289,
+   83289
+  ],
+  "secs": 1.1333333333333333,
+  "steps": 80,
+  "names": [
+   "Paume de recul"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "base",
+   "id": "up_light",
+   "title": "Haut + X (lanceur poing) : Ressort a loup",
+   "desc": "Coup directionnel : Haut + X (lanceur poing).",
+   "opts": "",
+   "toks": "UX",
+   "expect": 6
+  },
+  "name": "piege_up_light",
+  "notes": [
+   "Ne touche pas le mannequin dans ce scenario (portee, ou enchainement qui ne part pas).",
+   "Le scenario n'a pas declenche le coup attendu : verifier la commande."
+  ],
+  "kf": 7,
+  "sizes": [
+   51523,
+   51523
+  ],
+  "secs": 1.1333333333333333,
+  "steps": 70,
+  "names": [
+   "Tape-filet"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "base",
+   "id": "up_heavy",
+   "title": "Haut + Y (lanceur pied) : Pied remontant chasseur",
+   "desc": "Coup directionnel : Haut + Y (lanceur pied).",
+   "opts": "",
+   "toks": "UY",
+   "expect": 33
+  },
+  "name": "piege_up_heavy",
+  "notes": [],
+  "kf": 9,
+  "sizes": [
+   91877,
+   91877
+  ],
+  "secs": 1.5166666666666666,
+  "steps": 104,
+  "names": [
+   "Pied remontant chasseur"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "base",
+   "id": "run_light",
+   "title": "Course + X : Lariat de course",
+   "desc": "Coup directionnel : Course + X.",
+   "opts": "",
+   "toks": "RX",
+   "expect": 31
+  },
+  "name": "piege_run_light",
+  "notes": [],
+  "kf": 8,
+  "sizes": [
+   108458,
+   108458
+  ],
+  "secs": 1.25,
+  "steps": 90,
+  "names": [
+   "Lariat de course"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "base",
+   "id": "run_heavy",
+   "title": "Course + Y : Pied de biais",
+   "desc": "Coup directionnel : Course + Y.",
+   "opts": "",
+   "toks": "RY",
+   "expect": 8
+  },
+  "name": "piege_run_heavy",
+  "notes": [],
+  "kf": 9,
+  "sizes": [
+   166278,
+   166278
+  ],
+  "secs": 1.1333333333333333,
+  "steps": 80,
+  "names": [
+   "Pied de biais"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "bas",
+   "id": "low_light",
+   "title": "Bas + X : Jab bas",
+   "desc": "Coup bas : Bas + X.",
+   "opts": "",
+   "toks": "DX",
+   "expect": 32
+  },
+  "name": "piege_low_light",
+  "notes": [
+   "Ne touche pas le mannequin dans ce scenario (portee, ou enchainement qui ne part pas)."
+  ],
+  "kf": 7,
+  "sizes": [
+   40159,
+   40159
+  ],
+  "secs": 0.8666666666666667,
+  "steps": 54,
+  "names": [
+   "Jab bas"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "bas",
+   "id": "low_heavy",
+   "title": "Bas + Y : Croc-en-jambe",
+   "desc": "Coup bas : Bas + Y.",
+   "opts": "",
+   "toks": "DY",
+   "expect": 7
+  },
+  "name": "piege_low_heavy",
+  "notes": [],
+  "kf": 9,
+  "sizes": [
+   93042,
+   93042
+  ],
+  "secs": 1.1333333333333333,
+  "steps": 80,
+  "names": [
+   "Croc-en-jambe"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "air",
+   "id": "air1",
+   "title": "Saut + X : Paume ressort",
+   "desc": "Premier coup aerien apres un saut.",
+   "opts": "",
+   "toks": "j w16 X",
+   "expect": 11
+  },
+  "name": "piege_air1",
+  "notes": [],
+  "kf": 9,
+  "sizes": [
+   119855,
+   119855
+  ],
+  "secs": 1.3,
+  "steps": 88,
+  "names": [
+   "Paume ressort"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "air",
+   "id": "air2",
+   "title": "Aerien en deux : X X",
+   "desc": "Deux coups aeriens de suite.",
+   "opts": "",
+   "toks": "j w16 X X",
+   "expect": 12
+  },
+  "name": "piege_air2",
+  "notes": [],
+  "kf": 6,
+  "sizes": [
+   165580,
+   165580
+  ],
+  "secs": 1.4666666666666666,
+  "steps": 108,
+  "names": [
+   "Paume ressort",
+   "Coude ressort"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "air",
+   "id": "air3",
+   "title": "Aerien en trois : X X X",
+   "desc": "Trois coups aeriens (maximum).",
+   "opts": "",
+   "toks": "j w16 X X X",
+   "expect": null
+  },
+  "name": "piege_air3",
+  "notes": [],
+  "kf": 8,
+  "sizes": [
+   111798,
+   111798
+  ],
+  "secs": 1.9,
+  "steps": 138,
+  "names": [
+   "Paume ressort",
+   "Coude ressort",
+   "Tape-filet"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "air",
+   "id": "dive",
+   "title": "Plongeon : Chute du filet",
+   "desc": "Coup plongeant (Y en l'air).",
+   "opts": "",
+   "toks": "j w16 Y",
+   "expect": 13
+  },
+  "name": "piege_dive",
+  "notes": [],
+  "kf": 4,
+  "sizes": [
+   147088,
+   147088
+  ],
+  "secs": 1.4666666666666666,
+  "steps": 102,
+  "names": [
+   "Chute du filet"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "air",
+   "id": "airfwd",
+   "title": "Saut avant + X Y",
+   "desc": "Saut vers l'avant, coup aerien puis plongeon.",
+   "opts": "",
+   "toks": "jf w14 X Y",
+   "expect": null
+  },
+  "name": "piege_airfwd",
+  "notes": [],
+  "kf": 6,
+  "sizes": [
+   138414,
+   138414
+  ],
+  "secs": 1.5333333333333334,
+  "steps": 106,
+  "names": [
+   "Paume ressort",
+   "Chute du filet"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "combo",
+   "id": "cb1",
+   "title": "Enchainement 1 : X X X X X",
+   "desc": "Tape-filet > Overhand du traqueur > Coup de massue > Revers du traqueur > Ressort du chasseur",
+   "opts": "",
+   "toks": "X X X X X",
+   "expect": 23
+  },
+  "name": "piege_cb1",
+  "notes": [],
+  "kf": 12,
+  "sizes": [
+   131543,
+   131543
+  ],
+  "secs": 1.9666666666666666,
+  "steps": 162,
+  "names": [
+   "Tape-filet",
+   "Overhand du traqueur",
+   "Coup de massue",
+   "Revers du traqueur",
+   "Ressort du chasseur"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "combo",
+   "id": "cb2",
+   "title": "Enchainement 2 : Y X Y X Y",
+   "desc": "Genou de piege > Coude du traqueur > Detente > Revers tournant > Pied remontant traqueur",
+   "opts": "",
+   "toks": "Y X Y X Y",
+   "expect": 24
+  },
+  "name": "piege_cb2",
+  "notes": [],
+  "kf": 12,
+  "sizes": [
+   173354,
+   173354
+  ],
+  "secs": 2.0166666666666666,
+  "steps": 180,
+  "names": [
+   "Genou de piege",
+   "Coude du traqueur",
+   "Detente",
+   "Revers tournant",
+   "Pied remontant traqueur"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "combo",
+   "id": "cb3",
+   "title": "Enchainement 3 : X Y X Y X",
+   "desc": "Tape-filet > Genou de chasse > Poussee du traqueur > Pietinement traqueur > Massue du chasseur",
+   "opts": "",
+   "toks": "X Y X Y X",
+   "expect": 25
+  },
+  "name": "piege_cb3",
+  "notes": [],
+  "kf": 12,
+  "sizes": [
+   133593,
+   133593
+  ],
+  "secs": 1.8333333333333333,
+  "steps": 158,
+  "names": [
+   "Tape-filet",
+   "Genou de chasse",
+   "Poussee du traqueur",
+   "Pietinement traqueur",
+   "Massue du chasseur"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "combo",
+   "id": "cb4",
+   "title": "Enchainement 4 : Y Y Y Y Y",
+   "desc": "Genou de piege > Teep de chasse > Coup au tibia > Talon du chasseur > Crochet du sanglier",
+   "opts": "",
+   "toks": "Y Y Y Y Y",
+   "expect": 26
+  },
+  "name": "piege_cb4",
+  "notes": [
+   "Longue recuperation (23 images) apres Crochet du sanglier : le heros reste fige un moment."
+  ],
+  "kf": 12,
+  "sizes": [
+   114667,
+   114667
+  ],
+  "secs": 2.2,
+  "steps": 192,
+  "names": [
+   "Genou de piege",
+   "Teep de chasse",
+   "Coup au tibia",
+   "Talon du chasseur",
+   "Crochet du sanglier"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "combo",
+   "id": "cb5",
+   "title": "Enchainement 5 : X X X X Y",
+   "desc": "Tape-filet > Overhand du traqueur > Coup de massue > Revers du traqueur > Pied remontant traqueur",
+   "opts": "",
+   "toks": "X X X X Y",
+   "expect": 24
+  },
+  "name": "piege_cb5",
+  "notes": [],
+  "kf": 12,
+  "sizes": [
+   168265,
+   168265
+  ],
+  "secs": 1.7666666666666666,
+  "steps": 150,
+  "names": [
+   "Tape-filet",
+   "Overhand du traqueur",
+   "Coup de massue",
+   "Revers du traqueur",
+   "Pied remontant traqueur"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "combo",
+   "id": "cb6",
+   "title": "Enchainement 6 : X X X Y X",
+   "desc": "Tape-filet > Overhand du traqueur > Coup de massue > Pietinement traqueur > Massue du chasseur",
+   "opts": "",
+   "toks": "X X X Y X",
+   "expect": 25
+  },
+  "name": "piege_cb6",
+  "notes": [],
+  "kf": 12,
+  "sizes": [
+   142033,
+   142033
+  ],
+  "secs": 1.7666666666666666,
+  "steps": 152,
+  "names": [
+   "Tape-filet",
+   "Overhand du traqueur",
+   "Coup de massue",
+   "Pietinement traqueur",
+   "Massue du chasseur"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "combo",
+   "id": "cb7",
+   "title": "Enchainement 7 : X X X Y Y",
+   "desc": "Tape-filet > Overhand du traqueur > Coup de massue > Pietinement traqueur > Crochet du sanglier",
+   "opts": "",
+   "toks": "X X X Y Y",
+   "expect": 26
+  },
+  "name": "piege_cb7",
+  "notes": [
+   "Longue recuperation (23 images) apres Crochet du sanglier : le heros reste fige un moment."
+  ],
+  "kf": 12,
+  "sizes": [
+   157479,
+   157479
+  ],
+  "secs": 1.9,
+  "steps": 160,
+  "names": [
+   "Tape-filet",
+   "Overhand du traqueur",
+   "Coup de massue",
+   "Pietinement traqueur",
+   "Crochet du sanglier"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "combo",
+   "id": "cb8",
+   "title": "Enchainement 8 : X X Y X X",
+   "desc": "Tape-filet > Overhand du traqueur > Detente > Revers tournant > Ressort du chasseur",
+   "opts": "",
+   "toks": "X X Y X X",
+   "expect": 23
+  },
+  "name": "piege_cb8",
+  "notes": [],
+  "kf": 12,
+  "sizes": [
+   98850,
+   98850
+  ],
+  "secs": 2.1,
+  "steps": 174,
+  "names": [
+   "Tape-filet",
+   "Overhand du traqueur",
+   "Detente",
+   "Revers tournant",
+   "Ressort du chasseur"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "combo",
+   "id": "jug_up_light",
+   "title": "Lanceur poing + jongle aerien",
+   "desc": "Lanceur puis coups aeriens : Ressort a loup > Paume ressort.",
+   "opts": "",
+   "toks": "UX X X",
+   "expect": 6
+  },
+  "name": "piege_jug_up_light",
+  "notes": [
+   "Le dernier coup de l'enchainement n'est pas parti (enchainement interrompu)."
+  ],
+  "kf": 8,
+  "sizes": [
+   109178,
+   109178
+  ],
+  "secs": 1.3166666666666667,
+  "steps": 98,
+  "names": [
+   "Tape-filet",
+   "Overhand du traqueur",
+   "Coup de massue"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "combo",
+   "id": "jug_up_heavy",
+   "title": "Lanceur pied + jongle aerien",
+   "desc": "Lanceur puis coups aeriens : Pied remontant chasseur > Paume ressort.",
+   "opts": "",
+   "toks": "UY X X",
+   "expect": 33
+  },
+  "name": "piege_jug_up_heavy",
+  "notes": [],
+  "kf": 8,
+  "sizes": [
+   118401,
+   118401
+  ],
+  "secs": 1.6166666666666667,
+  "steps": 128,
+  "names": [
+   "Pied remontant chasseur",
+   "Paume ressort",
+   "Coude ressort"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "saisie",
+   "id": "grab1",
+   "title": "Saisie, deux coups, projection",
+   "desc": "Saisie, deux coups tenus puis projection en avant (Y).",
+   "opts": "d=55",
+   "toks": "grab w26 X w26 X w26 Y",
+   "expect": null
+  },
+  "name": "piege_grab1",
+  "notes": [],
+  "kf": 10,
+  "sizes": [
+   150612,
+   150612
+  ],
+  "secs": 2.3,
+  "steps": 156,
+  "names": []
+ },
+ {
+  "spec": {
+   "cat": "saisie",
+   "id": "grab2",
+   "title": "Saisie et projection arriere",
+   "desc": "Saisie puis projection derriere soi (Arriere + Y).",
+   "opts": "d=55 free",
+   "toks": "grab w30 BY",
+   "expect": null
+  },
+  "name": "piege_grab2",
+  "notes": [],
+  "kf": 10,
+  "sizes": [
+   88731,
+   88731
+  ],
+  "secs": 1.6333333333333333,
+  "steps": 110,
+  "names": []
+ },
+ {
+  "spec": {
+   "cat": "saisie",
+   "id": "grab3",
+   "title": "Saisie, rafale de coups tenus",
+   "desc": "Saisie puis coups tenus jusqu'a la projection automatique.",
+   "opts": "d=55 free",
+   "toks": "grab w26 X w26 X w26 X w26 X w26 X w100",
+   "expect": null
+  },
+  "name": "piege_grab3",
+  "notes": [],
+  "kf": 10,
+  "sizes": [
+   139505,
+   139505
+  ],
+  "secs": 4.066666666666666,
+  "steps": 280,
+  "names": []
+ },
+ {
+  "spec": {
+   "cat": "reaction",
+   "id": "guard",
+   "title": "Garde : bloque un coup",
+   "desc": "Garde levee a temps : le coup est bloque.",
+   "opts": "d=60",
+   "toks": "foe at14 g26",
+   "expect": null
+  },
+  "name": "piege_guard",
+  "notes": [],
+  "kf": 10,
+  "sizes": [
+   151000,
+   151000
+  ],
+  "secs": 1.4,
+  "steps": 106,
+  "names": []
+ },
+ {
+  "spec": {
+   "cat": "reaction",
+   "id": "guardlow",
+   "title": "Garde basse",
+   "desc": "Garde accroupie face a un coup.",
+   "opts": "d=60",
+   "toks": "foe at14 gd26",
+   "expect": null
+  },
+  "name": "piege_guardlow",
+  "notes": [],
+  "kf": 10,
+  "sizes": [
+   161101,
+   161101
+  ],
+  "secs": 1.6,
+  "steps": 98,
+  "names": []
+ },
+ {
+  "spec": {
+   "cat": "reaction",
+   "id": "parry",
+   "title": "Parade (garde a la derniere seconde)",
+   "desc": "Garde levee juste avant l'impact : parade parfaite.",
+   "opts": "d=60",
+   "toks": "foe at3 g26",
+   "expect": null
+  },
+  "name": "piege_parry",
+  "notes": [],
+  "kf": 10,
+  "sizes": [
+   74429,
+   74429
+  ],
+  "secs": 1.6166666666666667,
+  "steps": 100,
+  "names": []
+ },
+ {
+  "spec": {
+   "cat": "reaction",
+   "id": "df",
+   "title": "Esquive avant",
+   "desc": "Garde + direction au moment de l'impact.",
+   "opts": "d=60",
+   "toks": "foe at8 df",
+   "expect": null
+  },
+  "name": "piege_df",
+  "notes": [
+   "Le heros traverse ou colle la cible (ecart minimal -72 unites)."
+  ],
+  "kf": 10,
+  "sizes": [
+   119452,
+   119452
+  ],
+  "secs": 1.5666666666666667,
+  "steps": 96,
+  "names": []
+ },
+ {
+  "spec": {
+   "cat": "reaction",
+   "id": "db",
+   "title": "Esquive arriere",
+   "desc": "Garde + direction au moment de l'impact.",
+   "opts": "d=60",
+   "toks": "foe at8 db",
+   "expect": null
+  },
+  "name": "piege_db",
+  "notes": [],
+  "kf": 10,
+  "sizes": [
+   71015,
+   71015
+  ],
+  "secs": 1.6333333333333333,
+  "steps": 100,
+  "names": []
+ },
+ {
+  "spec": {
+   "cat": "reaction",
+   "id": "du",
+   "title": "Esquive vers le fond",
+   "desc": "Garde + direction au moment de l'impact.",
+   "opts": "d=60",
+   "toks": "foe at8 du",
+   "expect": null
+  },
+  "name": "piege_du",
+  "notes": [],
+  "kf": 10,
+  "sizes": [
+   106175,
+   106175
+  ],
+  "secs": 1.6,
+  "steps": 98,
+  "names": []
+ },
+ {
+  "spec": {
+   "cat": "reaction",
+   "id": "dd",
+   "title": "Esquive vers l'avant-scene",
+   "desc": "Garde + direction au moment de l'impact.",
+   "opts": "d=60",
+   "toks": "foe at8 dd",
+   "expect": null
+  },
+  "name": "piege_dd",
+  "notes": [],
+  "kf": 10,
+  "sizes": [
+   90342,
+   90342
+  ],
+  "secs": 1.6333333333333333,
+  "steps": 100,
+  "names": []
+ },
+ {
+  "spec": {
+   "cat": "super",
+   "id": "ult0",
+   "title": "Super 1 : PIRATAGE EN RAFALE (neutre (RT))",
+   "desc": "Type moteur : Multi. Cout et mise en scene reels.",
+   "opts": "max=420 d=105",
+   "toks": "ult0",
+   "expect": null
+  },
+  "name": "piege_ult0",
+  "notes": [],
+  "kf": 10,
+  "sizes": [
+   130570,
+   130570
+  ],
+  "secs": 4.033333333333333,
+  "steps": 278,
+  "names": []
+ },
+ {
+  "spec": {
+   "cat": "super",
+   "id": "ult1",
+   "title": "Super 2 : FILET DE CABLES (bas + RT)",
+   "desc": "Type moteur : Multi. Cout et mise en scene reels.",
+   "opts": "max=420 d=105",
+   "toks": "ult1",
+   "expect": null
+  },
+  "name": "piege_ult1",
+  "notes": [],
+  "kf": 10,
+  "sizes": [
+   171072,
+   171072
+  ],
+  "secs": 3.433333333333333,
+  "steps": 240,
+  "names": []
+ },
+ {
+  "spec": {
+   "cat": "super",
+   "id": "ult2",
+   "title": "Super 3 : CHARGE DU MECHA (avant + RT)",
+   "desc": "Type moteur : Multi. Cout et mise en scene reels.",
+   "opts": "max=420 d=105",
+   "toks": "ult2",
+   "expect": null
+  },
+  "name": "piege_ult2",
+  "notes": [],
+  "kf": 10,
+  "sizes": [
+   132652,
+   132652
+  ],
+  "secs": 3.7,
+  "steps": 256,
+  "names": []
+ },
+ {
+  "spec": {
+   "cat": "super",
+   "id": "ult3",
+   "title": "Super 4 : LEURRE DE SOUS-SOL (arriere + RT)",
+   "desc": "Type moteur : Multi. Cout et mise en scene reels.",
+   "opts": "max=420 d=105",
+   "toks": "ult3",
+   "expect": null
+  },
+  "name": "piege_ult3",
+  "notes": [],
+  "kf": 10,
+  "sizes": [
+   124965,
+   124965
+  ],
+  "secs": 3.6333333333333333,
+  "steps": 252,
+  "names": []
+ },
+ {
+  "spec": {
+   "cat": "super",
+   "id": "ult4",
+   "title": "Super 5 : ESSAIM DE DRONES (en l'air (RT))",
+   "desc": "Type moteur : Multi. Cout et mise en scene reels.",
+   "opts": "max=420 d=105",
+   "toks": "j w10 ult4",
+   "expect": null
+  },
+  "name": "piege_ult4",
+  "notes": [],
+  "kf": 10,
+  "sizes": [
+   131540,
+   131540
+  ],
+  "secs": 4.4,
+  "steps": 298,
+  "names": []
+ },
+ {
+  "spec": {
+   "cat": "transfo",
+   "id": "trans",
+   "title": "Transformation : MECHA KOGEN",
+   "desc": "Ki + gachette : mise en scene de la transformation.",
+   "opts": "max=300",
+   "toks": "tr",
+   "expect": null
+  },
+  "name": "piege_trans",
+  "notes": [],
+  "kf": 10,
+  "sizes": [
+   144988,
+   144988
+  ],
+  "secs": 1.3166666666666667,
+  "steps": 94,
+  "names": []
+ },
+ {
+  "spec": {
+   "cat": "transfo",
+   "id": "spb1",
+   "title": "Special B (appui bref) : Trap",
+   "desc": "Bouton B tape.",
+   "opts": "max=300",
+   "toks": "sp0",
+   "expect": null
+  },
+  "name": "piege_spb1",
+  "notes": [],
+  "kf": 1,
+  "sizes": [
+   136460,
+   136460
+  ],
+  "secs": 0.45,
+  "steps": 40,
+  "names": []
+ },
+ {
+  "spec": {
+   "cat": "transfo",
+   "id": "spb2",
+   "title": "Special B charge",
+   "desc": "Bouton B maintenu puis relache.",
+   "opts": "max=300",
+   "toks": "sp45",
+   "expect": null
+  },
+  "name": "piege_spb2",
+  "notes": [],
+  "kf": 10,
+  "sizes": [
+   137678,
+   137678
+  ],
+  "secs": 2.1,
+  "steps": 136,
+  "names": []
+ }
+]

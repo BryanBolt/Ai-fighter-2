@@ -11,7 +11,7 @@ import { WebSocketServer } from 'ws';
 import { createPush } from './push.js';
 
 export const PROTOCOL_VERSION = 8; // 8 : nunchaku (nouvelle arme ramassable, serie de six coups, Pied = coups de pied avec l'arme) et armes au sol du dojo/temple changees ; 7 : entree Saisie (nouveau bit d'entree) + coups renommes (SCHEMA_VERSION 8) ; 6 : table des coups changee (grammaire X/Y des 9 autres heros, SCHEMA_VERSION 7) ; 5 : jusqu'a 8 joueurs, vague/PV de depart (solo -> en ligne) ; 4 : table des coups changee (aeriens, realisme, grammaire X/Y ; tir allie, QA). 3 : parties hebergees (jeu complet : loadout, cmd sequences). 2 : join_any / host. Seuls les clients v8 sont acceptes.
-const COMPAT_VERSIONS = [7]; // protocole 7 : les clients 1 a 6 n'ont pas la meme table de coups (et 1 a 4 ne savent pas lire des salons de 8 places), ils doivent se mettre a jour
+const COMPAT_VERSIONS = [PROTOCOL_VERSION]; // derive de PROTOCOL_VERSION : ne peut plus diverger (v8 etait refuse par erreur, ancienne valeur [7]) ; // protocole 7 : les clients 1 a 6 n'ont pas la meme table de coups (et 1 a 4 ne savent pas lire des salons de 8 places), ils doivent se mettre a jour
 const HOSTED_SIZE = 2; // taille par defaut d une partie hebergee (anciens clients) ; le client actuel demande 4 avec `size` (places vides dormantes)
 const HOSTED_MIN = 2; // taille minimale demandable
 const MAX_CONN_PER_IP = 8; // connexions simultanees par adresse
@@ -283,7 +283,9 @@ export function createServer(opts = {}) {
       s.hi = -1; s.journal = []; s.lastMove = Date.now(); s.lastBits = 0; s.cmds = 0; s.loadouts = 0; s.afkWarned = false;
     });
     room.started = true; room.ctl = []; room.hashes = new Map();
-    room.seed = (rnd(0x7fffffff) >>> 0) || 1;
+    // Revanche apres une defaite : MEME graine (meme terrain, memes vagues) ; nouvelle graine seulement apres une victoire.
+    room.seed = (room.keepSeed && room.seed) ? room.seed : ((rnd(0x7fffffff) >>> 0) || 1);
+    room.keepSeed = false;
     room.config = { seed: room.seed, size, run: room.run, stage: room.options.stage | 0, full: !!room.full, mode: room.mode | 0, chapter: room.chapter | 0, wave: room.run === 0 ? (room.startWave | 0) : 0, hp: room.run === 0 ? (room.startHp | 0) : 0, ff: room.ff !== false, ffm: room.ffm, pal: room.pal !== false, slots: room.slots.slice(0, size).map((s, i) => ({ slot: i, char: s.char, name: s.name, ai: s.mode === 'ai' })) };
     broadcast(room, { t: 'start', ...room.config });
   }
@@ -334,7 +336,7 @@ export function createServer(opts = {}) {
 
   // ---- Parties toujours en cours : host / join_any (pas de salon d'attente, rejoignable a tout moment)
   function startAuto(room) {
-    room.options = { size: room.full ? (room.hostedSize || HOSTED_SIZE) : MAX_SLOTS, stage: room.full ? Math.max(0, Math.min(FULL_STAGES - 1, room.fixedStage ?? 0)) : Math.max(0, Math.min(STAGES - 1, room.fixedStage ?? (room.stageBase + room.run) % STAGES)) };
+    room.options = { size: room.full ? (room.hostedSize || HOSTED_SIZE) : MAX_SLOTS, stage: room.full ? Math.max(0, Math.min(FULL_STAGES - 1, room.fixedStage ?? 0)) : Math.max(0, Math.min(STAGES - 1, room.fixedStage ?? (room.stageBase + (room.wins | 0)) % STAGES)) };
     startGame(room);
   }
   function restartRun(room) {
@@ -388,7 +390,7 @@ export function createServer(opts = {}) {
     room.auto = true; room.keep = !!keep; room.ownerIp = c.ip;
     if (typeof ff === 'boolean') room.ff = ff;
     if (full) {
-      room.full = true; room.mode = int(full.mode, 0, 2); room.chapter = int(full.chapter, 0, 64);
+      room.full = true; room.mode = int(full.mode, 0, 4); room.chapter = int(full.chapter, 0, 64);
       room.hostedSize = int(full.size, HOSTED_MIN, MAX_SLOTS, HOSTED_SIZE); // 2 a 8 joueurs (places vides dormantes)
       room.startWave = int(full.wave, 0, 64, 0); room.startHp = int(full.hp, 0, 100, 0); // solo transforme : on reprend a la vague et aux PV de l'hote
     }
@@ -719,6 +721,8 @@ export function createServer(opts = {}) {
         if (room.full) return; // partie hebergee : pas de relance automatique, les joueurs decident (chapitre suivant ou quitter)
         if (room.auto) {
           if (m.run !== undefined && (m.run | 0) !== room.run) return;
+          // Coherence de progression : le terrain n'avance qu'apres une victoire ; une defaite rejoue le meme stage et la meme graine.
+          if (!room.restartTimer) { if (m.won === true) room.wins = (room.wins | 0) + 1; else room.keepSeed = true; }
           if (!room.restartTimer) { room.restartTimer = setTimeout(() => restartRun(room), restartMs); room.restartTimer.unref?.(); }
           return;
         }

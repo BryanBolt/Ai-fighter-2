@@ -1,0 +1,43 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Accessibilite - AI Fighter 2</title>
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b}
+body{margin:0;font:16px system-ui,sans-serif;background:var(--papier);color:var(--encre);padding:14px;line-height:1.35}
+h1{font-size:22px;margin:0 0 4px}h2{font-size:17px;margin:8px 0 2px}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-top:12px}
+.c{background:#fff;border:3px solid var(--encre);border-radius:16px;padding:10px;box-shadow:5px 5px 0 var(--accent)}
+.c.ok{outline:4px solid #2e9b5b}.c.no{outline:4px solid var(--accent)}
+img{width:100%;border-radius:10px;background:var(--encre);display:block}
+p{margin:4px 0;font-size:14px}.tag{display:inline-block;background:var(--encre);color:var(--papier);border-radius:999px;padding:2px 10px;font-size:12px;font-weight:700}
+button{font:inherit;font-weight:700;padding:10px 14px;border-radius:999px;border:2px solid var(--encre);margin:4px 6px 0 0;cursor:pointer;background:var(--papier);color:var(--encre)}
+button.v{background:#2e9b5b;color:#fff}button.x{background:var(--accent);color:#fff}
+textarea{width:100%;box-sizing:border-box;border-radius:10px;border:2px solid var(--encre);padding:6px;margin-top:6px;background:var(--papier);color:var(--encre);font:inherit}
+#o{white-space:pre-wrap;background:var(--encre);color:var(--papier);padding:12px;border-radius:12px;margin-top:14px}
+.go{background:var(--accent);color:#fff;margin-top:14px}
+</style></head><body>
+<h1>Accessibilite : jouable par tout le monde</h1>
+<p>Captures du vrai moteur, une par reglage. Une seule page de reglages (Options &gt; Accessibilite) : icone, mot court, pastille ON / OFF, apercu en direct. Pour chaque carte : Valider ou A refaire (+ remarque), puis genere le texte et colle-le dans le chat.</p>
+<p>Reglages locaux : rien n'entre dans le hash multijoueur. Limiteur de photosensibilite toujours actif : jamais plus de 3 eclats par seconde.</p>
+<div class="g" id="g"></div>
+<button class="go" onclick="out()">Generer mon texte</button><div id="o"></div>
+<script>
+var C=[
+{key:"page_pc",name:"Page de reglages (PC)",n:"15 lignes",d:"Une page : icone, mot court, ON/OFF ou valeur avec fleches, apercu en direct a droite, phrase d'aide courte.",img:"accessibilite/pg_pc_100.png"},
+{key:"page_160",name:"Texte x1,6 + daltonien + formes + sous-titres",n:"160 %",d:"Texte agrandi a 160 % : la page se met a l'echelle sans deborder ; l'apercu montre les formes et la couleur filtree.",img:"accessibilite/pg_pc_160.png"},
+{key:"page_tel",name:"Page de reglages (telephone portrait)",n:"390x844",d:"Apercu en haut, liste defilante (glisser, molette, fleches). Cibles tactiles >= 46.",img:"accessibilite/pg_tel_100.png"},
+{key:"page_tel160",name:"Telephone, texte 160 %, contraste fort, une main",n:"160 %",d:"Meme page au maximum de taille de texte.",img:"accessibilite/pg_tel_160.png"},
+{key:"page_petit",name:"Petit telephone 360x640, texte 160 %",n:"petit ecran",d:"Le cas le plus serre : rien ne deborde, la liste defile.",img:"accessibilite/pg_petit_160.png"},
+{key:"page_paysage",name:"Telephone paysage 844x390, texte 160 %",n:"paysage",d:"Liste a gauche, apercu a droite.",img:"accessibilite/pg_paysage_160.png"},
+{key:"cb1",name:"Daltonisme rouge-vert + formes (combat)",n:"protanopie / deuteranopie",d:"Palette Okabe-Ito et marqueurs de forme sur danger, barres (graduations), annonces de decor.",img:"accessibilite/fight_cb1.png"},
+{key:"cb2",name:"Daltonisme bleu-jaune (combat)",n:"tritanopie",d:"Autre palette, memes formes.",img:"accessibilite/fight_cb2.png"},
+{key:"contrast",name:"Contraste fort (commandes tactiles)",n:"contours epais",d:"Boutons opaques, contours epais, avec leur mot.",img:"accessibilite/fight_contrast.png"},
+{key:"text160",name:"Texte x1,6 en combat",n:"HUD agrandi",d:"Barres, noms et messages a 160 %.",img:"accessibilite/fight_text160.png"},
+{key:"onehand",name:"Mode une main (tactile)",n:"stick + boutons du meme cote",d:"Le stick vient a cote des boutons : un seul pouce. Avec 'Tenir = repeter', plus de martelage.",img:"accessibilite/fight_onehand.png"},
+{key:"captions",name:"Sous-titres des sons",n:"cues visuels",d:"Les sons importants (coup, garde, K.O., super) en bandeau ; duree allongee par le reglage Delais.",img:"accessibilite/fight_captions.png"},
+{key:"reduce",name:"Moins d'effets",n:"zero flash",d:"Plus de secousse, de flash, de kill cam ni de zoom : le combat reste lisible.",img:"accessibilite/fight_reduce.png"}
+],st={};
+var g=document.getElementById('g');
+C.forEach(function(c){var d=document.createElement('div');d.className='c';d.id='c_'+c.key;
+d.innerHTML='<img src="'+c.img+'" alt="" onerror="this.style.display=\'none\'"><h2>'+c.name+' <span class="tag">'+c.n+'</span></h2><p>'+c.d+'</p><button class="v" data-k="'+c.key+'" data-v="1">Valider</button><button class="x" data-k="'+c.key+'" data-v="-1">A refaire</button><textarea id="t_'+c.key+'" rows="2" placeholder="Remarque"></textarea>';g.appendChild(d);});
+g.addEventListener('click',function(e){var b=e.target;if(!b.dataset||!b.dataset.k)return;var v=+b.dataset.v;st[b.dataset.k]=v;document.getElementById('c_'+b.dataset.k).className='c '+(v>0?'ok':'no');});
+function out(){var L=C.map(function(c){var v=st[c.key];var t=document.getElementById('t_'+c.key).value.trim();return (v>0?'VALIDE':v<0?'A REFAIRE':'NON VU')+' : '+c.name+' ('+c.n+')'+(t?' - '+t:'');});document.getElementById('o').textContent=L.join('\n');}
+</script></body></html>

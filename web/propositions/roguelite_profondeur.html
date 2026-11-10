@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Roguelite : profondeur</title>
+<style>
+:root{--ink:#221834;--paper:#fff3e0;--acc:#d8456b}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 system-ui,sans-serif;padding:16px;max-width:980px;margin:auto}
+h1{border-bottom:4px solid var(--acc)}
+.card{background:#fff;border:2px solid var(--ink);border-radius:10px;padding:10px 12px;margin:8px 0}
+.tag{display:inline-block;padding:1px 8px;border-radius:99px;color:#fff;font-size:13px}
+.impl{background:#2e7d4f}.prop{background:var(--acc)}
+button{border:2px solid var(--ink);background:var(--paper);border-radius:8px;padding:4px 10px;cursor:pointer;margin-right:6px}
+button.on{background:var(--ink);color:var(--paper)}
+textarea{width:100%;box-sizing:border-box;margin-top:6px}
+.gif{border:2px dashed var(--acc);padding:8px;margin:8px 0;border-radius:8px;font-size:14px}
+</style></head><body>
+<h1>Roguelite : profondeur</h1>
+<p>Etat : logique pure et testee (modules <code>rl_depth.rs</code>, <code>rl_meta.rs</code>). Gameplay de base complet des l'etage 1 ; les pouvoirs viennent des recompenses.</p>
+<div class="gif">GIF « transition sans surprise » et « choix de porte » du vrai moteur : <b>a produire</b> (le branchement visuel des phases marche / annonce / grace n'est pas encore dans le moteur ; seule la logique est livree).</div>
+<div id="list"></div>
+<script>
+const I=[
+["Plan d'etage a 2-4 portes avec icones (X, XX, $, ?, +, ~, !, ^, M, *, #, B)","implemente"],
+["Porte 0 toujours sure ; repos avant le boss ; boutique par acte ; pas d'impasse","implemente"],
+["Vote de porte 1-8 joueurs : majorite, egalite tiree par la graine, defaut = porte sure","implemente"],
+["Transition : marche guidee 1,5 s + annonce muette 1 s + grace 0,75 s, jamais d'attaque surprise","implemente"],
+["Provenance coherente des ennemis (porte, ascenseur, fenetre, portail, sol, cotes) selon le decor","implemente"],
+["Arenes adaptees (largeur, ennemis simultanes, dangers) par type de salle et etage","implemente"],
+["Mutateurs de run (8) : malus/bonus choisis, score modifie","implemente"],
+["Reliques passives permanentes (14) avec rarete, benedictions et maledictions bornees","implemente"],
+["Synergies nommees (8) + identite de build","implemente"],
+["Meta-progression : deblocages, 8 succes, carnet de decouvertes, 3 paliers de difficulte","implemente"],
+["Soak 1000 runs par palier : victoire decroissante, aucune impasse","implemente"],
+["Salle secrete (cle d'argent) et Ange en boss final secret","implemente"],
+["Minimap des salles visitees (rendu)","propose"],
+["Annonces d'etage muettes visuelles et feedback de loot (rendu)","propose"],
+["Musique par biome et par type de salle","propose"],
+["Evolution des daemons par sanctuaires","propose"],
+["Marchand avec monnaie et achat de reliques","propose"],
+["Salle de defi a risque (vagues chronometrees, relique a la cle)","propose"],
+["Etages secrets multi-salles","propose"],
+["Soak sur le vrai moteur (IA jouant les 1000 runs)","propose"]];
+const L=document.getElementById('list'),S=JSON.parse(localStorage.getItem('rlp')||'{}');
+I.forEach((x,i)=>{const d=document.createElement('div');d.className='card';
+d.innerHTML=`<b>${i+1}.</b> ${x[0]} <span class="tag ${x[1]=='implemente'?'impl':'prop'}">${x[1]}</span><div></div><textarea rows="1" placeholder="Commentaire"></textarea>`;
+const b=d.children[2],t=d.children[3];t.value=(S[i]||{}).c||'';
+['Valider','A refaire'].forEach(n=>{const k=document.createElement('button');k.textContent=n;if((S[i]||{}).v==n)k.className='on';
+k.onclick=()=>{S[i]=Object.assign(S[i]||{},{v:n});localStorage.setItem('rlp',JSON.stringify(S));[...b.children].forEach(c=>c.className='');k.className='on'};b.appendChild(k)});
+t.oninput=()=>{S[i]=Object.assign(S[i]||{},{c:t.value});localStorage.setItem('rlp',JSON.stringify(S))};L.appendChild(d)});
+</script></body></html>

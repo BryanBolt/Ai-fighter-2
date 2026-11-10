@@ -1,0 +1,1055 @@
+[
+ {
+  "spec": {
+   "cat": "base",
+   "id": "x1",
+   "title": "Coup de depart X : Moulinet court",
+   "desc": "Le jab d'ouverture de l'arbre (touche X).",
+   "opts": "",
+   "toks": "X",
+   "expect": 0
+  },
+  "name": "bo_x1",
+  "notes": [],
+  "kf": 7,
+  "sizes": [
+   100828,
+   100828
+  ],
+  "secs": 1.1333333333333333,
+  "steps": 74,
+  "names": [
+   "Moulinet court"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "base",
+   "id": "y1",
+   "title": "Coup de depart Y : Pied du moine",
+   "desc": "Le pied d'ouverture de l'arbre (touche Y).",
+   "opts": "",
+   "toks": "Y",
+   "expect": 3
+  },
+  "name": "bo_y1",
+  "notes": [],
+  "kf": 9,
+  "sizes": [
+   125571,
+   125571
+  ],
+  "secs": 1.35,
+  "steps": 94,
+  "names": [
+   "Pied du moine"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "base",
+   "id": "fwd_heavy",
+   "title": "Avant + Y : Pied fendant",
+   "desc": "Coup directionnel : Avant + Y.",
+   "opts": "",
+   "toks": "FY",
+   "expect": 5
+  },
+  "name": "bo_fwd_heavy",
+  "notes": [],
+  "kf": 8,
+  "sizes": [
+   118555,
+   118555
+  ],
+  "secs": 1.2,
+  "steps": 86,
+  "names": [
+   "Pied fendant"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "base",
+   "id": "back_heavy",
+   "title": "Arriere + Y : Pied de recul",
+   "desc": "Coup directionnel : Arriere + Y.",
+   "opts": "",
+   "toks": "BY",
+   "expect": 30
+  },
+  "name": "bo_back_heavy",
+  "notes": [],
+  "kf": 9,
+  "sizes": [
+   91032,
+   91032
+  ],
+  "secs": 1.0833333333333333,
+  "steps": 76,
+  "names": [
+   "Pied de recul"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "base",
+   "id": "back_light",
+   "title": "Arriere + X : Repousse du manche",
+   "desc": "Coup directionnel : Arriere + X.",
+   "opts": "",
+   "toks": "BX",
+   "expect": 8
+  },
+  "name": "bo_back_light",
+  "notes": [],
+  "kf": 9,
+  "sizes": [
+   84782,
+   84782
+  ],
+  "secs": 1.0833333333333333,
+  "steps": 76,
+  "names": [
+   "Repousse du manche"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "base",
+   "id": "fwd_light",
+   "title": "Avant + X : Estoc du baton",
+   "desc": "Coup directionnel : Avant + X.",
+   "opts": "",
+   "toks": "FX",
+   "expect": 34
+  },
+  "name": "bo_fwd_light",
+  "notes": [],
+  "kf": 8,
+  "sizes": [
+   109837,
+   109837
+  ],
+  "secs": 0.9666666666666667,
+  "steps": 68,
+  "names": [
+   "Estoc du baton"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "base",
+   "id": "up_light",
+   "title": "Haut + X (lanceur poing) : Fauche montante",
+   "desc": "Coup directionnel : Haut + X (lanceur poing).",
+   "opts": "",
+   "toks": "UX",
+   "expect": 33
+  },
+  "name": "bo_up_light",
+  "notes": [
+   "Le scenario n'a pas declenche le coup attendu : verifier la commande."
+  ],
+  "kf": 7,
+  "sizes": [
+   129696,
+   129696
+  ],
+  "secs": 1.1333333333333333,
+  "steps": 74,
+  "names": [
+   "Moulinet court"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "base",
+   "id": "up_heavy",
+   "title": "Haut + Y (lanceur pied) : Pied remontant du moine",
+   "desc": "Coup directionnel : Haut + Y (lanceur pied).",
+   "opts": "",
+   "toks": "UY",
+   "expect": 6
+  },
+  "name": "bo_up_heavy",
+  "notes": [],
+  "kf": 8,
+  "sizes": [
+   111954,
+   111954
+  ],
+  "secs": 1.4833333333333334,
+  "steps": 102,
+  "names": [
+   "Pied remontant du moine"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "base",
+   "id": "run_light",
+   "title": "Course + X : Fauchage de course",
+   "desc": "Coup directionnel : Course + X.",
+   "opts": "",
+   "toks": "RX",
+   "expect": 31
+  },
+  "name": "bo_run_light",
+  "notes": [],
+  "kf": 8,
+  "sizes": [
+   131215,
+   131215
+  ],
+  "secs": 1.2,
+  "steps": 86,
+  "names": [
+   "Fauchage de course"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "base",
+   "id": "run_heavy",
+   "title": "Course + Y : Genou de course",
+   "desc": "Coup directionnel : Course + Y.",
+   "opts": "",
+   "toks": "RY",
+   "expect": 32
+  },
+  "name": "bo_run_heavy",
+  "notes": [],
+  "kf": 8,
+  "sizes": [
+   128860,
+   128860
+  ],
+  "secs": 1.2,
+  "steps": 86,
+  "names": [
+   "Genou de course"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "bas",
+   "id": "low_light",
+   "title": "Bas + X : Fauche du baton",
+   "desc": "Coup bas : Bas + X.",
+   "opts": "",
+   "toks": "DX",
+   "expect": 7
+  },
+  "name": "bo_low_light",
+  "notes": [],
+  "kf": 8,
+  "sizes": [
+   93485,
+   93485
+  ],
+  "secs": 1.0833333333333333,
+  "steps": 76,
+  "names": [
+   "Fauche du baton"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "bas",
+   "id": "low_heavy",
+   "title": "Bas + Y : Pietinement du moine",
+   "desc": "Coup bas : Bas + Y.",
+   "opts": "",
+   "toks": "DY",
+   "expect": 9
+  },
+  "name": "bo_low_heavy",
+  "notes": [],
+  "kf": 8,
+  "sizes": [
+   132148,
+   132148
+  ],
+  "secs": 1.2666666666666666,
+  "steps": 92,
+  "names": [
+   "Pietinement du moine"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "air",
+   "id": "air1",
+   "title": "Saut + X : Frappe aerienne",
+   "desc": "Premier coup aerien apres un saut.",
+   "opts": "",
+   "toks": "j w16 X",
+   "expect": 11
+  },
+  "name": "bo_air1",
+  "notes": [],
+  "kf": 9,
+  "sizes": [
+   97587,
+   97587
+  ],
+  "secs": 1.3666666666666667,
+  "steps": 92,
+  "names": [
+   "Frappe aerienne"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "air",
+   "id": "air2",
+   "title": "Aerien en deux : X X",
+   "desc": "Deux coups aeriens de suite.",
+   "opts": "",
+   "toks": "j w16 X X",
+   "expect": 12
+  },
+  "name": "bo_air2",
+  "notes": [],
+  "kf": 6,
+  "sizes": [
+   107812,
+   107812
+  ],
+  "secs": 1.45,
+  "steps": 106,
+  "names": [
+   "Frappe aerienne",
+   "Coupe aerienne"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "air",
+   "id": "air3",
+   "title": "Aerien en trois : X X X",
+   "desc": "Trois coups aeriens (maximum).",
+   "opts": "",
+   "toks": "j w16 X X X",
+   "expect": null
+  },
+  "name": "bo_air3",
+  "notes": [],
+  "kf": 8,
+  "sizes": [
+   121923,
+   121923
+  ],
+  "secs": 1.8833333333333333,
+  "steps": 136,
+  "names": [
+   "Frappe aerienne",
+   "Coupe aerienne",
+   "Moulinet court"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "air",
+   "id": "dive",
+   "title": "Plongeon : Plongeon du moine",
+   "desc": "Coup plongeant (Y en l'air).",
+   "opts": "",
+   "toks": "j w16 Y",
+   "expect": 13
+  },
+  "name": "bo_dive",
+  "notes": [],
+  "kf": 8,
+  "sizes": [
+   165081,
+   165081
+  ],
+  "secs": 1.4,
+  "steps": 98,
+  "names": [
+   "Plongeon du moine"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "air",
+   "id": "airfwd",
+   "title": "Saut avant + X Y",
+   "desc": "Saut vers l'avant, coup aerien puis plongeon.",
+   "opts": "",
+   "toks": "jf w14 X Y",
+   "expect": null
+  },
+  "name": "bo_airfwd",
+  "notes": [],
+  "kf": 6,
+  "sizes": [
+   106622,
+   106622
+  ],
+  "secs": 1.6,
+  "steps": 118,
+  "names": [
+   "Frappe aerienne",
+   "Plongeon du moine"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "combo",
+   "id": "cb1",
+   "title": "Enchainement 1 : X X X X X",
+   "desc": "Moulinet court > Taille tournoyante > Cercle du baton > Taille du baton > Fauche rasante",
+   "opts": "",
+   "toks": "X X X X X",
+   "expect": 23
+  },
+  "name": "bo_cb1",
+  "notes": [],
+  "kf": 12,
+  "sizes": [
+   180880,
+   180880
+  ],
+  "secs": 1.8,
+  "steps": 156,
+  "names": [
+   "Moulinet court",
+   "Taille tournoyante",
+   "Cercle du baton",
+   "Taille du baton",
+   "Fauche rasante"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "combo",
+   "id": "cb2",
+   "title": "Enchainement 2 : Y X Y X Y",
+   "desc": "Pied du moine > Revers pivot > Pied lateral du moine > Moulinet total > Pied crochet du moine",
+   "opts": "",
+   "toks": "Y X Y X Y",
+   "expect": 24
+  },
+  "name": "bo_cb2",
+  "notes": [
+   "Longue recuperation (22 images) apres Pied crochet du moine : le heros reste fige un moment."
+  ],
+  "kf": 12,
+  "sizes": [
+   133088,
+   133088
+  ],
+  "secs": 2.183333333333333,
+  "steps": 234,
+  "names": [
+   "Pied du moine",
+   "Revers pivot",
+   "Pied lateral du moine",
+   "Moulinet total",
+   "Pied crochet du moine"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "combo",
+   "id": "cb3",
+   "title": "Enchainement 3 : X Y X Y X",
+   "desc": "Moulinet court > Pied vif du moine > Pivot massif > Genou du moine > Tourbillon rasant",
+   "opts": "",
+   "toks": "X Y X Y X",
+   "expect": 25
+  },
+  "name": "bo_cb3",
+  "notes": [],
+  "kf": 12,
+  "sizes": [
+   101984,
+   101984
+  ],
+  "secs": 1.8,
+  "steps": 158,
+  "names": [
+   "Moulinet court",
+   "Pied vif du moine",
+   "Pivot massif",
+   "Genou du moine",
+   "Tourbillon rasant"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "combo",
+   "id": "cb4",
+   "title": "Enchainement 4 : Y Y Y Y Y",
+   "desc": "Pied du moine > Fouet du moine > Talon du moine > Pied de grue du moine > Pied glissant du moine",
+   "opts": "",
+   "toks": "Y Y Y Y Y",
+   "expect": 26
+  },
+  "name": "bo_cb4",
+  "notes": [
+   "Longue recuperation (24 images) apres Pied glissant du moine : le heros reste fige un moment."
+  ],
+  "kf": 12,
+  "sizes": [
+   134833,
+   134833
+  ],
+  "secs": 2.283333333333333,
+  "steps": 246,
+  "names": [
+   "Pied du moine",
+   "Fouet du moine",
+   "Talon du moine",
+   "Pied de grue du moine",
+   "Pied glissant du moine"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "combo",
+   "id": "cb5",
+   "title": "Enchainement 5 : X X X X Y",
+   "desc": "Moulinet court > Taille tournoyante > Cercle du baton > Taille du baton > Pied crochet du moine",
+   "opts": "",
+   "toks": "X X X X Y",
+   "expect": 24
+  },
+  "name": "bo_cb5",
+  "notes": [
+   "Longue recuperation (22 images) apres Pied crochet du moine : le heros reste fige un moment."
+  ],
+  "kf": 12,
+  "sizes": [
+   162431,
+   162431
+  ],
+  "secs": 1.8333333333333333,
+  "steps": 176,
+  "names": [
+   "Moulinet court",
+   "Taille tournoyante",
+   "Cercle du baton",
+   "Taille du baton",
+   "Pied crochet du moine"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "combo",
+   "id": "cb6",
+   "title": "Enchainement 6 : X X X Y X",
+   "desc": "Moulinet court > Taille tournoyante > Cercle du baton > Genou du moine > Tourbillon rasant",
+   "opts": "",
+   "toks": "X X X Y X",
+   "expect": 25
+  },
+  "name": "bo_cb6",
+  "notes": [],
+  "kf": 12,
+  "sizes": [
+   175993,
+   175993
+  ],
+  "secs": 1.75,
+  "steps": 154,
+  "names": [
+   "Moulinet court",
+   "Taille tournoyante",
+   "Cercle du baton",
+   "Genou du moine",
+   "Tourbillon rasant"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "combo",
+   "id": "cb7",
+   "title": "Enchainement 7 : X X X Y Y",
+   "desc": "Moulinet court > Taille tournoyante > Cercle du baton > Genou du moine > Pied glissant du moine",
+   "opts": "",
+   "toks": "X X X Y Y",
+   "expect": 26
+  },
+  "name": "bo_cb7",
+  "notes": [
+   "Longue recuperation (24 images) apres Pied glissant du moine : le heros reste fige un moment."
+  ],
+  "kf": 12,
+  "sizes": [
+   117942,
+   117942
+  ],
+  "secs": 2.033333333333333,
+  "steps": 222,
+  "names": [
+   "Moulinet court",
+   "Taille tournoyante",
+   "Cercle du baton",
+   "Genou du moine",
+   "Pied glissant du moine"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "combo",
+   "id": "cb8",
+   "title": "Enchainement 8 : X X Y X X",
+   "desc": "Moulinet court > Taille tournoyante > Pied lateral du moine > Moulinet total > Fauche rasante",
+   "opts": "",
+   "toks": "X X Y X X",
+   "expect": 23
+  },
+  "name": "bo_cb8",
+  "notes": [],
+  "kf": 12,
+  "sizes": [
+   136559,
+   136559
+  ],
+  "secs": 2.4,
+  "steps": 222,
+  "names": [
+   "Moulinet court",
+   "Taille tournoyante",
+   "Pied lateral du moine",
+   "Moulinet total",
+   "Fauche rasante"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "combo",
+   "id": "jug_up_light",
+   "title": "Lanceur poing + jongle aerien",
+   "desc": "Lanceur puis coups aeriens : Fauche montante > Frappe aerienne.",
+   "opts": "",
+   "toks": "UX X X",
+   "expect": 33
+  },
+  "name": "bo_jug_up_light",
+  "notes": [
+   "Le dernier coup de l'enchainement n'est pas parti (enchainement interrompu)."
+  ],
+  "kf": 8,
+  "sizes": [
+   122130,
+   122130
+  ],
+  "secs": 1.2166666666666666,
+  "steps": 96,
+  "names": [
+   "Moulinet court",
+   "Taille tournoyante",
+   "Cercle du baton"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "combo",
+   "id": "jug_up_heavy",
+   "title": "Lanceur pied + jongle aerien",
+   "desc": "Lanceur puis coups aeriens : Pied remontant du moine > Frappe aerienne.",
+   "opts": "",
+   "toks": "UY X X",
+   "expect": 6
+  },
+  "name": "bo_jug_up_heavy",
+  "notes": [],
+  "kf": 8,
+  "sizes": [
+   156175,
+   156175
+  ],
+  "secs": 1.5666666666666667,
+  "steps": 124,
+  "names": [
+   "Pied remontant du moine",
+   "Frappe aerienne",
+   "Coupe aerienne"
+  ]
+ },
+ {
+  "spec": {
+   "cat": "saisie",
+   "id": "grab1",
+   "title": "Saisie, deux coups, projection",
+   "desc": "Saisie, deux coups tenus puis projection en avant (Y).",
+   "opts": "d=55",
+   "toks": "grab w26 X w26 X w26 Y",
+   "expect": null
+  },
+  "name": "bo_grab1",
+  "notes": [],
+  "kf": 10,
+  "sizes": [
+   146596,
+   146596
+  ],
+  "secs": 2.3,
+  "steps": 156,
+  "names": []
+ },
+ {
+  "spec": {
+   "cat": "saisie",
+   "id": "grab2",
+   "title": "Saisie et projection arriere",
+   "desc": "Saisie puis projection derriere soi (Arriere + Y).",
+   "opts": "d=55 free",
+   "toks": "grab w30 BY",
+   "expect": null
+  },
+  "name": "bo_grab2",
+  "notes": [],
+  "kf": 10,
+  "sizes": [
+   173778,
+   173778
+  ],
+  "secs": 1.6333333333333333,
+  "steps": 110,
+  "names": []
+ },
+ {
+  "spec": {
+   "cat": "saisie",
+   "id": "grab3",
+   "title": "Saisie, rafale de coups tenus",
+   "desc": "Saisie puis coups tenus jusqu'a la projection automatique.",
+   "opts": "d=55 free",
+   "toks": "grab w26 X w26 X w26 X w26 X w26 X w100",
+   "expect": null
+  },
+  "name": "bo_grab3",
+  "notes": [],
+  "kf": 10,
+  "sizes": [
+   131070,
+   131070
+  ],
+  "secs": 4.066666666666666,
+  "steps": 280,
+  "names": []
+ },
+ {
+  "spec": {
+   "cat": "reaction",
+   "id": "guard",
+   "title": "Garde : bloque un coup",
+   "desc": "Garde levee a temps : le coup est bloque.",
+   "opts": "d=60",
+   "toks": "foe at14 g26",
+   "expect": null
+  },
+  "name": "bo_guard",
+  "notes": [],
+  "kf": 10,
+  "sizes": [
+   152269,
+   152269
+  ],
+  "secs": 1.4,
+  "steps": 106,
+  "names": []
+ },
+ {
+  "spec": {
+   "cat": "reaction",
+   "id": "guardlow",
+   "title": "Garde basse",
+   "desc": "Garde accroupie face a un coup.",
+   "opts": "d=60",
+   "toks": "foe at14 gd26",
+   "expect": null
+  },
+  "name": "bo_guardlow",
+  "notes": [],
+  "kf": 10,
+  "sizes": [
+   96075,
+   96075
+  ],
+  "secs": 1.5666666666666667,
+  "steps": 96,
+  "names": []
+ },
+ {
+  "spec": {
+   "cat": "reaction",
+   "id": "parry",
+   "title": "Parade (garde a la derniere seconde)",
+   "desc": "Garde levee juste avant l'impact : parade parfaite.",
+   "opts": "d=60",
+   "toks": "foe at3 g26",
+   "expect": null
+  },
+  "name": "bo_parry",
+  "notes": [],
+  "kf": 10,
+  "sizes": [
+   94592,
+   94592
+  ],
+  "secs": 1.6166666666666667,
+  "steps": 100,
+  "names": []
+ },
+ {
+  "spec": {
+   "cat": "reaction",
+   "id": "df",
+   "title": "Esquive avant",
+   "desc": "Garde + direction au moment de l'impact.",
+   "opts": "d=60",
+   "toks": "foe at8 df",
+   "expect": null
+  },
+  "name": "bo_df",
+  "notes": [
+   "Le heros traverse ou colle la cible (ecart minimal -72 unites)."
+  ],
+  "kf": 10,
+  "sizes": [
+   154129,
+   154129
+  ],
+  "secs": 1.5666666666666667,
+  "steps": 96,
+  "names": []
+ },
+ {
+  "spec": {
+   "cat": "reaction",
+   "id": "db",
+   "title": "Esquive arriere",
+   "desc": "Garde + direction au moment de l'impact.",
+   "opts": "d=60",
+   "toks": "foe at8 db",
+   "expect": null
+  },
+  "name": "bo_db",
+  "notes": [],
+  "kf": 10,
+  "sizes": [
+   84829,
+   84829
+  ],
+  "secs": 1.6333333333333333,
+  "steps": 100,
+  "names": []
+ },
+ {
+  "spec": {
+   "cat": "reaction",
+   "id": "du",
+   "title": "Esquive vers le fond",
+   "desc": "Garde + direction au moment de l'impact.",
+   "opts": "d=60",
+   "toks": "foe at8 du",
+   "expect": null
+  },
+  "name": "bo_du",
+  "notes": [],
+  "kf": 10,
+  "sizes": [
+   126022,
+   126022
+  ],
+  "secs": 1.5666666666666667,
+  "steps": 96,
+  "names": []
+ },
+ {
+  "spec": {
+   "cat": "reaction",
+   "id": "dd",
+   "title": "Esquive vers l'avant-scene",
+   "desc": "Garde + direction au moment de l'impact.",
+   "opts": "d=60",
+   "toks": "foe at8 dd",
+   "expect": null
+  },
+  "name": "bo_dd",
+  "notes": [],
+  "kf": 10,
+  "sizes": [
+   118632,
+   118632
+  ],
+  "secs": 1.6333333333333333,
+  "steps": 100,
+  "names": []
+ },
+ {
+  "spec": {
+   "cat": "super",
+   "id": "ult0",
+   "title": "Super 1 : MILLE COUPS DE BATON (neutre (RT))",
+   "desc": "Type moteur : Multi. Cout et mise en scene reels.",
+   "opts": "max=420 d=105",
+   "toks": "ult0",
+   "expect": null
+  },
+  "name": "bo_ult0",
+  "notes": [],
+  "kf": 10,
+  "sizes": [
+   144253,
+   144253
+  ],
+  "secs": 3.966666666666667,
+  "steps": 274,
+  "names": []
+ },
+ {
+  "spec": {
+   "cat": "super",
+   "id": "ult1",
+   "title": "Super 2 : BALAYAGE DE LIVREUR (bas + RT)",
+   "desc": "Type moteur : Multi. Cout et mise en scene reels.",
+   "opts": "max=420 d=105",
+   "toks": "ult1",
+   "expect": null
+  },
+  "name": "bo_ult1",
+  "notes": [],
+  "kf": 10,
+  "sizes": [
+   122948,
+   122948
+  ],
+  "secs": 3.5,
+  "steps": 244,
+  "names": []
+ },
+ {
+  "spec": {
+   "cat": "super",
+   "id": "ult2",
+   "title": "Super 3 : LIVRAISON EXPRESS (avant + RT)",
+   "desc": "Type moteur : Multi. Cout et mise en scene reels.",
+   "opts": "max=420 d=105",
+   "toks": "ult2",
+   "expect": null
+  },
+  "name": "bo_ult2",
+  "notes": [],
+  "kf": 10,
+  "sizes": [
+   124298,
+   124298
+  ],
+  "secs": 3.6666666666666665,
+  "steps": 254,
+  "names": []
+ },
+ {
+  "spec": {
+   "cat": "super",
+   "id": "ult3",
+   "title": "Super 4 : COLIS RETOUR (arriere + RT)",
+   "desc": "Type moteur : Multi. Cout et mise en scene reels.",
+   "opts": "max=420 d=105",
+   "toks": "ult3",
+   "expect": null
+  },
+  "name": "bo_ult3",
+  "notes": [],
+  "kf": 10,
+  "sizes": [
+   131264,
+   131264
+  ],
+  "secs": 3.7666666666666666,
+  "steps": 260,
+  "names": []
+ },
+ {
+  "spec": {
+   "cat": "super",
+   "id": "ult4",
+   "title": "Super 5 : SAUT DU COURSIER (en l'air (RT))",
+   "desc": "Type moteur : Multi. Cout et mise en scene reels.",
+   "opts": "max=420 d=105",
+   "toks": "j w10 ult4",
+   "expect": null
+  },
+  "name": "bo_ult4",
+  "notes": [],
+  "kf": 10,
+  "sizes": [
+   152466,
+   152466
+  ],
+  "secs": 4.5,
+  "steps": 304,
+  "names": []
+ },
+ {
+  "spec": {
+   "cat": "transfo",
+   "id": "trans",
+   "title": "Transformation : ARMURE DE BUREAU",
+   "desc": "Ki + gachette : mise en scene de la transformation.",
+   "opts": "max=300",
+   "toks": "tr",
+   "expect": null
+  },
+  "name": "bo_trans",
+  "notes": [],
+  "kf": 10,
+  "sizes": [
+   159778,
+   159778
+  ],
+  "secs": 1.3166666666666667,
+  "steps": 94,
+  "names": []
+ },
+ {
+  "spec": {
+   "cat": "transfo",
+   "id": "spb1",
+   "title": "Special B (appui bref) : Crescent",
+   "desc": "Bouton B tape.",
+   "opts": "max=300",
+   "toks": "sp0",
+   "expect": null
+  },
+  "name": "bo_spb1",
+  "notes": [],
+  "kf": 1,
+  "sizes": [
+   130127,
+   130127
+  ],
+  "secs": 0.45,
+  "steps": 40,
+  "names": []
+ },
+ {
+  "spec": {
+   "cat": "transfo",
+   "id": "spb2",
+   "title": "Special B charge",
+   "desc": "Bouton B maintenu puis relache.",
+   "opts": "max=300",
+   "toks": "sp45",
+   "expect": null
+  },
+  "name": "bo_spb2",
+  "notes": [],
+  "kf": 10,
+  "sizes": [
+   119551,
+   119551
+  ],
+  "secs": 2.6333333333333333,
+  "steps": 170,
+  "names": []
+ }
+]

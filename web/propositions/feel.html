@@ -1,0 +1,40 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Game feel : styles d'impact</title>
+<style>:root{--ink:#221834;--paper:#fff3e0;--acc:#d8456b}
+body{margin:0;font:16px system-ui,sans-serif;background:var(--ink);color:var(--paper);padding:12px}h1{font-size:22px;margin:0 0 4px}h2{font-size:16px;margin:6px 0 2px}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}.c{background:#2f2347;border-radius:10px;padding:10px}.c.ok{outline:3px solid #7bd88f}.c.no{outline:3px solid var(--acc)}
+canvas{width:100%;aspect-ratio:5/3;border-radius:8px;background:var(--paper);display:block}p{margin:4px 0;font-size:14px;opacity:.92}
+button{font:inherit;padding:9px 12px;border-radius:8px;border:0;margin:4px 4px 0 0;color:#fff;background:#555;cursor:pointer}button.v{background:#2e9b5b}button.x{background:var(--acc)}
+textarea{width:100%;box-sizing:border-box;border-radius:6px;border:0;padding:6px;margin-top:6px;background:#1a1228;color:var(--paper)}#o{white-space:pre-wrap;background:#150e22;padding:10px;border-radius:8px;margin-top:12px}
+.box{background:#2f2347;border-radius:10px;padding:10px;margin:10px 0;font-size:14px}</style></head><body>
+<h1>Game feel du combat : 16 styles d'impact</h1>
+<div class="box"><b>Deja integre dans le jeu (rendu seul, simulation et hash inchanges)</b> : camera de groupe 1-8 joueurs + boss (zoom doux, anticipation, ressort amorti stable), ecrasement/etirement discret du personnage touche et a la reception, poussiere de course et de roulade. Tout est coupe par « Reduire les effets » et borne par le plafond de particules.<br>Ci-dessous : choisis le style d'impact par defaut (aplats, aucun contour noir). Les animations tournent en boucle.</div>
+<div class="g" id="g"></div><button onclick="out()" style="background:var(--acc);font-weight:700;margin-top:12px">Generer mon texte</button><div id="o"></div>
+<script>
+var P='#fff3e0',I='#221834',A='#d8456b',Y='#f5c542',B='#5aa9e6',S='#9a8c7a';
+var V=[
+["Etoile a pointes","Aplat accent a 8 pointes, flash court : coup leger/moyen.",function(c,t,r){var n=8;c.fillStyle=A;c.beginPath();for(var i=0;i<n*2;i++){var a=i*Math.PI/n+t*.5,q=i%2?r*.45:r*1.1;c.lineTo(Math.cos(a)*q,Math.sin(a)*q)}c.fill();c.fillStyle=P;c.beginPath();c.arc(0,0,r*.3,0,7);c.fill()}],
+["Onde en anneau","Anneau epais qui s'ouvre et s'amincit.",function(c,t,r){c.strokeStyle=A;c.lineWidth=Math.max(1,14*(1-t));c.beginPath();c.arc(0,0,r*(.3+t),0,7);c.stroke()}],
+["Eclats triangulaires","Six eclats plats projetes, rotation lente.",function(c,t,r){for(var i=0;i<6;i++){var a=i*1.047+.3,d=r*(.3+t*1.2);c.save();c.translate(Math.cos(a)*d,Math.sin(a)*d);c.rotate(a+t*3);c.fillStyle=i%2?A:Y;c.globalAlpha=1-t;c.beginPath();c.moveTo(0,-9);c.lineTo(7,7);c.lineTo(-7,7);c.fill();c.restore()}}],
+["Traits radiaux","Lignes de vitesse epaisses depuis le point d'impact.",function(c,t,r){c.strokeStyle=I;c.lineCap='round';c.lineWidth=5*(1-t);for(var i=0;i<12;i++){var a=i*.5236,d0=r*(.3+t*.5),d1=d0+r*.5*(1-t*.5);c.beginPath();c.moveTo(Math.cos(a)*d0,Math.sin(a)*d0);c.lineTo(Math.cos(a)*d1,Math.sin(a)*d1);c.stroke()}}],
+["Nuage de poussiere","Disques ocre qui gonflent et palissent, au sol.",function(c,t,r){c.globalAlpha=.8*(1-t);c.fillStyle=S;for(var i=0;i<5;i++){c.beginPath();c.arc((i-2)*r*.4*(.4+t),-t*20-i%2*8,r*.28*(.6+t),0,7);c.fill()}}],
+["Eclats de pierre","Cailloux a trois tons, retombent avec gravite.",function(c,t,r){for(var i=0;i<9;i++){var a=-1.2-i*.22,v=r*1.4,x=Math.cos(a)*v*t*1.2,y=Math.sin(a)*v*t+260*t*t*.5*r/60;c.fillStyle=['#8c7b6b','#b5a290','#6a5b4e'][i%3];c.fillRect(x-5,y-5,10-t*4,10-t*4)}}],
+["Etincelles metal","Petits traits jaunes qui filent, tres vifs.",function(c,t,r){c.strokeStyle=Y;c.lineWidth=3;c.lineCap='round';for(var i=0;i<10;i++){var a=-1.9+i*.42,d=r*(.2+t*1.4);c.globalAlpha=1-t;c.beginPath();c.moveTo(Math.cos(a)*d,Math.sin(a)*d);c.lineTo(Math.cos(a)*(d+14),Math.sin(a)*(d+14));c.stroke()}}],
+["Eclaboussure d'encre","Gouttes d'encre indigo, grosses puis fines.",function(c,t,r){c.fillStyle=I;for(var i=0;i<8;i++){var a=i*.785+.2,d=r*(.2+t)*(.6+i%3*.3);c.beginPath();c.arc(Math.cos(a)*d,Math.sin(a)*d,Math.max(1,(9-i%3*2)*(1-t)),0,7);c.fill()}c.beginPath();c.arc(0,0,r*.3*(1-t),0,7);c.fill()}],
+["Croix flash","Deux barres or qui claquent en 6 images.",function(c,t,r){var k=Math.max(0,1-t*2.2);c.fillStyle=Y;c.fillRect(-r*1.3*k,-4*k,r*2.6*k,8*k);c.fillRect(-4*k,-r*1.3*k,8*k,r*2.6*k)}],
+["Double onde au sol","Deux ellipses plates, pour retombees et glissades.",function(c,t,r){c.strokeStyle=A;c.lineWidth=6*(1-t);c.beginPath();c.ellipse(0,10,r*(.3+t*1.2),r*.2*(.3+t),0,0,7);c.stroke();c.strokeStyle=Y;c.lineWidth=3*(1-t);c.beginPath();c.ellipse(0,10,r*(.2+t*.8),r*.12*(.3+t),0,0,7);c.stroke()}],
+["Eventail directionnel","Gerbe en cone dans le sens du coup (vers la droite).",function(c,t,r){c.fillStyle=A;c.globalAlpha=1-t;for(var i=-3;i<=3;i++){var a=i*.22,d=r*(.4+t*1.1);c.beginPath();c.moveTo(0,0);c.lineTo(Math.cos(a-.07)*d,Math.sin(a-.07)*d);c.lineTo(Math.cos(a+.07)*d,Math.sin(a+.07)*d);c.fill()}}],
+["Pop papier","Pastilles claires qui sautent, style bande dessinee.",function(c,t,r){for(var i=0;i<7;i++){var a=i*.9,d=r*(.2+t*1.1);c.fillStyle=i%2?Y:A;c.beginPath();c.arc(Math.cos(a)*d,Math.sin(a)*d,8*(1-t)+1,0,7);c.fill()}c.fillStyle=A;c.beginPath();c.arc(0,0,r*.25*(1-t),0,7);c.fill()}],
+["Fissures au sol","Trois fissures plates qui s'allongent, pour coups lourds.",function(c,t,r){c.strokeStyle=I;c.lineWidth=5;c.lineCap='round';c.lineJoin='round';[-.4,0,.4].forEach(function(a,i){c.beginPath();c.moveTo(0,8);var x=0,y=8,m=Math.min(1,t*3);for(var s=1;s<=4;s++){x+=Math.cos(a)*r*.3*m*(i==1?-1:1);y+=(s%2?5:-5)*m;c.lineTo(x,y)}c.stroke()})}],
+["Onde plein cadre","Disque accent translucide : coups finaux et supers.",function(c,t,r){c.globalAlpha=.55*(1-t);c.fillStyle=A;c.beginPath();c.arc(0,0,r*(.5+t*2.2),0,7);c.fill();c.globalAlpha=1;c.fillStyle=P;c.beginPath();c.arc(0,0,r*.28*(1-t),0,7);c.fill()}],
+["Spirale d'energie","Points en spirale qui s'ecartent : parade parfaite.",function(c,t,r){c.fillStyle=B;for(var i=0;i<14;i++){var a=i*.6+t*5,d=r*(.1+i*.07)*(.4+t);c.globalAlpha=1-t;c.beginPath();c.arc(Math.cos(a)*d,Math.sin(a)*d,4,0,7);c.fill()}}],
+["Plumes et papiers","Petits rectangles qui tournoient et flottent.",function(c,t,r){for(var i=0;i<8;i++){var a=i*.8,d=r*(.2+t*.9);c.save();c.translate(Math.cos(a)*d,Math.sin(a)*d-t*18);c.rotate(a+t*6);c.globalAlpha=1-t;c.fillStyle=i%2?Y:A;c.fillRect(-6,-3,12,6);c.restore()}}]
+];
+var g=document.getElementById('g'),st={},cv=[];
+V.forEach(function(v,i){var d=document.createElement('div');d.className='c';d.id='c_'+i;
+d.innerHTML='<canvas width="250" height="150" id="cv'+i+'"></canvas><h2>'+(i+1)+'. '+v[0]+'</h2><p>'+v[1]+'</p><button class="v" data-k="'+i+'" data-v="1">Valider</button><button class="x" data-k="'+i+'" data-v="-1">A refaire</button><textarea id="t_'+i+'" rows="2" placeholder="Remarque (taille, duree, couleur...)"></textarea>';g.appendChild(d);cv.push(document.getElementById('cv'+i).getContext('2d'))});
+g.addEventListener('click',function(e){var b=e.target;if(!b.dataset||b.dataset.k==null)return;var v=+b.dataset.v;st[b.dataset.k]=v;document.getElementById('c_'+b.dataset.k).className='c '+(v>0?'ok':'no')});
+var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+function frame(ms){V.forEach(function(v,i){var c=cv[i];c.setTransform(1,0,0,1,0,0);c.globalAlpha=1;c.clearRect(0,0,250,150);c.fillStyle=P;c.fillRect(0,0,250,150);c.fillStyle='#e8d6bb';c.fillRect(0,112,250,38);var t=reduce?.35:((ms/1000)%1.1)/1.1;c.save();c.translate(125,80);v[2](c,t,38);c.restore()});requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+function out(){var L=V.map(function(v,i){var s=st[i],t=document.getElementById('t_'+i).value.trim();return (s>0?'VALIDE':s<0?'A REFAIRE':'NON VU')+' : '+(i+1)+'. '+v[0]+(t?' - '+t:'')});document.getElementById('o').textContent=L.join('\n')}
+</script></body></html>

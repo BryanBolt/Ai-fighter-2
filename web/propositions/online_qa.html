@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QA en ligne</title>
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b}
+body{margin:0;background:var(--papier);color:var(--encre);font:16px/1.5 system-ui,sans-serif;padding:16px;max-width:760px;margin-inline:auto}
+h1{margin:.2em 0}
+.c{border:2px solid var(--encre);border-radius:10px;padding:12px;margin:12px 0;background:#fff}
+.c h2{margin:0 0 4px;font-size:1.05rem}
+button{font:inherit;border:2px solid var(--encre);background:var(--papier);color:var(--encre);border-radius:8px;padding:6px 12px;cursor:pointer}
+button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+textarea{width:100%;box-sizing:border-box;margin-top:8px;border:2px solid var(--encre);border-radius:8px;padding:6px;font:inherit;background:var(--papier);color:var(--encre)}
+</style></head><body>
+<h1>QA du multijoueur</h1>
+<p>Chaque point est couvert par un test automatique. Valide, ou demande a refaire avec un commentaire (enregistre dans ce navigateur).</p>
+<div id="l"></div>
+<script>
+const items=[
+["Version du protocole","Le serveur refusait tous les clients v8 (liste de compatibilite restee a 7). Corrige et verrouille par deux tests."],
+["Options tir allie / prise amicale","ffm borne 0..2, pal booleen, presents dans la config de depart pour tous."],
+["Messages hostiles","JSON casse et champs de mauvais type : le serveur reste vivant."],
+["Salons vides","Fermes apres le delai, avec ou sans lien permanent : pas de fuite."],
+["Arrivees / departs / retours aleatoires","2 a 8 joueurs, coop / campagne / histoire, tir allie 0-2 : meme etat chez tous."],
+["Boss, recompense, dialogue en cours de partie","Scenarios de depart/retour/arrivee en plein boss et ecran de recompense : identiques chez tous."],
+["Non couvert","Perte de paquets et latence variable simulees : a faire."]];
+let S={};try{S=JSON.parse(localStorage.getItem('qa')||'{}')}catch(e){}
+const save=()=>{try{localStorage.setItem('qa',JSON.stringify(S))}catch(e){}};
+const L=document.getElementById('l');
+items.forEach((it,i)=>{const s=S[i]||{};const d=document.createElement('div');d.className='c';
+d.innerHTML=`<h2>${it[0]}</h2><div>${it[1]}</div><p><button data-v="ok">Valider</button> <button data-v="ko">A refaire</button></p><textarea rows="2" placeholder="Commentaire"></textarea>`;
+const b=d.querySelectorAll('button'),t=d.querySelector('textarea');t.value=s.c||'';
+const paint=()=>b.forEach(x=>x.classList.toggle('on',(S[i]||{}).v===x.dataset.v));
+b.forEach(x=>x.onclick=()=>{S[i]={...(S[i]||{}),v:x.dataset.v};save();paint()});
+t.oninput=()=>{S[i]={...(S[i]||{}),c:t.value};save()};paint();L.appendChild(d)});
+</script></body></html>
