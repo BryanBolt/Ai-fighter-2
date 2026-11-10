@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Coherence du jeu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b;--ok:#2f8f5b}
+body{margin:0;background:var(--papier);color:var(--encre);font:16px/1.45 Nunito,system-ui,sans-serif;padding:16px}
+h1,h2{font-family:Silkscreen,monospace;letter-spacing:.02em;margin:0 0 6px}
+h1{font-size:22px}h2{font-size:15px;color:var(--accent)}
+.lead{max-width:760px}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px;margin-top:14px}
+.c{background:#fff;border:2px solid var(--encre);border-radius:12px;padding:10px}
+.c.ok{outline:4px solid var(--ok)}.c.no{outline:4px solid var(--accent)}
+p{margin:6px 0;font-size:14px}.why{opacity:.75;font-size:13px}
+.tag{display:inline-block;font-family:Silkscreen,monospace;font-size:11px;padding:2px 6px;border-radius:6px;border:2px solid var(--encre);margin-right:6px}
+.tag.f{background:var(--ok);color:#fff}.tag.r{background:var(--accent);color:#fff}
+button{font:inherit;font-weight:700;padding:9px 12px;border-radius:8px;border:2px solid var(--encre);margin:4px 4px 0 0;background:var(--papier);color:var(--encre);cursor:pointer}
+button.v{background:var(--ok);color:#fff}button.x{background:var(--accent);color:#fff}
+textarea{width:100%;box-sizing:border-box;border:2px solid var(--encre);border-radius:6px;padding:6px;margin-top:6px;font:inherit;background:var(--papier)}
+#o{white-space:pre-wrap;background:var(--encre);color:var(--papier);padding:12px;border-radius:10px;margin-top:14px}
+.gen{background:var(--accent);color:#fff;font-family:Silkscreen,monospace;margin-top:14px}
+</style></head><body>
+<h1>Chasse aux incoherences</h1>
+<p class="lead">Releve de l'agent de la coherence : logique, regles, animations, graphismes, textes. Chaque point est classe Corrige ou Reste. Les regles corrigees sont verrouillees par des tests en lot (src/coherence_tests.rs et l'invariant « un KO ne se releve jamais » du soak, 4000 parties de tous les modes, 1 a 8 joueurs). Pour chaque point : Valider ou A refaire (+ remarque), puis genere le texte et colle-le dans le chat.</p>
+<div class="g" id="g"></div>
+<button class="gen" onclick="out()">Generer mon texte</button><div id="o"></div>
+<script>
+var C=[
+{k:"ko_sim",s:"f",n:"Un KO ne se releve jamais tout seul (simulation)",d:"Verifie : ennemis, boss, allies IA, heros en coop, familiers, daemons de boss, killcam, lancer, vagues. 4000 parties du soak + tests en lot sur les 16 terrains et tout le roster : aucun KO ne se releve. Seuls se relevent : etourdi, projete, au sol non KO, garde brisee, potard ou consommable (Dernier souffle, Reveil), place en ligne qui se reveille, renfort de la vague suivante pour un joueur.",w:"Invariant ajoute a chaque image du soak (src/soak.rs) : « KO releve tout seul »."},
+{k:"ko_pose",s:"f",n:"Un heros KO ne se redresse plus pour la pose de defaite",d:"Avant : apres la defaite, le heros KO se mettait a genoux ou debout tete basse (16 poses). C'etait un KO qui se releve. Maintenant il reste allonge, yeux en croix.",w:"Les 16 poses restent dans les fiches de pose, non jouees sur un corps KO."},
+{k:"arme_rendu",s:"f",n:"Plus d'arme ni de baton natif dessine sur les heros et sbires",d:"Sora, Bo et le Samourai ne portent plus de lame ni de baton dessines : leurs coups se jouent a mains nues (tranchant de la main, estoc de paume). Les boss gardent leur arme signature. Le Ki-sabre et les armes ramassees ne changent pas.",w:"Interrupteur unique : data::native_weapon_drawn (boss seulement)."},
+{k:"arme_sol",s:"f",n:"Les armes se trouvent au sol : tres aleatoires, plus rares avec les niveaux",d:"Caisses : la part d'armes passe de 62 % au 1er niveau puis baisse de 5 points par vague (et de 6 points tant qu un boss est debout) ; sabre, revolver, fusil, mitraillette et cocktail s'epuisent plus vite que batte, fouet et grenades. Etages : une arme garantie au 1er etage seulement (apprendre a ramasser), ensuite une chance decroissante (84 %, 76 %, 68 %...), moindre sur les etages de boss, avec une position decalee au hasard.",w:"Tests : plus on avance, moins d'armes ; le 1er etage en a toujours une, les suivants pas toujours."},
+{k:"arme_lieu",s:"f",n:"Coherence thematique : objet de bureau au bureau",d:"Plus de sabre, de fouet ni de kunai au sol dans les bureaux (serveurs, open space, etage presidentiel, salles de reunion) ni a la cantine : ils sont remplaces par l'objet du lieu (agrafeuse, pied-de-biche, chandelier, poele). Les armes a feu et grenades restaient deja limitees aux lieux avec gardes ou mafieux.",w:"Regle commune a l'etage et aux caisses (everyday::out_of_place)."},
+{k:"noms",s:"r",n:"Noms de coups et textes qui parlent encore de sabre et de baton",d:"Sora, Bo et le Samourai gardent des noms comme « Revers du baton », « Lame montante », « Estoc ». Le geste est a mains nues mais le nom evoque l'arme. Ces noms servent de cles dans une dizaine de fichiers (grammaire X/Y, combos, supers, cartes de pose) : renommer sans casser les combos valides demande une passe dediee. Pareil pour les textes d'entrainement (« TAILLE », « COUP VERTICAL ») et le libelle de style « Sabre ».",w:"Propose : table d'affichage des noms (nom interne inchange, nom montre au joueur nouveau)."},
+{k:"anims",s:"r",n:"Gestes de lame sans lame : variantes de style a dessiner",d:"Les poses de taille, d'estoc et de moulinet des trois personnages sont celles d'un geste arme. Mains nues elles lisent comme des coups de tranchant et de paume, mais une vraie variante de style (poing de fer, appuis, paume) rendrait mieux. A proposer par lots de 16 variantes avant integration.",w:"Aussi : le Sabre de Sora et ses 5 sauts d'articulation (probleme 16) n'existent plus a l'ecran."},
+{k:"gear",s:"r",n:"Accessoires d'ennemis qui jouent le role d'arme (dague, baguette, mallette, megaphone)",d:"Ce sont des pieces d'equipement thematiques (cadre + mallette, assassin + dague, animateur + baguette), pas des armes natives, et elles changent le comportement de l'ennemi. Laisses en l'etat : a trancher.",w:"Option : les faire tomber au sol a la mort de l'ennemi, ramassables."},
+{k:"tactile",s:"r",n:"Problemes d'ergonomie tactile restants",d:"Liste existante (tools/PROBLEMES_A_RESOUDRE.md, points 5 a 18) : compteur de hits en ligne qui chevauche la pastille, bande vide en portrait, boutons plein ecran et commandes, textes sous 12 px, etc. Non touches par cette passe.",w:"Aucun test sur un vrai telephone."}
+],st={};
+var g=document.getElementById('g');
+C.forEach(function(c){var d=document.createElement('div');d.className='c';d.id='c_'+c.k;
+d.innerHTML='<span class="tag '+c.s+'">'+(c.s=='f'?'CORRIGE':'RESTE')+'</span><h2>'+c.n+'</h2><p>'+c.d+'</p><p class="why">'+c.w+'</p><button class="v" data-k="'+c.k+'" data-v="1">Valider</button><button class="x" data-k="'+c.k+'" data-v="-1">A refaire</button><textarea id="t_'+c.k+'" rows="2" placeholder="Remarque"></textarea>';g.appendChild(d);});
+g.addEventListener('click',function(e){var b=e.target;if(!b.dataset||!b.dataset.k)return;var v=+b.dataset.v;st[b.dataset.k]=v;document.getElementById('c_'+b.dataset.k).className='c '+(v>0?'ok':'no');});
+function out(){var L=C.map(function(c){var v=st[c.k];var t=document.getElementById('t_'+c.k).value.trim();return (v>0?'VALIDE':v<0?'A REFAIRE':'NON VU')+' : '+c.n+(t?' - '+t:'');});document.getElementById('o').textContent='Coherence :\n'+L.join('\n');}
+</script></body></html>

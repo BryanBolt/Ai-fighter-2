@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 import { WebSocketServer } from 'ws';
 import { createPush } from './push.js';
 
-export const PROTOCOL_VERSION = 7; // 7 : entree Saisie (nouveau bit d'entree) + coups renommes (SCHEMA_VERSION 8) ; 6 : table des coups changee (grammaire X/Y des 9 autres heros, SCHEMA_VERSION 7) ; 5 : jusqu'a 8 joueurs, vague/PV de depart (solo -> en ligne) ; 4 : table des coups changee (aeriens, realisme, grammaire X/Y ; tir allie, QA). 3 : parties hebergees (jeu complet : loadout, cmd sequences). 2 : join_any / host. Seuls les clients v7 sont acceptes.
+export const PROTOCOL_VERSION = 8; // 8 : nunchaku (nouvelle arme ramassable, serie de six coups, Pied = coups de pied avec l'arme) et armes au sol du dojo/temple changees ; 7 : entree Saisie (nouveau bit d'entree) + coups renommes (SCHEMA_VERSION 8) ; 6 : table des coups changee (grammaire X/Y des 9 autres heros, SCHEMA_VERSION 7) ; 5 : jusqu'a 8 joueurs, vague/PV de depart (solo -> en ligne) ; 4 : table des coups changee (aeriens, realisme, grammaire X/Y ; tir allie, QA). 3 : parties hebergees (jeu complet : loadout, cmd sequences). 2 : join_any / host. Seuls les clients v8 sont acceptes.
 const COMPAT_VERSIONS = [7]; // protocole 7 : les clients 1 a 6 n'ont pas la meme table de coups (et 1 a 4 ne savent pas lire des salons de 8 places), ils doivent se mettre a jour
 const HOSTED_SIZE = 2; // taille par defaut d une partie hebergee (anciens clients) ; le client actuel demande 4 avec `size` (places vides dormantes)
 const HOSTED_MIN = 2; // taille minimale demandable
