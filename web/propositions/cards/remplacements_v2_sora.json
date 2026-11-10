@@ -1,0 +1,38 @@
+[
+ {
+  "id": "sora_v2_sora_4",
+  "titre": "Sora_4 : Bond fendant",
+  "texte": "Poignet naturel : bras releve avant l'armee, plus de retournement de l'avant-bras apres l'impact (garde-fou de visee).",
+  "page": "remplacements_v2_sora.html"
+ },
+ {
+  "id": "sora_v2_sora_10",
+  "titre": "Sora_10 : Arc aerien (ex-Tourbillon aerien)",
+  "texte": "Meme animation validee, titre renomme.",
+  "page": "remplacements_v2_sora.html"
+ },
+ {
+  "id": "sora_v2_sora_12",
+  "titre": "Sora_12 : Coupe de charge",
+  "texte": "Retour a l'ancienne version (impact plus sensible).",
+  "page": "remplacements_v2_sora.html"
+ },
+ {
+  "id": "sora_v2_sora_19",
+  "titre": "Sora_19 : Fendoir retourne",
+  "texte": "Poignet dans l'amplitude humaine (max 113 deg, avant 174).",
+  "page": "remplacements_v2_sora.html"
+ },
+ {
+  "id": "sora_v2_sora_28",
+  "titre": "Sora_28 : Taille aerienne (ex-Moulinet aerien)",
+  "texte": "Refait : taille horizontale en l'air, le bras suit la lame (poignet max 34 deg).",
+  "page": "remplacements_v2_sora.html"
+ },
+ {
+  "id": "sora_v2_sora_35",
+  "titre": "Sora_35 : Estoc fendant",
+  "texte": "Coup large : grand pas, jambes ecartees, bras arriere ouvert, estoc bras tendu.",
+  "page": "remplacements_v2_sora.html"
+ }
+]
