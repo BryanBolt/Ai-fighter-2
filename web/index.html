@@ -354,7 +354,13 @@ miniquad_add_plugin({
   register_plugin: function (importObject) {
     // Vibration du telephone (retour haptique des coups) : navigator.vibrate, Android / Chrome.
     // 1 une fois quand la page vient d'etre masquee ou a perdu le focus (le jeu se met alors en pause) ; 0 sinon.
-    importObject.env.afh_focus_lost = function () { try { return window.afhGuard ? window.afhGuard.takeHidden() : 0; } catch (e) { return 0; } };
+    // Message d'une panique Rust (texte + fichier:ligne) : console.error, et affiche dans l'ecran d'erreur.
+    importObject.env.afh_panic = function (p, l) {
+      var m = ""; try { m = new TextDecoder().decode(new Uint8Array(wasm_memory.buffer, p, l)); } catch (e) {}
+      try { console.error("[panic Rust] " + m); } catch (e) {}
+      try { window.afhPanic = m; if (G.fatal) G.fatal("Panique : " + m.slice(0, 300)); } catch (e) {}
+    };
+    importObject.env.afh_focus_lost =function () { try { return window.afhGuard ? window.afhGuard.takeHidden() : 0; } catch (e) { return 0; } };
     // Preference systeme « reduire les animations » (reglage d'accessibilite) : 1 si activee.
     importObject.env.afh_reduced_motion = function () { try { return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 1 : 0; } catch (e) { return 0; } };
     // Musiques a la demande (hors du wasm : -11 Mo) : le jeu sonde afh_music_size (0 = en cours, -1 = echec, n = octets prets),
