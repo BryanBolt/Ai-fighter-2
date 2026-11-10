@@ -1,0 +1,3783 @@
+{
+"air_01": {
+"id": "air_01",
+"cat": "air",
+"name": "Direct saute",
+"desc": "Direct saute : 4 images de depart, 8 actives, 8 de retour ; 8 degats, lance la cible.",
+"keys": [
+"Xa"
+],
+"reference": false,
+"ok": true,
+"played": [
+"Direct saute"
+],
+"all_hit": false,
+"damage": 0,
+"n": 65,
+"jerk": 31.2,
+"hitstop": 5,
+"beats": 1,
+"xrange": 56.200000000000045,
+"jump": 27.600000000000023,
+"images": 18,
+"gif": [
+30135,
+30135
+],
+"keyframes": [
+[
+19,
+"Garde"
+],
+[
+23,
+"Anticipation"
+],
+[
+24,
+"Chargement"
+],
+[
+26,
+"Impact"
+],
+[
+30,
+"Extension"
+],
+[
+33,
+"Fin de l'extension"
+],
+[
+36,
+"Retour"
+],
+[
+40,
+"Retour (fin)"
+],
+[
+46,
+"Garde retrouvee"
+]
+],
+"window": [
+16,
+51
+],
+"maxup": 19
+},
+"air_02": {
+"id": "air_02",
+"cat": "air",
+"name": "Hache aerienne",
+"desc": "Hache aerienne : 9 images de depart, 4 actives, 18 de retour ; 13 degats.",
+"keys": [
+"Ya"
+],
+"reference": false,
+"ok": true,
+"played": [
+"Hache aerienne"
+],
+"all_hit": false,
+"damage": 0,
+"n": 72,
+"jerk": 17.1,
+"hitstop": 7,
+"beats": 1,
+"xrange": 45.0,
+"jump": 21.0,
+"images": 18,
+"gif": [
+33795,
+33795
+],
+"keyframes": [
+[
+19,
+"Garde"
+],
+[
+25,
+"Anticipation"
+],
+[
+29,
+"Chargement"
+],
+[
+31,
+"Impact"
+],
+[
+33,
+"Extension"
+],
+[
+34,
+"Fin de l'extension"
+],
+[
+40,
+"Retour"
+],
+[
+48,
+"Retour (fin)"
+],
+[
+57,
+"Garde retrouvee"
+]
+],
+"window": [
+16,
+67
+],
+"maxup": 28
+},
+"bas_01": {
+"id": "bas_01",
+"cat": "bas",
+"name": "Jab bas",
+"desc": "Jab bas : 4 images de depart, 3 actives, 13 de retour ; 5 degats.",
+"keys": [
+"Bas+X"
+],
+"reference": false,
+"ok": true,
+"played": [
+"Jab bas"
+],
+"all_hit": true,
+"damage": 5,
+"n": 47,
+"jerk": 24.1,
+"hitstop": 3,
+"beats": 1,
+"xrange": 16.0,
+"jump": 2.5,
+"images": 20,
+"gif": [
+71806,
+71806
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+15,
+"Anticipation"
+],
+[
+16,
+"Chargement"
+],
+[
+18,
+"Impact"
+],
+[
+19,
+"Extension"
+],
+[
+20,
+"Fin de l'extension"
+],
+[
+25,
+"Retour"
+],
+[
+30,
+"Retour (fin)"
+],
+[
+38,
+"Garde retrouvee"
+]
+],
+"window": [
+8,
+46
+],
+"maxup": 19
+},
+"bas_02": {
+"id": "bas_02",
+"cat": "bas",
+"name": "Balayage",
+"desc": "Balayage : 7 images de depart, 4 actives, 16 de retour ; 12 degats, lance la cible.",
+"keys": [
+"Bas+Y"
+],
+"reference": false,
+"ok": true,
+"played": [
+"Balayage"
+],
+"all_hit": true,
+"damage": 12,
+"n": 61,
+"jerk": 16.3,
+"hitstop": 6,
+"beats": 1,
+"xrange": 16.5,
+"jump": 2.5,
+"images": 18,
+"gif": [
+76747,
+76747
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+16,
+"Anticipation"
+],
+[
+19,
+"Chargement"
+],
+[
+21,
+"Impact"
+],
+[
+23,
+"Extension"
+],
+[
+24,
+"Fin de l'extension"
+],
+[
+30,
+"Retour"
+],
+[
+36,
+"Retour (fin)"
+],
+[
+45,
+"Garde retrouvee"
+]
+],
+"window": [
+8,
+60
+],
+"maxup": 26
+},
+"base_01": {
+"id": "base_01",
+"cat": "base",
+"name": "Jab",
+"desc": "Jab : 3 images de depart, 3 actives, 9 de retour ; 5 degats.",
+"keys": [
+"X"
+],
+"reference": false,
+"ok": true,
+"played": [
+"Jab"
+],
+"all_hit": true,
+"damage": 5,
+"n": 58,
+"jerk": 33.3,
+"hitstop": 3,
+"beats": 1,
+"xrange": 16.899999999999977,
+"jump": 2.5,
+"images": 17,
+"gif": [
+67397,
+67397
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+15,
+"Anticipation"
+],
+[
+17,
+"Impact"
+],
+[
+18,
+"Extension"
+],
+[
+19,
+"Fin de l'extension"
+],
+[
+23,
+"Retour"
+],
+[
+26,
+"Retour (fin)"
+],
+[
+33,
+"Garde retrouvee"
+]
+],
+"window": [
+8,
+57
+],
+"maxup": 30
+},
+"base_02": {
+"id": "base_02",
+"cat": "base",
+"name": "Pied brise-garde",
+"desc": "Pied brise-garde : 11 images de depart, 4 actives, 19 de retour ; 17 degats, brise la garde.",
+"keys": [
+"Y"
+],
+"reference": false,
+"ok": true,
+"played": [
+"Pied brise-garde"
+],
+"all_hit": true,
+"damage": 16,
+"n": 68,
+"jerk": 24.0,
+"hitstop": 9,
+"beats": 1,
+"xrange": 27.799999999999955,
+"jump": 4.2000000000000455,
+"images": 20,
+"gif": [
+76975,
+76975
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+18,
+"Anticipation"
+],
+[
+23,
+"Chargement"
+],
+[
+25,
+"Impact"
+],
+[
+27,
+"Extension"
+],
+[
+28,
+"Fin de l'extension"
+],
+[
+35,
+"Retour"
+],
+[
+42,
+"Retour (fin)"
+],
+[
+52,
+"Garde retrouvee"
+]
+],
+"window": [
+8,
+67
+],
+"maxup": 33
+},
+"base_03": {
+"id": "base_03",
+"cat": "base",
+"name": "Direct",
+"desc": "Direct : 4 images de depart, 3 actives, 9 de retour ; 7 degats.",
+"keys": [
+"X",
+"X"
+],
+"reference": false,
+"ok": true,
+"played": [
+"Jab",
+"Direct"
+],
+"all_hit": true,
+"damage": 13,
+"n": 74,
+"jerk": 43.6,
+"hitstop": 4,
+"beats": 2,
+"xrange": 28.399999999999977,
+"jump": 2.5,
+"images": 22,
+"gif": [
+82436,
+82436
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+16,
+"Coup 1 : anticipation"
+],
+[
+17,
+"Coup 1 : impact (Jab)"
+],
+[
+25,
+"Coup 2 : anticipation"
+],
+[
+27,
+"Coup 2 : impact (Direct)"
+],
+[
+34,
+"Retour"
+],
+[
+53,
+"Transition"
+],
+[
+73,
+"Garde retrouvee"
+]
+],
+"window": [
+8,
+73
+],
+"maxup": 31
+},
+"base_04": {
+"id": "base_04",
+"cat": "base",
+"name": "Genou du dragon",
+"desc": "Genou du dragon : 7 images de depart, 4 actives, 15 de retour ; 11 degats.",
+"keys": [
+"X",
+"Y"
+],
+"reference": false,
+"ok": true,
+"played": [
+"Jab",
+"Genou du dragon"
+],
+"all_hit": true,
+"damage": 16,
+"n": 69,
+"jerk": 33.3,
+"hitstop": 8,
+"beats": 2,
+"xrange": 40.89999999999998,
+"jump": 4.199999999999932,
+"images": 21,
+"gif": [
+51462,
+51462
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+16,
+"Coup 1 : anticipation"
+],
+[
+17,
+"Coup 1 : impact (Jab)"
+],
+[
+27,
+"Coup 2 : anticipation"
+],
+[
+30,
+"Coup 2 : impact (Genou du dragon)"
+],
+[
+41,
+"Retour"
+],
+[
+54,
+"Transition"
+],
+[
+68,
+"Garde retrouvee"
+]
+],
+"window": [
+8,
+68
+],
+"maxup": 25
+},
+"base_05": {
+"id": "base_05",
+"cat": "base",
+"name": "Griffe retour",
+"desc": "Griffe retour : 5 images de depart, 3 actives, 10 de retour ; 7 degats.",
+"keys": [
+"Y",
+"X"
+],
+"reference": false,
+"ok": true,
+"played": [
+"Pied brise-garde",
+"Griffe retour"
+],
+"all_hit": true,
+"damage": 23,
+"n": 75,
+"jerk": 24.2,
+"hitstop": 9,
+"beats": 2,
+"xrange": 37.10000000000002,
+"jump": 4.2000000000000455,
+"images": 23,
+"gif": [
+82123,
+82123
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+21,
+"Coup 1 : anticipation"
+],
+[
+25,
+"Coup 1 : impact (Pied brise-garde)"
+],
+[
+42,
+"Coup 2 : anticipation"
+],
+[
+44,
+"Coup 2 : impact (Griffe retour)"
+],
+[
+52,
+"Retour"
+],
+[
+63,
+"Transition"
+],
+[
+74,
+"Garde retrouvee"
+]
+],
+"window": [
+8,
+74
+],
+"maxup": 17
+},
+"base_06": {
+"id": "base_06",
+"cat": "base",
+"name": "Talon fouet",
+"desc": "Talon fouet : 9 images de depart, 4 actives, 19 de retour ; 10 degats.",
+"keys": [
+"Y",
+"Y"
+],
+"reference": false,
+"ok": true,
+"played": [
+"Pied brise-garde",
+"Talon fouet"
+],
+"all_hit": true,
+"damage": 26,
+"n": 91,
+"jerk": 24.0,
+"hitstop": 9,
+"beats": 2,
+"xrange": 63.799999999999955,
+"jump": 6.0,
+"images": 28,
+"gif": [
+56099,
+56099
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+21,
+"Coup 1 : anticipation"
+],
+[
+25,
+"Coup 1 : impact (Pied brise-garde)"
+],
+[
+44,
+"Coup 2 : anticipation"
+],
+[
+48,
+"Coup 2 : impact (Talon fouet)"
+],
+[
+61,
+"Retour"
+],
+[
+75,
+"Transition"
+],
+[
+90,
+"Garde retrouvee"
+]
+],
+"window": [
+8,
+90
+],
+"maxup": 31
+},
+"combo_01": {
+"id": "combo_01",
+"cat": "combo",
+"name": "Fouet en trois",
+"desc": "Trois pieds qui alternent les jambes : brise-garde, talon fouette, crochet du talon.",
+"keys": [
+"Y",
+"Y",
+"Y"
+],
+"reference": true,
+"ok": true,
+"played": [
+"Pied brise-garde",
+"Talon fouet",
+"Crochet du talon"
+],
+"all_hit": true,
+"damage": 35,
+"n": 124,
+"jerk": 24.0,
+"hitstop": 9,
+"beats": 3,
+"xrange": 99.39999999999998,
+"jump": 6.0,
+"images": 38,
+"gif": [
+82017,
+82017
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+21,
+"Coup 1 : anticipation"
+],
+[
+25,
+"Coup 1 : impact (Pied brise-garde)"
+],
+[
+44,
+"Coup 2 : anticipation"
+],
+[
+48,
+"Coup 2 : impact (Talon fouet)"
+],
+[
+68,
+"Coup 3 : anticipation"
+],
+[
+72,
+"Coup 3 : impact (Crochet du talon)"
+],
+[
+85,
+"Retour"
+],
+[
+121,
+"Garde retrouvee"
+]
+],
+"window": [
+8,
+121
+],
+"maxup": 32
+},
+"combo_02": {
+"id": "combo_02",
+"cat": "combo",
+"name": "Rafale du flamingo",
+"desc": "Cinq pieds sans une pause, droite gauche droite gauche, finis par la tornade.",
+"keys": [
+"Y",
+"Y",
+"Y",
+"Y",
+"Y"
+],
+"reference": false,
+"ok": true,
+"played": [
+"Pied brise-garde",
+"Talon fouet",
+"Crochet du talon",
+"Talon de foudre",
+"Tornade du dragon"
+],
+"all_hit": true,
+"damage": 61,
+"n": 177,
+"jerk": 73.8,
+"hitstop": 14,
+"beats": 5,
+"xrange": 160.39999999999998,
+"jump": 6.0,
+"images": 42,
+"gif": [
+100037,
+100037
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+25,
+"Coup 1 : impact (Pied brise-garde)"
+],
+[
+44,
+"Coup 2 : anticipation"
+],
+[
+48,
+"Coup 2 : impact (Talon fouet)"
+],
+[
+68,
+"Coup 3 : anticipation"
+],
+[
+72,
+"Coup 3 : impact (Crochet du talon)"
+],
+[
+92,
+"Coup 4 : anticipation"
+],
+[
+96,
+"Coup 4 : impact (Talon de foudre)"
+],
+[
+118,
+"Coup 5 : anticipation"
+],
+[
+123,
+"Coup 5 : impact (Tornade du dragon)"
+],
+[
+139,
+"Retour"
+],
+[
+174,
+"Garde retrouvee"
+]
+],
+"window": [
+8,
+174
+],
+"maxup": 40
+},
+"combo_03": {
+"id": "combo_03",
+"cat": "combo",
+"name": "Jab, genou, talons",
+"desc": "Un jab pour ouvrir, le genou, le crochet du talon puis le talon de foudre.",
+"keys": [
+"X",
+"Y",
+"Y",
+"Y"
+],
+"reference": true,
+"ok": true,
+"played": [
+"Jab",
+"Genou du dragon",
+"Crochet du talon",
+"Talon de foudre"
+],
+"all_hit": true,
+"damage": 35,
+"n": 123,
+"jerk": 33.3,
+"hitstop": 8,
+"beats": 4,
+"xrange": 98.5,
+"jump": 4.399999999999977,
+"images": 38,
+"gif": [
+84583,
+84583
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+16,
+"Coup 1 : anticipation"
+],
+[
+17,
+"Coup 1 : impact (Jab)"
+],
+[
+27,
+"Coup 2 : anticipation"
+],
+[
+30,
+"Coup 2 : impact (Genou du dragon)"
+],
+[
+50,
+"Coup 3 : anticipation"
+],
+[
+54,
+"Coup 3 : impact (Crochet du talon)"
+],
+[
+74,
+"Coup 4 : anticipation"
+],
+[
+78,
+"Coup 4 : impact (Talon de foudre)"
+],
+[
+91,
+"Retour"
+],
+[
+120,
+"Garde retrouvee"
+]
+],
+"window": [
+8,
+120
+],
+"maxup": 33
+},
+"combo_04": {
+"id": "combo_04",
+"cat": "combo",
+"name": "Lanceur du dragon",
+"desc": "Deux pieds, le pied remontant qui souleve, puis le talon qui fait retomber.",
+"keys": [
+"Y",
+"Y",
+"Haut+Y",
+"Ya"
+],
+"reference": true,
+"ok": true,
+"played": [
+"Pied brise-garde",
+"Talon fouet",
+"Pied remontant",
+"Hache aerienne"
+],
+"all_hit": true,
+"damage": 48,
+"n": 152,
+"jerk": 24.0,
+"hitstop": 9,
+"beats": 4,
+"xrange": 189.60000000000002,
+"jump": 6.0,
+"images": 43,
+"gif": [
+101962,
+101962
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+21,
+"Coup 1 : anticipation"
+],
+[
+25,
+"Coup 1 : impact (Pied brise-garde)"
+],
+[
+44,
+"Coup 2 : anticipation"
+],
+[
+48,
+"Coup 2 : impact (Talon fouet)"
+],
+[
+67,
+"Coup 3 : anticipation"
+],
+[
+71,
+"Coup 3 : impact (Pied remontant)"
+],
+[
+90,
+"Coup 4 : anticipation"
+],
+[
+94,
+"Coup 4 : impact (Hache aerienne)"
+],
+[
+107,
+"Retour"
+],
+[
+135,
+"Garde retrouvee"
+]
+],
+"window": [
+8,
+135
+],
+"maxup": 30
+},
+"combo_05": {
+"id": "combo_05",
+"cat": "combo",
+"name": "Jab, poing tonnerre",
+"desc": "Un jab pour ouvrir, puis le direct du bras avant lance en fente.",
+"keys": [
+"X",
+"X"
+],
+"reference": true,
+"ok": true,
+"played": [
+"Jab",
+"Direct"
+],
+"all_hit": true,
+"damage": 13,
+"n": 76,
+"jerk": 43.6,
+"hitstop": 4,
+"beats": 2,
+"xrange": 28.399999999999977,
+"jump": 2.5,
+"images": 22,
+"gif": [
+80952,
+80952
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+16,
+"Coup 1 : anticipation"
+],
+[
+17,
+"Coup 1 : impact (Jab)"
+],
+[
+25,
+"Coup 2 : anticipation"
+],
+[
+27,
+"Coup 2 : impact (Direct)"
+],
+[
+34,
+"Retour"
+],
+[
+53,
+"Transition"
+],
+[
+73,
+"Garde retrouvee"
+]
+],
+"window": [
+8,
+73
+],
+"maxup": 31
+},
+"combo_06": {
+"id": "combo_06",
+"cat": "combo",
+"name": "Enchainement Y > X > Y > X > Y > X",
+"desc": "Suite jouee : Pied brise-garde, Griffe retour, Coup circulaire, Paume du vent, Genou remontant, Direct saute.",
+"keys": [
+"Y",
+"X",
+"Y",
+"X",
+"Y",
+"X"
+],
+"reference": false,
+"ok": true,
+"played": [
+"Pied brise-garde",
+"Griffe retour",
+"Coup circulaire",
+"Paume du vent",
+"Genou remontant",
+"Direct saute"
+],
+"all_hit": true,
+"damage": 62,
+"n": 179,
+"jerk": 37.7,
+"hitstop": 11,
+"beats": 6,
+"xrange": 173.0,
+"jump": 4.300000000000068,
+"images": 51,
+"gif": [
+97775,
+97775
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+25,
+"Coup 1 : impact (Pied brise-garde)"
+],
+[
+44,
+"Coup 2 : impact (Griffe retour)"
+],
+[
+60,
+"Coup 3 : anticipation"
+],
+[
+63,
+"Coup 3 : impact (Coup circulaire)"
+],
+[
+80,
+"Coup 4 : anticipation"
+],
+[
+99,
+"Coup 5 : anticipation"
+],
+[
+103,
+"Coup 5 : impact (Genou remontant)"
+],
+[
+121,
+"Coup 6 : anticipation"
+],
+[
+123,
+"Coup 6 : impact (Direct saute)"
+],
+[
+135,
+"Retour"
+],
+[
+158,
+"Garde retrouvee"
+]
+],
+"window": [
+8,
+158
+],
+"maxup": 19
+},
+"combo_07": {
+"id": "combo_07",
+"cat": "combo",
+"name": "Enchainement Y > X > X > Y > X",
+"desc": "Suite jouee : Pied brise-garde, Griffe retour, Crochet, Tibia fouette, Poing de la montagne.",
+"keys": [
+"Y",
+"X",
+"X",
+"Y",
+"X"
+],
+"reference": false,
+"ok": true,
+"played": [
+"Pied brise-garde",
+"Griffe retour",
+"Crochet",
+"Tibia fouette",
+"Poing de la montagne"
+],
+"all_hit": true,
+"damage": 63,
+"n": 156,
+"jerk": 30.9,
+"hitstop": 12,
+"beats": 5,
+"xrange": 125.20000000000005,
+"jump": 6.7999999999999545,
+"images": 49,
+"gif": [
+110870,
+110870
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+25,
+"Coup 1 : impact (Pied brise-garde)"
+],
+[
+42,
+"Coup 2 : anticipation"
+],
+[
+44,
+"Coup 2 : impact (Griffe retour)"
+],
+[
+59,
+"Coup 3 : anticipation"
+],
+[
+61,
+"Coup 3 : impact (Crochet)"
+],
+[
+80,
+"Coup 4 : anticipation"
+],
+[
+84,
+"Coup 4 : impact (Tibia fouette)"
+],
+[
+104,
+"Coup 5 : anticipation"
+],
+[
+108,
+"Coup 5 : impact (Poing de la montagne)"
+],
+[
+122,
+"Retour"
+],
+[
+153,
+"Garde retrouvee"
+]
+],
+"window": [
+8,
+153
+],
+"maxup": 33
+},
+"combo_08": {
+"id": "combo_08",
+"cat": "combo",
+"name": "Enchainement Y > Y > X > X > X",
+"desc": "Suite jouee : Pied brise-garde, Talon fouet, Coude pivot, Rafale de griffes, Paume ascendante.",
+"keys": [
+"Y",
+"Y",
+"X",
+"X",
+"X"
+],
+"reference": false,
+"ok": true,
+"played": [
+"Pied brise-garde",
+"Talon fouet",
+"Coude pivot",
+"Rafale de griffes",
+"Paume ascendante"
+],
+"all_hit": true,
+"damage": 52,
+"n": 159,
+"jerk": 112.0,
+"hitstop": 12,
+"beats": 5,
+"xrange": 135.0,
+"jump": 6.800000000000068,
+"images": 50,
+"gif": [
+93501,
+93501
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+25,
+"Coup 1 : impact (Pied brise-garde)"
+],
+[
+44,
+"Coup 2 : anticipation"
+],
+[
+48,
+"Coup 2 : impact (Talon fouet)"
+],
+[
+65,
+"Coup 3 : anticipation"
+],
+[
+67,
+"Coup 3 : impact (Coude pivot)"
+],
+[
+82,
+"Coup 4 : anticipation"
+],
+[
+84,
+"Coup 4 : impact (Rafale de griffes)"
+],
+[
+107,
+"Coup 5 : anticipation"
+],
+[
+110,
+"Coup 5 : impact (Paume ascendante)"
+],
+[
+125,
+"Retour"
+],
+[
+156,
+"Garde retrouvee"
+]
+],
+"window": [
+8,
+156
+],
+"maxup": 32
+},
+"combo_09": {
+"id": "combo_09",
+"cat": "combo",
+"name": "Enchainement Y > Haut+Y > Xa > Xa",
+"desc": "Suite jouee : Pied brise-garde, Pied remontant, Direct saute, Coude saute.",
+"keys": [
+"Y",
+"Haut+Y",
+"Xa",
+"Xa"
+],
+"reference": false,
+"ok": true,
+"played": [
+"Pied brise-garde",
+"Pied remontant",
+"Direct saute",
+"Coude saute"
+],
+"all_hit": true,
+"damage": 55,
+"n": 156,
+"jerk": 47.3,
+"hitstop": 9,
+"beats": 4,
+"xrange": 187.5,
+"jump": 4.2000000000000455,
+"images": 47,
+"gif": [
+98372,
+98372
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+21,
+"Coup 1 : anticipation"
+],
+[
+25,
+"Coup 1 : impact (Pied brise-garde)"
+],
+[
+44,
+"Coup 2 : anticipation"
+],
+[
+48,
+"Coup 2 : impact (Pied remontant)"
+],
+[
+64,
+"Coup 3 : anticipation"
+],
+[
+66,
+"Coup 3 : impact (Direct saute)"
+],
+[
+89,
+"Coup 4 : anticipation"
+],
+[
+92,
+"Coup 4 : impact (Coude saute)"
+],
+[
+104,
+"Retour"
+],
+[
+146,
+"Garde retrouvee"
+]
+],
+"window": [
+8,
+146
+],
+"maxup": 26
+},
+"dir_01": {
+"id": "dir_01",
+"cat": "dir",
+"name": "Double paume",
+"desc": "Double paume : 5 images de depart, 3 actives, 13 de retour ; 9 degats.",
+"keys": [
+"Arr+X"
+],
+"reference": false,
+"ok": true,
+"played": [
+"Double paume"
+],
+"all_hit": true,
+"damage": 9,
+"n": 55,
+"jerk": 25.0,
+"hitstop": 8,
+"beats": 1,
+"xrange": 45.89999999999998,
+"jump": 7.100000000000023,
+"images": 16,
+"gif": [
+73665,
+73665
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+16,
+"Anticipation"
+],
+[
+17,
+"Chargement"
+],
+[
+19,
+"Impact"
+],
+[
+20,
+"Extension"
+],
+[
+21,
+"Fin de l'extension"
+],
+[
+26,
+"Retour"
+],
+[
+31,
+"Retour (fin)"
+],
+[
+39,
+"Garde retrouvee"
+]
+],
+"window": [
+8,
+54
+],
+"maxup": 20
+},
+"dir_02": {
+"id": "dir_02",
+"cat": "dir",
+"name": "Ruade du dragon",
+"desc": "Ruade du dragon : 9 images de depart, 4 actives, 19 de retour ; 18 degats.",
+"keys": [
+"Arr+Y"
+],
+"reference": false,
+"ok": true,
+"played": [
+"Ruade du dragon"
+],
+"all_hit": true,
+"damage": 18,
+"n": 67,
+"jerk": 22.8,
+"hitstop": 11,
+"beats": 1,
+"xrange": 40.799999999999955,
+"jump": 5.7000000000000455,
+"images": 20,
+"gif": [
+81323,
+81323
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+17,
+"Anticipation"
+],
+[
+21,
+"Chargement"
+],
+[
+23,
+"Impact"
+],
+[
+25,
+"Extension"
+],
+[
+26,
+"Fin de l'extension"
+],
+[
+33,
+"Retour"
+],
+[
+40,
+"Retour (fin)"
+],
+[
+50,
+"Garde retrouvee"
+]
+],
+"window": [
+8,
+66
+],
+"maxup": 31
+},
+"dir_03": {
+"id": "dir_03",
+"cat": "dir",
+"name": "Pied frontal",
+"desc": "Pied frontal : 8 images de depart, 4 actives, 16 de retour ; 11 degats.",
+"keys": [
+"Av+Y"
+],
+"reference": false,
+"ok": true,
+"played": [
+"Pied frontal"
+],
+"all_hit": true,
+"damage": 11,
+"n": 62,
+"jerk": 16.1,
+"hitstop": 9,
+"beats": 1,
+"xrange": 76.79999999999995,
+"jump": 11.899999999999977,
+"images": 18,
+"gif": [
+83428,
+83428
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+17,
+"Anticipation"
+],
+[
+20,
+"Chargement"
+],
+[
+22,
+"Impact"
+],
+[
+24,
+"Extension"
+],
+[
+25,
+"Fin de l'extension"
+],
+[
+31,
+"Retour"
+],
+[
+37,
+"Retour (fin)"
+],
+[
+46,
+"Garde retrouvee"
+]
+],
+"window": [
+8,
+61
+],
+"maxup": 27
+},
+"dir_04": {
+"id": "dir_04",
+"cat": "dir",
+"name": "Lariat de course",
+"desc": "Lariat de course : 5 images de depart, 5 actives, 14 de retour ; 12 degats.",
+"keys": [
+"Course+X"
+],
+"reference": false,
+"ok": true,
+"played": [
+"Lariat de course"
+],
+"all_hit": false,
+"damage": 0,
+"n": 48,
+"jerk": 20.5,
+"hitstop": 8,
+"beats": 1,
+"xrange": 54.5,
+"jump": 8.5,
+"images": 20,
+"gif": [
+51125,
+51125
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+16,
+"Anticipation"
+],
+[
+17,
+"Chargement"
+],
+[
+19,
+"Impact"
+],
+[
+21,
+"Extension"
+],
+[
+23,
+"Fin de l'extension"
+],
+[
+28,
+"Retour"
+],
+[
+34,
+"Retour (fin)"
+],
+[
+42,
+"Garde retrouvee"
+]
+],
+"window": [
+8,
+47
+],
+"maxup": 23
+},
+"dir_05": {
+"id": "dir_05",
+"cat": "dir",
+"name": "Coup de hache",
+"desc": "Coup de hache : 9 images de depart, 4 actives, 19 de retour ; 15 degats.",
+"keys": [
+"Course+Y"
+],
+"reference": false,
+"ok": true,
+"played": [
+"Coup de hache"
+],
+"all_hit": false,
+"damage": 0,
+"n": 56,
+"jerk": 17.1,
+"hitstop": 9,
+"beats": 1,
+"xrange": 44.39999999999998,
+"jump": 6.7999999999999545,
+"images": 16,
+"gif": [
+45835,
+45835
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+17,
+"Anticipation"
+],
+[
+21,
+"Chargement"
+],
+[
+23,
+"Impact"
+],
+[
+25,
+"Extension"
+],
+[
+26,
+"Fin de l'extension"
+],
+[
+33,
+"Retour"
+],
+[
+40,
+"Retour (fin)"
+],
+[
+50,
+"Garde retrouvee"
+]
+],
+"window": [
+8,
+55
+],
+"maxup": 31
+},
+"dir_06": {
+"id": "dir_06",
+"cat": "dir",
+"name": "Uppercut du dragon",
+"desc": "Uppercut du dragon : 8 images de depart, 5 actives, 16 de retour ; 13 degats, lance la cible.",
+"keys": [
+"X",
+"Haut+X"
+],
+"reference": false,
+"ok": true,
+"played": [
+"Jab",
+"Uppercut du dragon"
+],
+"all_hit": true,
+"damage": 18,
+"n": 72,
+"jerk": 33.3,
+"hitstop": 9,
+"beats": 2,
+"xrange": 30.700000000000045,
+"jump": 2.5,
+"images": 22,
+"gif": [
+64094,
+64094
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+16,
+"Coup 1 : anticipation"
+],
+[
+17,
+"Coup 1 : impact (Jab)"
+],
+[
+28,
+"Coup 2 : anticipation"
+],
+[
+31,
+"Coup 2 : impact (Uppercut du dragon)"
+],
+[
+44,
+"Retour"
+],
+[
+57,
+"Transition"
+],
+[
+71,
+"Garde retrouvee"
+]
+],
+"window": [
+8,
+71
+],
+"maxup": 28
+},
+"dir_07": {
+"id": "dir_07",
+"cat": "dir",
+"name": "Pied remontant",
+"desc": "Pied remontant : 9 images de depart, 4 actives, 17 de retour ; 12 degats, lance la cible.",
+"keys": [
+"Haut+Y"
+],
+"reference": false,
+"ok": true,
+"played": [
+"Pied remontant"
+],
+"all_hit": true,
+"damage": 13,
+"n": 64,
+"jerk": 16.0,
+"hitstop": 9,
+"beats": 1,
+"xrange": 16.5,
+"jump": 2.5,
+"images": 19,
+"gif": [
+50816,
+50816
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+17,
+"Anticipation"
+],
+[
+21,
+"Chargement"
+],
+[
+23,
+"Impact"
+],
+[
+25,
+"Extension"
+],
+[
+26,
+"Fin de l'extension"
+],
+[
+32,
+"Retour"
+],
+[
+39,
+"Retour (fin)"
+],
+[
+48,
+"Garde retrouvee"
+]
+],
+"window": [
+8,
+63
+],
+"maxup": 29
+},
+"grab_01": {
+"id": "grab_01",
+"cat": "grab",
+"name": "Prise et projection",
+"desc": "La saisie, puis la projection devant sans coup tenu.",
+"keys": [
+"Saisie",
+"Lourde + avant"
+],
+"reference": false,
+"ok": true,
+"played": [],
+"all_hit": false,
+"damage": 10,
+"n": 56,
+"jerk": 0.0,
+"hitstop": 0,
+"beats": 0,
+"xrange": 10.899999999999977,
+"jump": 10.899999999999977,
+"images": 15,
+"gif": [
+78420,
+78420
+],
+"keyframes": [
+[
+9,
+"Garde"
+],
+[
+15,
+"Prise tenue"
+],
+[
+16,
+"Recuperation"
+],
+[
+17,
+"Projection"
+],
+[
+28,
+"Recuperation (suite)"
+],
+[
+35,
+"Transition"
+],
+[
+43,
+"Garde"
+],
+[
+51,
+"Retour"
+]
+],
+"window": [
+8,
+51
+],
+"maxup": 0
+},
+"grab_02": {
+"id": "grab_02",
+"cat": "grab",
+"name": "Prise, un coup tenu, projection",
+"desc": "La saisie, un coup tenu, puis la projection devant.",
+"keys": [
+"Saisie",
+"X",
+"Lourde + avant"
+],
+"reference": false,
+"ok": true,
+"played": [],
+"all_hit": false,
+"damage": 12,
+"n": 66,
+"jerk": 0.0,
+"hitstop": 0,
+"beats": 0,
+"xrange": 11.0,
+"jump": 11.0,
+"images": 18,
+"gif": [
+77511,
+77511
+],
+"keyframes": [
+[
+9,
+"Garde"
+],
+[
+15,
+"Prise tenue"
+],
+[
+16,
+"Coup tenu 1"
+],
+[
+26,
+"Recuperation"
+],
+[
+27,
+"Projection"
+],
+[
+38,
+"Recuperation (suite)"
+],
+[
+53,
+"Garde"
+],
+[
+61,
+"Retour"
+]
+],
+"window": [
+8,
+61
+],
+"maxup": 0
+},
+"grab_03": {
+"id": "grab_03",
+"cat": "grab",
+"name": "Prise, trois coups tenus",
+"desc": "La saisie suivie de trois coups tenus ; la projection part seule.",
+"keys": [
+"Saisie",
+"X",
+"X",
+"X"
+],
+"reference": false,
+"ok": true,
+"played": [],
+"all_hit": false,
+"damage": 16,
+"n": 226,
+"jerk": 0.0,
+"hitstop": 0,
+"beats": 0,
+"xrange": 11.299999999999955,
+"jump": 11.299999999999955,
+"images": 54,
+"gif": [
+102300,
+102300
+],
+"keyframes": [
+[
+9,
+"Garde"
+],
+[
+15,
+"Prise tenue"
+],
+[
+16,
+"Coup tenu 1"
+],
+[
+26,
+"Coup tenu 2"
+],
+[
+36,
+"Coup tenu 3"
+],
+[
+109,
+"Coup tenu 3 (suite)"
+],
+[
+186,
+"Recuperation"
+],
+[
+187,
+"Projection"
+],
+[
+198,
+"Recuperation (suite)"
+],
+[
+213,
+"Garde"
+],
+[
+221,
+"Retour"
+]
+],
+"window": [
+8,
+221
+],
+"maxup": 0
+},
+"grab_04": {
+"id": "grab_04",
+"cat": "grab",
+"name": "Prise, coups lourds tenus",
+"desc": "La saisie, deux coups tenus a la lourde, puis la projection.",
+"keys": [
+"Saisie",
+"Y",
+"Y",
+"Lourde + avant"
+],
+"reference": false,
+"ok": true,
+"played": [],
+"all_hit": false,
+"damage": 14,
+"n": 76,
+"jerk": 0.0,
+"hitstop": 0,
+"beats": 0,
+"xrange": 11.200000000000045,
+"jump": 11.200000000000045,
+"images": 22,
+"gif": [
+83372,
+83372
+],
+"keyframes": [
+[
+9,
+"Garde"
+],
+[
+15,
+"Prise tenue"
+],
+[
+16,
+"Coup tenu 1"
+],
+[
+26,
+"Coup tenu 2"
+],
+[
+36,
+"Recuperation"
+],
+[
+37,
+"Projection"
+],
+[
+48,
+"Recuperation (suite)"
+],
+[
+63,
+"Garde"
+],
+[
+71,
+"Retour"
+]
+],
+"window": [
+8,
+71
+],
+"maxup": 0
+},
+"grab_05": {
+"id": "grab_05",
+"cat": "grab",
+"name": "Projection arriere",
+"desc": "La saisie, un coup tenu, puis la projection derriere soi.",
+"keys": [
+"Saisie",
+"X",
+"Lourde + arriere"
+],
+"reference": false,
+"ok": true,
+"played": [],
+"all_hit": false,
+"damage": 31,
+"n": 66,
+"jerk": 0.0,
+"hitstop": 0,
+"beats": 0,
+"xrange": 81.60000000000002,
+"jump": 17.799999999999955,
+"images": 18,
+"gif": [
+84862,
+84862
+],
+"keyframes": [
+[
+9,
+"Garde"
+],
+[
+15,
+"Prise tenue"
+],
+[
+16,
+"Coup tenu 1"
+],
+[
+26,
+"Recuperation"
+],
+[
+27,
+"Projection"
+],
+[
+38,
+"Recuperation (suite)"
+],
+[
+53,
+"Garde"
+],
+[
+61,
+"Retour"
+]
+],
+"window": [
+8,
+61
+],
+"maxup": 0
+},
+"loco_01": {
+"id": "loco_01",
+"cat": "loco",
+"name": "Marche",
+"desc": "Avant puis arriere : le pas du heros.",
+"keys": [
+"Avant",
+"Arriere"
+],
+"reference": false,
+"ok": true,
+"played": [],
+"all_hit": false,
+"damage": 0,
+"n": 90,
+"jerk": 0.0,
+"hitstop": 0,
+"beats": 0,
+"xrange": 108.0,
+"jump": 3.6000000000000227,
+"images": 28,
+"gif": [
+105692,
+105692
+],
+"keyframes": [
+[
+9,
+"Garde"
+],
+[
+15,
+"Marche"
+],
+[
+28,
+"Marche (suite)"
+],
+[
+45,
+"Garde"
+],
+[
+55,
+"Marche"
+],
+[
+68,
+"Marche (suite)"
+],
+[
+85,
+"Garde"
+],
+[
+89,
+"Retour"
+]
+],
+"window": [
+8,
+89
+],
+"maxup": 0
+},
+"loco_02": {
+"id": "loco_02",
+"cat": "loco",
+"name": "Course",
+"desc": "Course lancee vers l'adversaire.",
+"keys": [
+"Course"
+],
+"reference": false,
+"ok": true,
+"played": [],
+"all_hit": false,
+"damage": 0,
+"n": 70,
+"jerk": 0.0,
+"hitstop": 0,
+"beats": 0,
+"xrange": 291.4,
+"jump": 6.5,
+"images": 21,
+"gif": [
+106012,
+106012
+],
+"keyframes": [
+[
+9,
+"Garde"
+],
+[
+15,
+"Marche"
+],
+[
+26,
+"Transition"
+],
+[
+38,
+"Marche (suite)"
+],
+[
+51,
+"Transition"
+],
+[
+58,
+"Transition"
+],
+[
+65,
+"Garde"
+],
+[
+69,
+"Retour"
+]
+],
+"window": [
+8,
+69
+],
+"maxup": 0
+},
+"loco_03": {
+"id": "loco_03",
+"cat": "loco",
+"name": "Saut",
+"desc": "Saut vertical : elan, apogee, reception.",
+"keys": [
+"Saut"
+],
+"reference": false,
+"ok": true,
+"played": [],
+"all_hit": false,
+"damage": 0,
+"n": 61,
+"jerk": 0.0,
+"hitstop": 0,
+"beats": 0,
+"xrange": 0.0,
+"jump": 0.0,
+"images": 21,
+"gif": [
+36999,
+36999
+],
+"keyframes": [
+[
+1,
+"Garde"
+],
+[
+15,
+"Transition"
+],
+[
+22,
+"Transition"
+],
+[
+30,
+"Garde (suite)"
+],
+[
+37,
+"Transition"
+],
+[
+45,
+"Transition"
+],
+[
+52,
+"Transition"
+],
+[
+60,
+"Retour"
+]
+],
+"window": [
+0,
+60
+],
+"maxup": 0
+},
+"loco_04": {
+"id": "loco_04",
+"cat": "loco",
+"name": "Double saut",
+"desc": "Deuxieme saut en l'air, plus haut.",
+"keys": [
+"Saut",
+"Saut"
+],
+"reference": false,
+"ok": true,
+"played": [],
+"all_hit": false,
+"damage": 0,
+"n": 79,
+"jerk": 0.0,
+"hitstop": 0,
+"beats": 0,
+"xrange": 0.0,
+"jump": 0.0,
+"images": 27,
+"gif": [
+41421,
+41421
+],
+"keyframes": [
+[
+1,
+"Garde"
+],
+[
+20,
+"Transition"
+],
+[
+29,
+"Transition"
+],
+[
+39,
+"Garde (suite)"
+],
+[
+48,
+"Transition"
+],
+[
+58,
+"Transition"
+],
+[
+68,
+"Transition"
+],
+[
+78,
+"Retour"
+]
+],
+"window": [
+0,
+78
+],
+"maxup": 0
+},
+"react_01": {
+"id": "react_01",
+"cat": "react",
+"name": "Garde haute",
+"desc": "Garde tenue : le crochet du mannequin est bloque (etourdissement de garde), puis retour au repos.",
+"keys": [
+"Garde"
+],
+"reference": false,
+"ok": true,
+"played": [],
+"all_hit": false,
+"damage": 0,
+"n": 84,
+"jerk": 0.0,
+"hitstop": 0,
+"beats": 0,
+"xrange": 11.299999999999955,
+"jump": 1.7000000000000455,
+"images": 25,
+"gif": [
+71096,
+71096
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+15,
+"Garde levee"
+],
+[
+27,
+"Coup encaisse par la garde"
+],
+[
+35,
+"Garde levee"
+],
+[
+53,
+"Garde levee (suite)"
+],
+[
+64,
+"Transition"
+],
+[
+75,
+"Garde"
+],
+[
+83,
+"Retour"
+]
+],
+"window": [
+10,
+83
+],
+"maxup": 0
+},
+"react_02": {
+"id": "react_02",
+"cat": "react",
+"name": "Garde basse",
+"desc": "Garde accroupie (garde + bas) : le mannequin frappe, la garde basse encaisse.",
+"keys": [
+"Garde + Bas"
+],
+"reference": false,
+"ok": true,
+"played": [],
+"all_hit": false,
+"damage": 0,
+"n": 100,
+"jerk": 0.0,
+"hitstop": 0,
+"beats": 0,
+"xrange": 0.0,
+"jump": 0.0,
+"images": 30,
+"gif": [
+82034,
+82034
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+15,
+"Esquive"
+],
+[
+35,
+"Recuperation"
+],
+[
+36,
+"Esquive"
+],
+[
+44,
+"Esquive (suite)"
+],
+[
+56,
+"Recuperation"
+],
+[
+63,
+"Garde"
+],
+[
+64,
+"Esquive"
+],
+[
+72,
+"Esquive (suite)"
+],
+[
+84,
+"Recuperation"
+],
+[
+91,
+"Garde"
+],
+[
+99,
+"Retour"
+]
+],
+"window": [
+10,
+99
+],
+"maxup": 0
+},
+"react_03": {
+"id": "react_03",
+"cat": "react",
+"name": "Parade",
+"desc": "La garde est levee juste avant l'impact : fenetre de parade (8 images), eclat et riposte possible.",
+"keys": [
+"Garde (juste avant l'impact)"
+],
+"reference": false,
+"ok": true,
+"played": [],
+"all_hit": false,
+"damage": 0,
+"n": 73,
+"jerk": 0.0,
+"hitstop": 0,
+"beats": 0,
+"xrange": 0.0,
+"jump": 0.0,
+"images": 21,
+"gif": [
+67981,
+67981
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+24,
+"Garde levee"
+],
+[
+27,
+"Garde"
+],
+[
+34,
+"Transition"
+],
+[
+41,
+"Garde levee"
+],
+[
+51,
+"Garde levee (suite)"
+],
+[
+64,
+"Garde"
+],
+[
+72,
+"Retour"
+]
+],
+"window": [
+10,
+72
+],
+"maxup": 0
+},
+"react_04": {
+"id": "react_04",
+"cat": "react",
+"name": "Garde brisee",
+"desc": "La jauge de garde est vide : la garde cede, le heros chancelle quelques images.",
+"keys": [
+"(garde brisee)"
+],
+"reference": false,
+"ok": true,
+"played": [],
+"all_hit": false,
+"damage": 0,
+"n": 86,
+"jerk": 0.0,
+"hitstop": 0,
+"beats": 0,
+"xrange": 0.0,
+"jump": 0.0,
+"images": 26,
+"gif": [
+64014,
+64014
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+17,
+"Garde brisee"
+],
+[
+31,
+"Transition"
+],
+[
+45,
+"Garde brisee (suite)"
+],
+[
+61,
+"Transition"
+],
+[
+69,
+"Transition"
+],
+[
+77,
+"Garde"
+],
+[
+85,
+"Retour"
+]
+],
+"window": [
+10,
+85
+],
+"maxup": 0
+},
+"react_05": {
+"id": "react_05",
+"cat": "react",
+"name": "Touche (etourdissement)",
+"desc": "Sans garde : le crochet du mannequin touche, recul et etourdissement.",
+"keys": [
+"(aucune entree)"
+],
+"reference": false,
+"ok": true,
+"played": [],
+"all_hit": false,
+"damage": 0,
+"n": 62,
+"jerk": 0.0,
+"hitstop": 0,
+"beats": 0,
+"xrange": 9.700000000000045,
+"jump": 1.5,
+"images": 18,
+"gif": [
+63711,
+63711
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+17,
+"Transition"
+],
+[
+23,
+"Touche : recul"
+],
+[
+29,
+"Transition"
+],
+[
+36,
+"Touche : recul (suite)"
+],
+[
+44,
+"Transition"
+],
+[
+53,
+"Garde"
+],
+[
+61,
+"Retour"
+]
+],
+"window": [
+10,
+61
+],
+"maxup": 0
+},
+"react_06": {
+"id": "react_06",
+"cat": "react",
+"name": "Projete, chute et relevage",
+"desc": "Le heros est jete en l'air, retombe, reste au sol puis se releve.",
+"keys": [
+"(lance)"
+],
+"reference": false,
+"ok": true,
+"played": [],
+"all_hit": false,
+"damage": 0,
+"n": 150,
+"jerk": 0.0,
+"hitstop": 0,
+"beats": 0,
+"xrange": 124.79999999999995,
+"jump": 3.5,
+"images": 38,
+"gif": [
+73949,
+73949
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+17,
+"Projete en l'air"
+],
+[
+30,
+"Projete en l'air (suite)"
+],
+[
+47,
+"Au sol"
+],
+[
+66,
+"Au sol (suite)"
+],
+[
+88,
+"Relevage"
+],
+[
+99,
+"Relevage (suite)"
+],
+[
+113,
+"Garde"
+],
+[
+121,
+"Retour"
+]
+],
+"window": [
+10,
+121
+],
+"maxup": 0
+},
+"react_07": {
+"id": "react_07",
+"cat": "react",
+"name": "Esquive arriere (famille 1)",
+"desc": "Garde + arriere : pas de cote rapide en arriere, invulnerable un instant.",
+"keys": [
+"Garde + direction"
+],
+"reference": false,
+"ok": true,
+"played": [],
+"all_hit": false,
+"damage": 0,
+"n": 51,
+"jerk": 0.0,
+"hitstop": 0,
+"beats": 0,
+"xrange": 131.10000000000002,
+"jump": 7.7000000000000455,
+"images": 14,
+"gif": [
+59360,
+59360
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+15,
+"Esquive"
+],
+[
+23,
+"Esquive (suite)"
+],
+[
+29,
+"Transition"
+],
+[
+35,
+"Recuperation"
+],
+[
+42,
+"Garde"
+],
+[
+46,
+"Transition"
+],
+[
+50,
+"Retour"
+]
+],
+"window": [
+10,
+50
+],
+"maxup": 0
+},
+"react_08": {
+"id": "react_08",
+"cat": "react",
+"name": "Esquive arriere (famille 2)",
+"desc": "Garde + arriere : pas de cote rapide en arriere, invulnerable un instant.",
+"keys": [
+"Garde + direction"
+],
+"reference": false,
+"ok": true,
+"played": [],
+"all_hit": false,
+"damage": 0,
+"n": 51,
+"jerk": 0.0,
+"hitstop": 0,
+"beats": 0,
+"xrange": 131.10000000000002,
+"jump": 7.7000000000000455,
+"images": 14,
+"gif": [
+59449,
+59449
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+15,
+"Esquive"
+],
+[
+23,
+"Esquive (suite)"
+],
+[
+29,
+"Transition"
+],
+[
+35,
+"Recuperation"
+],
+[
+42,
+"Garde"
+],
+[
+46,
+"Transition"
+],
+[
+50,
+"Retour"
+]
+],
+"window": [
+10,
+50
+],
+"maxup": 0
+},
+"react_09": {
+"id": "react_09",
+"cat": "react",
+"name": "Esquive arriere (famille 3)",
+"desc": "Garde + arriere : pas de cote rapide en arriere, invulnerable un instant.",
+"keys": [
+"Garde + direction"
+],
+"reference": false,
+"ok": true,
+"played": [],
+"all_hit": false,
+"damage": 0,
+"n": 51,
+"jerk": 0.0,
+"hitstop": 0,
+"beats": 0,
+"xrange": 131.10000000000002,
+"jump": 7.7000000000000455,
+"images": 14,
+"gif": [
+57110,
+57110
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+15,
+"Esquive"
+],
+[
+23,
+"Esquive (suite)"
+],
+[
+29,
+"Transition"
+],
+[
+35,
+"Recuperation"
+],
+[
+42,
+"Garde"
+],
+[
+46,
+"Transition"
+],
+[
+50,
+"Retour"
+]
+],
+"window": [
+10,
+50
+],
+"maxup": 0
+},
+"react_10": {
+"id": "react_10",
+"cat": "react",
+"name": "Esquive avant",
+"desc": "Garde + avant : esquive qui passe vers l'adversaire.",
+"keys": [
+"Garde + direction"
+],
+"reference": false,
+"ok": true,
+"played": [],
+"all_hit": false,
+"damage": 0,
+"n": 51,
+"jerk": 0.0,
+"hitstop": 0,
+"beats": 0,
+"xrange": 115.89999999999998,
+"jump": 27.0,
+"images": 14,
+"gif": [
+73761,
+73761
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+15,
+"Esquive"
+],
+[
+23,
+"Esquive (suite)"
+],
+[
+29,
+"Transition"
+],
+[
+35,
+"Recuperation"
+],
+[
+42,
+"Garde"
+],
+[
+46,
+"Transition"
+],
+[
+50,
+"Retour"
+]
+],
+"window": [
+10,
+50
+],
+"maxup": 0
+},
+"react_11": {
+"id": "react_11",
+"cat": "react",
+"name": "Esquive laterale",
+"desc": "Garde + haut : esquive sur le cote (profondeur).",
+"keys": [
+"Garde + direction"
+],
+"reference": false,
+"ok": true,
+"played": [],
+"all_hit": false,
+"damage": 0,
+"n": 51,
+"jerk": 0.0,
+"hitstop": 0,
+"beats": 0,
+"xrange": 0.0,
+"jump": 0.0,
+"images": 14,
+"gif": [
+43231,
+43231
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+15,
+"Esquive"
+],
+[
+23,
+"Esquive (suite)"
+],
+[
+29,
+"Transition"
+],
+[
+35,
+"Recuperation"
+],
+[
+42,
+"Garde"
+],
+[
+46,
+"Transition"
+],
+[
+50,
+"Retour"
+]
+],
+"window": [
+10,
+50
+],
+"maxup": 0
+},
+"spec_01": {
+"id": "spec_01",
+"cat": "special",
+"name": "Special B",
+"desc": "Special de l'emplacement B (Crescent).",
+"keys": [
+"B"
+],
+"reference": false,
+"ok": true,
+"played": [],
+"all_hit": false,
+"damage": 6,
+"n": 50,
+"jerk": 0.0,
+"hitstop": 0,
+"beats": 0,
+"xrange": 0.0,
+"jump": 0.0,
+"images": 17,
+"gif": [
+77881,
+77881
+],
+"keyframes": [
+[
+9,
+"Garde"
+],
+[
+15,
+"Charge"
+],
+[
+16,
+"Recuperation"
+],
+[
+21,
+"Impact"
+],
+[
+26,
+"Transition"
+],
+[
+32,
+"Garde"
+],
+[
+36,
+"Transition"
+],
+[
+40,
+"Retour"
+]
+],
+"window": [
+8,
+40
+],
+"maxup": 0
+},
+"super_1": {
+"id": "super_1",
+"cat": "super",
+"name": "HEURES SUP EN RAFALE",
+"desc": "Super numero 1 (RT) : serie de coups cinematique sur la cible.",
+"keys": [
+"RT"
+],
+"reference": false,
+"ok": true,
+"played": [],
+"all_hit": false,
+"damage": 60,
+"n": 305,
+"jerk": 0.0,
+"hitstop": 0,
+"beats": 0,
+"xrange": 72.0,
+"jump": 12.0,
+"images": 71,
+"gif": [
+161133,
+161133
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+17,
+"Declenchement"
+],
+[
+61,
+"Coup 1"
+],
+[
+94,
+"Coup 2"
+],
+[
+119,
+"Coup 3"
+],
+[
+131,
+"Coup 4"
+],
+[
+145,
+"Coup 5"
+],
+[
+157,
+"Coup 6"
+],
+[
+171,
+"Coup 7"
+],
+[
+286,
+"Retour"
+],
+[
+290,
+"Garde retrouvee"
+]
+],
+"window": [
+8,
+290
+],
+"maxup": 0
+},
+"super_2": {
+"id": "super_2",
+"cat": "super",
+"name": "BALAYAGE DE MOQUETTE",
+"desc": "Super numero 2 (Bas + RT) : serie de coups cinematique sur la cible.",
+"keys": [
+"Bas + RT"
+],
+"reference": false,
+"ok": true,
+"played": [],
+"all_hit": false,
+"damage": 40,
+"n": 251,
+"jerk": 0.0,
+"hitstop": 0,
+"beats": 0,
+"xrange": 64.0,
+"jump": 10.700000000000045,
+"images": 58,
+"gif": [
+137915,
+137915
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+17,
+"Declenchement"
+],
+[
+61,
+"Coup 1"
+],
+[
+84,
+"Coup 2"
+],
+[
+97,
+"Coup 3"
+],
+[
+106,
+"Coup 4"
+],
+[
+114,
+"Coup 5"
+],
+[
+121,
+"Coup 6"
+],
+[
+131,
+"Coup 7"
+],
+[
+232,
+"Retour"
+],
+[
+236,
+"Garde retrouvee"
+]
+],
+"window": [
+8,
+236
+],
+"maxup": 0
+},
+"super_3": {
+"id": "super_3",
+"cat": "super",
+"name": "DEMISSION FRACASSANTE",
+"desc": "Super numero 3 (Avant + RT) : serie de coups cinematique sur la cible.",
+"keys": [
+"Avant + RT"
+],
+"reference": false,
+"ok": true,
+"played": [],
+"all_hit": false,
+"damage": 60,
+"n": 255,
+"jerk": 0.0,
+"hitstop": 0,
+"beats": 0,
+"xrange": 225.0,
+"jump": 125.60000000000002,
+"images": 59,
+"gif": [
+164701,
+164701
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+17,
+"Declenchement"
+],
+[
+61,
+"Coup 1"
+],
+[
+78,
+"Coup 2"
+],
+[
+92,
+"Coup 3"
+],
+[
+99,
+"Coup 4"
+],
+[
+107,
+"Coup 5"
+],
+[
+113,
+"Coup 6"
+],
+[
+119,
+"Coup 7"
+],
+[
+236,
+"Retour"
+],
+[
+240,
+"Garde retrouvee"
+]
+],
+"window": [
+8,
+240
+],
+"maxup": 0
+},
+"super_4": {
+"id": "super_4",
+"cat": "super",
+"name": "PREAVIS DE 30 JOURS",
+"desc": "Super numero 4 (Arriere + RT) : serie de coups cinematique sur la cible.",
+"keys": [
+"Arriere + RT"
+],
+"reference": false,
+"ok": true,
+"played": [],
+"all_hit": false,
+"damage": 41,
+"n": 268,
+"jerk": 0.0,
+"hitstop": 0,
+"beats": 0,
+"xrange": 204.0,
+"jump": 118.39999999999998,
+"images": 62,
+"gif": [
+151061,
+151061
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+17,
+"Declenchement"
+],
+[
+61,
+"Coup 1"
+],
+[
+84,
+"Coup 2"
+],
+[
+101,
+"Coup 3"
+],
+[
+111,
+"Coup 4"
+],
+[
+119,
+"Coup 5"
+],
+[
+126,
+"Coup 6"
+],
+[
+136,
+"Coup 7"
+],
+[
+249,
+"Retour"
+],
+[
+253,
+"Garde retrouvee"
+]
+],
+"window": [
+8,
+253
+],
+"maxup": 0
+},
+"super_5": {
+"id": "super_5",
+"cat": "super",
+"name": "CAFE EN APESANTEUR",
+"desc": "Super numero 5 (RT en l'air) : serie de coups cinematique sur la cible.",
+"keys": [
+"RT en l'air"
+],
+"reference": false,
+"ok": true,
+"played": [],
+"all_hit": false,
+"damage": 87,
+"n": 316,
+"jerk": 0.0,
+"hitstop": 0,
+"beats": 0,
+"xrange": 64.0,
+"jump": 10.700000000000045,
+"images": 70,
+"gif": [
+173441,
+173441
+],
+"keyframes": [
+[
+18,
+"Garde"
+],
+[
+24,
+"Declenchement"
+],
+[
+68,
+"Coup 1"
+],
+[
+93,
+"Coup 2"
+],
+[
+110,
+"Coup 3"
+],
+[
+121,
+"Coup 4"
+],
+[
+130,
+"Coup 5"
+],
+[
+139,
+"Coup 6"
+],
+[
+150,
+"Coup 7"
+],
+[
+290,
+"Retour"
+],
+[
+294,
+"Garde retrouvee"
+]
+],
+"window": [
+15,
+294
+],
+"maxup": 0
+},
+"transfo_1": {
+"id": "transfo_1",
+"cat": "transfo",
+"name": "ULTIME KOGEN",
+"desc": "Ki + gachette : la transformation (mise en scene, aura, retour en garde transforme).",
+"keys": [
+"LB+RT"
+],
+"reference": false,
+"ok": true,
+"played": [],
+"all_hit": false,
+"damage": 0,
+"n": 109,
+"jerk": 0.0,
+"hitstop": 0,
+"beats": 0,
+"xrange": 0.0,
+"jump": 0.0,
+"images": 24,
+"gif": [
+103489,
+103489
+],
+"keyframes": [
+[
+11,
+"Garde"
+],
+[
+17,
+"Declenchement"
+],
+[
+21,
+"Phase 1"
+],
+[
+28,
+"Phase 2"
+],
+[
+35,
+"Phase 3"
+],
+[
+42,
+"Phase 4"
+],
+[
+49,
+"Phase 5"
+],
+[
+56,
+"Phase 6"
+],
+[
+63,
+"Phase 7"
+],
+[
+74,
+"Retour"
+],
+[
+78,
+"Garde retrouvee"
+]
+],
+"window": [
+8,
+78
+],
+"maxup": 0
+}
+}

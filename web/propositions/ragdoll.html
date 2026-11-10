@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ragdoll, musiques, niveaux</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b;--ok:#2f8f5b}
+body{margin:0;background:var(--papier);color:var(--encre);font:16px/1.45 Nunito,system-ui,sans-serif;padding:16px}
+h1,h2{font-family:Silkscreen,monospace;letter-spacing:.02em;margin:0 0 6px}
+h1{font-size:22px}h2{font-size:15px;color:var(--accent)}
+.lead{max-width:760px}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px;margin-top:14px}
+.c{background:#fff;border:2px solid var(--encre);border-radius:12px;padding:10px}
+.c.ok{outline:4px solid var(--ok)}.c.no{outline:4px solid var(--accent)}
+p{margin:6px 0;font-size:14px}.why{opacity:.75;font-size:13px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.pair figure{margin:0}.pair img{width:100%;border:2px solid var(--encre);border-radius:6px;background:#ddd;display:block}
+.pair figcaption{font-family:Silkscreen,monospace;font-size:11px;text-align:center;margin-top:2px}
+.tag{display:inline-block;font-family:Silkscreen,monospace;font-size:11px;padding:2px 6px;border-radius:6px;border:2px solid var(--encre);margin-right:6px}
+.tag.f{background:var(--ok);color:#fff}.tag.r{background:var(--accent);color:#fff}
+button{font:inherit;font-weight:700;padding:9px 12px;border-radius:8px;border:2px solid var(--encre);margin:4px 4px 0 0;background:var(--papier);color:var(--encre);cursor:pointer}
+button.v{background:var(--ok);color:#fff}button.x{background:var(--accent);color:#fff}
+textarea{width:100%;box-sizing:border-box;border:2px solid var(--encre);border-radius:6px;padding:6px;margin-top:6px;font:inherit;background:var(--papier)}
+#o{white-space:pre-wrap;background:var(--encre);color:var(--papier);padding:12px;border-radius:10px;margin-top:14px}
+.gen{background:var(--accent);color:#fff;font-family:Silkscreen,monospace;margin-top:14px}
+</style></head><body>
+<h1>Ragdoll, musiques en double, niveaux</h1>
+<p class="lead">Trois chantiers. Les GIF sont du vrai moteur (banc <code>ragdoll_lab</code>) : le meme coup est rejoue avant et apres. Pour chaque carte : Valider ou A refaire (+ remarque), puis genere le texte et colle-le dans le chat.</p>
+<div class="g" id="g"></div>
+<button class="gen" onclick="out()">Generer mon texte</button><div id="o"></div>
+<script>
+function pair(n){return '<div class="pair"><figure><img loading="lazy" src="ragdoll/avant_'+n+'.gif" alt="avant"><figcaption>AVANT</figcaption></figure><figure><img loading="lazy" src="ragdoll/apres_'+n+'.gif" alt="apres"><figcaption>APRES</figcaption></figure></div>';}
+var C=[
+{k:"rag_coup",s:"f",n:"Ragdoll : coup",g:"coup",d:"Un coup encaisse debout : le tronc encaisse l'elan, les coudes et les genoux plient dans leur seul sens, puis les moteurs ramenent la pose. Les articulations des animations gardent leurs bornes larges (grands coups de pied), mais plus aucun coude ni genou ne depasse 150 degres.",w:"Moteurs actifs : LIMITS (coude et genou 0 a 150)."},
+{k:"rag_proj",s:"f",n:"Ragdoll : projection",g:"projection",d:"Projete, le corps est inerte avec des limites strictement humaines : coudes et genoux 0 a 150 degres dans un seul sens, epaule -65 a 180, hanche -30 a 125, cou -40 a 50, grand ecart de jambes borne a 140. Le sens de rotation depend du sens de projection.",w:"Constantes publiques ragdoll::STRICT et LEG_SPLIT_MAX."},
+{k:"rag_mur",s:"f",n:"Ragdoll : choc contre un mur",g:"mur",d:"Nouveau : une deceleration horizontale brutale en l'air est detectee comme un choc de mur. Le buste est renvoye, la tete fouette, les membres s'ecartent, le corps rebondit un peu.",w:"Ragdoll::wall_hit, detection par saut de vitesse."},
+{k:"rag_expl",s:"f",n:"Ragdoll : explosion",g:"explosion",d:"Impulsion extreme (jusqu'a 400 de puissance) : vitesses angulaires et articulaires bornees, aucun NaN, pas d'explosion numerique. Retombee avec rebond amorti, glissade (les membres trainent derriere) et repos naturel.",w:"Pas fixe de 1/120 s, vitesses plafonnees."},
+{k:"rag_sol",s:"f",n:"Contacts au sol credibles",d:"Au sol, un membre ne s'enfonce plus : il pivote autour de son articulation et se pose sur le sol (longueurs d'os constantes, plus de membre raccourci). Raccord propre avec le relevé : le buste revient par le plus court tour, l'elan residuel est amorti, les moteurs se rallument progressivement.",w:"flatten_limbs (cinematique directe, pas de compression)."},
+{k:"rag_tests",s:"f",n:"Tests en lot du ragdoll",d:"3000 scenarios aleatoires (coup, projection, mur, explosion, rafale de coups pendant la chute, retombee, relevé), 420 images chacun : aucun angle hors limites (corps inerte : STRICT ; moteurs : LIMITS), aucun NaN, energie bornee, buste au-dessus du sol, jambes sous le grand ecart, determinisme bit a bit. Le ragdoll est uniquement visuel : il ne touche ni la simulation ni le hash d'etat du lockstep, 1 a 8 joueurs.",w:"ragdoll::tests::thousands_of_random_impacts_stay_human_finite_and_bounded."},
+{k:"zik",s:"f",n:"Musiques en double : cause racine",d:"Cause : le fondu de l'ancien morceau (tick_outgoing) n'etait appele nulle part. A chaque changement de piste (titre vers niveau, phase de boss, ecran, reprise en ligne), l'ancien morceau continuait a plein volume sous le nouveau jusqu'au changement suivant. Correction : machine a etats pure (audio::Voices), fondu appele a chaque image, fondu de 0,3 s, au plus une piste sortante, jamais la meme piste demarree deux fois.",w:"Test en lot : 200 parcours aleatoires de 400 evenements, jamais plus de 2 pistes (fondu) et une seule des que le fondu est fini."},
+{k:"zik2",s:"f",n:"Musique des terrains et des boss",d:"Avant, 6 terrains sur 13 jouaient deja la piste de leur propre boss (le pool de terrains contenait deux pistes de boss) : l'arrivee du boss ne changeait rien. Maintenant les terrains ordinaires jouent seulement les deux pistes de niveau (jour et calme : niveau 1 ; nuit et tension : niveau 2), les pistes de boss sont reservees aux boss.",w:"audio::stage_track + test stage_music_never_equals_a_boss_track."},
+{k:"niv",s:"f",n:"Coherence des niveaux existants",d:"Audit des 13 terrains (decor, ennemis, equipement, objets, armes, dangers, ambiance, difficulte, musique). Corrections : musiques, baguette magique d'un tireur de salle des serveurs, patins a roulettes des serveurs, casque de samourai d'un garde presidentiel. Journal complet : tools/audit_niveaux_log.md (section 2026-11).",w:"Test en lot : equipement vs lieu, boss en derniere vague, recompenses croissantes."},
+{k:"reste",s:"r",n:"Reste a decider",d:"Le ragdoll ne gere pas les objets du decor (caisses, tonneaux) comme obstacles solides : seuls le sol et les murs de la simulation existent pour lui. La hauteur de rebond et la glissade sont visuelles. Les cinq boss reskin du Maitre Noir partagent les memes coups.",w:"A trancher : obstacles physiques pour le ragdoll ? Variantes de coups pour les boss reskin ?"}
+],st={};
+var g=document.getElementById('g');
+C.forEach(function(c){var d=document.createElement('div');d.className='c';d.id='c_'+c.k;
+d.innerHTML='<span class="tag '+c.s+'">'+(c.s=='f'?'CORRIGE':'RESTE')+'</span><h2>'+c.n+'</h2>'+(c.g?pair(c.g):'')+'<p>'+c.d+'</p><p class="why">'+c.w+'</p><button class="v" data-k="'+c.k+'" data-v="1">Valider</button><button class="x" data-k="'+c.k+'" data-v="-1">A refaire</button><textarea id="t_'+c.k+'" rows="2" placeholder="Remarque"></textarea>';g.appendChild(d);});
+g.addEventListener('click',function(e){var b=e.target;if(!b.dataset||!b.dataset.k)return;var v=+b.dataset.v;st[b.dataset.k]=v;document.getElementById('c_'+b.dataset.k).className='c '+(v>0?'ok':'no');});
+function out(){var L=C.map(function(c){var v=st[c.k];var t=document.getElementById('t_'+c.k).value.trim();return (v>0?'VALIDE':v<0?'A REFAIRE':'NON VU')+' : '+c.n+(t?' - '+t:'');});document.getElementById('o').textContent='Ragdoll / musiques / niveaux :\n'+L.join('\n');}
+</script></body></html>

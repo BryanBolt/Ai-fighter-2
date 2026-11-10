@@ -1,0 +1,32 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mouvements : lot A</title>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+<style>:root{--ink:#221834;--paper:#fff3e0;--acc:#d8456b;--card:#fff;--mut:#6b5a80;--ok:#2e9e5b;--warn:#c98a00}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--ink:#fff3e0;--paper:#221834;--card:#2f2347;--mut:#c9b8e0}}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Nunito,sans-serif;line-height:1.5}
+header,main{max-width:1100px;margin:0 auto;padding:16px}
+h1{font-family:Silkscreen,monospace;color:var(--acc);font-size:28px;margin:8px 0}
+details.cat{margin:22px 0}details.cat>summary{font-family:Silkscreen,monospace;font-size:19px;border-bottom:3px solid var(--acc);padding:6px 0;cursor:pointer;list-style:none}
+details.cat>summary::before{content:"+ ";color:var(--acc)}details.cat[open]>summary::before{content:"- "}
+.sub{color:var(--mut);margin:6px 0 0}
+h3{margin:0 0 4px;font-size:19px}.num{display:inline-block;background:var(--acc);color:#fff;border-radius:50%;min-width:30px;height:30px;line-height:30px;text-align:center;font-family:Silkscreen,monospace;font-size:13px;padding:0 4px}
+.card{background:var(--card);border:2px solid var(--ink);border-radius:12px;padding:14px;margin:16px 0}
+.card.ok{border-color:var(--ok);box-shadow:0 0 0 3px #2e9e5b55}.card.ko{border-color:var(--acc);box-shadow:0 0 0 3px #d8456b55}
+.keys{font-family:Silkscreen,monospace;font-size:13px;color:var(--acc)}.desc{color:var(--mut);margin:2px 0 8px}
+.badge{display:inline-block;border-radius:6px;padding:1px 8px;margin:0 6px 4px 0;font:700 12px Nunito,sans-serif;color:#fff;background:var(--mut)}
+.badge.ref{background:var(--ok)}.badge.warn{background:var(--warn)}.badge.bad{background:var(--acc)}
+.board{width:100%;height:auto;border-radius:8px;border:1px solid var(--ink);display:block}
+.gifs{display:flex;gap:12px;flex-wrap:wrap;margin:10px 0}.gifs figure{margin:0;flex:1 1 280px}.gifs img{width:100%;height:auto;border-radius:8px;border:1px solid var(--ink)}
+figcaption{font-size:13px;color:var(--mut)}
+button{font:800 15px Nunito,sans-serif;border:2px solid var(--ink);background:var(--paper);color:var(--ink);border-radius:8px;padding:8px 14px;margin-right:8px;cursor:pointer;min-height:40px}
+button.on[data-v=ok]{background:var(--ok);color:#fff}button.on[data-v=ko]{background:var(--acc);color:#fff}
+textarea{width:100%;min-height:52px;margin-top:8px;border:2px solid var(--ink);border-radius:8px;padding:8px;font:inherit;background:var(--paper);color:var(--ink)}
+#gen{position:sticky;bottom:0;background:var(--paper);border-top:3px solid var(--acc);padding:10px 16px;text-align:center}
+#out{width:100%;min-height:140px;margin-top:8px;display:none}
+.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0}.bar label{font-weight:700}
+a{color:var(--acc)}.hero{display:inline-block;background:var(--card);border:2px solid var(--ink);border-radius:12px;padding:14px;margin:8px;min-width:220px;vertical-align:top;text-decoration:none;color:var(--ink)}
+</style></head><body><header><h1>Mouvements : Kaze, Gorr, Sora, Tetsu, Nova</h1><p>Pour chaque h&eacute;ros, tous les mouvements par cat&eacute;gories (coups de base, directionnels, bas, a&eacute;riens, encha&icirc;nements, saisies, esquive / garde / parade, sp&eacute;ciaux, supers, transformation, d&eacute;placements). Chaque mouvement a sa <b>planche de d&eacute;composition</b>, son <b>GIF du vrai moteur</b> et son <b>ralenti x0,25</b>, avec Valider / &Agrave; refaire / commentaire. Les kaze valid&eacute;s sont marqu&eacute;s &laquo; valide (r&eacute;f&eacute;rence) &raquo;.</p></header><main><a class="hero" href="coups_kaze.html"><h3>Kaze</h3><div>53 mouvements<br>9 &agrave; surveiller<br>13.2 Mo</div></a><a class="hero" href="coups_gorr.html"><h3>Gorr</h3><div>48 mouvements<br>11 &agrave; surveiller<br>13.1 Mo</div></a><a class="hero" href="coups_sora.html"><h3>Sora</h3><div>55 mouvements<br>18 &agrave; surveiller<br>13.1 Mo</div></a><a class="hero" href="coups_tetsu.html"><h3>Tetsu</h3><div>49 mouvements<br>7 &agrave; surveiller<br>13.1 Mo</div></a><a class="hero" href="coups_nova.html"><h3>Nova</h3><div>50 mouvements<br>13 &agrave; surveiller<br>13.0 Mo</div></a><p><button id="all">G&eacute;n&eacute;rer mon texte (tous les h&eacute;ros)</button></p><textarea id="out" style="display:none" readonly></textarea></main><script>
+document.getElementById('all').onclick=function(){var L=[];['kaze','gorr','sora','tetsu','nova'].forEach(function(h){var S={};try{S=JSON.parse(localStorage.getItem('coupsA_'+h)||'{}')}catch(e){}
+ Object.keys(S).forEach(function(id){var s=S[id];if(s.v||s.t){L.push('- '+h+' / '+id+' : '+(s.v==='ok'?'VALIDE':s.v==='ko'?'A REFAIRE':'(pas de verdict)')+(s.t?' ; '+s.t:''))}})});
+ var o=document.getElementById('out');o.style.display='block';o.value=L.length?L.join('\n'):'Aucun verdict enregistre dans ce navigateur (ouvre les pages heros).';o.rows=14;o.style.width='100%';o.select();try{navigator.clipboard.writeText(o.value)}catch(e){}};
+</script></body></html>
