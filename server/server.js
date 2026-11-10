@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 import { WebSocketServer } from 'ws';
 import { createPush } from './push.js';
 
-export const PROTOCOL_VERSION = 9; // 9 : mode ROGUELITE en coop (mode 3 : run d equipe, cartes personnelles, etages) ; 8 : nunchaku (nouvelle arme ramassable, serie de six coups, Pied = coups de pied avec l'arme) et armes au sol du dojo/temple changees ; 7 : entree Saisie (nouveau bit d'entree) + coups renommes (SCHEMA_VERSION 8) ; 6 : table des coups changee (grammaire X/Y des 9 autres heros, SCHEMA_VERSION 7) ; 5 : jusqu'a 8 joueurs, vague/PV de depart (solo -> en ligne) ; 4 : table des coups changee (aeriens, realisme, grammaire X/Y ; tir allie, QA). 3 : parties hebergees (jeu complet : loadout, cmd sequences). 2 : join_any / host. Seuls les clients v8 sont acceptes.
+export const PROTOCOL_VERSION = 10; // 10 : daemon de chaque joueur au salon (champ `daemon` des messages lobby et room) ; 9 : mode ROGUELITE en coop (mode 3 : run d equipe, cartes personnelles, etages) ; 8 : nunchaku (nouvelle arme ramassable, serie de six coups, Pied = coups de pied avec l'arme) et armes au sol du dojo/temple changees ; 7 : entree Saisie (nouveau bit d'entree) + coups renommes (SCHEMA_VERSION 8) ; 6 : table des coups changee (grammaire X/Y des 9 autres heros, SCHEMA_VERSION 7) ; 5 : jusqu'a 8 joueurs, vague/PV de depart (solo -> en ligne) ; 4 : table des coups changee (aeriens, realisme, grammaire X/Y ; tir allie, QA). 3 : parties hebergees (jeu complet : loadout, cmd sequences). 2 : join_any / host. Seuls les clients v8 sont acceptes.
 const COMPAT_VERSIONS = [PROTOCOL_VERSION]; // derive de PROTOCOL_VERSION : ne peut plus diverger (v8 etait refuse par erreur, ancienne valeur [7]) ; // protocole 7 : les clients 1 a 6 n'ont pas la meme table de coups (et 1 a 4 ne savent pas lire des salons de 8 places), ils doivent se mettre a jour
 const HOSTED_SIZE = 2; // taille par defaut d une partie hebergee (anciens clients) ; le client actuel demande 4 avec `size` (places vides dormantes)
 const HOSTED_MIN = 2; // taille minimale demandable
@@ -204,7 +204,7 @@ export function createServer(opts = {}) {
   }
 
   // ---------------------------------------------------------------- Salons
-  const emptySlot = () => ({ color: 0, ws: null, name: '', char: 0, ready: false, token: null, mode: 'free', hi: -1, journal: [], lastMove: Date.now(), lastBits: 0, heldUntil: 0, ip: '', loadout: null, cmds: 0, lastLoadout: 0, loadouts: 0, lastChat: 0, lastResync: 0, afkWarned: false, dormantDue: false });
+  const emptySlot = () => ({ color: 0, ws: null, name: '', char: 0, ready: false, token: null, mode: 'free', hi: -1, journal: [], lastMove: Date.now(), lastBits: 0, heldUntil: 0, ip: '', loadout: null, cmds: 0, lastLoadout: 0, loadouts: 0, lastChat: 0, lastResync: 0, afkWarned: false, dormantDue: false, daemon: 255 });
   function makeRoom(isPublic) {
     const room = {
       code: newCode(), public: !!isPublic, started: false, created: Date.now(), lastAct: Date.now(), auto: false, run: 0, wave: 0, emptySince: 0, restartTimer: null, stageBase: rnd(STAGES),
@@ -220,7 +220,7 @@ export function createServer(opts = {}) {
   const humans = (room) => room.slots.map((s, i) => [s, i]).filter(([s]) => s.ws);
   const lobbyView = (room) => ({
     t: 'room', code: room.code, public: room.public, started: room.started, auto: room.auto, run: room.run, options: { ...room.options, ff: room.ff !== false, ffm: room.ffm, pal: room.pal !== false }, host: hostSlot(room), full: !!room.full, private: !room.public, keep: !!room.keep, ttl: Math.round(roomTtl / 60000),
-    players: room.slots.map((s, i) => ({ slot: i, name: s.name, char: s.char, color: s.color, ready: s.ready, online: !!s.ws, mode: s.mode })),
+    players: room.slots.map((s, i) => ({ slot: i, name: s.name, char: s.char, color: s.color, daemon: s.daemon, ready: s.ready, online: !!s.ws, mode: s.mode })),
   });
   const broadcast = (room, msg, except = null) => { for (const [s] of humans(room)) if (s.ws !== except) send(s.ws, msg); };
   // Liste publique : seulement les salons habites, les plus remplis (puis les plus recents) d'abord, bornee.
@@ -247,7 +247,7 @@ export function createServer(opts = {}) {
     const idx = room.slots.findIndex((s, i) => i < limit && !s.ws && s.heldUntil < now && (!room.started || s.mode === 'ai'));
     if (idx < 0) return -1;
     const s = room.slots[idx];
-    s.ws = ws; s.name = uniqueName(room, cleanName(name), idx); s.token = c.token; s.ip = c.ip; s.heldUntil = 0; s.color = pickColor(room, idx, c.color);
+    s.ws = ws; s.name = uniqueName(room, cleanName(name), idx); s.token = c.token; s.ip = c.ip; s.heldUntil = 0; s.color = pickColor(room, idx, c.color); s.daemon = 255;
     s.ready = false; s.lastMove = now; s.afkWarned = false;
     c.room = room; c.slot = idx;
     if (!room.started) s.mode = 'human';
@@ -592,6 +592,7 @@ export function createServer(opts = {}) {
         s.char = Math.max(0, Math.min(99, m.char | 0));
         s.ready = !!m.ready;
         if (Number.isInteger(m.color)) { c.color = m.color; s.color = pickColor(room, c.slot, m.color); }
+        s.daemon = Number.isInteger(m.daemon) && m.daemon >= 0 && m.daemon < 64 ? m.daemon : 255; // indice d'espece : borne, jamais de valeur libre
         if (m.name) { s.name = uniqueName(room, cleanName(m.name), c.slot); c.name = s.name; }
         return broadcast(room, lobbyView(room));
       case 'options':

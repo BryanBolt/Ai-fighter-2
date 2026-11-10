@@ -7,7 +7,7 @@ const CACHE = 'afh-shell-v3';
 // l'installation ; le wasm de ~12 Mo ne retient pas le demarrage : la page le telecharge deja en parallele).
 // Mise a jour sans casser une partie : skipWaiting + claim ne rechargent JAMAIS la page ouverte ; la nouvelle version n'est
 // utilisee qu'a la prochaine ouverture ou au prochain rechargement.
-const CORE = ['/', '/index.html', '/mq_js_bundle.js', '/manifest.webmanifest', '/icon-192.png', '/icon-512.png', '/icon-maskable-512.png', '/ai_fighter_2.wasm', '/music/final_escalation_title.ogg', '/music/level_1.ogg'];
+const CORE = ['/', '/index.html', '/mq_js_bundle.js', '/manifest.webmanifest', '/icon-192.png', '/icon-512.png', '/icon-maskable-512.png', '/favicon.svg', '/apple-touch-icon.png', '/ai_fighter_2.wasm', '/music/final_escalation_title.ogg', '/music/level_1.ogg'];
 self.addEventListener('install', (e) => {
   self.skipWaiting();
   e.waitUntil((async () => {

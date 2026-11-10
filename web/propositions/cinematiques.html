@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Fighter 2 - Cinematiques muettes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#221834;--paper:#fff3e0;--acc:#d8456b;--card:#fffaf0;--mut:#6b5a78}
+@media (prefers-color-scheme:dark){:root{--ink:#fff3e0;--paper:#221834;--card:#2c2040;--mut:#c9b8d6}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 Nunito,sans-serif}
+header,main,footer{max-width:1020px;margin:0 auto;padding:16px}
+h1,h2,h3{font-family:Silkscreen,monospace;font-weight:700;letter-spacing:.02em}
+h1{font-size:26px;margin:.4em 0}
+h2{font-size:18px;margin:0 0 6px}
+h3{font-size:20px;margin:26px 0 4px;border-bottom:3px solid var(--acc);padding-bottom:4px}
+p.lead{color:var(--mut);margin-top:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(440px,100%),1fr));gap:18px}
+.card{background:var(--card);border:3px solid var(--ink);border-radius:10px;box-shadow:5px 5px 0 var(--ink);padding:12px}
+.card img{width:100%;max-width:400px;height:auto;display:block;border:2px solid var(--ink);border-radius:6px;margin:6px 0}
+.card small{color:var(--mut)}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+button{font:700 14px Silkscreen,monospace;border:3px solid var(--ink);border-radius:999px;padding:6px 14px;background:var(--card);color:var(--ink);cursor:pointer}
+button[aria-pressed=true].ok{background:#2f9e5b;color:#fff;border-color:#2f9e5b}
+button[aria-pressed=true].redo{background:var(--acc);color:#fff;border-color:var(--acc)}
+button.gen{background:var(--acc);color:#fff;border-color:var(--acc);font-size:16px;padding:10px 20px}
+textarea{width:100%;min-height:54px;font:16px Nunito,sans-serif;border:2px solid var(--ink);border-radius:8px;padding:6px;background:var(--paper);color:var(--ink)}
+#out{min-height:200px;margin-top:10px}
+.tag{font:700 12px Silkscreen,monospace;color:var(--acc)}
+.rule{background:var(--card);border-left:6px solid var(--acc);padding:8px 12px;border-radius:6px}
+</style>
+</head>
+<body>
+<header>
+<h1>CINEMATIQUES MUETTES</h1>
+<p class="lead">Tout est rendu par le moteur du jeu (jamais une video externe), sans une ligne de texte : on comprend par l'image. Chaque GIF est une capture du vrai moteur (400 px, 48 couleurs, vitesse reelle). Les transitions entre chapitres durent 4 s ; la cinematique du chapitre suit. Un tap passe a la suite et le bouton PASSER est toujours visible.</p>
+<p class="rule"><b>Fil rouge cryptique</b> : Kevin qui est toujours la (la petite regle de 47 traits en haut = la nuit 47, le trait du chapitre est en Accent), le daemon qui mange les regrets, la sortie qui change de cote, l'horloge bloquee a 06:58, le vrai boss qui dort. Le ciel suit l'heure et la meteo du terrain d'arrivee. Les cartes d'etage et de lieu (en combat) montrent maintenant, sans mot, le cadran du jour (soleil ou lune, pluie) a gauche et le daemon mascotte a droite. Mode « Reduction des effets » : memes scenes, sans secousse, sans eclair ni lignes de vitesse.</p>
+</header>
+<main id="main"></main>
+<main>
+<p><button class="gen" id="gen">GENERER MON TEXTE</button></p>
+<textarea id="out" readonly placeholder="Ton texte apparait ici : copie-le dans le chat."></textarea>
+</main>
+<footer><small>Charte Encre #221834, Papier #fff3e0, Accent #d8456b. Deterministe : chaque image ne depend que du temps (parties en ligne synchronisees, rien ne touche au lockstep).</small></footer>
+<script>
+const S=[
+["Transitions entre chapitres (4 s, une par passage de chapitre)",[
+["gag_00","Le cafe gele","Kevin dort sur la table ; le daemon souffle sur la tasse, la vapeur devient glace, la tasse craque. Personne n'a dormi, rien n'est chaud."],
+["gag_01","La plante contribuable","Le heros frappe une plante ; ses pieces filent vers le pot, qui enfile une cravate et tamponne un formulaire. Elle a paye ses impots."],
+["gag_02","La sortie change de cote","La porte est a droite, le heros court, elle glisse a gauche, il revient, elle repart a droite. Interrogation."],
+["gag_03","Kevin partout","Kevin sort tour a tour d'un guichet, d'une poubelle, d'un arbuste ; les pages du calendrier s'arrachent."],
+["gag_04","Un lundi avec une cravate","Le boss cornu, yeux rouges, perd ses cornes, se tasse, serre sa tasse de cafe ; le daemon lui tapote la tete."],
+["gag_05","Zero euro et un frisson","Une piece-trou tombe dans la main du heros, un frisson bleu lui descend le dos, une mite sort du portefeuille vide."],
+["gag_06","Le daemon a faim","Les regrets (petites boules qui pleurent) montent du heros ; le daemon les avale, gonfle, rote une etoile. Il en reste."],
+["gag_07","Le ravin court aussi","Le heros court sur place, le ravin (trou a yeux et a pattes) le suit ; panneau de chute."],
+["gag_08","Le meme jour, encore","Des echos du heros trainent derriere lui, un lit a peine dessine, une horloge qui hoquete a 06:58. A peine souligne."],
+["gag_09","Encore lui","Le boss regarde derriere un pilier ; dans une bulle, le vrai boss dort dans son lit. Le heros nie de la tete."],
+["gag_10","Le distributeur","Coup de pied dans la machine : une canette tombe, Kevin en sort et salue dans la mousse."],
+["gag_11","L'ascenseur","Les portes s'ouvrent sur Kevin a chaque etage ; le daemon martele le bouton ; musique d'ascenseur en notes."],
+["gag_12","Le pigeon louche","Pigeon cravate et lunettes : une crotte tombe sur la tete du heros, impassible ; le daemon rattrape la suivante."],
+["gag_13","L'imprimante","Elle crache sans fin la meme feuille (une main), Kevin sort du bac a la fin."],
+["gag_14","Le dernier train","Chaque fenetre montre le heros dans une pose differente, la derniere montre Kevin."],
+["gag_15","Snooze","Reveil geant a 06:58, une main (celle de Kevin) tape snooze, la sonnerie s'arrete, tout s'assombrit. Subtil : on peut ne pas y voir un reve."]]],
+["Cinematiques de chapitre (muettes, daemon mascotte, heure du decor)",[
+["cine_chapter","Ouverture de chapitre","Decor a l'heure et a la meteo du terrain, 19 pastilles de progression (cinq actes), le heros arrive en courant avec son daemon."],
+["cine_boss","Arrivee d'un chef","Silhouette immense en trois coupes, eclair a la place du VS, le daemon du chef flotte au-dessus."],
+["cine_dream","Revelation 06:58","Glitch et horloge qui s'emballe vers 06:58, daemon dans le coin."],
+["cine_epilogue","Aube","Soleil qui se leve, reveil de 06:58 a 07:00, le daemon s'endort."]]],
+["Victoire de boss et version calme",[
+["gag_05_calme","Version calme (Reduire les effets)","La transition « zero euro » avec l'option activee : pas de secousse, pas de lignes de vitesse, pluie plus lente. Meme histoire, meme lisibilite."],
+["victoire_boss","Victoire de boss : le butin reel","L'or est toujours gagne ; l'icone suivante montre l'arme ou l'armure REELLEMENT donnee a la premiere victoire ; la troisieme, le daemon du boss s'il est nouveau."]]]
+];
+let st={};try{st=JSON.parse(localStorage.getItem('ci_state')||'{}')}catch(e){}
+const m=document.getElementById('main');let n=0;const all=[];
+S.forEach(([title,items])=>{
+ const h=document.createElement('h3');h.textContent=title;m.appendChild(h);
+ const g=document.createElement('div');g.className='grid';m.appendChild(g);
+ items.forEach(([id,name,desc])=>{
+  n++;all.push([id,name]);
+  const s=st[id]||{v:'',c:''};st[id]=s;
+  const d=document.createElement('div');d.className='card';
+  d.innerHTML='<span class="tag">'+String(n).padStart(2,'0')+'</span><h2>'+name+'</h2><img src="cinematiques/'+id+'.gif" alt="'+name+'" loading="lazy" width="400"><p>'+desc+'</p><div class="btns"><button class="ok">VALIDER</button><button class="redo">A REFAIRE</button></div><textarea placeholder="Commentaire (optionnel)"></textarea>';
+  const b1=d.querySelector('.ok'),b2=d.querySelector('.redo'),ta=d.querySelector('textarea');
+  ta.value=s.c;
+  const paint=()=>{b1.setAttribute('aria-pressed',s.v==='ok');b2.setAttribute('aria-pressed',s.v==='redo')};
+  const save=()=>{try{localStorage.setItem('ci_state',JSON.stringify(st))}catch(e){}};
+  const set=v=>{s.v=s.v===v?'':v;paint();save()};
+  b1.onclick=()=>set('ok');b2.onclick=()=>set('redo');ta.oninput=()=>{s.c=ta.value;save()};
+  paint();g.appendChild(d);
+ });
+});
+document.getElementById('gen').onclick=()=>{
+ const L=['Retour sur les cinematiques muettes (AI Fighter 2) :'];
+ all.forEach(([id,name],i)=>{const s=st[id]||{};L.push((i+1)+'. '+name+' : '+(s.v==='ok'?'VALIDE':s.v==='redo'?'A REFAIRE':'sans avis')+(s.c?' - '+s.c:''))});
+ document.getElementById('out').value=L.join('\n');
+};
+</script>
+</body>
+</html>

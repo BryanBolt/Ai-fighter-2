@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Daemons 3 - proposition</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>:root{--ink:#221834;--paper:#fff3e0;--acc:#d8456b;--card:#fffaf2;--ok:#2f8f5b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/1.55 Nunito,system-ui,sans-serif}
+.wrap{max-width:1040px;margin:0 auto;padding:20px 16px 80px}
+h1,h2,h3,.pix{font-family:Silkscreen,monospace;font-weight:700}
+h1{font-size:32px;margin:8px 0 4px;color:var(--acc)} h2{font-size:21px;margin:36px 0 10px;border-bottom:3px solid var(--acc);padding-bottom:6px} h3{font-size:16px;margin:0 0 8px}
+.card{background:var(--card);border:2px solid var(--ink);border-radius:10px;padding:14px 16px;margin:12px 0;box-shadow:4px 4px 0 var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:14px}
+img{max-width:100%;border:2px solid var(--ink);border-radius:8px;display:block}
+.cap{font-size:14px;margin:4px 0 8px;opacity:.85}
+table{border-collapse:collapse;width:100%;font-size:15px} td,th{border:2px solid var(--ink);padding:6px 8px;text-align:left;vertical-align:top} th{background:var(--ink);color:var(--paper)}
+button,input,textarea{font:700 15px Nunito,sans-serif;color:var(--ink)}
+button{background:var(--card);border:2px solid var(--ink);border-radius:8px;padding:8px 14px;cursor:pointer;box-shadow:2px 2px 0 var(--ink)}
+button.on.ok{background:var(--ok);color:#fff} button.on.no{background:var(--acc);color:#fff}
+input,textarea{background:#fff;border:2px solid var(--ink);border-radius:8px;padding:7px 9px;width:100%}
+.vb{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px} .vb button{flex:0 0 auto}
+.out{background:var(--ink);color:var(--paper);border-radius:10px;padding:14px 16px;margin-top:12px}
+.tag{display:inline-block;border:2px solid var(--ink);border-radius:6px;padding:0 7px;font:700 13px Silkscreen,monospace;background:#fff}</style></head><body><div class="wrap">
+<div class="pix" style="color:var(--acc);font-size:13px">AI FIGHTER 2 / DAEMONS / PROPOSITION</div>
+<h1>DAEMONS 3 : CHARGE, BOSS, SONS, SALON</h1>
+<p>Suite du chantier daemons. Tout est capture sur le <b>vrai moteur</b> (pas de maquette). Chaque bloc a ses boutons <b>Valider</b> / <b>A refaire</b> et un commentaire ; le bas de page rassemble ton retour a copier.</p>
+
+<h2>1. Preparation liee a la charge</h2>
+<p>Quand le heros <b>charge</b>, son daemon se met en position (il avance, monte d'un cran, joue sa preparation propre) et un signe dit <b>quelle attaque va partir</b> : <span class="tag">COUP</span> = attaque A, <span class="tag">SPECIAL</span> = attaque B, <span class="tag">KI</span>, <span class="tag">SUPER</span> (A puis B tres vite), <span class="tag">TRANSFO</span>. L'anneau se remplit avec la charge, les points sous le signe sont les paliers. Lu en lecture seule sur l'etat reel du heros (<code>atk_charge</code>, charge du special, Ki, super, transformation) : rien n'est ajoute a la simulation, chaque joueur voit le daemon de SON heros (1 a 8 joueurs).</p>
+<div class="grid">
+<div class="card"><h3>Coup charge (bouton maintenu)</h3><img src="daemons3/charge_coup.webp" alt="coup charge"><div class="cap">Les 8 daemons du roster 2 : tous preparent l'attaque A.</div></div>
+<div class="card"><h3>Special maintenu</h3><img src="daemons3/charge_special.webp" alt="special"><div class="cap">Attaque B : le signe SPECIAL monte de palier en palier.</div></div>
+<div class="card"><h3>Ki en charge</h3><img src="daemons3/charge_ki.webp" alt="ki"><div class="cap">Le daemon monte et se charge de bleu.</div></div>
+<div class="card"><h3>Super</h3><img src="daemons3/charge_super.webp" alt="super"><div class="cap">Les deux attaques s'enchainent vite : le daemon alterne A / B.</div></div>
+<div class="card"><h3>Transformation</h3><img src="daemons3/charge_transfo.webp" alt="transformation"><div class="cap">Ki maintenu longtemps : le signe passe a TRANSFO.</div></div>
+</div>
+<div class="vb" data-sec="1. Preparation liee a la charge"></div>
+
+<h2>2. Six nouveaux daemons de boss (13 au total)</h2>
+<p>Un par theme des nouveaux lieux. Chacun est <b>gagne en battant son boss</b>, a un design distinct, un bonus branche dans la simulation (identique chez tous les joueurs, vaut pour chaque heros humain), et le meme daemon agit contre toi quand c'est le boss qui le porte (preparation visible 30 images avant).</p>
+<table><tr><th>Daemon</th><th>Lieu / boss</th><th>Bonus quand tu l'equipes</th><th>Quand le boss l'utilise</th></tr>
+<tr><td>Nimbus (nuage-cherubin)</td><td>Paradis des nuages / Saint Quelquechose</td><td>Pluie douce : le Ki de chaque heros remonte seul</td><td>Foudre du nuage, de loin</td></tr>
+<tr><td>Kaeru (crapaud au banjo)</td><td>Marais de la grenouille / Roi Crapaud Bedon</td><td>Chaque KO te soigne de 4 %</td><td>La langue t'attrape et te tire vers lui</td></tr>
+<tr><td>Kagami (miroir noir)</td><td>Royaume des Ombres / Seigneur Sans Reflet</td><td>Renvoie 20 % des coups recus (jamais mortel)</td><td>Le reflet frappe la ou tu te tiens</td></tr>
+<tr><td>Yeti (colosse de neige)</td><td>Ascension de la montagne / Colosse du Sommet</td><td>Peau de glace : 15 % de degats en moins</td><td>Grosse boule de neige roulante</td></tr>
+<tr><td>Mokka (cafetiere)</td><td>Cafe du coin / Grand Barista Expresso</td><td>Jet de vapeur qui etourdit les ennemis colles a toi</td><td>Vapeur et brulure si tu es colle</td></tr>
+<tr><td>Sphinx (marchand)</td><td>Pyramides du Caire / Pharaon du Grand Marchandage</td><td>Des pieces a chaque KO (plus pour un boss)</td><td>L'enigme te fige sur place un instant</td></tr></table>
+<div class="grid" style="margin-top:14px">
+<div class="card"><h3>Nimbus</h3><img src="daemons3/boss_0.webp" alt="Nimbus"><div class="cap">Pluie douce, ecran du heros.</div><div class="vb" data-sec="2a. Nimbus"></div></div>
+<div class="card"><h3>Kaeru</h3><img src="daemons3/boss_1.webp" alt="Kaeru"><div class="cap">KO : le crapaud gonfle son sac, le heros se soigne.</div><div class="vb" data-sec="2b. Kaeru"></div></div>
+<div class="card"><h3>Kagami</h3><img src="daemons3/boss_2.webp" alt="Kagami"><div class="cap">Le miroir se fissure en renvoyant un coup.</div><div class="vb" data-sec="2c. Kagami"></div></div>
+<div class="card"><h3>Yeti</h3><img src="daemons3/boss_3.webp" alt="Yeti"><div class="cap">Peau de glace.</div><div class="vb" data-sec="2d. Yeti"></div></div>
+<div class="card"><h3>Mokka</h3><img src="daemons3/boss_4.webp" alt="Mokka"><div class="cap">Jet de vapeur toutes les 5 s.</div><div class="vb" data-sec="2e. Mokka"></div></div>
+<div class="card"><h3>Sphinx</h3><img src="daemons3/boss_5.webp" alt="Sphinx"><div class="cap">Pieces a chaque KO.</div><div class="vb" data-sec="2f. Sphinx"></div></div>
+</div>
+<h3 style="margin-top:22px">Les memes, portes par un boss ennemi (preparation puis action)</h3>
+<div class="grid">
+<div class="card"><h3>Nimbus : foudre</h3><img src="daemons3/bossfoe_0.webp" alt="Nimbus ennemi"></div>
+<div class="card"><h3>Kaeru : langue</h3><img src="daemons3/bossfoe_1.webp" alt="Kaeru ennemi"></div>
+<div class="card"><h3>Kagami : reflet</h3><img src="daemons3/bossfoe_2.webp" alt="Kagami ennemi"></div>
+<div class="card"><h3>Yeti : boule de neige</h3><img src="daemons3/bossfoe_3.webp" alt="Yeti ennemi"></div>
+<div class="card"><h3>Mokka : vapeur</h3><img src="daemons3/bossfoe_4.webp" alt="Mokka ennemi"></div>
+<div class="card"><h3>Sphinx : enigme</h3><img src="daemons3/bossfoe_5.webp" alt="Sphinx ennemi"></div>
+</div>
+
+<h2>3. Planche des 16 variantes (2 boss-daemons x 8 dessins)</h2>
+<p>Nimbus (A a H) et Kagami (A a H) : trois choix se combinent. <b>Palette</b> (pairs : blanc et or / bleu et rose pour Nimbus ; violet / turquoise pour Kagami), <b>silhouette</b> (nuage a cinq lobes ou cherubin a grosse tete ; cadre ovale ou octogone), <b>accessoire</b> (aureole ou trompette ; deux yeux ou un oeil unique). Le dessin A est celui integre par defaut. Dis-moi la lettre que tu preferes pour chacun.</p>
+<div class="card"><img src="daemons3/planche16.webp" alt="16 variantes"><div class="vb" data-sec="3a. Nimbus (lettre preferee)"></div><div class="vb" data-sec="3b. Kagami (lettre preferee)"></div></div>
+
+<h2>4. Sons propres aux 8 daemons du roster 2</h2>
+<p>Chaque espece a sa <b>signature sonore</b> synthetisee (aucun fichier ajoute), jouee a chaque attaque, plus une matiere sous l'attaque (A : souffle d'air, B : appui de pierre). Bus Effets, deterministe cote rendu, sous-titre « DAEMON » pour l'accessibilite.</p>
+<table><tr><th>Daemon</th><th>Signature</th></tr>
+<tr><td>Tsurara (glace)</td><td>Trois notes cristallines qui descendent, craquement bref</td></tr>
+<tr><td>Kurage (mer)</td><td>Bulles qui montent, decharge electrique en queue</td></tr>
+<tr><td>Suna (desert)</td><td>Souffle de sable, grains en rafale</td></tr>
+<tr><td>Fukuro (foret)</td><td>Hululement de hibou, froissement de feuilles</td></tr>
+<tr><td>Kajiya (forge)</td><td>Coup de marteau sur l'enclume, braise qui crepite</td></tr>
+<tr><td>Usagi (lune)</td><td>Marimba doux, trois notes pentatoniques</td></tr>
+<tr><td>Glitch (ville-neon)</td><td>Arpege carre 8 bits, coupures aleatoires</td></tr>
+<tr><td>Kame (volcan)</td><td>Grondement grave, bulles de lave qui eclatent</td></tr></table>
+<p class="cap">Pour les ecouter : <code>cargo test export_pour_la_page_web -- --ignored</code> avec <code>AFH_SONS_DIR=dossier</code> ecrit un WAV par son (<code>daemon_tsurara.wav</code>...).</p>
+<div class="vb" data-sec="4. Sons des 8 daemons"></div>
+
+<h2>5. Les autres joueurs voient ton vrai daemon au salon</h2>
+<p>Le salon en ligne n'affichait pour les autres qu'une mascotte choisie d'apres ta couleur et ton heros. Maintenant chaque joueur annonce <b>son daemon</b> (l'espece la plus liee de son profil) : le serveur le diffuse a tout le salon, et la pastille de chacun montre le vrai daemon. Protocole passe en <b>version 10</b> (client et serveur, test d'identite : ce que l'un annonce, tous les autres le lisent a l'identique ; une valeur absente ou hors liste est ignoree).</p>
+<div class="vb" data-sec="5. Daemon visible au salon"></div>
+
+<h2>Retour</h2><div class="card"><textarea id="gen" rows="3" placeholder="Commentaire general"></textarea><div class="vb"><button id="copy">Copier mon retour</button><button id="reset">Tout effacer</button></div><div class="out" id="sum"></div></div>
+</div><script>
+const KEY='daemons3_v1';let st={};try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}summ();};
+const esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+document.querySelectorAll('.vb[data-sec]').forEach(el=>{const s=el.dataset.sec;st[s]=st[s]||{v:'',c:''};
+ el.innerHTML=`<button>Valider</button><button>A refaire</button><input placeholder="Commentaire : ${s}" style="flex:1 1 220px">`;
+ const [b1,b2]=el.querySelectorAll('button'),inp=el.querySelector('input');inp.value=st[s].c;
+ const paint=()=>{b1.classList.toggle('on',st[s].v=='ok');b1.classList.toggle('ok',1);b2.classList.toggle('on',st[s].v=='no');b2.classList.toggle('no',1);};paint();
+ b1.onclick=()=>{st[s].v=st[s].v=='ok'?'':'ok';paint();save();};b2.onclick=()=>{st[s].v=st[s].v=='no'?'':'no';paint();save();};inp.oninput=()=>{st[s].c=inp.value;save();};});
+const g=document.getElementById('gen');g.value=st._g||'';g.oninput=()=>{st._g=g.value;save();};
+function text(){let t='RETOUR DAEMONS 3\n';for(const [k,v] of Object.entries(st)){if(k=='_g')continue;t+=`- ${k} : ${v.v=='ok'?'VALIDE':v.v=='no'?'A REFAIRE':'(pas de choix)'}${v.c?' - '+v.c:''}\n`;}if(st._g)t+='Commentaire : '+st._g+'\n';return t;}
+function summ(){document.getElementById('sum').innerHTML=esc(text()).replace(/\n/g,'<br>');}
+document.getElementById('copy').onclick=async()=>{try{await navigator.clipboard.writeText(text());}catch(e){window.prompt('Copie :',text());}};
+document.getElementById('reset').onclick=()=>{st={};try{localStorage.removeItem(KEY)}catch(e){}location.reload();};
+summ();
+</script></body></html>

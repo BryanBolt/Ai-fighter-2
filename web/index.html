@@ -7,13 +7,15 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#221834">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="icon-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <title>AI Fighter 2</title>
 <style>
   /* Jeu plein ecran : papier clair, encre sombre, accent rouge sceau. Un seul look, voulu. */
-  :root { --paper: #f7f6f4; --ink: #1a1a22; --seal: #d6423a; color-scheme: light; }
+  :root { --paper: #fff3e0; --ink: #221834; --seal: #d8456b; color-scheme: light; }
   html, body { margin: 0; height: 100%; height: 100dvh; width: 100%; position: fixed; inset: 0; overflow: hidden; background: var(--paper); color: var(--ink); touch-action: none; overscroll-behavior: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
   canvas#glcanvas { contain: strict; display: block; position: absolute; left: 0; top: 0; width: 100%; height: 100%; height: 100dvh; outline: none; touch-action: none; }
   [hidden] { display: none !important; }
@@ -30,12 +32,33 @@
   #fs:focus-visible { outline: 3px solid var(--seal); outline-offset: 2px; opacity: 1; }
   @media (prefers-reduced-motion: reduce) { #loading { transition: none !important; } }
   #fs { width: 34px; height: 34px; opacity: .55;font: 600 16px monospace; border: 1px solid var(--ink); background: var(--paper); color: var(--ink); border-radius: 6px; padding: 0; }
+/* Chargement : charte Encre / Papier / Accent, rien a lire (marque, mot trace, jauge, pictogrammes). Genere par tools/titre_assets.py */
+  #loading { background: #221834; color: #fff3e0; gap: 0; }
+  #loading .stage { position: relative; display: flex; flex-direction: column; align-items: center; width: min(86vw, 520px); }
+  #loading .mk { width: min(34vw, 150px, 24vh); height: auto; overflow: visible; animation: ldHop 1.1s cubic-bezier(.3,0,.4,1) infinite; transform-origin: 50% 90%; }
+  #loading .mk .pu { animation: ldBlink 3.6s infinite; transform-box: fill-box; transform-origin: center; }
+  #loading .sh { width: min(24vw, 100px); height: 8px; border-radius: 50%; background: #0000004d; margin: 6px 0 14px; animation: ldShadow 1.1s cubic-bezier(.3,0,.4,1) infinite; }
+  #loading .wm { width: 100%; height: auto; overflow: visible; }
+  #loading .wm .l { animation: ldDrop .5s cubic-bezier(.2,1.4,.4,1) both; animation-delay: calc(var(--i) * .06s + .1s); transform-box: fill-box; transform-origin: center; }
+  #loading .wm .two { animation-delay: .85s; }
+  #loading .rail { width: 100%; height: 10px; border-radius: 99px; background: #fff3e026; margin-top: 22px; overflow: hidden; }
+  #loading .rail b { display: block; height: 100%; width: 4%; border-radius: 99px; background: #ffd27a; transition: width .25s ease-out; }
+  #loading .tips { position: relative; width: 84px; height: 100px; margin-top: 18px; }
+  #loading .tips svg { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; stroke: #fff3e0; stroke-width: 10; stroke-linecap: round; animation: ldTip 3.6s infinite; }
+  #loading .tips svg:nth-child(2) { animation-delay: 1.2s; }
+  #loading .tips svg:nth-child(3) { animation-delay: 2.4s; }
+  @keyframes ldHop { 0%, 100% { transform: translateY(0) scale(1.06, .92); } 45% { transform: translateY(-26px) scale(.96, 1.06); } 90% { transform: translateY(0) scale(1.06, .92); } }
+  @keyframes ldShadow { 0%, 100% { transform: scaleX(1); opacity: .9; } 45% { transform: scaleX(.6); opacity: .5; } }
+  @keyframes ldBlink { 0%, 94%, 100% { transform: scaleY(1); } 97% { transform: scaleY(.1); } }
+  @keyframes ldDrop { from { transform: translateY(-34px) scale(1.5); opacity: 0; } to { transform: none; opacity: 1; } }
+  @keyframes ldTip { 0%, 30%, 100% { opacity: 0; transform: translateY(8px); } 6%, 26% { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { #loading .mk, #loading .sh, #loading .wm .l, #loading .mk .pu { animation: none; } #loading .tips svg { animation: none; } #loading .tips svg:first-child { opacity: 1; } #loading .rail b { transition: none; } }
 </style>
 </head>
 <body>
 
 <canvas id="glcanvas" tabindex="1" role="application" aria-label="AI Fighter 2 : jeu de combat. Fleches ou stick pour bouger, A pour frapper. Options, Accessibilite : texte plus grand, daltonisme, une main, sous-titres des sons."></canvas>
-<div id="loading"><i></i>AI FIGHTER 2<small>chargement, quelques secondes...</small></div>
+<div id="loading" role="status" aria-label="Chargement"><div class="stage"><svg class="mk" viewBox="-130 -150 260 260" aria-hidden="true"><polygon points="-92.0,-10.0 -78.0,-132.0 -8.0,-90.0" fill="#d8456b"/><polygon points="-78.0,-35.0 -72.0,-98.0 -34.0,-74.0" fill="#ffd27a"/><polygon points="92.0,-10.0 78.0,-132.0 8.0,-90.0" fill="#d8456b"/><polygon points="78.0,-35.0 72.0,-98.0 34.0,-74.0" fill="#ffd27a"/><circle cx="0.0" cy="0.0" r="100.0" fill="#d8456b"/><circle cx="-38.0" cy="4.0" r="21.0" fill="#fff3e0"/><circle class="pu" cx="-40.0" cy="7.0" r="10.0" fill="#221834"/><circle cx="38.0" cy="4.0" r="21.0" fill="#fff3e0"/><circle class="pu" cx="40.0" cy="7.0" r="10.0" fill="#221834"/><line x1="-12.0" y1="46.0" x2="12.0" y2="46.0" stroke="#221834" stroke-width="9.0" stroke-linecap="round"/></svg><i class="sh"></i><svg class="wm" viewBox="-0.8 -0.8 55.90 7.6" aria-hidden="true"><g fill="none" stroke="#fff3e0" stroke-width="0.62" stroke-linecap="round" stroke-linejoin="round"><g class="l" style="--i:0"><path d="M0.00 6.00 L2.00 0.00 L4.00 6.00"/><path d="M0.80 4.00 L3.20 4.00"/></g><g class="l" style="--i:1"><path d="M6.20 0.00 L6.20 6.00"/></g><g class="l" style="--i:2"><path d="M16.10 0.00 L12.10 0.00 L12.10 6.00"/><path d="M12.10 3.00 L15.10 3.00"/></g><g class="l" style="--i:3"><path d="M18.30 0.00 L18.30 6.00"/></g><g class="l" style="--i:4"><path d="M24.50 1.00 L23.50 0.00 L21.50 0.00 L20.50 1.00 L20.50 5.00 L21.50 6.00 L23.50 6.00 L24.50 5.00 L24.50 3.00 L22.70 3.00"/></g><g class="l" style="--i:5"><path d="M26.20 0.00 L26.20 6.00"/><path d="M30.20 0.00 L30.20 6.00"/><path d="M26.20 3.00 L30.20 3.00"/></g><g class="l" style="--i:6"><path d="M31.90 0.00 L35.90 0.00"/><path d="M33.90 0.00 L33.90 6.00"/></g><g class="l" style="--i:7"><path d="M41.60 0.00 L37.60 0.00 L37.60 6.00 L41.60 6.00"/><path d="M37.60 3.00 L40.60 3.00"/></g><g class="l" style="--i:8"><path d="M43.30 6.00 L43.30 0.00 L46.30 0.00 L47.30 1.00 L47.30 2.00 L46.30 3.00 L43.30 3.00"/><path d="M45.30 3.00 L47.30 6.00"/></g><g class="l two" stroke="#d8456b" style="--i:9"><path d="M50.30 1.00 L51.30 0.00 L53.30 0.00 L54.30 1.00 L54.30 2.00 L50.30 6.00 L54.30 6.00"/></g></g></svg><div class="rail" role="progressbar" aria-valuemin="0" aria-valuemax="100"><b id="ld-bar"></b></div><div class="tips"><svg viewBox="0 0 84 100" aria-hidden="true"><line x1="40" y1="62" x2="42" y2="38"/><line x1="42" y1="38" x2="24" y2="50"/><line x1="42" y1="38" x2="66" y2="34"/><line x1="40" y1="62" x2="56" y2="82"/><line x1="40" y1="62" x2="30" y2="84"/><circle cx="44" cy="26" r="9" fill="#fff3e0" stroke="none"/></svg><svg viewBox="0 0 84 100" aria-hidden="true"><line x1="36" y1="60" x2="40" y2="38"/><line x1="40" y1="38" x2="22" y2="44"/><line x1="40" y1="38" x2="24" y2="24"/><line x1="36" y1="60" x2="70" y2="52"/><line x1="36" y1="60" x2="24" y2="84"/><circle cx="44" cy="26" r="9" fill="#fff3e0" stroke="none"/></svg><svg viewBox="0 0 84 100" aria-hidden="true"><line x1="40" y1="56" x2="40" y2="36"/><line x1="40" y1="36" x2="22" y2="18"/><line x1="40" y1="36" x2="58" y2="18"/><line x1="40" y1="56" x2="28" y2="78"/><line x1="40" y1="56" x2="54" y2="70"/><circle cx="40" cy="24" r="9" fill="#fff3e0" stroke="none"/></svg></div></div></div>
 <button id="pi" title="Installer le jeu" aria-label="Installer le jeu" hidden>Installer</button>
 <button id="fs" title="Plein ecran" aria-label="Plein ecran">[ ]</button>
 <button id="pf" title="Prevenir mes amis" aria-label="Prevenir mes amis" hidden>Amis</button>
@@ -260,6 +283,46 @@
     var l = D.getElementById("loading");
     if (l && !l.hidden && l.style.opacity !== "0" && !shown) { var s = l.querySelector("small"); if (s) s.textContent = "chargement long... verifie ta connexion, ou recharge la page"; }
   }, 25000);
+})();
+</script>
+<script>
+// Jauge de chargement : octets reels du wasm (80 %) et de la musique du titre (20 %) lus au passage ; le chargement lui-meme
+// ne change pas (meme requete, memes en-tetes). Sans taille annoncee : estimation d'apres le dernier chargement.
+(function () {
+  var W = window, bar = null, p = { w: [0, 0], m: [0, 0] }, KEY = "afh_wasm_bytes", est = 0;
+  try { est = +localStorage.getItem(KEY) || 0; } catch (e) {}
+  function paint() {
+    bar = bar || document.getElementById("ld-bar"); if (!bar) return;
+    var wf = p.w[1] ? p.w[0] / p.w[1] : Math.min(.92, p.w[0] / (est || 6e6));
+    var mf = p.m[1] ? p.m[0] / p.m[1] : 0;
+    bar.style.width = Math.round(Math.max(.04, Math.min(1, wf * .8 + mf * .2)) * 100) + "%";
+  }
+  if (!W.fetch || !W.ReadableStream || !W.Response) return;
+  var F = W.fetch.bind(W);
+  W.fetch = function (u, o) {
+    var url = String((u && u.url) || u), k = /\.wasm(\?|$)/.test(url) ? "w" : (/final_escalation_title\.ogg/.test(url) ? "m" : "");
+    var pr = F(u, o);
+    if (!k) return pr;
+    return pr.then(function (r) {
+      try {
+        if (!r.ok || !r.body || !r.body.getReader) return r;
+        var total = +r.headers.get("content-length") || 0, got = 0, rd = r.body.getReader();
+        p[k] = [0, total];
+        var rs = new ReadableStream({
+          pull: function (c) {
+            return rd.read().then(function (x) {
+              if (x.done) { p[k] = [1, 1]; if (k === "w") { try { localStorage.setItem(KEY, String(got)); } catch (e) {} } paint(); c.close(); return; }
+              got += x.value.length;
+              if (total && got > total) total = 0; // reponse compressee : la taille annoncee ne vaut plus
+              p[k] = [got, total]; paint(); c.enqueue(x.value);
+            });
+          },
+          cancel: function (e) { return rd.cancel(e); }
+        });
+        return new Response(rs, { status: r.status, statusText: r.statusText, headers: r.headers });
+      } catch (e) { return r; }
+    });
+  };
 })();
 </script>
 <script src="mq_js_bundle.js"></script>
