@@ -1,4 +1,4 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Objets : jeter et boire</title>
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Objets : jeter et boire</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b;--carte:#32264a}
@@ -10,12 +10,22 @@ p{margin:4px 0 10px;line-height:1.4}.c{background:var(--carte);border-radius:12p
 img{max-width:100%;border-radius:8px;background:#000;display:block}.row{display:flex;flex-wrap:wrap;gap:12px;margin-top:8px}.row figure{margin:0;flex:1 1 360px;max-width:420px}
 figcaption{font:13px Silkscreen,monospace;margin-top:4px;opacity:.85}
 button{font:700 15px Nunito,sans-serif;padding:10px 14px;border-radius:8px;border:0;margin:8px 6px 0 0;color:var(--papier);background:#5a4a78;cursor:pointer}
-button.v{background:#2e9b5b}button.x{background:var(--accent)}button.g{background:var(--accent);font-family:Silkscreen,monospace;margin-top:14px}
+button.v{background:#2f8f5b}button.x{background:var(--accent)}button.g{background:var(--accent);font-family:Silkscreen,monospace;margin-top:14px}
 textarea{width:100%;box-sizing:border-box;border-radius:6px;border:0;padding:8px;margin-top:8px;background:var(--encre);color:var(--papier);font:inherit}
 #o{white-space:pre-wrap;background:#150f22;padding:12px;border-radius:8px;margin-top:12px}
-</style></head><body>
+button,input[type=button],select{min-height:44px}</style><style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js"></script>
+</head><body>
 <h1>Objets : jeter et boire</h1>
-<p>Captures du vrai moteur (Kaze, scene scriptee). Pour chaque point : planche de decomposition, GIF temps reel, GIF ralenti x0,25. Valide ou demande a refaire (avec une remarque), puis « Generer mon texte » et colle-le dans le chat.</p>
+<p>Captures du vrai moteur (Kaze, scène scriptee). Pour chaque point : planche de decomposition, GIF temps réel, GIF ralenti x0,25. Valide ou demande à refaire (avec une remarque), puis « Generer mon texte » et colle-le dans le chat.</p>
 <div id="g"></div><button class="g" onclick="out()">Generer mon texte</button><div id="o"></div>
 <script>var C=[{"key": "jeter", "name": "Geste JETER : un seul bouton (Saisie) quand on tient un objet", "n": "geste", "d": "Clavier G, manette R3, TACTILE : le bouton Saisie devient « Jeter » (dore) des qu'un objet est en main. Sans direction : vers l'ennemi. Stick HAUT : cloche (passe au-dessus de la garde). Stick BAS : on lache l'objet aux pieds, intact et ramassable. Stick ARRIERE : lancer dans le dos. Course tenue : lancer fort. La Lourde garde son ancien role (lancer droit). Sequence du GIF : avant, cloche, lacher, ramasser.", "board": "objets_planche_jeter.png", "real": "objets_jeter_reel.webp", "slow": "objets_jeter_ralenti.webp"}, {"key": "lait", "name": "Bouteille de lait : ramasser, boire, vide, lancer, casse, tesson, 3 coups, casse finale", "n": "cycle", "d": "Ki avec une bouteille pleine : on s'arrete 52 images (bras leve, tete en arriere, 4 gorgees, le lait baisse), +20 % de vie (28 PV au moins), pas de Ki, vulnerable : un coup recu interrompt. Vide, elle se jette (Saisie) : degats legers + etourdissement, elle se brise en eclats de verre et laisse un TESSON au sol. Le tesson : estoc, entaille, grand coup, il se brise a la 3e frappe (22 de degats de base).", "board": "objets_planche_lait.png", "real": "objets_lait_reel.webp", "slow": "objets_lait_ralenti.webp"}],st={};
 var g=document.getElementById('g');

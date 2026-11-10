@@ -1,0 +1,20 @@
+[
+ {
+  "id": "musique-1",
+  "titre": "Musique des menus a plein volume",
+  "texte": "Les menus jouaient a 30 % du reglage (bug corrige) : verifier a l'oreille que le niveau titre vous convient.",
+  "page": "decisions.html"
+ },
+ {
+  "id": "musique-2",
+  "titre": "Baisse pendant les dialogues",
+  "texte": "La musique descend a 55 % pendant les dialogues : trop ou pas assez ?",
+  "page": "decisions.html"
+ },
+ {
+  "id": "musique-3",
+  "titre": "Normaliser le volume des pistes",
+  "texte": "Egaliser le niveau des pistes fournies et composees (gain par piste) : a faire si l'ecoute montre des ecarts.",
+  "page": "decisions.html"
+ }
+]

@@ -1,0 +1,8 @@
+[
+{"id":"hc_brief","titre":"Bandeau objectif + carte du parcours","texte":"Au debut de chaque chapitre (et a la fin de l'epilogue), un bandeau montre le lieu, l'objectif en 8 mots et « TU ES ICI » sur la carte : garder tel quel ?","page":"histoire_claire.html"},
+{"id":"hc_fil","titre":"Fil rouge : le badge vole","texte":"Acte 1 a 3 : retrouver son badge ; acte 4-5 : monter a la PDG ; saison 2 : atteindre le bouton ARRET avant 07:00. Valider ce fil unique ?","page":"histoire_claire.html"},
+{"id":"hc_boss","titre":"Un seul dernier boss : Le Rappel","texte":"Valerie ferme la saison 1, Kaze la saison 2, Le Rappel (le reveil) ferme le jeu ; L'Ange reste hors histoire, sans lien explicite.","page":"histoire_claire.html"},
+{"id":"hc_courts","titre":"Textes raccourcis (environ 47 %)","texte":"Repliques de 150 caracteres maxi, 6 repliques maxi par intro, test automatique a l'appui : encore trop long, ou bien ?","page":"histoire_claire.html"},
+{"id":"hc_nuits","titre":"Compte des nuits : 47 puis 48","texte":"47 nuits avant le jeu, la saison 2 et le final sont la 48e : tranche applique partout dans les dialogues.","page":"histoire_claire.html"},
+{"id":"hc_dlg","titre":"Rendu des dialogues : on garde dlg_stage","texte":"Le dialogue de main (decor du lieu, bonshommes du rig, boutons tactiles masques) remplace l'idee « vrai moteur » de l'autre branche : pas de double systeme.","page":"histoire_claire.html"}
+]

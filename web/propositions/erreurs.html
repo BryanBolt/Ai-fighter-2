@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Erreurs des joueurs</title>
+<style>
+  :root { --paper: #fff3e0; --ink: #221834; --seal: #d8456b; --mute: #6b6b76; --line: #d9d6d0; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 14px/1.45 ui-monospace, Menlo, Consolas, monospace; padding: 16px; }
+  h1 { font-size: 20px; margin: 0 0 12px; }
+  .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 14px; }
+  input, select, button { font: inherit; padding: 6px 8px; border: 1px solid var(--ink); background: #fff; color: var(--ink); border-radius: 6px; }
+  button { cursor: pointer; background: var(--ink); color: var(--paper); }
+  .g { border: 1px solid var(--line); background: #fff; border-radius: 8px; margin-bottom: 8px; }
+  .g > summary { cursor: pointer; padding: 8px 10px; display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: baseline; }
+  .kind { font-weight: 700; padding: 0 6px; border-radius: 4px; background: var(--ink); color: var(--paper); }
+  .kind.panic, .kind.wasm { background: var(--seal); }
+  .n { font-weight: 700; }
+  .msg { flex: 1 1 320px; word-break: break-word; }
+  .mute { color: var(--mute); font-size: 12px; }
+  .body { padding: 0 12px 10px; border-top: 1px solid var(--line); }
+  pre { white-space: pre-wrap; word-break: break-word; background: var(--paper); padding: 8px; border-radius: 6px; margin: 6px 0; font-size: 12px; }
+  #st { color: var(--mute); }
+  @media (prefers-color-scheme: dark) { :root { --paper: #15151b; --ink: #ecebe6; --line: #34343e; --mute: #9a9aa6; } input, select, .g { background: #1d1d25; } button { background: var(--ink); color: var(--paper); } }
+button{min-height:44px}</style>
+<script src="verdicts.js"></script>
+<style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style></head>
+<body>
+<h1>Erreurs des joueurs</h1>
+<div class="bar">
+  <input id="key" type="password" placeholder="cle ADMIN_KEY" autocomplete="off">
+  <select id="kind"><option value="">tous types</option></select>
+  <select id="mode"><option value="">tous modes</option></select>
+  <input id="build" placeholder="version (build)" size="14">
+  <select id="since"><option value="">toujours</option><option value="1">24 h</option><option value="7">7 jours</option></select>
+  <input id="q" placeholder="chercher un texte" size="18">
+  <button id="go">Actualiser</button>
+  <span id="st"></span>
+</div>
+<div id="out"></div>
+<script>
+(function () {
+  var $ = function (i) { return document.getElementById(i); };
+  var KINDS = ["panic", "js", "net", "asset", "audio", "webgl", "wasm", "ws", "other"], MODES = ["campagne", "histoire", "defi", "online", "roguelite"];
+  KINDS.forEach(function (k) { var o = document.createElement("option"); o.value = o.textContent = k; $("kind").appendChild(o); });
+  MODES.forEach(function (k) { var o = document.createElement("option"); o.value = o.textContent = k; $("mode").appendChild(o); });
+  try { var qk = new URLSearchParams(location.search).get("key"); if (qk) { sessionStorage.setItem("afh_key", qk); history.replaceState(null, "", location.pathname); } $("key").value = sessionStorage.getItem("afh_key") || ""; } catch (e) {}
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function render(data) {
+    var out = $("out"), q = $("q").value.toLowerCase(); out.textContent = "";
+    var gs = data.groups.filter(function (g) { return !q || (g.msg + " " + g.loc).toLowerCase().indexOf(q) >= 0; });
+    $("st").textContent = data.total + " rapports, " + gs.length + " groupes";
+    gs.forEach(function (g) {
+      var d = el("details", "g"), s = el("summary");
+      s.appendChild(el("span", "kind " + g.kind, g.kind));
+      s.appendChild(el("span", "n", g.count + "x"));
+      s.appendChild(el("span", "msg", g.msg.split("\n")[0].slice(0, 200) + (g.loc ? "  [" + g.loc + "]" : "")));
+      s.appendChild(el("span", "mute", "derniere " + g.last.replace("T", " ").slice(0, 16) + " | " + g.modes.join(",")));
+      d.appendChild(s);
+      var b = el("div", "body");
+      b.appendChild(el("pre", null, "empreinte " + g.fp + " | " + g.sessions + " session(s) | premiere " + g.first + "\nversions : " + g.builds.join(", ") + "\nplateformes : " + g.platforms.join(", ") + "\n\n" + g.msg));
+      g.samples.forEach(function (sm) {
+        var t = "[" + sm.at + "] " + (sm.build || "") + " " + (sm.platform || "") + "\ncontexte : " + Object.keys(sm.ctx || {}).map(function (k) { return k + "=" + sm.ctx[k]; }).join(" ; ") + "\nenv : " + Object.keys(sm.env || {}).map(function (k) { return k + "=" + sm.env[k]; }).join(" ; ") + "\n\nfil d'Ariane :\n" + (sm.crumbs || []).map(function (c) { return "  " + new Date(c.t).toISOString().slice(11, 19) + " " + c.k + " : " + c.m; }).join("\n");
+        b.appendChild(el("pre", null, t));
+      });
+      d.appendChild(b); out.appendChild(d);
+    });
+  }
+  function load() {
+    var key = $("key").value; try { sessionStorage.setItem("afh_key", key); } catch (e) {}
+    var p = new URLSearchParams({ key: key });
+    ["kind", "mode", "build"].forEach(function (k) { if ($(k).value.trim()) p.set(k, $(k).value.trim()); });
+    if ($("since").value) p.set("since", new Date(Date.now() - $("since").value * 864e5).toISOString());
+    $("st").textContent = "chargement...";
+    fetch("/reports?" + p).then(function (r) { if (!r.ok) throw new Error(r.status === 401 ? "cle invalide" : r.status === 403 ? "ADMIN_KEY non definie sur le serveur" : "erreur " + r.status); return r.json(); }).then(render).catch(function (e) { $("st").textContent = String(e.message || e); });
+  }
+  $("go").onclick = load; ["kind", "mode", "since"].forEach(function (k) { $(k).onchange = load; });
+  $("q").oninput = function () { if (window.__d) render(window.__d); };
+  var _r = render; render = function (d) { window.__d = d; _r(d); };
+  if ($("key").value) load();
+})();
+</script>
+</body>
+</html>

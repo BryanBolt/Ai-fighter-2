@@ -1,0 +1,61 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Réseau - AI Fighter 2</title>
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b;--bon:#2f8f5b}
+body{margin:0;font:16px system-ui,sans-serif;background:var(--papier);color:var(--encre);padding:14px;line-height:1.4;max-width:980px}
+h1{font-size:22px;margin:0 0 4px}h2{font-size:17px;margin:10px 0 2px}
+.c{background:#fff;border:3px solid var(--encre);border-radius:16px;padding:12px;box-shadow:5px 5px 0 var(--accent);margin-top:14px}
+.c.ok{outline:4px solid var(--bon)}.c.no{outline:4px solid var(--accent)}
+p{margin:4px 0;font-size:14px}.tag{display:inline-block;background:var(--encre);color:var(--papier);border-radius:999px;padding:2px 10px;font-size:12px;font-weight:700}
+button{font:inherit;font-weight:700;padding:10px 14px;border-radius:999px;border:2px solid var(--encre);margin:4px 6px 0 0;cursor:pointer;background:var(--papier);color:var(--encre)}
+button.v{background:var(--bon);color:#fff}button.x{background:var(--accent);color:#fff}
+textarea{width:100%;box-sizing:border-box;border-radius:10px;border:2px solid var(--encre);padding:6px;margin-top:6px;background:var(--papier);color:var(--encre);font:inherit}
+#o{white-space:pre-wrap;background:var(--encre);color:var(--papier);padding:12px;border-radius:12px;margin-top:14px}
+.go{background:var(--accent);color:#fff;margin-top:14px}
+.row{display:grid;grid-template-columns:minmax(120px,40%) 1fr;gap:4px 10px;align-items:center;font-size:13px;margin:3px 0}
+.bar{height:14px;border-radius:8px;display:flex;align-items:center;font-size:11px;color:#fff;padding-left:6px;box-sizing:border-box;white-space:nowrap;min-width:2px}
+.av{background:#7a6f8c}.ap{background:var(--accent)}
+.sig{display:inline-flex;gap:2px;align-items:flex-end;vertical-align:middle;margin:0 8px 0 0}.sig i{display:block;width:5px;background:#c9b8b4;border-radius:4px}.sig i.on{background:var(--bon)}.sig.mid i.on{background:#e0a020}.sig.low i.on{background:var(--accent)}
+small{color:#5b4f70}
+button{min-height:44px}</style><script src="verdicts.js"></script>
+<style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style></head><body>
+<h1>Réseau : jouer a plusieurs sur téléphone</h1>
+<p>Banc deterministe (horloge simulee a la milliseconde, serveur relais comme en vrai) : latence 20 a 300 ms, gigue, retransmissions, reordonnancement, coupures, jusqu'a 8 clients. Dans tous les cas l'état final du jeu est identique chez tous les joueurs. Pour chaque carte : Valider ou À refaire (+ remarque), puis genere le texte et colle-le dans le chat.</p>
+<div id="g"></div>
+<button class="go" onclick="out()">Generer mon texte</button><div id="o"></div>
+<script>
+// Resultats du banc (cargo test net_quality -- --nocapture). gel = plus longue attente continue, geleP = part du temps ou la partie a attendu.
+var B=[
+{nom:"2 joueurs, wifi 20 ms",av:{gel:33,geleP:0.13,delai:43},ap:{gel:33,geleP:0.13,delai:53}},
+{nom:"4 joueurs, 4G 80 ms, gigue 30",av:{gel:117,geleP:4.11,delai:132},ap:{gel:133,geleP:0.48,delai:152}},
+{nom:"4 joueurs, 4G 150 ms, gigue 40",av:{gel:200,geleP:9.01,delai:193},ap:{gel:200,geleP:6.48,delai:200}},
+{nom:"8 joueurs, 20 a 300 ms, pertes 1 %",av:{gel:383,geleP:47.28,delai:198},ap:{gel:433,geleP:47.28,delai:200}},
+{nom:"4 joueurs, reordonnancement, gigue 60",av:{gel:233,geleP:10.38,delai:193},ap:{gel:250,geleP:8.16,delai:200}},
+{nom:"4 joueurs, coupure de 2 s",av:{gel:2017,geleP:9.21,delai:164},ap:{gel:2000,geleP:7.79,delai:169}},
+{nom:"4 joueurs, un joueur disparait (IA a 6 s)",av:{gel:5917,geleP:20.0,delai:166},ap:{gel:5900,geleP:18.57,delai:171}}
+];
+function bars(n,cls){var h='<span class="sig '+cls+'">';for(var k=0;k<4;k++)h+='<i class="'+(k<n?'on':'')+'" style="height:'+(5+k*4)+'px"></i>';return h+'</span>';}
+function chart(key){var m=0;B.forEach(function(r){m=Math.max(m,r[key]);});var h='';B.forEach(function(r){var w=function(v){return Math.max(1,Math.round(100*v/m));};
+h+='<div class="row"><div>'+r.nom+'</div><div><div class="bar av" style="width:'+w(r.av[key])+'%">avant '+r.av[key]+'</div><div class="bar ap" style="width:'+w(r.ap[key])+'%;margin-top:2px">apres '+r.ap[key]+'</div></div></div>';});return h;}
+var C=[
+{key:"banc",name:"Le banc : memes etats, gels mesures",n:"7 conditions",d:function(){return '<p>Gel le plus long (ms), avant (delai fixe) / apres (delai adaptatif selon la liaison). Toutes les conditions finissent avec la meme empreinte.</p>'+chart('gel')+'<h2>Part du temps a attendre (%)</h2>'+chart('geleP');}},
+{key:"delai",name:"Delai d'entree adaptatif",n:"invisible",d:function(){return '<p>Le delai suit l\'aller-retour mesure (moyenne lissee + gigue), borne a 2..12 images : 2 sur wifi (33 ms), jusqu\'a 12 sur une liaison tres lente. Il monte d\'un cran a la fois et ne redescend que liaison calme. Aucun chiffre a l\'ecran.</p><h2>Delai moyen (ms)</h2>'+chart('delai');}},
+{key:"barres",name:"Barres de signal par joueur",n:"sans jargon",d:function(){return '<p>Une jauge de 4 barres par joueur (la mienne : mesure vers le serveur ; les autres : part des images ou on les a attendus). Plus de chiffres ni de « delai N images ».</p><p>'+bars(4,'')+'Excellent <small>(&lt; 80 ms)</small> '+bars(3,'')+'Bon <small>(&lt; 150 ms)</small> '+bars(2,'mid')+'Moyen <small>(&lt; 280 ms)</small> '+bars(1,'low')+'Lent</p>';}},
+{key:"attente",name:"Texte d'attente : jamais fantome",n:"1,5 s / 3 s",d:function(){return '<p>Avant : texte des 0,6 s, « connexion lente ? » a 8 s. Maintenant : rien avant 1,5 s continues (seules les barres bougent) ; « X revient... » de 1,5 s a 3 s ; « Connexion lente : X... (une IA prendra le relais si ca dure) » ensuite. Cote serveur, apres 6 s de gel du meme joueur, une IA joue a sa place (il reprend d\'une action).</p>';}},
+{key:"batt",name:"Batterie et bande passante",n:"-50 % de messages",d:function(){return '<p>Entrees envoyees une image sur deux des 3 humains (meme format, 2 images de redondance gardees) ; keepalive 4 s liaison stable / 2 s liaison agitee (avant : 2 s). Liaison morte (aucune reponse 8 s, ex. changement wifi/4G) : coupure et reprise automatique. Retour au premier plan : sonde immediate et reprise en 0,05 s.</p>';}},
+{key:"srv",name:"Serveur gratuit : /api/stats",n:"minimal",d:function(){return '<p>Messages/s et Ko/s entrants et sortants, memoire, retard de boucle (CPU sature), gels traites, salons, joueurs. Aucune donnee personnelle. /health inchange.</p>';}}
+],st={};
+var g=document.getElementById('g');
+C.forEach(function(c){var d=document.createElement('div');d.className='c';d.id='c_'+c.key;
+d.innerHTML='<h2>'+c.name+' <span class="tag">'+c.n+'</span></h2>'+c.d()+'<button class="v" data-k="'+c.key+'" data-v="1">Valider</button><button class="x" data-k="'+c.key+'" data-v="-1">A refaire</button><textarea id="t_'+c.key+'" rows="2" placeholder="Remarque"></textarea>';g.appendChild(d);});
+g.addEventListener('click',function(e){var b=e.target;if(!b.dataset||!b.dataset.k)return;var v=+b.dataset.v;st[b.dataset.k]=v;document.getElementById('c_'+b.dataset.k).className='c '+(v>0?'ok':'no');});
+function out(){var L=C.map(function(c){var v=st[c.key];var t=document.getElementById('t_'+c.key).value.trim();return (v>0?'VALIDE':v<0?'A REFAIRE':'NON VU')+' : '+c.name+' ('+c.n+')'+(t?' - '+t:'');});document.getElementById('o').textContent=L.join('\n');}
+</script></body></html>

@@ -1,0 +1,51 @@
+[
+ {
+  "id": "roguelite_statuts",
+  "titre": "Statuts combinables (18) et reactions (16)",
+  "texte": "Matrice des reactions, 41 objets, variantes de style.",
+  "page": "roguelite_statuts.html",
+  "groupe": "NOUVEAU : ROGUELITE"
+ },
+ {
+  "id": "roguelite_chaleur",
+  "titre": "Pacte de punition et paliers (facon Hades)",
+  "texte": "26 malus, 10 paliers, ascension post-victoire.",
+  "page": "roguelite_chaleur.html",
+  "groupe": "NOUVEAU : ROGUELITE"
+ },
+ {
+  "id": "roguelite_ui",
+  "titre": "Menu pause en onglets et cartes de choix",
+  "texte": "Avant / après.",
+  "page": "roguelite_ui.html",
+  "groupe": "NOUVEAU : ROGUELITE"
+ },
+ {
+  "id": "roguelite_look",
+  "titre": "Evolution visuelle du héros (6 paliers)",
+  "texte": "16 variantes pour aura, ailes, traînees.",
+  "page": "roguelite_look.html",
+  "groupe": "NOUVEAU : ROGUELITE"
+ },
+ {
+  "id": "roguelite_commandes",
+  "titre": "Commandes progressives",
+  "texte": "Les touches apparaissent quand le pouvoir est gagne.",
+  "page": "roguelite_commandes.html",
+  "groupe": "NOUVEAU : ROGUELITE"
+ },
+ {
+  "id": "armes_feu_roguelite",
+  "titre": "Armes a feu du roguelite",
+  "texte": "11 idees dont 5 en jeu.",
+  "page": "armes_feu_roguelite.html",
+  "groupe": "NOUVEAU : ROGUELITE"
+ },
+ {
+  "id": "run_coop",
+  "titre": "Run coop 16 niveaux en ligne",
+  "texte": "Structure par chapitres.",
+  "page": "run_coop.html",
+  "groupe": "NOUVEAU : ROGUELITE"
+ }
+]

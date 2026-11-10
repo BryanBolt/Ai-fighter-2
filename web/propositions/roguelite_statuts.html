@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Roguelite - statuts et reactions - AI Fighter 2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
@@ -33,7 +33,7 @@ textarea.note{width:100%;height:46px;background:#fff;color:var(--ink);border:2px
 .matrix table{border-collapse:separate;border-spacing:3px;font-size:11px}
 .matrix th{font:700 9px Silkscreen;padding:2px 4px;white-space:nowrap}
 .matrix th.col{writing-mode:vertical-rl;transform:rotate(180deg);text-align:left}
-.cell{width:30px;height:30px;border-radius:7px;background:rgba(255,243,224,.07);display:grid;place-items:center;font:800 10px Silkscreen;color:var(--ink);cursor:default;border:0;padding:0}
+.cell{width:30px;height:30px;border-radius:8px;background:rgba(255,243,224,.07);display:grid;place-items:center;font:800 10px Silkscreen;color:var(--ink);cursor:default;border:0;padding:0}
 .cell.on{cursor:pointer}
 .legend{font-size:12px;opacity:.8}
 .vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
@@ -44,13 +44,23 @@ textarea.out{width:100%;min-height:200px;background:#0d0a14;color:var(--paper);b
 .concept{background:rgba(216,69,107,.16);border:2px solid var(--accent);border-radius:14px;padding:12px 14px;margin:10px 0}
 @media(max-width:560px){body{padding:10px}}
 @media (prefers-reduced-motion:reduce){.shot img{animation:none}}
-</style></head><body>
+button,input[type=button],select{min-height:44px}</style><style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js" data-keys="rls_state"></script>
+</head><body>
 <h1>ROGUELITE : STATUTS ET REACTIONS</h1>
-<p class="lead">Chaque attaque (coups, pouvoirs des daemons, supers, armes) peut infliger des <b>statuts</b> ; deux statuts qui se rencontrent sur la meme cible declenchent une <b>reaction</b> (nom + icone + effet unique). On DECOUVRE les synergies en jouant. Les ennemis, eux aussi, peuvent te geler, t'endormir ou t'electrocuter (reduit de moitie sur toi). Les boss ont des resistances et aucun controle ne dure jamais indefiniment. Toutes les animations ci-dessous sont des captures du VRAI moteur.</p>
-<div class="concept"><b class="px">GARDE-FOUS D'EQUILIBRAGE.</b> Controles durs (gel, paralysie, sommeil, etourdissement) : duree maxi 2,5 s, rendements decroissants x1 / x0,5 / x0,25, puis 1 s d'immunite apres chaque controle. Boss : sommeil, charme, confusion, peur et levitation sans effet, controles reduits a 0,8 s. Joueur : durees x0,5 a x0,8. Option « Reduire les effets » : on garde les icones et teintes, on coupe les particules. Chaque statut a une FORME et une couleur (daltonisme). Au plus trois icones au-dessus de la tete.</div>
+<p class="lead">Chaque attaque (coups, pouvoirs des daemons, supers, armes) peut infliger des <b>statuts</b> ; deux statuts qui se rencontrent sur la même cible declenchent une <b>reaction</b> (nom + icone + effet unique). On DÉCOUVRE les synergies en jouant. Les ennemis, eux aussi, peuvent te geler, t'endormir ou t'electrocuter (réduit de moitie sur toi). Les boss ont des resistances et aucun contrôle ne dure jamais indefiniment. Toutes les animations ci-dessous sont des captures du VRAI moteur.</p>
+<div class="concept"><b class="px">GARDE-FOUS D'EQUILIBRAGE.</b> Contrôles durs (gel, paralysie, sommeil, etourdissement) : duree maxi 2,5 s, rendements decroissants x1 / x0,5 / x0,25, puis 1 s d'immunite après chaque contrôle. Boss : sommeil, charme, confusion, peur et levitation sans effet, contrôles reduits a 0,8 s. Joueur : durees x0,5 a x0,8. Option « Réduire les effets » : on garde les icones et teintes, on coupe les particules. Chaque statut a une FORME et une couleur (daltonisme). Au plus trois icones au-dessus de la tête.</div>
 
 <h2>MATRICE DES REACTIONS</h2>
-<p class="legend">Une case = deux statuts (ou un statut + un coup). Cliquez sur une case coloree pour voir la reaction. Les reactions « statut + coup » (Brise-glace, Coup du sommeil, Reaction en chaine) sont dans la derniere colonne.</p>
+<p class="legend">Une case = deux statuts (ou un statut + un coup). Cliquez sur une case coloree pour voir la reaction. Les reactions « statut + coup » (Brise-glace, Coup du sommeil, Reaction en chaîne) sont dans la dernière colonne.</p>
 <div class="matrix" id="matrix"></div>
 
 <h2>STATUTS (18)</h2>
@@ -58,7 +68,7 @@ textarea.out{width:100%;min-height:200px;background:#0d0a14;color:var(--paper);b
 <h2>REACTIONS (16)</h2>
 <div class="grid" id="reacts"></div>
 <h2>OBJETS ET BONUS (41)</h2>
-<p class="lead">Chaque objet ajoute ou ameliore un statut ou une reaction. Les objets « Niveau +2 » rendent une reaction 80 % plus puissante. Les daemons portent aussi un statut selon leur element (feu : brulure, glace : gel, foudre : electrocution, terre : lestage, vent : levitation, lune : sommeil, lumiere : marque, ombre : peur, temps : ralentissement, etoile : confusion).</p>
+<p class="lead">Chaque objet ajoute ou ameliore un statut ou une reaction. Les objets « Niveau +2 » rendent une reaction 80 % plus puissante. Les daemons portent aussi un statut selon leur element (feu : brûlure, glace : gel, foudre : electrocution, terre : lestage, vent : levitation, lune : sommeil, lumière : marque, ombre : peur, temps : ralentissement, étoile : confusion).</p>
 <div class="grid" id="items"></div>
 
 <h2>VARIANTES DE STYLE : 3 STATUTS PHARES</h2>

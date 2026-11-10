@@ -1,0 +1,79 @@
+[
+ {
+  "id": "bilan",
+  "titre": "Bilan de fin de combat",
+  "texte": "Comprends-tu enfin ce que tu gagnes ?",
+  "page": "bilan.html",
+  "groupe": "MENUS, ÉCRANS, EN LIGNE"
+ },
+ {
+  "id": "dialogues",
+  "titre": "Dialogues et cinematiques",
+  "texte": "Les cinematiques sont maintenant muettes.",
+  "page": "dialogues.html",
+  "groupe": "MENUS, ÉCRANS, EN LIGNE"
+ },
+ {
+  "id": "transitions",
+  "titre": "Transitions entre niveaux",
+  "texte": "Cartes visuelles, pastilles d'étages.",
+  "page": "transitions.html",
+  "groupe": "MENUS, ÉCRANS, EN LIGNE"
+ },
+ {
+  "id": "lobby",
+  "titre": "Salons, QR, partage",
+  "texte": "Prive / public, lien, QR, reprise.",
+  "page": "lobby.html",
+  "groupe": "MENUS, ÉCRANS, EN LIGNE"
+ },
+ {
+  "id": "friendly_fire",
+  "titre": "Tirs amis, prise d'un ami, arene",
+  "texte": "Trois réglages de tirs amis, arene de fin de run.",
+  "page": "friendly_fire.html",
+  "groupe": "MENUS, ÉCRANS, EN LIGNE"
+ },
+ {
+  "id": "responsive_menus",
+  "titre": "Boutons toujours visibles",
+  "texte": "Barre d'actions fixe.",
+  "page": "decisions.html",
+  "groupe": "MENUS, ÉCRANS, EN LIGNE"
+ },
+ {
+  "id": "paysage",
+  "titre": "Touches jamais devant le jeu",
+  "texte": "Planches sur 10 formats d'écran.",
+  "page": "paysage.html",
+  "groupe": "MENUS, ÉCRANS, EN LIGNE"
+ },
+ {
+  "id": "style_guide",
+  "titre": "Charte graphique et coherence",
+  "texte": "175 incoherences, 64 corrigees.",
+  "page": "style_guide.html",
+  "groupe": "MENUS, ÉCRANS, EN LIGNE"
+ },
+ {
+  "id": "coherence",
+  "titre": "Cohérence du jeu (KO, armes au sol)",
+  "texte": "Ce qui reste à décider.",
+  "page": "coherence.html",
+  "groupe": "MENUS, ÉCRANS, EN LIGNE"
+ },
+ {
+  "id": "coherence_audit",
+  "titre": "Audit transversal de cohérence",
+  "texte": "Polices, couleurs, noir pur, sons, dégâts, cinématiques : 7 points corrigés, 7 à décider.",
+  "page": "coherence_audit.html",
+  "groupe": "MENUS, ÉCRANS, EN LIGNE"
+ },
+ {
+  "id": "replay",
+  "titre": "Replay, mode photo, run du jour",
+  "texte": "Rejouer, photo, défi du jour.",
+  "page": "replay.html",
+  "groupe": "MENUS, ÉCRANS, EN LIGNE"
+ }
+]

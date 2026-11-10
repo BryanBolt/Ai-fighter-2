@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Roguelite : profondeur</title>
 <style>
 :root{--ink:#221834;--paper:#fff3e0;--acc:#d8456b}
@@ -12,10 +12,20 @@ button{border:2px solid var(--ink);background:var(--paper);border-radius:8px;pad
 button.on{background:var(--ink);color:var(--paper)}
 textarea{width:100%;box-sizing:border-box;margin-top:6px}
 .gif{border:2px dashed var(--acc);padding:8px;margin:8px 0;border-radius:8px;font-size:14px}
-</style></head><body>
+button,input[type=button],select{min-height:44px}</style><style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js" data-keys="rlp"></script>
+</head><body>
 <h1>Roguelite : profondeur</h1>
-<p>Etat : logique pure et testee (modules <code>rl_depth.rs</code>, <code>rl_meta.rs</code>). Gameplay de base complet des l'etage 1 ; les pouvoirs viennent des recompenses.</p>
-<div class="gif">GIF « transition sans surprise » et « choix de porte » du vrai moteur : <b>a produire</b> (le branchement visuel des phases marche / annonce / grace n'est pas encore dans le moteur ; seule la logique est livree).</div>
+<p>État : logique pure et testee (modules <code>rl_depth.rs</code>, <code>rl_meta.rs</code>). Gameplay de base complet des l'étage 1 ; les pouvoirs viennent des récompenses.</p>
+<div class="gif">GIF « transition sans surprise » et « choix de porte » du vrai moteur : <b>a produire</b> (le branchement visuel des phases marche / annonce / grâce n'est pas encore dans le moteur ; seule la logique est livree).</div>
 <div id="list"></div>
 <script>
 const I=[

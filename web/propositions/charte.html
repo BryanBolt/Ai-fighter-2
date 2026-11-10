@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Charte graphique - AI Fighter 2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
@@ -44,23 +44,33 @@ h1{font-size:22px;margin:4px 0}h2{font-size:15px;margin:22px 0 8px;color:var(--a
 .demo{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.demo button{font:800 14px Nunito;border:0;border-radius:99px;padding:10px 14px;background:var(--accent);color:var(--paper);cursor:pointer}
 .demo button.alt{background:var(--paper2);color:var(--paper)}
 .val{background:var(--paper2);border-radius:14px;padding:12px;margin-top:14px}.val button{font:800 13px Nunito;border:0;border-radius:99px;padding:9px 13px;margin:3px 3px 0 0;color:#fff;background:#555;cursor:pointer}
-.val .k{background:#2e9b5b}.val .d{background:#c03a62}textarea{width:100%;margin-top:8px;border-radius:10px;border:0;padding:8px;background:#15101f;color:var(--paper);font:600 13px Nunito}
+.val .k{background:#2f8f5b}.val .d{background:#c03a62}textarea{width:100%;margin-top:8px;border-radius:10px;border:0;padding:8px;background:#15101f;color:var(--paper);font:600 13px Nunito}
 #o{white-space:pre-wrap;font:12px monospace;margin-top:8px}
 .sh{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}.sh span{background:var(--paper2);padding:6px 10px;border-radius:99px;font-size:12px}
-</style></head><body>
+button,input[type=button],select{min-height:44px}</style><style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js"></script>
+</head><body>
 <h1>Charte graphique : menus et interface</h1>
-<p>Proposition a valider AVANT de toucher au jeu. Essaie les trois ecrans a droite (telephone) : l'animation fait partie de la charte.</p>
+<p>Proposition à valider AVANT de toucher au jeu. Essaie les trois écrans a droite (téléphone) : l'animation fait partie de la charte.</p>
 <div class="wrap">
 <div>
   <div class="rules">
-    <b class="px" style="font-size:12px">LES REGLES</b>
+    <b class="px" style="font-size:12px">LES RÈGLES</b>
     <ul style="margin:6px 0;padding-left:18px">
-      <li><b>3 couleurs, pas une de plus</b> : Encre (fond sombre, texte sur clair), Papier (panneaux, texte sur sombre), Accent rose (action principale, selection, danger).</li>
+      <li><b>3 couleurs, pas une de plus</b> : Encre (fond sombre, texte sur clair), Papier (panneaux, texte sur sombre), Accent rose (action principale, sélection, danger).</li>
       <li><b>2 polices</b> : pixel pour les titres et chiffres, sans-serif arrondie pour tout le texte. (Une 3e reservee aux grands effets : onomatopees.)</li>
-      <li><b>Formes simples</b> : pilules et cartes aux coins tres arrondis, aplats, pas de contour noir ni de degrade. Une ombre pleine en accent sous les panneaux.</li>
-      <li><b>Une action principale par ecran</b> (bouton accent), les autres en contour ou en encre.</li>
-      <li><b>Cibles tactiles &gt;= 44 px</b>, texte &gt;= 13 px reels, contraste &gt;= 4,5:1.</li>
-      <li><b>Mouvement</b> : le voile se floute, le panneau rebondit, les elements arrivent en cascade (80 ms d'ecart), l'appui ecrase le bouton. Rien ne dure plus de 0,4 s.</li>
+      <li><b>Formes simples</b> : pilules et cartes aux coins très arrondis, aplats, pas de contour noir ni de degrade. Une ombre pleine en accent sous les panneaux.</li>
+      <li><b>Une action principale par écran</b> (bouton accent), les autres en contour ou en encre.</li>
+      <li><b>Cibles tactiles &gt;= 44 px</b>, texte &gt;= 13 px réels, contraste &gt;= 4,5:1.</li>
+      <li><b>Mouvement</b> : le voile se floute, le panneau rebondit, les elements arrivent en cascade (80 ms d'ecart), l'appui écrase le bouton. Rien ne dure plus de 0,4 s.</li>
     </ul>
     <div class="sw"><i style="background:#221834;color:#fff3e0">ENCRE</i><i style="background:#fff3e0;color:#221834">PAPIER</i><i style="background:#d8456b;color:#fff3e0">ACCENT</i></div>
     <div class="sh"><span class="px">Titre pixel</span><span>Texte arrondi</span></div>
@@ -75,7 +85,7 @@ h1{font-size:22px;margin:4px 0}h2{font-size:15px;margin:22px 0 8px;color:var(--a
   <div class="demo">
     <button onclick="show('pause')">Menu pause</button>
     <button onclick="show('bonus')">Fin de vague : bonus</button>
-    <button onclick="show('lose')">Defaite</button>
+    <button onclick="show('lose')">Défaite</button>
     <button class="alt" onclick="show('')">Fermer</button>
   </div>
   <div class="phone"><div class="scr">
@@ -93,7 +103,7 @@ h1{font-size:22px;margin:4px 0}h2{font-size:15px;margin:22px 0 8px;color:var(--a
     <div class="veil" id="v_bonus"><div class="panel">
       <h3>VAGUE TERMINEE</h3><p>Choisis un bonus.</p>
       <div class="cards">
-        <div class="card"><div class="ic">+</div><div><b>Pause cafe</b><span>Soigne 10 % des PV a chaque etage.</span></div></div>
+        <div class="card"><div class="ic">+</div><div><b>Pause cafe</b><span>Soigne 10 % des PV a chaque étage.</span></div></div>
         <div class="card rare"><div class="ic">*</div><div><b>Satellites<span class="tag r">RARE</span></b><span>Des orbes tournent et frappent autour de toi.</span></div></div>
         <div class="card"><div class="ic">!</div><div><b>Nouveau coup<span class="tag">COUP</span></b><span>Ajoute un coup de pied retourne.</span></div></div>
       </div>
@@ -101,9 +111,9 @@ h1{font-size:22px;margin:4px 0}h2{font-size:15px;margin:22px 0 8px;color:var(--a
     </div></div>
 
     <div class="veil" id="v_lose"><div class="panel">
-      <h3>DEFAITE</h3><p>Les heros sont tombes.</p>
-      <button class="btn main">Recommencer le stage</button>
-      <button class="btn ghost">Rejouer le meme niveau</button>
+      <h3>DÉFAITE</h3><p>Les héros sont tombes.</p>
+      <button class="btn main">Recommencer le niveau</button>
+      <button class="btn ghost">Rejouer le même niveau</button>
       <button class="btn">Quitter</button>
     </div></div>
   </div></div>

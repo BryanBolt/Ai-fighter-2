@@ -1,0 +1,44 @@
+[
+ {
+  "id": "boss",
+  "titre": "Annonce de boss, mini-boss, Ange",
+  "texte": "Intro muette de boss, mini-boss, boss final blanc.",
+  "page": "boss.html",
+  "groupe": "BOSS, ENNEMIS, ÉVÉNEMENTS"
+ },
+ {
+  "id": "evenements",
+  "titre": "Événements de décor (13 passages)",
+  "texte": "Voitures, moto, metro, air lourd, vapeurs, oiseaux, feu d'artifice...",
+  "page": "evenements.html",
+  "groupe": "BOSS, ENNEMIS, ÉVÉNEMENTS"
+ },
+ {
+  "id": "meteo",
+  "titre": "Météo",
+  "texte": "Pluie, brume, etc.",
+  "page": "meteo.html",
+  "groupe": "BOSS, ENNEMIS, ÉVÉNEMENTS"
+ },
+ {
+  "id": "niveaux_neufs",
+  "titre": "Niveaux neufs",
+  "texte": "Les 3 niveaux déjà ajoutes.",
+  "page": "niveaux_neufs.html",
+  "groupe": "BOSS, ENNEMIS, ÉVÉNEMENTS"
+ },
+ {
+  "id": "nemesis",
+  "titre": "Nemesis",
+  "texte": "Ennemis recurrents.",
+  "page": "nemesis.html",
+  "groupe": "BOSS, ENNEMIS, ÉVÉNEMENTS"
+ },
+ {
+  "id": "civils",
+  "titre": "Passants civils (29 demarches)",
+  "texte": "Marches, attentes, postures.",
+  "page": "civils.html",
+  "groupe": "BOSS, ENNEMIS, ÉVÉNEMENTS"
+ }
+]

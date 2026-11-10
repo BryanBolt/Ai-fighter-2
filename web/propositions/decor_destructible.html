@@ -1,6 +1,6 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Decor destructible</title>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Décor destructible</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b;--ok:#2f8f5b}
@@ -19,9 +19,19 @@ textarea{width:100%;box-sizing:border-box;border:2px solid var(--encre);border-r
 #o{white-space:pre-wrap;background:var(--encre);color:var(--papier);padding:12px;border-radius:10px;margin-top:14px}
 .gen{background:var(--accent);color:#fff;font-family:Silkscreen,monospace;margin-top:14px}
 .sheet{margin-top:10px}
-</style></head><body>
-<h1>Le decor se degrade et sert au combat</h1>
-<p class="lead">Captures du vrai moteur en temps reel (400 px, 48 couleurs). 65 elements structurels, 5 par terrain : vitres et cloisons, piliers, poteaux, ecrans et serveurs, objets suspendus, garde-corps, portes et ascenseurs, tuyaux, tatamis et dalles. Un corps projete les abime (petit bonus de degats, budget fini, jamais sur un boss) ; un coup au sol fait tomber un objet suspendu apres une annonce de 0,6 s qui touche tout le monde. Une interaction n'est appliquee que quand elle a du sens dans le lieu. Pour chaque scene : Valider ou A refaire (+ remarque), puis genere le texte et colle-le dans le chat.</p>
+button,input[type=button],select{min-height:44px}</style><style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js"></script>
+</head><body>
+<h1>Le décor se degrade et sert au combat</h1>
+<p class="lead">Captures du vrai moteur en temps réel (400 px, 48 couleurs). 65 elements structurels, 5 par terrain : vitres et cloisons, piliers, poteaux, écrans et serveurs, objets suspendus, garde-corps, portes et ascenseurs, tuyaux, tatamis et dalles. Un corps projete les abime (petit bonus de dégâts, budget fini, jamais sur un boss) ; un coup au sol fait tomber un objet suspendu après une annonce de 0,6 s qui touche tout le monde. Une interaction n'est appliquee que quand elle a du sens dans le lieu. Pour chaque scène : Valider ou À refaire (+ remarque), puis genere le texte et colle-le dans le chat.</p>
 <h2>Les 13 terrains d'un coup</h2>
 <div class="sheet"><img src="decor_destructible/decor_all_planche.png" alt="planche des 13 terrains, decor abime"></div>
 <div class="g" id="g"></div>

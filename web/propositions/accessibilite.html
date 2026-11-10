@@ -1,22 +1,32 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Accessibilite - AI Fighter 2</title>
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Accessibilite - AI Fighter 2</title>
 <style>
 :root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b}
 body{margin:0;font:16px system-ui,sans-serif;background:var(--papier);color:var(--encre);padding:14px;line-height:1.35}
 h1{font-size:22px;margin:0 0 4px}h2{font-size:17px;margin:8px 0 2px}
 .g{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-top:12px}
 .c{background:#fff;border:3px solid var(--encre);border-radius:16px;padding:10px;box-shadow:5px 5px 0 var(--accent)}
-.c.ok{outline:4px solid #2e9b5b}.c.no{outline:4px solid var(--accent)}
+.c.ok{outline:4px solid #2f8f5b}.c.no{outline:4px solid var(--accent)}
 img{width:100%;border-radius:10px;background:var(--encre);display:block}
 p{margin:4px 0;font-size:14px}.tag{display:inline-block;background:var(--encre);color:var(--papier);border-radius:999px;padding:2px 10px;font-size:12px;font-weight:700}
 button{font:inherit;font-weight:700;padding:10px 14px;border-radius:999px;border:2px solid var(--encre);margin:4px 6px 0 0;cursor:pointer;background:var(--papier);color:var(--encre)}
-button.v{background:#2e9b5b;color:#fff}button.x{background:var(--accent);color:#fff}
+button.v{background:#2f8f5b;color:#fff}button.x{background:var(--accent);color:#fff}
 textarea{width:100%;box-sizing:border-box;border-radius:10px;border:2px solid var(--encre);padding:6px;margin-top:6px;background:var(--papier);color:var(--encre);font:inherit}
 #o{white-space:pre-wrap;background:var(--encre);color:var(--papier);padding:12px;border-radius:12px;margin-top:14px}
 .go{background:var(--accent);color:#fff;margin-top:14px}
-</style></head><body>
+button,input[type=button],select{min-height:44px}</style><style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js"></script>
+</head><body>
 <h1>Accessibilite : jouable par tout le monde</h1>
-<p>Captures du vrai moteur, une par reglage. Une seule page de reglages (Options &gt; Accessibilite) : icone, mot court, pastille ON / OFF, apercu en direct. Pour chaque carte : Valider ou A refaire (+ remarque), puis genere le texte et colle-le dans le chat.</p>
-<p>Reglages locaux : rien n'entre dans le hash multijoueur. Limiteur de photosensibilite toujours actif : jamais plus de 3 eclats par seconde.</p>
+<p>Captures du vrai moteur, une par réglage. Une seule page de réglages (Options &gt; Accessibilite) : icone, mot court, pastille ON / OFF, aperçu en direct. Pour chaque carte : Valider ou À refaire (+ remarque), puis genere le texte et colle-le dans le chat.</p>
+<p>Réglages locaux : rien n'entre dans le hash multijoueur. Limiteur de photosensibilite toujours actif : jamais plus de 3 éclats par seconde.</p>
 <div class="g" id="g"></div>
 <button class="go" onclick="out()">Generer mon texte</button><div id="o"></div>
 <script>

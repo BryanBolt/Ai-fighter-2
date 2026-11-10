@@ -1,0 +1,32 @@
+[
+ {
+  "id": "gc_hitstop",
+  "titre": "Échelle unique d'arrêt sur impact",
+  "texte": "Remplacer les 11 valeurs en dur de sim.rs (0,2,3,4,5,6,8,10,11,12,14) par la table léger 4 / moyen 6 / lourd 10 / super 14 (src/gameplay_scale.rs) : change le feeling et le hash.",
+  "page": "decisions.html"
+ },
+ {
+  "id": "gc_heal",
+  "titre": "Unifier les soins",
+  "texte": "Aujourd'hui : objet 25 % (min 35), gorgée de bouteille, animal soigneur 7 % (min 10), daemon 3-4 %, siphon 50 % des dégâts, vol de vie par mod : proposer un barème unique par rareté.",
+  "page": "decisions.html"
+ },
+ {
+  "id": "gc_dot_shield",
+  "titre": "Brûlure et poison contre le bouclier",
+  "texte": "Mesuré : la brûlure passe à travers le bouclier (test burn_ignores_shield_measured). Faire absorber les DOT par le bouclier change l'équilibre.",
+  "page": "decisions.html"
+ },
+ {
+  "id": "gc_cryo",
+  "titre": "Poison x2 sous gel, brûlure non",
+  "texte": "Le poison double sous gel (synergie cryo) mais pas la brûlure : donner un équivalent (brûlure x1,5 sous gel) ou retirer le x2.",
+  "page": "decisions.html"
+ },
+ {
+  "id": "gc_direct_hp",
+  "titre": "PV écrits hors chaîne de dégâts",
+  "texte": "Écritures directes restantes (épines, recul d'attaque, chute) : les passer par apply_hit change les chiffres et le hash.",
+  "page": "decisions.html"
+ }
+]

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Tirs amis et arene</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -20,15 +20,25 @@ textarea{width:100%;box-sizing:border-box;border:2px solid var(--encre);border-r
 .gen{background:var(--accent);color:#fff;font-family:Silkscreen,monospace;margin-top:14px}
 table{border-collapse:collapse;margin:10px 0;font-size:14px;max-width:780px}
 td,th{border:2px solid var(--encre);padding:6px 8px;text-align:left;background:#fff}th{background:var(--encre);color:var(--papier)}
-</style></head><body>
+button,input[type=button],select{min-height:44px}</style><style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js"></script>
+</head><body>
 <h1>Tirs amis, prise d'un ami et ARENE de fin de run</h1>
-<p class="lead">Captures du vrai moteur (400 px, 48 couleurs). Idee : se taper dessus doit etre PREVU et SYMPA. Un reglage clair choisi par l'hote et visible par tous dans le salon, un petit « Oups ! » sans punition, jamais de KO d'un ami hors arene, un garde-fou contre les harceleurs (jamais de blocage), la possibilite de saisir / porter / jeter un ami (et de se debattre), et apres la victoire une ARENE opt-in : vote, compte a rebours, manches, podium, revanche, retour a la run sans rien perdre. Aussi : la charge de Ki est maintenant lisible en deux temps (HUD « 1/2 Charge le Ki... » puis « 2/2 KI MAX ! la TRANSFORMATION monte »), non capturee ici. Pour chaque scene : Valider ou A refaire (+ remarque), puis genere le texte et colle-le dans le chat.</p>
+<p class="lead">Captures du vrai moteur (400 px, 48 couleurs). Idee : se taper dessus doit être PRÉVU et SYMPA. Un réglage clair choisi par l'hôte et visible par tous dans le salon, un petit « Oups ! » sans punition, jamais de KO d'un ami hors arene, un garde-fou contre les harceleurs (jamais de blocage), la possibilite de saisir / porter / jeter un ami (et de se debattre), et après la victoire une ARENE opt-in : vote, compte a rebours, manches, podium, revanche, retour a la run sans rien perdre. Aussi : la charge de Ki est maintenant lisible en deux temps (HUD « 1/2 Charge le Ki... » puis « 2/2 KI MAX ! la TRANSFORMATION monte »), non capturee ici. Pour chaque scène : Valider ou À refaire (+ remarque), puis genere le texte et colle-le dans le chat.</p>
 <table>
-<tr><th>Reglage</th><th>Degats entre amis</th><th>Mortel ?</th><th>Pour qui</th></tr>
+<tr><th>Réglage</th><th>Dégâts entre amis</th><th>Mortel ?</th><th>Pour qui</th></tr>
 <tr><td>OFF</td><td>0 (les coups traversent)</td><td>non</td><td>coop pure, enfants, debutants</td></tr>
 <tr><td>REDUITS (25 %)</td><td>25 %</td><td>jamais (1 PV mini)</td><td>defaut : on s'amuse, sans rancune</td></tr>
 <tr><td>ON</td><td>100 % (35 % des PV max par coup au plus)</td><td>jamais (1 PV mini)</td><td>amis qui s'assument ; garde-fou si on insiste</td></tr>
-<tr><td>ARENE</td><td>80 %, PV egalises</td><td>oui (c'est le but)</td><td>duel opt-in apres la victoire</td></tr>
+<tr><td>ARENE</td><td>80 %, PV egalises</td><td>oui (c'est le but)</td><td>duel opt-in après la victoire</td></tr>
 </table>
 <div class="g" id="g"></div>
 <button class="gen" onclick="out()">Generer mon texte</button><div id="o"></div>

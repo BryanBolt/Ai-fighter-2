@@ -1,6 +1,6 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Roguelite : evolution visuelle du heros - proposition</title>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Roguelite : evolution visuelle du héros - proposition</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{--ink:#221834;--paper:#fff3e0;--acc:#d8456b;--card:#fffaf2;--line:#e9d3b4;--ok:#2f8f5b}
@@ -22,38 +22,48 @@ input,textarea{background:#fff;border:2px solid var(--ink);border-radius:8px;pad
 .vb{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px} .vb input{flex:1 1 90px}
 .out{background:var(--ink);color:var(--paper);border-radius:10px;padding:14px 16px;margin-top:12px;font-size:15px}
 table{border-collapse:collapse;width:100%;font-size:14px} td,th{border:1px solid var(--line);padding:4px 8px;text-align:left}
-</style></head><body><div class="wrap">
+button,input[type=button],select{min-height:44px}</style><style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js" data-keys="rl_look_v1"></script>
+</head><body><div class="wrap">
 <div class="pix" style="color:var(--acc);font-size:13px">AI FIGHTER 2 / ROGUELITE / PROPOSITION</div>
-<h1>LE HEROS CHANGE AVEC SES BONUS</h1>
-<p>Le heros evolue par six paliers (0 sobre, 5 spectaculaire), lus dans l'etat de run deja synchronise : aucune donnee en plus, rendu seulement. Tout est en aplats (trois tons de l'element), sans contour noir, et petit devant le corps : la silhouette reste lisible. Les daemons gardent leur design ; chacun a sa propre orbite.</p>
+<h1>LE HÉROS CHANGE AVEC SES BONUS</h1>
+<p>Le héros evolue par six paliers (0 sobre, 5 spectaculaire), lus dans l'état de run déjà synchronise : aucune donnee en plus, rendu seulement. Tout est en aplats (trois tons de l'element), sans contour noir, et petit devant le corps : la silhouette reste lisible. Les daemons gardent leur design ; chacun a sa propre orbite.</p>
 
 <h2>1. Les paliers</h2>
 <div class="card"><table>
 <tr><th>Palier</th><th>Ce qu'on voit</th><th>Declencheur typique</th></tr>
-<tr><td>0</td><td>sobre : rien</td><td>debut de run</td></tr>
+<tr><td>0</td><td>sobre : rien</td><td>début de run</td></tr>
 <tr><td>1</td><td>aura au sol (forme selon l'element) + echarpe ou bandeau</td><td>premier daemon</td></tr>
-<tr><td>2</td><td>+ lueur des yeux, lucioles, epaulieres</td><td>super / eveil debloque</td></tr>
+<tr><td>2</td><td>+ lueur des yeux, lucioles, epaulieres</td><td>super / éveil debloque</td></tr>
 <tr><td>3</td><td>+ trainees de mouvement, brassards, halo</td><td>mobilite, effets croises</td></tr>
-<tr><td>4</td><td>+ ailes de lumiere</td><td>armure, formes, sorcier</td></tr>
+<tr><td>4</td><td>+ ailes de lumière</td><td>armure, formes, sorcier</td></tr>
 <tr><td>5</td><td>+ couronne, aura pleine</td><td>fin de run</td></tr></table>
-<p class="cap">Element : l'effet croise dominant (gel, feu, poison, foudre, barriere, berserk, epines), sinon l'espece du premier daemon. Formes d'aura : langues (feu, sang), eclats (glace, acier), zigzags (foudre, ki), volutes (vent, esprit), bulles (poison, bois).</p></div>
+<p class="cap">Element : l'effet croise dominant (gel, feu, poison, foudre, barriere, berserk, épines), sinon l'espèce du premier daemon. Formes d'aura : langues (feu, sang), éclats (glace, acier), zigzags (foudre, ki), volutes (vent, esprit), bulles (poison, bois).</p></div>
 
-<h2>2. Planche du vrai moteur : 10 heros x 6 paliers</h2>
+<h2>2. Planche du vrai moteur : 10 héros x 6 paliers</h2>
 <div class="card"><img src="rl_look/planche.png" alt="planche heros x paliers" onerror="this.parentNode.innerHTML='<p>(planche non generee)</p>'">
-<p class="cap">Chaque colonne est un palier, chaque ligne un heros ; captures du vrai moteur (tools/rl_look_board.py).</p>
+<p class="cap">Chaque colonne est un palier, chaque ligne un héros ; captures du vrai moteur (tools/rl_look_board.py).</p>
 <img src="rl_look/paliers.webp" alt="GIF paliers" onerror="this.remove()"></div>
 
 <h2>3. Trois effets phares : 16 variantes chacun</h2>
-<p>Choisis une variante par effet (Valider) ou demande a refaire. Variantes = nombre de marques et hauteur (aura), nombre de plumes et ouverture (ailes), nombre de filets et longueur (trainees). Choix par defaut actuel : variante 6 pour chacun.</p>
+<p>Choisis une variante par effet (Valider) ou demande à refaire. Variantes = nombre de marques et hauteur (aura), nombre de plumes et ouverture (ailes), nombre de filets et longueur (trainees). Choix par defaut actuel : variante 6 pour chacun.</p>
 <h2>Aura au sol</h2><div class="grid" id="g-aura"></div>
-<h2>Ailes de lumiere</h2><div class="grid" id="g-wings"></div>
+<h2>Ailes de lumière</h2><div class="grid" id="g-wings"></div>
 <h2>Trainees de mouvement</h2><div class="grid" id="g-trail"></div>
 
 <h2>4. Joueurs 1 a 8, accessibilite</h2>
 <div class="card"><canvas id="pl" width="960" height="150"></canvas>
-<p class="cap">Anneau pointille au sol + pastille de forme au-dessus de la tete (disque, triangle, carre, losange, hexagone, croix, barre, anneau), palette Okabe-Ito sans rouge (le rouge est le camp ennemi). Daltonisme : les teintes passent par la palette daltonien du jeu ; la forme porte l'identite. Reduire les effets : plus de trainees ni de lucioles, aura calme. Budget : lucioles plafonnees par le reglage de particules (mode eco = moitie).</p>
+<p class="cap">Anneau pointille au sol + pastille de forme au-dessus de la tête (disque, triangle, carre, losange, hexagone, croix, barre, anneau), palette Okabe-Ito sans rouge (le rouge est le camp ennemi). Daltonisme : les teintes passent par la palette daltonien du jeu ; la forme porte l'identite. Réduire les effets : plus de trainees ni de lucioles, aura calme. Budget : lucioles plafonnees par le réglage de particules (mode eco = moitie).</p>
 <div class="vb" data-sec="Joueurs 1-8 : couleur + forme"></div></div>
-<div class="card"><b>Commentaire general</b><textarea id="gen" rows="3" placeholder="Ce que tu veux changer..."></textarea></div>
+<div class="card"><b>Commentaire général</b><textarea id="gen" rows="3" placeholder="Ce que tu veux changer..."></textarea></div>
 <div class="out"><b>Ton retour (copie-le et colle-le dans le chat)</b><div id="sum" style="margin-top:8px"></div><div class="vb"><button id="copy">Copier</button><button id="reset">Tout effacer</button></div></div>
 </div>
 <script>

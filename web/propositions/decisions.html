@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Mes decisions</title>
+<title>Mes décisions</title>
+<!-- GENERE par tools/build_decisions.py a partir de cards/*.json : ne pas editer a la main. -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b;--ok:#2f8f5b;--mid:#c98a1c}
@@ -8,128 +9,58 @@
 body{margin:0;background:var(--papier);color:var(--encre);font:16px/1.45 Nunito,system-ui,sans-serif;padding:16px 16px 90px}
 h1,h2{font-family:Silkscreen,monospace;letter-spacing:.02em;margin:0 0 6px}
 h1{font-size:22px}h2{font-size:16px;margin:26px 0 8px;color:var(--accent)}
+h2.top{color:var(--encre);background:#ffd36b;border:3px solid var(--encre);border-radius:10px;padding:8px 12px;max-width:760px}
 .lead{max-width:760px;margin:0 0 10px}
 .bar{position:sticky;top:0;background:var(--papier);padding:8px 0;z-index:5;display:flex;gap:8px;flex-wrap:wrap;align-items:center;border-bottom:2px solid var(--encre)}
 .bar .n{font-family:Silkscreen,monospace;font-size:13px}
 .card{background:#fff;border:3px solid var(--encre);border-radius:14px;padding:12px 14px;margin:10px 0;max-width:760px;box-shadow:4px 4px 0 var(--encre)}
+.card.prio{border-color:var(--accent)}
 .card h3{font-family:Silkscreen,monospace;font-size:14px;margin:0 0 4px}
 .card p{margin:4px 0 8px}
-.card a.open{display:inline-block;font-weight:700;color:var(--accent);margin-bottom:6px}
+.card a.open{display:inline-flex;align-items:center;min-height:44px;font-weight:700;color:var(--accent);margin-bottom:6px}
 .v{display:flex;gap:6px;flex-wrap:wrap}
-button{font:700 14px Nunito,sans-serif;border:2px solid var(--encre);background:var(--papier);color:var(--encre);border-radius:999px;padding:10px 14px;min-height:44px;cursor:pointer}
+button{font:700 14px Nunito,sans-serif;border:2px solid var(--encre);background:var(--papier);color:var(--encre);border-radius:999px;padding:10px 14px;min-height:44px;min-width:44px;cursor:pointer}
 button.on.ok{background:var(--ok);color:#fff}button.on.no{background:var(--accent);color:#fff}button.on.mid{background:var(--mid);color:#fff}
 textarea{width:100%;min-height:56px;margin-top:8px;border:2px solid var(--encre);border-radius:10px;padding:8px;font:15px Nunito,sans-serif;background:var(--papier);color:var(--encre)}
 #out{width:100%;max-width:760px;min-height:160px}
 .fixed{position:fixed;left:0;right:0;bottom:0;background:var(--encre);padding:10px 16px;display:flex;gap:8px;justify-content:center}
 .fixed button{background:var(--accent);color:#fff;border-color:#fff}
-.tag{font:12px Silkscreen,monospace;background:var(--encre);color:var(--papier);border-radius:6px;padding:2px 6px;margin-left:6px}
 </style></head><body>
-<h1>Mes decisions</h1>
-<p class="lead">Tout ce qui attend ton avis, au meme endroit. Pour chaque fiche : ouvre la page, puis choisis Valider, A refaire ou A discuter, et ajoute un commentaire si tu veux. Tes choix restent dans ce navigateur. Le bouton en bas fabrique le texte a me coller.</p>
+<h1>Mes décisions</h1>
+<p class="lead">Tout ce qui attend ton avis, au même endroit. Pour chaque fiche : ouvre la page, puis choisis Valider, À refaire ou À discuter, et ajoute un commentaire si tu veux. Tes choix restent dans ce navigateur. Le bouton en bas fabrique le texte à me coller.</p>
 <div class="bar"><span class="n" id="count"></span></div>
 <div id="list"></div>
 <h2>Ton texte</h2>
-<textarea id="out" readonly placeholder="Appuie sur « Generer mon texte »"></textarea>
-<div class="fixed"><button id="gen">Generer mon texte</button><button id="copy">Copier</button></div>
+<textarea id="out" readonly placeholder="Appuie sur « Générer mon texte »"></textarea>
+<div class="fixed"><button id="gen">Générer mon texte</button><button id="copy">Copier</button></div>
 <script>
-var G=[
-["A TRANCHER EN PREMIER",[
-["a_retirer","Vieux trucs a retirer ?","50 elements (options, modes, code mort, poids). Pour chacun : retirer, garder ou revoir. Le dossier de propositions pese 337 Mo : on l'exclut du deploiement ?"],
-["remplacements","Coups remplaces par les nouvelles animations","Les variantes des refontes A et B sont maintenant actives par defaut, y compris des coups que tu n'avais peut-etre pas valides. Lesquelles retirer ?"],
-["boss_variantes","Design des boss et de l'Ange (32 variantes)","Choisis la variante preferee pour l'Ange, la Brute, Valerie, Kaze PDG et le Rappel."],
-["histoire_incoherences","Incoherences de l'histoire (10 points)","Ce qu'on enleve ou garde dans l'histoire."]
-]],
-["COMBAT ET ANIMATIONS",[
-["refonte_a","Refonte des coups : Gorr, Tetsu, Nova, Kage, Bo","26 coups refaits, avant / apres."],
-["refonte_b","Refonte des coups : Sora, Piege, Zui, Yume","42 coups refaits, avant / apres."],
-["coups_a","Galerie des mouvements, heros 1 a 5","255 mouvements. Les GIF des supers sont tres comprimes : regarde les planches."],
-["nunchaku","Nunchaku et cou du personnage","Combo de 6 coups, coups diriges, raccord du cou."],
-["pantoufles","Pantoufles et dernier coup lance","Sera refait en une seule savate comique : regarde le principe."],
-["objets","Jeter les objets, lait, tesson","Geste Jeter, boire le lait, tesson de 3 coups."],
-["ragdoll","Ragdoll realiste","Limites des articulations, rebonds, glissades."],
-["supers2","Supers au sol","Tes validations precedentes."],
-["supers_air2","Supers aeriennes","Tes validations precedentes."],
-["roulade2","Roulades et saltos","Tes validations precedentes."]
-]],
-["BOSS, ENNEMIS, EVENEMENTS",[
-["boss","Annonce de boss, mini-boss, Ange","Intro muette de boss, mini-boss, boss final blanc."],
-["evenements","Evenements de decor (13 passages)","Voitures, moto, metro, air lourd, vapeurs, oiseaux, feu d'artifice..."],
-["meteo","Meteo","Pluie, brume, etc."],
-["niveaux_neufs","Niveaux neufs","Les 3 niveaux deja ajoutes."],
-["nemesis","Nemesis","Ennemis recurrents."],
-["civils","Passants civils (29 demarches)","Marches, attentes, postures."]
-]],
-["MENUS, ECRANS, EN LIGNE",[
-["bilan","Bilan de fin de combat","Comprends-tu enfin ce que tu gagnes ?"],
-["dialogues","Dialogues et cinematiques","Les cinematiques sont maintenant muettes."],
-["transitions","Transitions entre niveaux","Cartes visuelles, pastilles d'etages."],
-["lobby","Salons, QR, partage","Prive / public, lien, QR, reprise."],
-["friendly_fire","Tirs amis, prise d'un ami, arene","Trois reglages de tirs amis, arene de fin de run."],
-["responsive","Boutons toujours visibles","Barre d'actions fixe."],
-["paysage","Touches jamais devant le jeu","Planches sur 10 formats d'ecran."],
-["style_guide","Charte graphique et coherence","175 incoherences, 64 corrigees."],
-["coherence","Coherence du jeu (KO, armes au sol)","Ce qui reste a decider."],
-["replay","Replay, mode photo, run du jour","Rejouer, photo, defi du jour."]
-]],
-["NOUVEAU : COMBAT, HEROS, DAEMONS, ENNEMIS",[
-["heros_identite","Identite des 10 heros","Choisis les idles et gardes (16 variantes) pour chaque heros."],
-["supers3","Supers (50) : poses lissees et mise en scene","Variantes de rendu de super, GIF a jour partiel."],
-["daemons2","Daemons : 8 nouveaux + pastille HUD","Choisis le dessin A ou B de chaque nouveau daemon."],
-["bestiaire","Bestiaire : 13 nouveaux ennemis, 15 mini-boss","Planche de 16 designs pour 4 ennemis phares."],
-["armes_comiques","Armes comiques : savate, agrafeuse, expulsion","16 variantes de savate et d'agrafeuse a choisir."],
-["combat_design","Combat design : audit et propositions P1 a P5","Valide ou refuse chaque proposition d'equilibrage."],
-["feel","Game feel : 16 styles d'impact","Choisis le style d'impact par defaut."],
-["sons","Sound design","Ecoute les familles de sons."]
-]],
-["NOUVEAU : ROGUELITE",[
-["roguelite_statuts","Statuts combinables (18) et reactions (16)","Matrice des reactions, 41 objets, variantes de style."],
-["roguelite_chaleur","Pacte de punition et paliers (facon Hades)","26 malus, 10 paliers, ascension post-victoire."],
-["roguelite_ui","Menu pause en onglets et cartes de choix","Avant / apres."],
-["roguelite_look","Evolution visuelle du heros (6 paliers)","16 variantes pour aura, ailes, traînees."],
-["roguelite_commandes","Commandes progressives","Les touches apparaissent quand le pouvoir est gagne."],
-["armes_feu_roguelite","Armes a feu du roguelite","11 idees dont 5 en jeu."],
-["run_coop","Run coop 16 niveaux en ligne","Structure par chapitres."]
-]],
-["NOUVEAU : NIVEAUX, MENUS, SYSTEME",[
-["niveaux_vague2","23 nouveaux lieux","Paradis, enfers, Paris, Shibuya, etc."],
-["niveaux_vague3","8 lieux de plus + signatures de boss","Rio, Sydney, Agra, fete foraine, serre, surf, ferme, macaques."],
-["menus_hierarchie","Nouvelle hierarchie des menus","Titre court, 3 niveaux maxi."],
-["accessibilite","Accessibilite","Daltonisme, une main, effets, taille du texte."],
-["manettes","Manettes","Glyphes par famille, tables de repli."],
-["textes","Accents, glossaire, i18n","Avant / apres."],
-["perf","Performance, poids, PWA","Tableaux avant / apres."],
-["qa_visuel","QA visuel","Defauts trouves et corriges."],
-["online_qa","QA en ligne","Durcissement multijoueur."]
-]],
-["ROGUELITE",[
-["roguelite","Roguelite : objets et pouvoirs","Tes verdicts precedents."],
-["roguelite_profondeur","Roguelite : salles, reliques, progression","20 idees a classer. Seule la logique est ecrite, pas encore branchee."]
-]]
-];
+var TOP=[{"id": "a_retirer", "titre": "Vieux trucs à retirer ?", "texte": "50 elements (options, modes, code mort, poids). Pour chacun : retirer, garder ou revoir. Le dossier de propositions pese 337 Mo : on l'exclut du deploiement ?", "page": "a_retirer.html"}, {"id": "remplacements", "titre": "Coups remplaces par les nouvelles animations", "texte": "Les variantes des refontes A et B sont maintenant actives par defaut, y compris des coups que tu n'avais peut-être pas valides. Lesquelles retirer ?", "page": "remplacements.html"}, {"id": "boss_variantes", "titre": "Design des boss et de l'Ange (32 variantes)", "texte": "Choisis la variante preferee pour l'Ange, la Brute, Valerie, Kaze PDG et le Rappel.", "page": "boss_variantes.html"}, {"id": "histoire_incoherences", "titre": "Incoherences de l'histoire (10 points)", "texte": "Ce qu'on enleve ou garde dans l'histoire.", "page": "histoire_incoherences.html"}, {"id": "coherence_audit", "titre": "Audit transversal de cohérence", "texte": "Polices, couleurs, noir pur, sons, dégâts, cinématiques : 7 points corrigés, 7 à décider.", "page": "coherence_audit.html"}];
+var G=[["COMBAT ET ANIMATIONS", [{"id": "refonte_a", "titre": "Refonte des coups : Gorr, Tetsu, Nova, Kage, Bo", "texte": "26 coups refaits, avant / après.", "page": "refonte_a.html"}, {"id": "refonte_b", "titre": "Refonte des coups : Sora, Piège, Zui, Yume", "texte": "42 coups refaits, avant / après.", "page": "refonte_b.html"}, {"id": "coups_a", "titre": "Galerie des mouvements, héros 1 a 5", "texte": "255 mouvements. Les GIF des supers sont très comprimes : regarde les planches.", "page": "coups_a.html"}, {"id": "nunchaku", "titre": "Nunchaku et cou du personnage", "texte": "Combo de 6 coups, coups diriges, raccord du cou.", "page": "nunchaku.html"}, {"id": "pantoufles", "titre": "Pantoufles et dernier coup lance", "texte": "Sera refait en une seule savate comique : regarde le principe.", "page": "pantoufles.html"}, {"id": "objets", "titre": "Jeter les objets, lait, tesson", "texte": "Geste Jeter, boire le lait, tesson de 3 coups.", "page": "objets.html"}, {"id": "ragdoll", "titre": "Ragdoll realiste", "texte": "Limites des articulations, rebonds, glissades.", "page": "ragdoll.html"}, {"id": "supers2", "titre": "Supers au sol", "texte": "Tes validations precedentes.", "page": "supers2.html"}, {"id": "supers_air2", "titre": "Supers aériennes", "texte": "Tes validations precedentes.", "page": "supers_air2.html"}, {"id": "roulade2", "titre": "Roulades et saltos", "texte": "Tes validations precedentes.", "page": "roulade2.html"}]], ["BOSS, ENNEMIS, ÉVÉNEMENTS", [{"id": "boss", "titre": "Annonce de boss, mini-boss, Ange", "texte": "Intro muette de boss, mini-boss, boss final blanc.", "page": "boss.html"}, {"id": "evenements", "titre": "Événements de décor (13 passages)", "texte": "Voitures, moto, metro, air lourd, vapeurs, oiseaux, feu d'artifice...", "page": "evenements.html"}, {"id": "meteo", "titre": "Météo", "texte": "Pluie, brume, etc.", "page": "meteo.html"}, {"id": "niveaux_neufs", "titre": "Niveaux neufs", "texte": "Les 3 niveaux déjà ajoutes.", "page": "niveaux_neufs.html"}, {"id": "nemesis", "titre": "Nemesis", "texte": "Ennemis recurrents.", "page": "nemesis.html"}, {"id": "civils", "titre": "Passants civils (29 demarches)", "texte": "Marches, attentes, postures.", "page": "civils.html"}]], ["MENUS, ÉCRANS, EN LIGNE", [{"id": "bilan", "titre": "Bilan de fin de combat", "texte": "Comprends-tu enfin ce que tu gagnes ?", "page": "bilan.html"}, {"id": "dialogues", "titre": "Dialogues et cinematiques", "texte": "Les cinematiques sont maintenant muettes.", "page": "dialogues.html"}, {"id": "transitions", "titre": "Transitions entre niveaux", "texte": "Cartes visuelles, pastilles d'étages.", "page": "transitions.html"}, {"id": "lobby", "titre": "Salons, QR, partage", "texte": "Prive / public, lien, QR, reprise.", "page": "lobby.html"}, {"id": "friendly_fire", "titre": "Tirs amis, prise d'un ami, arene", "texte": "Trois réglages de tirs amis, arene de fin de run.", "page": "friendly_fire.html"}, {"id": "responsive_menus", "titre": "Boutons toujours visibles", "texte": "Barre d'actions fixe.", "page": "decisions.html"}, {"id": "paysage", "titre": "Touches jamais devant le jeu", "texte": "Planches sur 10 formats d'écran.", "page": "paysage.html"}, {"id": "style_guide", "titre": "Charte graphique et coherence", "texte": "175 incoherences, 64 corrigees.", "page": "style_guide.html"}, {"id": "coherence", "titre": "Cohérence du jeu (KO, armes au sol)", "texte": "Ce qui reste à décider.", "page": "coherence.html"}, {"id": "replay", "titre": "Replay, mode photo, run du jour", "texte": "Rejouer, photo, défi du jour.", "page": "replay.html"}]], ["NOUVEAU : COMBAT, HÉROS, DAEMONS, ENNEMIS", [{"id": "heros_identite", "titre": "Identite des 10 héros", "texte": "Choisis les idles et gardes (16 variantes) pour chaque héros.", "page": "heros_identite.html"}, {"id": "supers3", "titre": "Supers (50) : poses lissees et mise en scène", "texte": "Variantes de rendu de super, GIF a jour partiel.", "page": "supers3.html"}, {"id": "daemons2", "titre": "Daemons : 8 nouveaux + pastille HUD", "texte": "Choisis le dessin A ou B de chaque nouveau daemon.", "page": "daemons2.html"}, {"id": "bestiaire", "titre": "Bestiaire : 13 nouveaux ennemis, 15 mini-boss", "texte": "Planche de 16 designs pour 4 ennemis phares.", "page": "bestiaire.html"}, {"id": "armes_comiques", "titre": "Armes comiques : savate, agrafeuse, expulsion", "texte": "16 variantes de savate et d'agrafeuse a choisir.", "page": "armes_comiques.html"}, {"id": "combat_design", "titre": "Combat design : audit et propositions P1 a P5", "texte": "Valide ou refuse chaque proposition d'equilibrage.", "page": "combat_design.html"}, {"id": "feel", "titre": "Game feel : 16 styles d'impact", "texte": "Choisis le style d'impact par defaut.", "page": "feel.html"}, {"id": "sons", "titre": "Sound design", "texte": "Écoute les familles de sons.", "page": "sons.html"}]], ["NOUVEAU : ROGUELITE", [{"id": "roguelite_statuts", "titre": "Statuts combinables (18) et reactions (16)", "texte": "Matrice des reactions, 41 objets, variantes de style.", "page": "roguelite_statuts.html"}, {"id": "roguelite_chaleur", "titre": "Pacte de punition et paliers (facon Hades)", "texte": "26 malus, 10 paliers, ascension post-victoire.", "page": "roguelite_chaleur.html"}, {"id": "roguelite_ui", "titre": "Menu pause en onglets et cartes de choix", "texte": "Avant / après.", "page": "roguelite_ui.html"}, {"id": "roguelite_look", "titre": "Evolution visuelle du héros (6 paliers)", "texte": "16 variantes pour aura, ailes, traînees.", "page": "roguelite_look.html"}, {"id": "roguelite_commandes", "titre": "Commandes progressives", "texte": "Les touches apparaissent quand le pouvoir est gagne.", "page": "roguelite_commandes.html"}, {"id": "armes_feu_roguelite", "titre": "Armes a feu du roguelite", "texte": "11 idees dont 5 en jeu.", "page": "armes_feu_roguelite.html"}, {"id": "run_coop", "titre": "Run coop 16 niveaux en ligne", "texte": "Structure par chapitres.", "page": "run_coop.html"}]], ["NOUVEAU : NIVEAUX, MENUS, SYSTÈME", [{"id": "niveaux_vague2", "titre": "23 nouveaux lieux", "texte": "Paradis, enfers, Paris, Shibuya, etc.", "page": "niveaux_vague2.html"}, {"id": "niveaux_vague3", "titre": "8 lieux de plus + signatures de boss", "texte": "Rio, Sydney, Agra, fête foraine, serre, surf, ferme, macaques.", "page": "niveaux_vague3.html"}, {"id": "menus_hierarchie", "titre": "Nouvelle hierarchie des menus", "texte": "Titre court, 3 niveaux maxi.", "page": "menus_hierarchie.html"}, {"id": "accessibilite", "titre": "Accessibilite", "texte": "Daltonisme, une main, effets, taille du texte.", "page": "accessibilite.html"}, {"id": "manettes", "titre": "Manettes", "texte": "Glyphes par famille, tables de repli.", "page": "manettes.html"}, {"id": "textes", "titre": "Accents, glossaire, i18n", "texte": "Avant / après.", "page": "textes.html"}, {"id": "perf", "titre": "Performance, poids, PWA", "texte": "Tableaux avant / après.", "page": "perf.html"}, {"id": "qa_visuel", "titre": "QA visuel", "texte": "Defauts trouves et corriges.", "page": "qa_visuel.html"}, {"id": "online_qa", "titre": "QA en ligne", "texte": "Durcissement multijoueur.", "page": "online_qa.html"}]], ["ROGUELITE", [{"id": "roguelite", "titre": "Roguelite : objets et pouvoirs", "texte": "Tes verdicts precedents.", "page": "roguelite.html"}, {"id": "roguelite_profondeur", "titre": "Roguelite : salles, reliques, progression", "texte": "20 idees a classer. Seule la logique est ecrite, pas encore branchee.", "page": "roguelite_profondeur.html"}]], ["NOUVEAU", [{"id": "gc_hitstop", "titre": "Échelle unique d'arrêt sur impact", "texte": "Remplacer les 11 valeurs en dur de sim.rs (0,2,3,4,5,6,8,10,11,12,14) par la table léger 4 / moyen 6 / lourd 10 / super 14 (src/gameplay_scale.rs) : change le feeling et le hash.", "page": "decisions.html"}, {"id": "gc_heal", "titre": "Unifier les soins", "texte": "Aujourd'hui : objet 25 % (min 35), gorgée de bouteille, animal soigneur 7 % (min 10), daemon 3-4 %, siphon 50 % des dégâts, vol de vie par mod : proposer un barème unique par rareté.", "page": "decisions.html"}, {"id": "gc_dot_shield", "titre": "Brûlure et poison contre le bouclier", "texte": "Mesuré : la brûlure passe à travers le bouclier (test burn_ignores_shield_measured). Faire absorber les DOT par le bouclier change l'équilibre.", "page": "decisions.html"}, {"id": "gc_cryo", "titre": "Poison x2 sous gel, brûlure non", "texte": "Le poison double sous gel (synergie cryo) mais pas la brûlure : donner un équivalent (brûlure x1,5 sous gel) ou retirer le x2.", "page": "decisions.html"}, {"id": "gc_direct_hp", "titre": "PV écrits hors chaîne de dégâts", "texte": "Écritures directes restantes (épines, recul d'attaque, chute) : les passer par apply_hit change les chiffres et le hash.", "page": "decisions.html"}, {"id": "hc_brief", "titre": "Bandeau objectif + carte du parcours", "texte": "Au debut de chaque chapitre (et a la fin de l'epilogue), un bandeau montre le lieu, l'objectif en 8 mots et « TU ES ICI » sur la carte : garder tel quel ?", "page": "histoire_claire.html"}, {"id": "hc_fil", "titre": "Fil rouge : le badge vole", "texte": "Acte 1 a 3 : retrouver son badge ; acte 4-5 : monter a la PDG ; saison 2 : atteindre le bouton ARRET avant 07:00. Valider ce fil unique ?", "page": "histoire_claire.html"}, {"id": "hc_boss", "titre": "Un seul dernier boss : Le Rappel", "texte": "Valerie ferme la saison 1, Kaze la saison 2, Le Rappel (le reveil) ferme le jeu ; L'Ange reste hors histoire, sans lien explicite.", "page": "histoire_claire.html"}, {"id": "hc_courts", "titre": "Textes raccourcis (environ 47 %)", "texte": "Repliques de 150 caracteres maxi, 6 repliques maxi par intro, test automatique a l'appui : encore trop long, ou bien ?", "page": "histoire_claire.html"}, {"id": "hc_nuits", "titre": "Compte des nuits : 47 puis 48", "texte": "47 nuits avant le jeu, la saison 2 et le final sont la 48e : tranche applique partout dans les dialogues.", "page": "histoire_claire.html"}, {"id": "hc_dlg", "titre": "Rendu des dialogues : on garde dlg_stage", "texte": "Le dialogue de main (decor du lieu, bonshommes du rig, boutons tactiles masques) remplace l'idee « vrai moteur » de l'autre branche : pas de double systeme.", "page": "histoire_claire.html"}, {"id": "lieux-1", "titre": "Auditer l'écran brut hors lieux", "texte": "Une trentaine de fichiers UI utilisent encore la largeur de fenêtre réelle ; on les audite par capture ?", "page": "decisions.html"}, {"id": "lieux-2", "titre": "Captures golden des 20 lieux", "texte": "Lancer la planche golden des lieux pour valider parallaxe et lisibilité après ce correctif ?", "page": "decisions.html"}, {"id": "horde_facile", "titre": "Horde un peu plus facile ?", "texte": "Les bots gagnent la horde 4 fois sur 18 : baisser les PV ennemis (0,7 -> 0,6) ?", "page": "decisions.html"}, {"id": "colline_egalite", "titre": "Colline : trop d'egalites", "texte": "6 parties sur 18 finissent a egalite : ajouter une mort subite de 15 s ?", "page": "decisions.html"}, {"id": "foot_egalite", "titre": "Foot : egalites", "texte": "4 parties sur 18 sans vainqueur : but en or en prolongation ?", "page": "decisions.html"}, {"id": "musique-1", "titre": "Musique des menus a plein volume", "texte": "Les menus jouaient a 30 % du reglage (bug corrige) : verifier a l'oreille que le niveau titre vous convient.", "page": "decisions.html"}, {"id": "musique-2", "titre": "Baisse pendant les dialogues", "texte": "La musique descend a 55 % pendant les dialogues : trop ou pas assez ?", "page": "decisions.html"}, {"id": "musique-3", "titre": "Normaliser le volume des pistes", "texte": "Egaliser le niveau des pistes fournies et composees (gain par piste) : a faire si l'ecoute montre des ecarts.", "page": "decisions.html"}, {"id": "replay_png_compact", "titre": "Photos de replay compactes", "texte": "Les photos PNG du replay passent d'environ 1,5 Mo a quelques dizaines de Ko (sans dependance) : on garde ce format pour le partage ?", "page": "replay.html"}, {"id": "replay_seed_pin", "titre": "Graines du jour epinglees", "texte": "Le defi du jour a la meme graine sur toutes les plateformes, verrouillee par test : on accepte de ne jamais la changer ?", "page": "tournoi.html"}, {"id": "replay_determinisme", "titre": "Rejeu et seek verifies", "texte": "Le rejeu et le saut dans le temps redonnent le meme state_hash (teste) : on peut s'en servir comme preuve pour les classements ?", "page": "replay.html"}, {"id": "responsive", "titre": "Responsive à la racine : un seul système de mise en page", "texte": "12 formats (Fold 4 plié/déplié, téléphones, tablettes, PC, ultra-large), avant / après.", "page": "decisions.html"}, {"id": "rlb_debut", "titre": "Début de run : joystick, Poing, Pied, Saut", "texte": "Rien d'autre à l'écran ; chaque bouton apparaît avec son pouvoir.", "page": "roguelite_boutons.html"}, {"id": "rlb_gains", "titre": "Garde, Spécial, Super, Saisie, Course", "texte": "Garde au 1er pouvoir, Saisie et Course au 2e, Spécial avec un daemon, Super avec un super ou une forme.", "page": "roguelite_boutons.html"}, {"id": "rlb_actif", "titre": "Pouvoir actif sur le bouton Spécial", "texte": "Glyphe d'élément et jauge dans l'icône, 4 pouvoirs au plus, Tab ou direction + Spécial pour choisir.", "page": "roguelite_boutons.html"}, {"id": "rlb_16", "titre": "16 variantes de sélection des pouvoirs", "texte": "La variante 1 (pastilles en éventail) est dans le jeu ; choisis ou refais.", "page": "roguelite_boutons.html"}, {"id": "rythme1", "titre": "Boss trop longs", "texte": "Serre tropicale (283 s), Cantine, Louvre, 06:58 dépassent 180 s : réduire leurs PV de 15 % ?", "page": "decisions.html"}, {"id": "rythme2", "titre": "Pic Serre tropicale", "texte": "Le boss de la Serre inflige 2664 PV, le double des autres : l'adoucir ?", "page": "decisions.html"}, {"id": "rythme3", "titre": "Courbe plate", "texte": "Les vagues 2 des stages 4 à 39 coûtent toutes 600-800 PV : ajouter une rampe par étage ?", "page": "decisions.html"}, {"id": "sandwich_plafond", "titre": "Plafond de 3 coups en chaine", "texte": "Un heros ne prend plus que 3 coups d'affilee sans pouvoir agir (le 3e le met a terre, protege), puis 20 images d'invulnerabilite au reveil pour esquiver ou riposter ; mesure : 14 coups d'affilee avant, 3 apres.", "page": "sandwich.html"}, {"id": "sandwich_jetons", "titre": "Jetons d'attaque par cible et par cote", "texte": "Au plus 1 / 2 / 3 ennemis frappent un meme heros (facile / normal / difficile), 2 au plus s'il est encercle, jamais deux ennemis de cotes opposes en meme temps, et plus de decisions simultanees dans la meme image.", "page": "sandwich.html"}, {"id": "sandwich_telegraphe", "titre": "Coup annonce plus longtemps quand on est encercle", "texte": "Un ennemi qui attaque un heros pris en sandwich se fige 20 images avec un « ! » orange avant de frapper ; les bosses et leurs combats restent inchanges.", "page": "sandwich.html"}, {"id": "sandwich_respiration", "titre": "Respiration apres un coup encaisse", "texte": "Quand un heros est touche, les autres ennemis proches reculent et attendent 0,7 s, et ceux qui attendent leur tour ne passent plus de l'autre cote du heros.", "page": "sandwich.html"}, {"id": "sandwich_alerte", "titre": "Alerte visuelle et sonore de sandwich", "texte": "Quand des ennemis sont des deux cotes : anneau rouge pulsant, fleches rouges sur les deux flancs, bandeau « ENCERCLE ! » et cornet d'alerte (une fois toutes les 2,5 s au plus). A valider : trop discret, trop envahissant ?", "page": "sandwich.html"}, {"id": "sandwich_difficulte", "titre": "Difficulte : trop facile ou juste ?", "texte": "Coups subis par minute -24 %, PV perdus -18 %, victoires des bots 52 % -> 56 % ; les combats de boss ne changent pas. Si c'est encore trop dur, baisser le plafond a 2 ; trop facile, remonter a 4 ou raccourcir le reveil protege.", "page": "sandwich.html"}, {"id": "sa1", "titre": "Sons hors ecran", "texte": "Attenuer ou couper les impacts dont la source est hors de la camera (en ligne a 8 joueurs) ?", "page": "decisions.html"}, {"id": "sa2", "titre": "Predecoder la musique suivante", "texte": "Decoder en avance la piste de niveau pendant le titre (+~60 Mo memoire telephone) pour zero attente ?", "page": "decisions.html"}, {"id": "sa3", "titre": "Mesure de latence telephone", "texte": "Valider sur un vrai iPhone/Android que le premier son suit le premier toucher (non mesurable ici).", "page": "decisions.html"}]], ["Passage des agents (intégration)", [{"id": "demarrage_pwa", "titre": "Démarrage PWA (serveur endormi, cache)", "texte": "3 correctifs : reessai propre si Render repond 503, 1re visite 2x plus légère, cache v4. À valider.", "page": "demarrage_pwa.html"}, {"id": "jouissance", "titre": "Jouissance : coups finaux, combo, victoire", "texte": "Audit du plaisir de jeu : compteur de combo qui claque, mots de palier ; propositions à valider.", "page": "jouissance.html"}, {"id": "sons2", "titre": "Sons cohérents : familles, bruit de la rue, coups", "texte": "Poing, arme, feu, glace, eau, poison, gestes : écoute chaque famille, avant / après du ronflement de la rue.", "page": "sons2.html"}, {"id": "statuts", "titre": "Test des statuts : choc entretenu corrige", "texte": "Joueur-testeur : verrou par electrisation trouve et supprime.", "page": "statuts.html"}, {"id": "coherence_ux", "titre": "Cohérence textes et UX", "texte": "10 arbitrages de vocabulaire et de navigation.", "page": "coherence_ux.html"}, {"id": "coherence_visuel", "titre": "Cohérence visuelle : 6 arbitrages", "texte": "Fonds des menus, bleu nuit des maquettes, gris, ombres, écran titre, restes de noir pur. Corrections sûres déjà faites.", "page": "coherence_visuel.html"}, {"id": "armes_objets", "titre": "Armes et objets", "texte": "Lancer rate sans explosion, tactile coop, plafond au sol.", "page": "armes_objets.html"}, {"id": "navigation_menus", "titre": "Navigation des menus (joueur-testeur)", "texte": "Clavier, manette, souris, tactile : rappels de touches corriges par famille de manette, 10 constats.", "page": "navigation_menus.html"}, {"id": "playtest_online", "titre": "Playtest en ligne (bots)", "texte": "3 defauts corriges (expulsion, AFK, fin de partie), 5 propositions.", "page": "playtest_online.html"}, {"id": "sauvegarde", "titre": "Sauvegarde : test par fuzz", "texte": "1000 profils abimes testes, 3 defauts corriges (deux onglets, stockage plein, pièces), 4 points à décider.", "page": "sauvegarde.html"}]]];
 var K="afh_decisions_v1",S={};
 try{S=JSON.parse(localStorage.getItem(K)||"{}")}catch(e){}
 function save(){try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}}
-function count(){var n=0,t=0;G.forEach(function(g){g[1].forEach(function(c){t++;if(S[c[0]]&&S[c[0]].v)n++})});document.getElementById("count").textContent=n+" / "+t+" fiches traitees"}
+var ALL=TOP.slice();G.forEach(function(g){ALL=ALL.concat(g[1])});
+function count(){var n=0;ALL.forEach(function(c){if(S[c.id]&&S[c.id].v)n++});document.getElementById("count").textContent=n+" / "+ALL.length+" fiches traitées"}
 var L=document.getElementById("list");
-G.forEach(function(g){
- var h=document.createElement("h2");h.textContent=g[0];L.appendChild(h);
- g[1].forEach(function(c){
-  var id=c[0],s=S[id]||(S[id]={});
-  var d=document.createElement("div");d.className="card";
-  d.innerHTML='<h3></h3><p></p><a class="open" target="_blank"></a><div class="v"></div><textarea placeholder="Commentaire (facultatif)"></textarea>';
-  d.querySelector("h3").textContent=c[1];d.querySelector("p").textContent=c[2];
-  var a=d.querySelector("a");a.href=id+".html";a.textContent="Ouvrir la page";
-  var v=d.querySelector(".v");
-  [["ok","Valider"],["no","A refaire"],["mid","A discuter"]].forEach(function(o){
-   var b=document.createElement("button");b.textContent=o[1];if(s.v===o[0])b.className="on "+o[0];
-   b.onclick=function(){s.v=(s.v===o[0]?"":o[0]);v.querySelectorAll("button").forEach(function(x){x.className=""});if(s.v)b.className="on "+o[0];save();count()};
-   v.appendChild(b)});
-  var t=d.querySelector("textarea");t.value=s.c||"";t.oninput=function(){s.c=t.value;save()};
-  L.appendChild(d)})});
+function card(c,prio){
+ var id=c.id,s=S[id]||(S[id]={});
+ var d=document.createElement("div");d.className="card"+(prio?" prio":"");
+ d.innerHTML='<h3></h3><p></p><a class="open" target="_blank" rel="noopener"></a><div class="v"></div><textarea placeholder="Commentaire (facultatif)"></textarea>';
+ d.querySelector("h3").textContent=c.titre;d.querySelector("p").textContent=c.texte;
+ var a=d.querySelector("a");a.href=c.page;a.textContent="Ouvrir la page";
+ var v=d.querySelector(".v");
+ [["ok","Valider"],["no","À refaire"],["mid","À discuter"]].forEach(function(o){
+  var b=document.createElement("button");b.textContent=o[1];if(s.v===o[0])b.className="on "+o[0];
+  b.onclick=function(){s.v=(s.v===o[0]?"":o[0]);v.querySelectorAll("button").forEach(function(x){x.className=""});if(s.v)b.className="on "+o[0];save();count()};
+  v.appendChild(b)});
+ var t=d.querySelector("textarea");t.value=s.c||"";t.oninput=function(){s.c=t.value;save()};
+ L.appendChild(d)}
+if(TOP.length){var h=document.createElement("h2");h.className="top";h.textContent="Top 5 à trancher d'abord";L.appendChild(h);TOP.forEach(function(c){card(c,true)})}
+G.forEach(function(g){var h=document.createElement("h2");h.textContent=g[0];L.appendChild(h);g[1].forEach(function(c){card(c,false)})});
 count();
-var NAME={ok:"VALIDE",no:"A REFAIRE",mid:"A DISCUTER"};
-function gen(){var o=[];G.forEach(function(g){g[1].forEach(function(c){var s=S[c[0]]||{};if(s.v||s.c)o.push("- "+c[1]+" ("+c[0]+") : "+(s.v?NAME[s.v]:"sans avis")+(s.c?" | "+s.c:""))})});
- document.getElementById("out").value=o.length?"Mes decisions :\n"+o.join("\n"):"Rien de traite pour l'instant."}
+var NAME={ok:"VALIDÉ",no:"À REFAIRE",mid:"À DISCUTER"};
+function gen(){var o=[];ALL.forEach(function(c){var s=S[c.id]||{};if(s.v||s.c)o.push("- "+c.titre+" ("+c.id+") : "+(s.v?NAME[s.v]:"sans avis")+(s.c?" | "+s.c:""))});
+ document.getElementById("out").value=o.length?"Mes décisions :\n"+o.join("\n"):"Rien de traité pour l'instant."}
 document.getElementById("gen").onclick=function(){gen();document.getElementById("out").scrollIntoView()};
 document.getElementById("copy").onclick=function(){gen();var t=document.getElementById("out");t.select();try{document.execCommand("copy")}catch(e){}};
 </script></body></html>

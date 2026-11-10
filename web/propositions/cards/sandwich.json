@@ -1,0 +1,38 @@
+[
+ {
+  "id": "sandwich_plafond",
+  "titre": "Plafond de 3 coups en chaine",
+  "texte": "Un heros ne prend plus que 3 coups d'affilee sans pouvoir agir (le 3e le met a terre, protege), puis 20 images d'invulnerabilite au reveil pour esquiver ou riposter ; mesure : 14 coups d'affilee avant, 3 apres.",
+  "page": "sandwich.html"
+ },
+ {
+  "id": "sandwich_jetons",
+  "titre": "Jetons d'attaque par cible et par cote",
+  "texte": "Au plus 1 / 2 / 3 ennemis frappent un meme heros (facile / normal / difficile), 2 au plus s'il est encercle, jamais deux ennemis de cotes opposes en meme temps, et plus de decisions simultanees dans la meme image.",
+  "page": "sandwich.html"
+ },
+ {
+  "id": "sandwich_telegraphe",
+  "titre": "Coup annonce plus longtemps quand on est encercle",
+  "texte": "Un ennemi qui attaque un heros pris en sandwich se fige 20 images avec un « ! » orange avant de frapper ; les bosses et leurs combats restent inchanges.",
+  "page": "sandwich.html"
+ },
+ {
+  "id": "sandwich_respiration",
+  "titre": "Respiration apres un coup encaisse",
+  "texte": "Quand un heros est touche, les autres ennemis proches reculent et attendent 0,7 s, et ceux qui attendent leur tour ne passent plus de l'autre cote du heros.",
+  "page": "sandwich.html"
+ },
+ {
+  "id": "sandwich_alerte",
+  "titre": "Alerte visuelle et sonore de sandwich",
+  "texte": "Quand des ennemis sont des deux cotes : anneau rouge pulsant, fleches rouges sur les deux flancs, bandeau « ENCERCLE ! » et cornet d'alerte (une fois toutes les 2,5 s au plus). A valider : trop discret, trop envahissant ?",
+  "page": "sandwich.html"
+ },
+ {
+  "id": "sandwich_difficulte",
+  "titre": "Difficulte : trop facile ou juste ?",
+  "texte": "Coups subis par minute -24 %, PV perdus -18 %, victoires des bots 52 % -> 56 % ; les combats de boss ne changent pas. Si c'est encore trop dur, baisser le plafond a 2 ; trop facile, remonter a 4 ou raccourcir le reveil protege.",
+  "page": "sandwich.html"
+ }
+]

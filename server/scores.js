@@ -35,8 +35,10 @@ const int = (v, lo, hi) => (Number.isInteger(v) && v >= lo && v <= hi ? v : null
 
 // Pseudo assaini : lettres / chiffres / espace / _ - . ' seulement, 14 caracteres, pas de lien ni d'adresse.
 export function cleanPseudo(v) {
-  let s = String(v ?? '').normalize('NFKC').replace(/[^\p{L}\p{N} _\-.']/gu, '').split(' ').filter(Boolean).join(' ').slice(0, 14).trim();
-  if (/https?|www|\.(com|net|org|fr|io|gg)\b|@/i.test(String(v ?? '')) || !s) s = 'Anonyme';
+  // Le controle de lien se fait sur le texte NORMALISE (sinon la version pleine chasse de www.ex.com passait puis devenait www.ex.com).
+  const norm = String(v ?? '').normalize('NFKC');
+  let s = Array.from(norm.replace(/[^\p{L}\p{N} _\-.']/gu, '').split(' ').filter(Boolean).join(' ')).slice(0, 14).join('').trim();
+  if (/https?|www|\.(com|net|org|fr|io|gg)\b|@/i.test(norm) || !s) s = 'Anonyme';
   return s;
 }
 
@@ -64,6 +66,7 @@ export function createScores({ file = null, now = () => Date.now() } = {}) {
   }
   const ipLog = new Map(); // ip -> { last, stamps[] }
   const pidLast = new Map();
+  const ipPids = new Map(); // tableau|cle|ip -> Set(pid) : au plus 3 identifiants par adresse et par tableau (anti-inondation, memoire seule)
   const presence = new Map(); // code d'ami -> { pid, name, room, at }
   let timer = null;
 
@@ -125,11 +128,16 @@ export function createScores({ file = null, now = () => Date.now() } = {}) {
     const why = plausible(board, e);
     if (why) return { ok: false, err: why, code: 'implausible' };
     const t = now();
+    const ipk = board + '|' + key + '|' + ip;
+    const known = ipPids.get(ipk);
+    if (!known?.has(pid) && (known?.size ?? 0) >= 3) return { ok: false, err: 'trop d\'identifiants depuis cette adresse', code: 'rate' };
     if (!rateOk(ip, pid, t)) return { ok: false, err: 'trop vite', code: 'rate' };
     let arr;
     if (board === 'rl') arr = db.rl;
     else if (board === 'daily') arr = db.daily[key] || (db.daily[key] = []);
     else arr = db.chal[key] || (db.chal[key] = []);
+    if (known) known.add(pid); else ipPids.set(ipk, new Set([pid]));
+    if (ipPids.size > 5000) ipPids.clear();
     const entry = { pid, name: cleanPseudo(m.name), ...e, at: t };
     const i = arr.findIndex((x) => x.pid === pid);
     let improved = true;

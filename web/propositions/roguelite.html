@@ -1,6 +1,6 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Roguelite - objets et etages - AI Fighter 2</title>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Roguelite - objets et étages - AI Fighter 2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
 <style>
@@ -48,16 +48,26 @@ button:focus-visible,.sw:focus-visible,.chip:focus-visible{outline:3px solid var
 textarea.note{min-height:0;height:auto;margin-top:8px;font:13px/1.4 system-ui,sans-serif}.card.f{outline:3px solid var(--accent)}textarea{width:100%;min-height:200px;background:#0d0a14;color:var(--paper);border:2px solid var(--paper2);border-radius:10px;padding:10px;font:13px/1.4 ui-monospace,Consolas,monospace}
 .small{font-size:12px;opacity:.75}
 @media(max-width:560px){body{padding:10px}}
-</style></head><body>
-<h1>ROGUELITE : OBJETS ET ETAGES</h1>
-<p class="lead">Chaque animation est une vraie capture du moteur en temps reel (les objets sans animation propre sont marques « concept »). Les objets s'ajoutent a vos coups, ils ne les remplacent pas. Les neuf pouvoirs demandes (cris du dragon, de feu, de gel et du temps, canon charge, arme de boss, dash aerien, saut mural, armure a capsules) sont maintenant reels dans le mode Roguelite (beta) : leurs fiches montrent le GIF du moteur et six images-cles ; les six armes de boss ne se tirent pas au hasard, un boss vaincu les propose.</p>
+button,input[type=button],select{min-height:44px}</style><style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js" data-keys="rl_state"></script>
+</head><body>
+<h1>ROGUELITE : OBJETS ET ÉTAGES</h1>
+<p class="lead">Chaque animation est une vraie capture du moteur en temps réel (les objets sans animation propre sont marques « concept »). Les objets s'ajoutent a vos coups, ils ne les remplacent pas. Les neuf pouvoirs demandes (cris du dragon, de feu, de gel et du temps, canon charge, arme de boss, dash aérien, saut mural, armure a capsules) sont maintenant réels dans le mode Roguelite (beta) : leurs fiches montrent le GIF du moteur et six images-cles ; les six armes de boss ne se tirent pas au hasard, un boss vaincu les propose.</p>
 
-<div class="concept"><b>NOUVEAU : LES DAEMONS PORTENT LES POUVOIRS.</b> En roguelite, le heros n'a plus aucun pouvoir magique propre : il garde ses coups, ses armes et ses garde-fous. Chaque pouvoir magique est un petit monstre (un daemon) que l'on adopte en choisissant la carte. Quand on appuie sur la touche du pouvoir, le heros fait un geste de commande et c'est le DAEMON qui vient se placer devant lui, se charge, puis lance le pouvoir depuis sa gueule, ses mains ou ses cornes. Une jauge sous le daemon montre sa recharge ; quatre daemons au plus (B, Avant, Arriere, Haut + B) ; certains duos se renforcent (feu + vent = incendie, glace + foudre = gel paralysant, feu + terre = lave, foudre + vent = orage, lune + ombre = eclipse) ; les etoiles d'attachement rendent le pouvoir plus fort. Chaque GIF ci-dessous est une capture du vrai moteur : regardez le daemon, pas le heros. Verdict conseille a donner : « Animation a refaire » si le daemon ne lance pas clairement le pouvoir.
+<div class="concept"><b>NOUVEAU : LES DAEMONS PORTENT LES POUVOIRS.</b> En roguelite, le héros n'a plus aucun pouvoir magique propre : il garde ses coups, ses armes et ses garde-fous. Chaque pouvoir magique est un petit monstre (un daemon) que l'on adopte en choisissant la carte. Quand on appuie sur la touche du pouvoir, le héros fait un geste de commande et c'est le DAEMON qui vient se placer devant lui, se charge, puis lance le pouvoir depuis sa gueule, ses mains ou ses cornes. Une jauge sous le daemon montre sa recharge ; quatre daemons au plus (B, Avant, Arrière, Haut + B) ; certains duos se renforcent (feu + vent = incendie, glace + foudre = gel paralysant, feu + terre = lave, foudre + vent = orage, lune + ombre = eclipse) ; les étoiles d'attachement rendent le pouvoir plus fort. Chaque GIF ci-dessous est une capture du vrai moteur : regardez le daemon, pas le héros. Verdict conseille a donner : « Animation à refaire » si le daemon ne lance pas clairement le pouvoir.
 <div class="sheetbig" id="dmsheet"><a href="roguelite/dm_planche.jpg" target="_blank"><img src="roguelite/dm_planche.jpg" alt="Planche contact : les 22 daemons porteurs avec leur pouvoir" onerror="this.parentNode.style.display='none'"></a></div></div>
 
 <h2>Options de partie</h2>
 <div class="panel">
-  <p class="small" style="margin:0 0 8px">Ce panneau montre ce que fera l'option du lancement : couper une categorie ou un objet precis. Cliquez sur une pastille pour l'activer ou la couper.</p>
+  <p class="small" style="margin:0 0 8px">Ce panneau montre ce que fera l'option du lancement : couper une catégorie ou un objet précis. Cliquez sur une pastille pour l'activer ou la couper.</p>
   <div class="row" id="cats"></div>
   <div class="row" style="margin-top:8px"><button id="noab">Couper tous les abusifs</button><button id="allon">Tout activer</button><span class="small" id="count"></span></div>
   <div class="chips" id="chips"></div>
@@ -67,8 +77,8 @@ textarea.note{min-height:0;height:auto;margin-top:8px;font:13px/1.4 system-ui,sa
 <div class="row" id="filters" style="margin-bottom:10px"></div>
 <div class="grid" id="grid"></div>
 
-<h2>Etages tires au sort</h2>
-<p class="lead">Six exemples produits par le generateur (graine + profondeur). Le decor est une capture reelle du theme.</p>
+<h2>Étages tires au sort</h2>
+<p class="lead">Six exemples produits par le generateur (graine + profondeur). Le décor est une capture réelle du thème.</p>
 <div class="floors" id="floors"></div>
 
 <h2>Texte de validation</h2>

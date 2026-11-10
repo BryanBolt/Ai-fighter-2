@@ -1,0 +1,30 @@
+[
+ {
+  "id": "a_retirer",
+  "titre": "Vieux trucs à retirer ?",
+  "texte": "50 elements (options, modes, code mort, poids). Pour chacun : retirer, garder ou revoir. Le dossier de propositions pese 337 Mo : on l'exclut du deploiement ?",
+  "page": "a_retirer.html",
+  "groupe": "À TRANCHER EN PREMIER"
+ },
+ {
+  "id": "remplacements",
+  "titre": "Coups remplaces par les nouvelles animations",
+  "texte": "Les variantes des refontes A et B sont maintenant actives par defaut, y compris des coups que tu n'avais peut-être pas valides. Lesquelles retirer ?",
+  "page": "remplacements.html",
+  "groupe": "À TRANCHER EN PREMIER"
+ },
+ {
+  "id": "boss_variantes",
+  "titre": "Design des boss et de l'Ange (32 variantes)",
+  "texte": "Choisis la variante preferee pour l'Ange, la Brute, Valerie, Kaze PDG et le Rappel.",
+  "page": "boss_variantes.html",
+  "groupe": "À TRANCHER EN PREMIER"
+ },
+ {
+  "id": "histoire_incoherences",
+  "titre": "Incoherences de l'histoire (10 points)",
+  "texte": "Ce qu'on enleve ou garde dans l'histoire.",
+  "page": "histoire_incoherences.html",
+  "groupe": "À TRANCHER EN PREMIER"
+ }
+]

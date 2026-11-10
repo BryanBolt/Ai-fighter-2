@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Nemesis de Kogen Corp - proposition</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -28,63 +28,73 @@ textarea{min-height:64px;font-weight:400}
 .out b{color:#ff9db8}
 footer{margin-top:40px;font-size:14px;opacity:.8}
 @media(max-width:520px){h1{font-size:26px}}
-</style></head><body><div class="wrap">
+</style><style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js" data-keys="nemesis_retour_v1"></script>
+</head><body><div class="wrap">
 <div class="pix" style="color:var(--acc);font-size:13px">AI FIGHTER 2 / KOGEN CORP / PROPOSITION</div>
 <h1>NEMESIS DE KOGEN CORP</h1>
-<p class="lead">Un sbire d'elite te met KO, ou t'echappe presque vaincu... et REVIENT plus tard : un nom (« Marc de la Compta »), un titre (« Gardien des tableurs »), une replique qui se souvient, une cicatrice ou un accessoire visible, un trait de combat, une recompense a sa defaite. Leger, lisible, equitable, deterministe.</p>
+<p class="lead">Un sbire d'élite te met KO, ou t'echappe presque vaincu... et REVIENT plus tard : un nom (« Marc de la Compta »), un titre (« Gardien des tableurs »), une replique qui se souvient, une cicatrice ou un accessoire visible, un trait de combat, une récompense a sa défaite. Léger, lisible, equitable, deterministe.</p>
 
 <h2>1. Comment ca marche</h2>
 <div class="card"><ul>
-<li><b>Naissance</b> : une defaite fait naitre un nemesis (il se souvient de l'etage et de l'ennemi) ; ou un sbire d'elite debute sur un etage generique (1 chance sur 3 par stage).</li>
-<li><b>Retour</b> : un nemesis non regle revient des que tu rejoues un stage egal ou posterieur ; il <b>remplace</b> un ennemi, jamais l'etage 1, jamais un etage de boss, <b>un seul par stage</b>, un seul a l'ecran.</li>
-<li><b>Il te bat</b> : il gagne un accessoire de victoire (cravate, badge, monocle...). <b>Il s'enfuit</b> (sous 18 % de vie, premiere fois) : il garde une cicatrice (pansement sur le nez, lunettes fendues...). Il revient plus costaud, mais avec des plafonds.</li>
+<li><b>Naissance</b> : une défaite fait naitre un nemesis (il se souvient de l'étage et de l'ennemi) ; ou un sbire d'élite debute sur un étage generique (1 chance sur 3 par niveau).</li>
+<li><b>Retour</b> : un nemesis non règle revient des que tu rejoues un niveau égal ou posterieur ; il <b>remplace</b> un ennemi, jamais l'étage 1, jamais un étage de boss, <b>un seul par niveau</b>, un seul a l'écran.</li>
+<li><b>Il te bat</b> : il gagne un accessoire de victoire (cravate, badge, monocle...). <b>Il s'enfuit</b> (sous 18 % de vie, première fois) : il garde une cicatrice (pansement sur le nez, lunettes fendues...). Il revient plus costaud, mais avec des plafonds.</li>
 <li><b>Tu le vaincs</b> : prime d'or unique (40 a 160), trophee, fiche archivee dans le <b>Tableau des nemesis</b> (Titre &gt; Personnaliser).</li>
-<li><b>Equite</b> : PV entre 60 et 150 ; degats au plus x1,30 de l'ennemi remplace ; vitesse au plus x1,25 ; aucune apparition en plus.</li>
-<li><b>Deterministe</b> : tout est tire de la graine du profil et de l'identifiant du nemesis (aucun hasard systeme, le hasard de la simulation n'est pas touche). En ligne : desactive (identique pour tous = aucun). Sauvegardes anciennes : champ optionnel, rien ne casse.</li>
+<li><b>Equite</b> : PV entre 60 et 150 ; dégâts au plus x1,30 de l'ennemi remplace ; vitesse au plus x1,25 ; aucune apparition en plus.</li>
+<li><b>Deterministe</b> : tout est tire de la graine du profil et de l'identifiant du nemesis (aucun hasard système, le hasard de la simulation n'est pas touche). En ligne : desactive (identique pour tous = aucun). Sauvegardes anciennes : champ optionnel, rien ne casse.</li>
 </ul></div>
 <div class="vb" data-sec="Concept"></div>
 
-<h2>2. Captures reelles du jeu</h2>
+<h2>2. Captures réelles du jeu</h2>
 <div class="grid">
-<div><img src="nemesis/intro.webp" alt="intro d'un nemesis" loading="lazy"><div class="cap"><b>Intro</b> : un nouveau nemesis (trait Tireur) entre en scene, plaque + bandeau de replique.</div></div>
+<div><img src="nemesis/intro.webp" alt="intro d'un nemesis" loading="lazy"><div class="cap"><b>Intro</b> : un nouveau nemesis (trait Tireur) entre en scène, plaque + bandeau de replique.</div></div>
 <div><img src="nemesis/retour.webp" alt="retour d'un nemesis" loading="lazy"><div class="cap"><b>Retour</b> : il revient avec sa cicatrice et sa replique qui se souvient.</div></div>
 <div><img src="nemesis/beat.webp" alt="nemesis rancunier" loading="lazy"><div class="cap"><b>Rancunier</b> : il t'avait battu, il porte son accessoire de victoire (trait Invocateur).</div></div>
-<div><img src="nemesis/board1.png" alt="tableau des nemesis" loading="lazy"><div class="cap"><b>Tableau des nemesis</b> : fiches, trait, cicatrice, derniere replique.</div></div>
+<div><img src="nemesis/board1.png" alt="tableau des nemesis" loading="lazy"><div class="cap"><b>Tableau des nemesis</b> : fiches, trait, cicatrice, dernière replique.</div></div>
 </div>
 <div class="vb" data-sec="Rendu"></div>
 
 <h2>3. Exemples generes par le moteur</h2>
-<p>Ces 8 fiches sortent du vrai code du jeu (graines 7, 19, 31...). Memes graines = memes nemesis, partout.</p>
+<p>Ces 8 fiches sortent du vrai code du jeu (graines 7, 19, 31...). Mêmes graines = mêmes nemesis, partout.</p>
 <div class="grid" id="ex"></div>
 <div class="vb" data-sec="Noms, titres et repliques"></div>
 
 <h2>4. Generer mon texte</h2>
 <div class="card">
 <div class="row">
-<label>Ton heros<input id="g_hero" value="Kaze" maxlength="16"></label>
+<label>Ton héros<input id="g_hero" value="Kaze" maxlength="16"></label>
 <label>Graine (nombre)<input id="g_id" type="number" value="1234" min="0" max="2147483647"></label>
-<label>Situation<select id="g_gr"><option value="0">Debut (inconnu)</option><option value="1">Il t'a battu</option><option value="2" selected>Il s'est enfui</option></select></label>
-<label>Stage<select id="g_st"></select></label>
-<label>Etage<select id="g_fl"><option value="1">2</option><option value="2" selected>3</option><option value="3">4</option></select></label>
+<label>Situation<select id="g_gr"><option value="0">Début (inconnu)</option><option value="1">Il t'a battu</option><option value="2" selected>Il s'est enfui</option></select></label>
+<label>Niveau<select id="g_st"></select></label>
+<label>Étage<select id="g_fl"><option value="1">2</option><option value="2" selected>3</option><option value="3">4</option></select></label>
 </div>
 <div class="vb"><button id="g_go">Generer</button><button id="g_rnd">Une graine au hasard</button></div>
-<div class="out" id="g_out">Appuie sur Generer. C'est exactement l'algorithme du jeu : la meme graine donne le meme nemesis en jeu.</div>
+<div class="out" id="g_out">Appuie sur Generer. C'est exactement l'algorithme du jeu : la même graine donne le même nemesis en jeu.</div>
 </div>
 
 <h2>5. Les six traits</h2>
 <div class="card"><table><tr><th>Trait</th><th>Effet (borne)</th></tr>
-<tr><td>Bretteur</td><td>allonge +12 %, coups plus vifs, degats -5 %, un peu plus agressif</td></tr>
-<tr><td>Lourd</td><td>+20 % PV, lourde +15 %, defense +1, plus lent (x0,9)</td></tr>
+<tr><td>Bretteur</td><td>allonge +12 %, coups plus vifs, dégâts -5 %, un peu plus agressif</td></tr>
+<tr><td>Lourd</td><td>+20 % PV, lourde +15 %, défense +1, plus lent (x0,9)</td></tr>
 <tr><td>Rapide</td><td>vitesse x1,18, -15 % PV, demarrages plus courts</td></tr>
-<tr><td>Tireur</td><td>garde ses distances, boules de Ki de 3 a 4,5 degats</td></tr>
+<tr><td>Tireur</td><td>garde ses distances, boules de Ki de 3 a 4,5 dégâts</td></tr>
 <tr><td>Invocateur</td><td>appelle UN stagiaire fragile (26 PV) a mi-vie</td></tr>
-<tr><td>Gardien</td><td>bouclier de depart de 30, defense +2, un peu plus lent</td></tr></table>
-<p>Rang (rencontres) : +5 % PV et +4 % degats par rencontre, plafonne a 3 rangs, puis bornes globales (voir 1).</p></div>
+<tr><td>Gardien</td><td>bouclier de départ de 30, défense +2, un peu plus lent</td></tr></table>
+<p>Rang (rencontres) : +5 % PV et +4 % dégâts par rencontre, plafonne a 3 rangs, puis bornes globales (voir 1).</p></div>
 <div class="vb" data-sec="Traits et equilibre"></div>
 
 <h2>6. Ton avis</h2>
 <div class="card">
-<label>Commentaire general<textarea id="gen" placeholder="Ce que tu veux garder, changer, ajouter..."></textarea></label>
+<label>Commentaire général<textarea id="gen" placeholder="Ce que tu veux garder, changer, ajouter..."></textarea></label>
 <div class="vb"><button id="copy">Copier mon retour</button><button id="reset">Tout effacer</button></div>
 <div class="out" id="sum"></div></div>
 <footer>Charte : Encre #221834 / Papier #fff3e0 / Accent #d8456b - Silkscreen + Nunito. Page statique, rien n'est envoye : ton retour reste dans ton navigateur jusqu'a ce que tu le copies.</footer>

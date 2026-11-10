@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Atelier de pose</title>
 <style>
 body{margin:0;font:15px system-ui,sans-serif;background:#1c1d2e;color:#eee;padding:10px}
@@ -14,9 +14,19 @@ button{font:inherit;padding:8px 11px;border-radius:8px;border:0;margin:3px 3px 0
 button.p{background:#e0507a}
 textarea{width:100%;box-sizing:border-box;background:#101126;color:#9ef0b0;border:0;border-radius:8px;padding:8px;font:12px monospace}
 .g{display:flex;flex-wrap:wrap}
-</style></head><body>
+button,input[type=button],select{min-height:44px}</style><style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js"></script>
+</head><body>
 <h1>Atelier de pose (Kaze)</h1>
-<p style="margin:2px 0 8px;opacity:.85">Regle la posture avec les curseurs, puis "Copier mes valeurs" et colle-les dans le chat. Le dessin est une approximation du moteur : le dernier controle se fait dans le jeu.</p>
+<p style="margin:2px 0 8px;opacity:.85">Règle la posture avec les curseurs, puis "Copier mes valeurs" et colle-les dans le chat. Le dessin est une approximation du moteur : le dernier contrôle se fait dans le jeu.</p>
 <div class="wrap">
 <div><canvas id="c" width="420" height="420"></canvas>
 <div class="g" id="pre"></div></div>

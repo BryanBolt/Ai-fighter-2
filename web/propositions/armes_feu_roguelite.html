@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Armes a feu du roguelite</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -22,15 +22,25 @@ textarea{width:100%;box-sizing:border-box;border:2px solid var(--encre);border-r
 .gen{background:var(--accent);color:#fff;font-family:Silkscreen,monospace;margin-top:14px}
 table{border-collapse:collapse;margin:10px 0;font-size:14px;max-width:780px}
 td,th{border:2px solid var(--encre);padding:6px 8px;text-align:left;background:#fff}th{background:var(--encre);color:var(--papier)}
-</style></head><body>
+button,input[type=button],select{min-height:44px}</style><style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js"></script>
+</head><body>
 <h1>Armes a feu du roguelite : peu de balles, mais chacune compte</h1>
-<p class="lead">Retour : « elles doivent faire plus de degats si on est aussi limite en munitions ». Plutot qu'un simple chiffre en plus, un vrai gameplay : le chargeur est <b>petit mais se remplit tout seul</b> (recharge lente a la place du stock fixe qui cassait l'arme), chaque balle <b>pese lourd</b>, et chaque arme a <b>son trait</b> lisible (ricochet du revolver, perforation de la mitraillette, derniere balle doree). Les ennemis armes gardent les anciennes regles (balle a 11, l'arme disparait) : l'IA ne change pas. Captures du vrai moteur (400 px, 48 couleurs). 5 idees sont deja dans le jeu (etiquette verte), 6 sont des propositions. Pour chaque carte : Valider ou A refaire (+ remarque), puis genere le texte et colle-le dans le chat.</p>
+<p class="lead">Retour : « elles doivent faire plus de dégâts si on est aussi limite en munitions ». Plutôt qu'un simple chiffre en plus, un vrai gameplay : le chargeur est <b>petit mais se remplit tout seul</b> (recharge lente a la place du stock fixe qui cassait l'arme), chaque balle <b>pese lourd</b>, et chaque arme a <b>son trait</b> lisible (ricochet du revolver, perforation de la mitraillette, dernière balle doree). Les ennemis armes gardent les anciennes règles (balle a 11, l'arme disparait) : l'IA ne change pas. Captures du vrai moteur (400 px, 48 couleurs). 5 idees sont déjà dans le jeu (etiquette verte), 6 sont des propositions. Pour chaque carte : Valider ou À refaire (+ remarque), puis genere le texte et colle-le dans le chat.</p>
 <table>
-<tr><th>Arme (roguelite)</th><th>Chargeur</th><th>Degats / balle</th><th>Recharge</th><th>Trait</th></tr>
-<tr><td>Revolver</td><td>4</td><td>44 (avant : 11)</td><td>1 balle / 5 s</td><td>ricochet vers un 2e ennemi (-30 %), derniere balle doree x1,5 perforante</td></tr>
-<tr><td>Mitraillette</td><td>12 (4 rafales de 3)</td><td>20 (avant : 4)</td><td>1 balle / 1,3 s</td><td>perfore toute la file, derniere balle doree</td></tr>
+<tr><th>Arme (roguelite)</th><th>Chargeur</th><th>Dégâts / balle</th><th>Recharge</th><th>Trait</th></tr>
+<tr><td>Revolver</td><td>4</td><td>44 (avant : 11)</td><td>1 balle / 5 s</td><td>ricochet vers un 2e ennemi (-30 %), dernière balle doree x1,5 perforante</td></tr>
+<tr><td>Mitraillette</td><td>12 (4 rafales de 3)</td><td>20 (avant : 4)</td><td>1 balle / 1,3 s</td><td>perfore toute la file, dernière balle doree</td></tr>
 <tr><td>Fusil a pompe (butin)</td><td>3</td><td>31 par plomb (3 plombs)</td><td>1 cartouche / 8 s</td><td>gerbe courte portee</td></tr>
-<tr><td>Melee (reference)</td><td>durabilite</td><td>14 en moyenne par coup d'arme, 20 le meilleur coup du heros</td><td>-</td><td>mesure par test : chaque balle vaut plus qu'un coup d'arme, le revolver plus que le meilleur coup du heros</td></tr>
+<tr><td>Melee (reference)</td><td>durabilite</td><td>14 en moyenne par coup d'arme, 20 le meilleur coup du héros</td><td>-</td><td>mesure par test : chaque balle vaut plus qu'un coup d'arme, le revolver plus que le meilleur coup du héros</td></tr>
 </table>
 <div class="g" id="g"></div>
 <button class="gen" onclick="out()">Generer mon texte</button><div id="o"></div>

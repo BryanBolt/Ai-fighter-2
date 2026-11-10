@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Audit de cohérence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b;--ok:#2f8f5b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--papier);color:var(--encre);font:16px/1.45 Nunito,system-ui,sans-serif;padding:16px 16px 40px}
+h1,h2{font-family:Silkscreen,monospace;letter-spacing:.02em;margin:0 0 6px}
+h1{font-size:22px}h2{font-size:15px;color:var(--accent);margin-top:22px}
+.lead{max-width:760px}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px;margin-top:10px}
+.c{background:#fff;border:3px solid var(--encre);border-radius:14px;padding:12px 14px;box-shadow:4px 4px 0 var(--encre)}
+.c.ok{outline:4px solid var(--ok)}.c.no{outline:4px solid var(--accent)}
+.c h3{font-family:Silkscreen,monospace;font-size:13px;margin:0 0 4px}
+p{margin:6px 0;font-size:14px}.why{opacity:.8;font-size:13px}
+.tag{display:inline-block;font-family:Silkscreen,monospace;font-size:11px;padding:2px 6px;border-radius:6px;border:2px solid var(--encre);margin-right:6px}
+.tag.f{background:var(--ok);color:#fff}.tag.r{background:var(--accent);color:#fff}
+button{font:700 14px Nunito,sans-serif;padding:10px 14px;min-height:44px;border-radius:999px;border:2px solid var(--encre);margin:4px 4px 0 0;background:var(--papier);color:var(--encre);cursor:pointer}
+button.v{background:var(--ok);color:#fff}button.x{background:var(--accent);color:#fff}
+textarea{width:100%;min-height:56px;border:2px solid var(--encre);border-radius:10px;padding:8px;margin-top:6px;font:15px Nunito,sans-serif;background:var(--papier);color:var(--encre)}
+#o{white-space:pre-wrap;background:var(--encre);color:var(--papier);padding:12px;border-radius:10px;margin-top:14px;max-width:760px}
+.gen{background:var(--accent);color:#fff;border-color:var(--encre);font-family:Silkscreen,monospace;margin-top:14px}
+</style><style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js" data-keys="afh_coherence_audit_v1"></script>
+</head><body>
+<h1>Audit de cohérence</h1>
+<p class="lead">Relevé transversal de l'agent de la cohérence : style graphique, rendu, son, gameplay, sensations, textes. Les points « Corrigé » sont verrouillés par <code>tools/coherence_guard.py</code> (lancé par <code>tools/check_all.sh</code>) et décrits dans <code>tools/coherence_charte.md</code>. Les points « Reste à décider » attendent ton avis : Valider, À refaire, ou un commentaire. Génère ensuite le texte et colle-le dans le chat.</p>
+<h2>Reste à décider</h2>
+<div class="g" id="r"></div>
+<h2>Corrigé dans cette passe</h2>
+<div class="g" id="f"></div>
+<button class="gen" onclick="out()">Générer mon texte</button><div id="o"></div>
+<script>
+var R=[
+{k:"cine_figure",n:"Cinématiques : bonhomme à part",d:"Les cinématiques dessinent une silhouette d'encre pleine avec le squelette du jeu (dlg_cine::figure) au lieu du combattant du moteur : pas de tenue, pas de couleurs de héros. Proposition : utiliser le vrai rendu du combattant (render::draw_fighter) sur le même squelette.",w:"Cohérence visuelle forte, un peu de travail de cadrage."},
+{k:"polices_pages",n:"Titres des pages en Silkscreen, jeu en Nunito",d:"Le jeu n'a qu'une police (Nunito). Toutes les pages de propositions titrent en Silkscreen (pixel). Proposition : titres en Nunito gras partout, ou garder Silkscreen comme signature « atelier » uniquement dans les pages.",w:"Purement cosmétique, 105 pages."},
+{k:"pv_directs",n:"Écritures de PV hors chaîne de dégâts",d:"9 endroits de sim.rs retirent des PV directement (hors compute_damage) : brûlure, pièges, décor... Proposition : auditer chacun pour qu'armure, échelle de combo et statuts s'appliquent partout pareil, ou documenter les exceptions voulues.",w:"Touche l'équilibrage et le déterminisme : à faire avec les tests soak."},
+{k:"hitstop_litteraux",n:"Arrêt sur impact : 65 valeurs écrites en dur",d:"La charte calcule l'arrêt sur impact (3 à 12 images selon les dégâts), mais 65 valeurs de hitstop sont écrites à la main dans sim.rs. Proposition : trois classes (léger, moyen, lourd) + une classe « super », et tout y ramener.",w:"Impact direct sur la sensation des coups : à valider en jeu."},
+{k:"noir_pur",n:"Noir pur restant (20 emplacements)",d:"Le rendu utilise encore du noir pur à 20 endroits (ombres, bandes, barres). Les yeux, croix de KO, ombres de sol et bandes de replay sont déjà passés à l'encre prune. Proposition : tout migrer vers l'encre, le garde-fou empêche d'en ajouter.",w:"Risque visuel faible, à voir sur capture."},
+{k:"son_familles",n:"Niveaux sonores : deux systèmes",d:"Le son combine un gain par effet (audio::gain) et des bus (sound_design). Tout reste borné à 1,0 et plafonné par image, mais deux tables à régler au lieu d'une. Proposition : fusionner dans les bus.",w:"À mesurer à l'oreille avant de toucher."},
+{k:"pages_generees",n:"Pages générées par script",d:"Les pages produites par tools/*_page.py perdent leurs accents si on les régénère. Proposition : appeler tools/accentuer_pages.py à la fin de chaque générateur.",w:"Petit, sûr, à confirmer."}
+];
+var F=[
+{n:"Texte hors police du jeu (6 écrans)",d:"Les mini-textes d'armes comiques, du bestiaire, des badges de daemon, de la charge des daemons, des dangers de lieux et du feu du roguelite utilisaient la police par défaut, sans accents ni glossaire. Ils passent maintenant par txt::draw_text."},
+{n:"Couleurs écrites en dur (10 emplacements)",d:"Salon, interface de chaleur et social recopiaient l'encre, le papier et l'accent. Ils utilisent maintenant les jetons du thème (ui_theme)."},
+{n:"Noir pur sur les yeux, KO, ombres, bandes",d:"Yeux et croix de KO des combattants, ombres de sol, bandes du replay : encre prune au lieu du noir pur."},
+{n:"Accents des pages (100 pages)",d:"Mots non ambigus accentués avec le dictionnaire du jeu (outil tools/accentuer_pages.py). Les participes ambigus (ajoute / ajouté) ne sont jamais touchés."},
+{n:"Vocabulaire des pages",d:"« stage », « familier », « compagnon », « lockstep » remplacés par Niveau, Daemon, synchro en ligne dans 12 pages (la page du glossaire garde les mots interdits pour les expliquer)."},
+{n:"Boutons des pages sous 44 px (73 pages)",d:"Toutes les pages à boutons ont maintenant au moins 44 px de haut."},
+{n:"Garde-fous automatiques",d:"tools/coherence_guard.py : texte hors pipeline, police unique, daemons sans contour noir, cibles 44 px, volumes bornés, accents, vocabulaire, palette, noir pur (cliquet). Branché dans tools/check_all.sh."}
+];
+var S={},K="afh_coherence_audit_v1";try{S=JSON.parse(localStorage.getItem(K)||"{}")}catch(e){}
+function sv(){try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}}
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;")}
+var G=document.getElementById("r");
+R.forEach(function(c){
+ var s=S[c.k]||(S[c.k]={});
+ var d=document.createElement("div");d.className="c "+(s.v||"");
+ d.innerHTML='<h3>'+esc(c.n)+'</h3><p>'+esc(c.d)+'</p><p class="why">'+esc(c.w)+'</p><button class="v">Valider</button><button class="x">À refaire</button><textarea placeholder="Commentaire (facultatif)"></textarea>';
+ var b=d.querySelectorAll("button"),t=d.querySelector("textarea");t.value=s.c||"";t.oninput=function(){s.c=t.value;sv()};
+ function set(v){s.v=(s.v===v?"":v);d.className="c "+(s.v||"");sv()}
+ b[0].onclick=function(){set("ok")};b[1].onclick=function(){set("no")};
+ G.appendChild(d)});
+var H=document.getElementById("f");
+F.forEach(function(c){var d=document.createElement("div");d.className="c";d.innerHTML='<h3><span class="tag f">Corrigé</span>'+esc(c.n)+'</h3><p>'+esc(c.d)+'</p>';H.appendChild(d)});
+function out(){var o=[];R.forEach(function(c){var s=S[c.k]||{};if(s.v||s.c)o.push("- "+c.n+" ("+c.k+") : "+(s.v==="ok"?"VALIDÉ":s.v==="no"?"À REFAIRE":"sans avis")+(s.c?" | "+s.c:""))});
+ document.getElementById("o").textContent=o.length?"Audit de cohérence :\n"+o.join("\n"):"Rien de traité pour l'instant."}
+</script></body></html>

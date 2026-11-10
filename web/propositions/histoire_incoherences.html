@@ -1,6 +1,6 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Histoire : incoherences a trancher</title>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Histoire : incoherences à trancher</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{--ink:#221834;--paper:#fff3e0;--acc:#d8456b;--card:#fffaf2;--ok:#2f8f5b}
@@ -14,10 +14,20 @@ button{background:var(--card);border:2px solid var(--ink);border-radius:8px;padd
 button.on.ok{background:var(--ok);color:#fff} button.on.no{background:var(--acc);color:#fff}
 input,textarea{background:#fff;border:2px solid var(--ink);border-radius:8px;padding:7px 9px;width:100%}
 .vb{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px} .out{background:var(--ink);color:var(--paper);border-radius:10px;padding:14px 16px;margin-top:12px}
-</style></head><body><div class="wrap">
-<div class="pix" style="color:var(--acc);font-size:13px">AI FIGHTER 2 / HISTOIRE / A TRANCHER</div>
+button,input[type=button],select{min-height:44px}</style><style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js" data-keys="histoire_inco_v1"></script>
+</head><body><div class="wrap">
+<div class="pix" style="color:var(--acc);font-size:13px">AI FIGHTER 2 / HISTOIRE / À TRANCHER</div>
 <h1>INCOHERENCES RELEVEES</h1>
-<p>Rien n'a ete modifie : chaque point attend ta decision. Le « reve » reste subtil : on evite de le souligner.</p>
+<p>Rien n'a été modifie : chaque point attend ta decision. Le « rêve » reste subtil : on évite de le souligner.</p>
 <div id="list"></div>
 <div class="card"><textarea id="gen" placeholder="Commentaire general"></textarea><div class="vb"><button id="copy">Copier mon retour</button><button id="reset">Tout effacer</button></div><div class="out" id="sum"></div></div>
 </div>

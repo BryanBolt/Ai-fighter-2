@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Synchro des verdicts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b;--ok:#2f8f5b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--papier);color:var(--encre);font:16px/1.45 Nunito,system-ui,sans-serif;padding:16px 16px 100px}
+h1{font:22px Silkscreen,monospace;margin:0 0 8px}
+.lead{max-width:720px}
+.card{background:#fff;border:3px solid var(--encre);border-radius:14px;padding:12px 14px;margin:12px 0;max-width:720px;box-shadow:4px 4px 0 var(--encre)}
+.card h3{font:14px Silkscreen,monospace;margin:0 0 6px}
+.card.ok{border-color:var(--ok)}.card.ko{border-color:var(--accent)}
+button{font:700 14px Nunito,sans-serif;border:2px solid var(--encre);background:var(--papier);color:var(--encre);border-radius:999px;padding:10px 14px;min-height:44px;cursor:pointer;margin:4px 4px 0 0}
+button.on{background:var(--encre);color:var(--papier)}
+textarea,input{width:100%;border:2px solid var(--encre);border-radius:10px;padding:8px;font:15px Nunito,sans-serif;background:var(--papier);color:var(--encre);margin-top:8px}
+#gen{position:fixed;left:0;right:0;bottom:0;background:var(--encre);padding:10px 16px}
+#gen button{background:var(--accent);color:#fff;border-color:#fff}
+#out{display:none;max-height:90px}
+#log{font:13px Silkscreen,monospace;white-space:pre-wrap}
+</style>
+<script src="verdicts.js" data-keys="afh_verdicts_page_v1"></script><style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style></head><body>
+<h1>Synchro des verdicts</h1>
+<p class="lead">Tes clics Valider / À refaire et tes commentaires, sur toutes les pages de propositions, partent maintenant vers le serveur pour que je puisse les lire. Tu saisis la cle une seule fois dans <a href="decisions.html">Mes decisions</a>. Sans cle, rien ne change : tout reste dans ton navigateur. Cette page sert a vérifier que ca marche.</p>
+<article class="card" id="essai" data-label="Essai de synchro">
+<h3>1. Essai de bout en bout</h3>
+<p>Clique sur Valider ou À refaire, ecris un mot. Si la cle est saisie, le badge en bas a gauche passe a « synchronise », puis le test ci-dessous doit retrouver ton avis sur le serveur.</p>
+<div><button data-v="ok">Valider</button><button data-v="ko">À refaire</button></div><textarea placeholder="Ton commentaire..."></textarea>
+<div><button id="check">Vérifier sur le serveur</button></div><div id="log">Pas encore verifie.</div>
+</article>
+<article class="card" id="lisible" data-label="Indicateur et decisions">
+<h3>2. Indicateur et page Mes decisions</h3>
+<p>Le badge « synchronise » (coin bas gauche) te convient-il ? La page Mes decisions montre-t-elle bien, par fiche, En attente / Valide / À refaire, avec des filtres ?</p>
+<div><button data-v="ok">Valider</button><button data-v="ko">À refaire</button></div><textarea placeholder="Ton commentaire..."></textarea>
+</article>
+<div id="gen"><button id="g">Generer mon texte</button><textarea id="out" readonly></textarea></div>
+<script>var K='afh_verdicts_page_v1',S={};try{S=JSON.parse(localStorage.getItem(K)||'{}')}catch(e){}
+function save(){try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}}
+document.querySelectorAll('.card').forEach(function(c){var id=c.id,st=S[id]||{};
+ if(st.v){c.classList.add(st.v);c.querySelector('[data-v='+st.v+']').classList.add('on')}
+ var ta=c.querySelector('textarea');ta.value=st.t||'';
+ c.querySelectorAll('[data-v]').forEach(function(b){b.onclick=function(){var s=S[id]||{};s.v=b.dataset.v;S[id]=s;
+  c.classList.remove('ok','ko');c.classList.add(s.v);c.querySelectorAll('[data-v]').forEach(function(x){x.classList.toggle('on',x===b)});save()}});
+ ta.oninput=function(){var s=S[id]||{};s.t=ta.value;S[id]=s;save()}});
+document.getElementById('check').onclick=function(){var l=document.getElementById('log');
+ if(!window.AFV||!AFV.getKey()){l.textContent='Cle absente : saisis-la dans Mes decisions.';return}
+ l.textContent='Verification...';
+ setTimeout(function(){AFV.fetchAll().then(function(d){var r=d.verdicts.filter(function(x){return x.page==='verdicts'&&x.carte==='essai'})[0];
+  l.textContent=r?'OK : le serveur a recu '+(r.verdict||'(sans verdict)')+(r.commentaire?' + commentaire':'')+'. En attente d\'envoi : '+AFV.pending():'Rien recu pour cette carte (clique d\'abord Valider ou A refaire).'})
+  .catch(function(e){l.textContent='Echec : '+e.message})},1500)};
+document.getElementById('g').onclick=function(){var L=['Retour sur la synchro des verdicts :'];
+ document.querySelectorAll('.card').forEach(function(c){var s=S[c.id]||{};if(s.v||s.t){L.push('- '+c.dataset.label+' : '+(s.v==='ok'?'VALIDE':s.v==='ko'?'A REFAIRE':'(pas de verdict)')+(s.t?' ; '+s.t:''))}});
+ var o=document.getElementById('out');o.style.display='block';o.value=L.join('\n');o.select();try{navigator.clipboard.writeText(o.value)}catch(e){}};</script></body></html>

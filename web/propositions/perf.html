@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Performance, poids, PWA</title>
 <style>
 :root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b}
@@ -15,37 +15,47 @@ button{font:inherit;border:2px solid var(--encre);background:var(--papier);color
 button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
 textarea{width:100%;box-sizing:border-box;margin-top:8px;border:2px solid var(--encre);border-radius:8px;padding:6px;font:inherit;background:var(--papier);color:var(--encre)}
 small{opacity:.75}
-</style></head><body>
-<h1>Performance, poids, demarrage, PWA</h1>
-<p>Mesures avant / apres. Valide, ou demande a refaire avec un commentaire (enregistre dans ce navigateur). Rien n'a ete supprime du jeu.</p>
+button,input[type=button],select{min-height:44px}</style><style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js" data-keys="perf_v"></script>
+</head><body>
+<h1>Performance, poids, démarrage, PWA</h1>
+<p>Mesures avant / après. Valide, ou demande à refaire avec un commentaire (enregistre dans ce navigateur). Rien n'a été supprime du jeu.</p>
 
 <div class="c" data-k="props"><h2>1. Propositions hors du poids du jeu</h2>
-<table><tr><th>Mesure</th><th>Avant</th><th>Apres</th></tr>
+<table><tr><th>Mesure</th><th>Avant</th><th>Après</th></tr>
 <tr><td>Dossier web/propositions</td><td>578 Mo (2137 GIF = 457 Mo)</td><td class="g">398 Mo (-31 %)</td></tr>
 <tr><td>GIF convertis en WebP anime</td><td>0</td><td class="g">1390 (les autres ne gagnaient rien)</td></tr>
 <tr><td>Cache navigateur des medias</td><td>revalidation a chaque visite</td><td class="g">7 jours + revalidation</td></tr>
 <tr><td>Liens des pages de decision</td><td>OK</td><td class="g">OK (references reecrites .gif vers .webp dans la copie de deploiement)</td></tr></table>
-<p>Option « aucune proposition dans le jeu » : second site + variable <code>PROPS_ORIGIN</code> (redirection, memes chemins). Voir tools/README_PERF.md.</p></div>
+<p>Option « aucune proposition dans le jeu » : second site + variable <code>PROPS_ORIGIN</code> (redirection, mêmes chemins). Voir tools/README_PERF.md.</p></div>
 
-<div class="c" data-k="wasm"><h2>2. Poids et demarrage</h2>
-<table><tr><th>Mesure</th><th>Avant</th><th>Apres</th></tr>
+<div class="c" data-k="wasm"><h2>2. Poids et démarrage</h2>
+<table><tr><th>Mesure</th><th>Avant</th><th>Après</th></tr>
 <tr><td>Fichier .wasm</td><td>12,6 Mo (dont 11,0 Mo de musique)</td><td class="g">5,2 Mo (-59 %) ; gzip 2,3 Mo contre ~12 Mo avant</tr>
 <tr><td>Musiques</td><td>integrees (tout telecharge avant de jouer)</td><td class="g">a la demande (titre en parallele, jamais bloquant)</td></tr>
-<tr><td>Intro de 30 s</td><td>-</td><td class="g">deja non jouee au lancement, ignorable</td></tr></table></div>
+<tr><td>Intro de 30 s</td><td>-</td><td class="g">déjà non jouee au lancement, ignorable</td></tr></table></div>
 
 <div class="c" data-k="pwa"><h2>3. PWA</h2>
-<table><tr><th>Element</th><th>Etat</th></tr>
+<table><tr><th>Element</th><th>État</th></tr>
 <tr><td>Hors ligne</td><td class="g">pre-cache du coeur du jeu des l'installation</td></tr>
 <tr><td>Mise a jour</td><td class="g">silencieuse, la partie ouverte n'est jamais rechargee</td></tr>
-<tr><td>Installation</td><td class="g">bouton « Installer » (Android / Chrome), iPhone : Partager &gt; Sur l'ecran d'accueil</td></tr>
-<tr><td>Plein ecran, safe areas, orientation</td><td>deja en place, conserves</td></tr></table></div>
+<tr><td>Installation</td><td class="g">bouton « Installer » (Android / Chrome), iPhone : Partager &gt; Sur l'écran d'accueil</td></tr>
+<tr><td>Plein écran, safe areas, orientation</td><td>déjà en place, conserves</td></tr></table></div>
 
 <div class="c" data-k="push"><h2>4. Notifications push</h2>
-<p>Le code est pret et desactive tant que les cles manquent. A renseigner dans Render (Environment) : <b>VAPID_PUBLIC</b>, <b>VAPID_PRIVATE</b> (generees une fois avec <code>npx web-push generate-vapid-keys</code>), <b>VAPID_SUBJECT</b> (<code>mailto:...</code>). Aucune cle n'est dans le depot. Test : ouvrir <code>/push/key</code>.</p></div>
+<p>Le code est prêt et desactive tant que les cles manquent. A renseigner dans Render (Environment) : <b>VAPID_PUBLIC</b>, <b>VAPID_PRIVATE</b> (generees une fois avec <code>npx web-push generate-vapid-keys</code>), <b>VAPID_SUBJECT</b> (<code>mailto:...</code>). Aucune cle n'est dans le depot. Test : ouvrir <code>/push/key</code>.</p></div>
 
 <div class="c" data-k="combat"><h2>5. Combat a 8 joueurs</h2>
 <p>Voir le rapport : simulation et IA mesurees, journal detaille dans tools/audit_perf_log.md.</p>
-<table><tr><th>Scene</th><th>step moyen</th><th>step p95</th><th>IA moyenne</th></tr><tr><td>melee a 8</td><td>0,0041</td><td>0,0063</td><td>0,0025</td></tr><tr><td>8 joueurs</td><td>0,0077</td><td>0,0132</td><td>0,0071</td></tr><tr><td>8 avec supers</td><td>0,0185</td><td>0,0074</td><td>0,0039</td></tr></table><p>Tout est sous 0,03 ms par image (budget 16,6 ms) : la simulation n est pas le goulot, le rendu l est (voir audit_perf_log.md). Pic isole a 13,6 ms lors d un super a 8, a surveiller.</p></div>
+<table><tr><th>Scène</th><th>step moyen</th><th>step p95</th><th>IA moyenne</th></tr><tr><td>melee a 8</td><td>0,0041</td><td>0,0063</td><td>0,0025</td></tr><tr><td>8 joueurs</td><td>0,0077</td><td>0,0132</td><td>0,0071</td></tr><tr><td>8 avec supers</td><td>0,0185</td><td>0,0074</td><td>0,0039</td></tr></table><p>Tout est sous 0,03 ms par image (budget 16,6 ms) : la simulation n est pas le goulot, le rendu l est (voir audit_perf_log.md). Pic isole a 13,6 ms lors d un super a 8, a surveiller.</p></div>
 
 <script>
 const S0={};let S={};try{S=JSON.parse(localStorage.getItem('perf_v')||'{}')}catch(e){}

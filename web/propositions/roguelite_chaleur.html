@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Roguelite - Pacte de punition - AI Fighter 2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
@@ -45,18 +45,28 @@ textarea.big{min-height:200px}
 pre{background:#0d0a14;border-radius:12px;padding:10px;overflow:auto;font:12px/1.4 ui-monospace,monospace;color:#ffe9c4}
 .sec{border-left:6px solid transparent;padding-left:10px;margin-top:20px}.sec.k{border-color:var(--ok)}.sec.r{border-color:var(--ko)}
 @media(max-width:560px){body{padding:10px}}
-</style></head><body>
+</style><style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js" data-keys="rl_chaleur_v1"></script>
+</head><body>
 <h1>ROGUELITE : PACTE DE PUNITION</h1>
-<p class="lead">Apres la premiere victoire, on rejoue avec des MALUS que l'on choisit soi-meme. Chaque malus donne de la CHALEUR ; plus il y en a, plus le palier est haut, plus les recompenses sont belles. Les maquettes ci-dessous sont des captures du vrai moteur.</p>
+<p class="lead">Après la première victoire, on rejoue avec des MALUS que l'on choisit soi-même. Chaque malus donne de la CHALEUR ; plus il y en a, plus le palier est haut, plus les récompenses sont belles. Les maquettes ci-dessous sont des captures du vrai moteur.</p>
 
 <div class="steps">
 <div class="step"><b>1. CHOISIR</b><br>26 pastilles, 2 lettres chacune. Un appui = un rang de plus (jusqu'a 3). Pas de texte long.</div>
 <div class="step"><b>2. CHAUFFER</b><br>La barre de chaleur monte et change de couleur : 10 paliers nommes, de Stagiaire a Mythe.</div>
-<div class="step"><b>3. GAGNER</b><br>Une victoire a un palier donne des titres, des aspects, des reliques et des daemons de depart.</div>
-<div class="step"><b>4. ASCENSION</b><br>Apres la victoire : l'etage 10 ne finit plus la run, la chaleur monte toute seule, record d'etage.</div>
+<div class="step"><b>3. GAGNER</b><br>Une victoire a un palier donne des titres, des aspects, des reliques et des daemons de départ.</div>
+<div class="step"><b>4. ASCENSION</b><br>Après la victoire : l'étage 10 ne finit plus la run, la chaleur monte toute seule, record d'étage.</div>
 </div>
 
-<h2>ESSAYER LE PACTE (comme a l'ecran du jeu)</h2>
+<h2>ESSAYER LE PACTE (comme a l'écran du jeu)</h2>
 <div class="panel">
 <div class="row"><span class="px" style="font-size:12px">Ma meilleure victoire :</span><select id="bw" style="font:700 13px Nunito;padding:6px 10px;border-radius:99px"></select><span style="font-size:12px;opacity:.8">(on peut viser 2 paliers au-dessus)</span></div>
 <div id="bar"><div id="fill"></div><div id="lab"></div></div>
@@ -68,20 +78,20 @@ pre{background:#0d0a14;border-radius:12px;padding:10px;overflow:auto;font:12px/1
 <h2>LES 10 PALIERS</h2>
 <div class="tiers" id="tiers"></div>
 
-<h2>RECOMPENSES (16)</h2>
-<p class="lead">Gagnees une seule fois, a la premiere victoire au palier indique. Reliques et daemons s'equipent (un seul a la fois) et donnent un objet de depart.</p>
+<h2>RÉCOMPENSES (16)</h2>
+<p class="lead">Gagnees une seule fois, a la première victoire au palier indique. Reliques et daemons s'equipent (un seul a la fois) et donnent un objet de départ.</p>
 <div class="cards" id="rw"></div>
 
 <h2>CAPTURES DU MOTEUR</h2>
 <div class="shots">
-<div class="shot"><img src="roguelite_chaleur/pacte.png" alt="Ecran du pacte" onerror="this.style.display='none'"><div><h3>Ecran du pacte</h3>Barre de chaleur, pastilles, boutons.</div></div>
-<div class="shot"><img src="roguelite_chaleur/combat.png" alt="Combat avec pacte" onerror="this.style.display='none'"><div><h3>En combat</h3>Pastilles actives en haut, chrono, vision reduite.</div></div>
-<div class="shot"><img src="roguelite_chaleur/fin.png" alt="Fin de run" onerror="this.style.display='none'"><div><h3>Fin de run</h3>Palier, note, jetons, recompenses gagnees.</div></div>
+<div class="shot"><img src="roguelite_chaleur/pacte.png" alt="Ecran du pacte" onerror="this.style.display='none'"><div><h3>Écran du pacte</h3>Barre de chaleur, pastilles, boutons.</div></div>
+<div class="shot"><img src="roguelite_chaleur/combat.png" alt="Combat avec pacte" onerror="this.style.display='none'"><div><h3>En combat</h3>Pastilles actives en haut, chrono, vision réduite.</div></div>
+<div class="shot"><img src="roguelite_chaleur/fin.png" alt="Fin de run" onerror="this.style.display='none'"><div><h3>Fin de run</h3>Palier, note, jetons, récompenses gagnees.</div></div>
 </div>
 
 <h2>EQUILIBRAGE (soak en lot, IA jouant)</h2>
-<p class="lead">Taux de victoire de l'IA par palier, a trois niveaux de competence (PV du heros x1,5 / x2,5 / x4). Aucun palier impossible pour un joueur fort, aucun palier trivial.</p>
-<pre id="soak">6 graines par case, 10 etages (boss aux etages 5 et 10), IA du jeu. Competence = PV x1,5 s et degats x s.
+<p class="lead">Taux de victoire de l'IA par palier, a trois niveaux de competence (PV du héros x1,5 / x2,5 / x4). Aucun palier impossible pour un joueur fort, aucun palier trivial.</p>
+<pre id="soak">6 graines par case, 10 étages (boss aux étages 5 et 10), IA du jeu. Competence = PV x1,5 s et dégâts x s.
 Chaque palier utilise le chemin LE PLUS DOUX vers sa chaleur (Heat::auto).
 
                           x12      x40      x120
@@ -93,29 +103,29 @@ Chaque palier utilise le chemin LE PLUS DOUX vers sa chaleur (Heat::auto).
 6 Associe     chaleur 30  2/6      4/6      6/6
 7 PDG         chaleur 40  3/6      2/6      3/6
 8 Conseil     chaleur 50  0/6      3/6      3/6
-9 Legende     chaleur 62  0/6      5/6      6/6
+9 Légende     chaleur 62  0/6      5/6      6/6
 10 Mythe      chaleur 75  0/6      4/6      5/6
 
-Lecture : une IA faible (x12) s'arrete autour du palier 5 ; une IA tres forte (x120) gagne meme le palier 10 (5/6).
+Lecture : une IA faible (x12) s'arrete autour du palier 5 ; une IA très forte (x120) gagne même le palier 10 (5/6).
 Aucun palier n'est impossible (le dernier est gagne), aucun n'est trivial (le palier 1 est le seul a 6/6 partout a x12).
-Bogue trouve par le soak : « Vagues en plus » rendait l'etage infini (declencheur de la 6e vague hors de l'arene) ; plafonne a 5 vagues.
+Bogue trouve par le soak : « Vagues en plus » rendait l'étage infini (declencheur de la 6e vague hors de l'arene) ; plafonne a 5 vagues.
 </pre>
 
-<h2>MULTIJOUEUR ET DETAILS</h2>
+<h2>MULTIJOUEUR ET DÉTAILS</h2>
 <div class="panel"><ul style="margin:0;padding-left:18px">
-<li>Chaleur COMMUNE : choisie par l'hote, ou par vote (un rang est retenu si la moitie des joueurs le veut ; l'hote compte double). Elle entre dans la config de run partagee et son hash.</li>
-<li>Recompenses pour TOUS les joueurs du groupe ; les etages grossissent avec le nombre de joueurs (PV, renforts), jamais le malus lui-meme.</li>
+<li>Chaleur COMMUNE : choisie par l'hôte, ou par vote (un rang est retenu si la moitie des joueurs le veut ; l'hôte compte double). Elle entre dans la config de run partagee et son hash.</li>
+<li>Récompenses pour TOUS les joueurs du groupe ; les étages grossissent avec le nombre de joueurs (PV, renforts), jamais le malus lui-même.</li>
 <li>Run du jour : chaleur du jour (3 pastilles tirees de la date) ; objectifs quotidiens et hebdo comptent en jetons.</li>
-<li>Jetons Kogen : gagnes a chaque run (x1 + 5 % par point de chaleur). Carnet des 20 dernieres runs, records par heros et par palier, rang d'accomplissement (Recrue a Legende).</li>
-<li>Vieilles sauvegardes : tout est en defaut, rien ne casse. Le pacte s'ouvre apres la premiere victoire.</li>
-<li>Echelle de puissance : plus on prend de pouvoirs forts et styles (rare, epique, legendaire, daemons), plus les ennemis suivent (jusqu'a +45 % degats, +60 % PV).</li>
+<li>Jetons Kogen : gagnes a chaque run (x1 + 5 % par point de chaleur). Carnet des 20 dernières runs, records par héros et par palier, rang d'accomplissement (Recrue a Légende).</li>
+<li>Vieilles sauvegardes : tout est en defaut, rien ne casse. Le pacte s'ouvre après la première victoire.</li>
+<li>Echelle de puissance : plus on prend de pouvoirs forts et styles (rare, épique, légendaire, daemons), plus les ennemis suivent (jusqu'a +45 % dégâts, +60 % PV).</li>
 </ul></div>
 
 <h2>VOTRE AVIS</h2>
 <div class="panel">
-<div class="row"><button id="vok">VALIDER L'ENSEMBLE</button><button id="vko">A REFAIRE</button></div>
+<div class="row"><button id="vok">VALIDER L'ENSEMBLE</button><button id="vko">À REFAIRE</button></div>
 <textarea id="gc" class="big" placeholder="Commentaire general : pastilles, paliers, recompenses, ce qui manque..."></textarea>
-<div class="row"><button class="acc" id="gen">PREPARER LE RETOUR</button><button id="copy">COPIER</button><span id="msg"></span></div>
+<div class="row"><button class="acc" id="gen">PRÉPARER LE RETOUR</button><button id="copy">COPIER</button><span id="msg"></span></div>
 <textarea id="out" class="big" readonly></textarea>
 </div>
 

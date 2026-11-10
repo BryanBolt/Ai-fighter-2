@@ -1,4 +1,4 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Refonte des coups A - Gorr Tetsu Nova Kage Bo</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -10,15 +10,25 @@ h1{font:700 24px Silkscreen,monospace;color:var(--accent);margin:8px 0}h2{font:7
 .ba{display:grid;grid-template-columns:1fr 1fr;gap:6px}.ba figure{margin:0}.ba figcaption{font:700 11px Silkscreen,monospace;text-align:center;padding:3px 0;color:#ffbe78}
 .ba img{width:100%;border-radius:8px;background:#000;display:block}h3{font:700 14px Silkscreen,monospace;margin:8px 0 2px}
 .k{color:#ffbe78;font-weight:800;font-size:14px}p{margin:4px 0;font-size:14px;opacity:.92}.av{color:#f19ab0}.ap{color:#8fe3b4}
-button{font:800 15px Nunito,sans-serif;padding:10px 14px;border-radius:9px;border:0;margin:6px 6px 0 0;color:#fff;background:#5a4a78;cursor:pointer;min-height:44px}
-button.v{background:#2e9b5b}button.x{background:#c03a62}button.main{background:var(--accent);font-size:17px;margin-top:18px}
+button{font:800 15px Nunito,sans-serif;padding:10px 14px;border-radius:8px;border:0;margin:6px 6px 0 0;color:#fff;background:#5a4a78;cursor:pointer;min-height:44px}
+button.v{background:#2f8f5b}button.x{background:#c03a62}button.main{background:var(--accent);font-size:17px;margin-top:18px}
 details{margin-top:6px}summary{cursor:pointer;color:#ffbe78;font-weight:700}details img{width:100%;margin-top:6px;border-radius:6px}
 textarea{width:100%;border-radius:8px;border:0;padding:8px;margin-top:6px;background:#17102a;color:var(--papier);font:inherit}
 #o{white-space:pre-wrap;background:#120c22;padding:12px;border-radius:10px;margin-top:14px;min-height:40px}
 .tag{display:inline-block;background:var(--accent);color:#fff;border-radius:6px;padding:1px 8px;font:12px Silkscreen,monospace}
-</style></head><body>
+</style><style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js"></script>
+</head><body>
 <h1>REFONTE DES COUPS A</h1>
-<p class="intro">Gorr, Tetsu, Nova, Kage, Bo : les coups qui meritaient d'etre refaits, avec ce qu'on sait maintenant des articulations et du style (anticipation, chargement, impact, retour ; epaules abaissees, bassin qui precede le bras, bras arriere en balancier). Pour chaque coup : AVANT (jeu actuel) a gauche, APRES (proposition) a droite, GIF du vrai moteur en temps reel (360 px, 40 couleurs) ; deplie pour le ralenti x0,25 et la planche de decomposition. Valide ou A refaire (+ remarque), puis « Generer mon texte » et colle le resultat dans le chat. Rien ne change dans le jeu tant que tu n'as pas valide : les variantes ne s'activent que par AFH_MOVEVAR.</p>
+<p class="intro">Gorr, Tetsu, Nova, Kage, Bo : les coups qui meritaient d'être refaits, avec ce qu'on sait maintenant des articulations et du style (anticipation, chargement, impact, retour ; epaules abaissees, bassin qui precede le bras, bras arrière en balancier). Pour chaque coup : AVANT (jeu actuel) a gauche, APRÈS (proposition) a droite, GIF du vrai moteur en temps réel (360 px, 40 couleurs) ; deplie pour le ralenti x0,25 et la planche de decomposition. Valide ou À refaire (+ remarque), puis « Generer mon texte » et colle le résultat dans le chat. Rien ne change dans le jeu tant que tu n'as pas valide : les variantes ne s'activent que par AFH_MOVEVAR.</p>
 <div id="gs"></div>
 <button class="main" onclick="out()">Generer mon texte</button><div id="o"></div>
 <script>

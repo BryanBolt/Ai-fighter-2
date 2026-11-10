@@ -1,6 +1,6 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>A retirer ?</title>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>À retirer ?</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b;--ok:#2f8f5b;--mid:#c98a1c}
@@ -24,9 +24,19 @@ textarea{width:100%;box-sizing:border-box;border:2px solid var(--encre);border-r
 .gen{background:var(--accent);color:#fff;font-family:Silkscreen,monospace;margin-top:14px}
 code{background:#f3e6cf;padding:0 4px;border-radius:4px;font-size:12px}
 @media(max-width:560px){.row{grid-template-columns:1fr}}
-</style></head><body>
+button,input[type=button],select{min-height:44px}</style><style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js"></script>
+</head><body>
 <h1>Vieux trucs : retirer, garder, revoir ?</h1>
-<p class="lead">Inventaire exhaustif, <b>rien n'a ete supprime</b>. Pour chaque element : ce que c'est, pourquoi il pose probleme, l'impact si on le retire, le risque et ma recommandation. Coche Retirer / Garder / A revoir (ma recommandation est pre-affichee en etiquette), ajoute un commentaire, puis « Generer mon texte » et colle-le dans le chat. Source complete : <code>tools/audit_a_retirer.md</code>.</p>
+<p class="lead">Inventaire exhaustif, <b>rien n'a été supprime</b>. Pour chaque element : ce que c'est, pourquoi il pose problème, l'impact si on le retire, le risque et ma recommandation. Coche Retirer / Garder / À revoir (ma recommandation est pre-affichee en etiquette), ajoute un commentaire, puis « Generer mon texte » et colle-le dans le chat. Source complete : <code>tools/audit_a_retirer.md</code>.</p>
 <div class="k">
 <div><b>12,6 Mo</b>wasm commite</div><div><b>11,0 Mo</b>de musique dedans</div><div><b>337 Mo</b>web/propositions (deploye)</div><div><b>34 Mo</b>assets</div><div><b>145 k</b>lignes Rust, 224 modules</div><div><b>3 min 42</b>compilation a froid</div><div><b>270</b>avertissements (236 code mort)</div><div><b>~11 000</b>lignes de bancs dans le jeu</div><div><b>143</b>variables AFH_*</div>
 </div>

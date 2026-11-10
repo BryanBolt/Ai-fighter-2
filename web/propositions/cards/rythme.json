@@ -1,0 +1,20 @@
+[
+ {
+  "id": "rythme1",
+  "titre": "Boss trop longs",
+  "texte": "Serre tropicale (283 s), Cantine, Louvre, 06:58 dépassent 180 s : réduire leurs PV de 15 % ?",
+  "page": "decisions.html"
+ },
+ {
+  "id": "rythme2",
+  "titre": "Pic Serre tropicale",
+  "texte": "Le boss de la Serre inflige 2664 PV, le double des autres : l'adoucir ?",
+  "page": "decisions.html"
+ },
+ {
+  "id": "rythme3",
+  "titre": "Courbe plate",
+  "texte": "Les vagues 2 des stages 4 à 39 coûtent toutes 600-800 PV : ajouter une rampe par étage ?",
+  "page": "decisions.html"
+ }
+]

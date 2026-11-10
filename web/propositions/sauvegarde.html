@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sauvegarde</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b;--ok:#2f8f5b}
+body{margin:0;background:var(--papier);color:var(--encre);font:16px/1.45 Nunito,system-ui,sans-serif;padding:16px}
+h1,h2{font-family:Silkscreen,monospace;letter-spacing:.02em;margin:0 0 6px}
+h1{font-size:22px}h2{font-size:15px;color:var(--accent)}
+.lead{max-width:760px}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px;margin-top:14px}
+.c{background:#fff;border:2px solid var(--encre);border-radius:12px;padding:10px}
+.c.ok{outline:4px solid var(--ok)}.c.no{outline:4px solid var(--accent)}
+p{margin:6px 0;font-size:14px}
+.tag{display:inline-block;font-family:Silkscreen,monospace;font-size:11px;padding:2px 6px;border-radius:6px;border:2px solid var(--encre);margin-right:6px}
+.tag.f{background:var(--ok);color:#fff}.tag.r{background:var(--accent);color:#fff}
+button{font:inherit;font-weight:700;padding:9px 12px;border-radius:8px;border:2px solid var(--encre);margin:4px 4px 0 0;background:var(--papier);color:var(--encre);cursor:pointer;min-height:44px}
+button.v{background:var(--ok);color:#fff}button.x{background:var(--accent);color:#fff}
+textarea{width:100%;box-sizing:border-box;border:2px solid var(--encre);border-radius:6px;padding:6px;margin-top:6px;font:inherit;background:var(--papier);color:var(--encre)}
+#o{white-space:pre-wrap;background:var(--encre);color:var(--papier);padding:12px;border-radius:10px;margin-top:14px}
+.gen{background:var(--accent);color:#fff;font-family:Silkscreen,monospace;margin-top:14px}
+</style><script src="verdicts.js"></script>
+<style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style></head><body>
+<h1>Sauvegarde : test par fuzz</h1>
+<p class="lead">1000 profils et fichiers abimes ont été lances contre le chargeur (valeurs extremes, octets retournes, fichiers coupes, anciennes versions 1 a 9, ecriture interrompue). Aucune panique, aucune progression perdue quand une copie saine existe. Trois defauts corriges, quatre points restent à décider.</p>
+<div class="g" id="g"></div>
+<button class="gen" onclick="out()">Generer mon texte</button><div id="o"></div>
+<script>
+var C=[
+{k:"coins",s:"f",n:"Remboursement de pieces qui pouvait deborder",d:"Un vieux profil dont des coups ont disparu est rembourse en pieces. Avec une monnaie proche du maximum, l'addition debordait (plantage en test, valeur fausse en jeu). Maintenant plafonnee."},
+{k:"onglets",s:"f",n:"Deux onglets : le dernier qui ecrit n'efface plus l'autre",d:"Avant, un onglet ancien ecrasait victoires, deblocages et coups gagnes dans l'autre. Maintenant les compteurs ne reculent jamais et les listes de deblocages sont reunies. La monnaie reste celle de l'onglet actif."},
+{k:"quota",s:"f",n:"Stockage plein ou presque : on libere avant d'abandonner",d:"L'ecriture web echouait au premier refus. Maintenant : on libere la copie mise de cote, on reessaie, puis en dernier recours la copie de secours. Le joueur voit toujours l'erreur si tout echoue."},
+{k:"monnaie",s:"r",n:"Monnaie negative ou gigantesque : 0 ou plafond ?",d:"Un champ de monnaie invalide est remis a 0 (le reste de la sauvegarde est garde, l'original est conserve a cote). Alternative : le plafonner au maximum au lieu de le mettre a 0."},
+{k:"export",s:"r",n:"Export / import du profil dans le jeu",d:"Il n'existe que la copie manuelle du fichier sur PC. Un bouton Exporter / Importer (texte a copier) protegerait aussi le navigateur et la navigation privee."},
+{k:"prive",s:"r",n:"Navigation privee : prevenir avant de jouer",d:"Le navigateur peut refuser toute ecriture : la progression de la session disparait a la fermeture. Proposition : message clair au lancement si le test d'ecriture echoue."},
+{k:"monnaie2",s:"r",n:"Deux onglets : la monnaie n'est pas fusionnable",d:"Une depense dans un onglet serait annulee par l'autre. Option : bloquer le jeu dans le second onglet (verrou) plutot que fusionner."}
+],st={};
+var g=document.getElementById('g');
+C.forEach(function(c){var d=document.createElement('div');d.className='c';d.id='c_'+c.k;
+d.innerHTML='<span class="tag '+c.s+'">'+(c.s=='f'?'CORRIGE':'A DECIDER')+'</span><h2></h2><p></p><button class="v" data-k="'+c.k+'" data-v="1">Valider</button><button class="x" data-k="'+c.k+'" data-v="-1">A refaire</button><textarea id="t_'+c.k+'" placeholder="Commentaire (facultatif)"></textarea>';
+d.querySelector('h2').textContent=c.n;d.querySelector('p').textContent=c.d;g.appendChild(d)});
+g.addEventListener('click',function(e){var b=e.target;if(!b.dataset||!b.dataset.k)return;var v=+b.dataset.v;st[b.dataset.k]=v;document.getElementById('c_'+b.dataset.k).className='c '+(v>0?'ok':'no')});
+function out(){var L=C.map(function(c){var v=st[c.k];var t=document.getElementById('t_'+c.k).value.trim();return (v>0?'VALIDE':v<0?'A REFAIRE':'NON VU')+' : '+c.n+(t?' - '+t:'')});document.getElementById('o').textContent=L.join('\n')}
+</script></body></html>

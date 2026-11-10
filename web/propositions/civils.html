@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Animations civiles</title>
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -14,15 +14,25 @@ h1,h2,h3{font-family:Silkscreen,monospace;margin:.3em 0}
 .card img{width:100%;border:2px solid var(--encre);display:block;background:var(--papier)}
 .card p{font-size:14px;margin:6px 0}
 button{font-family:Silkscreen,monospace;border:2px solid var(--encre);background:#fff;padding:7px 11px;margin:4px 4px 0 0;cursor:pointer;border-radius:6px;color:var(--encre)}
-button.ok.on{background:#3b9c5a;color:#fff}button.ko.on{background:var(--accent);color:#fff}
+button.ok.on{background:#2f8f5b;color:#fff}button.ko.on{background:var(--accent);color:#fff}
 input.c{width:100%;box-sizing:border-box;border:2px solid var(--encre);border-radius:6px;padding:6px;margin-top:6px;font-family:Nunito,sans-serif;background:#fff;color:var(--encre)}
 textarea{width:100%;min-height:220px;font-family:Nunito,sans-serif;border:2px solid var(--encre);border-radius:6px;padding:8px;box-sizing:border-box;background:#fff;color:var(--encre)}
 .gen{background:var(--accent);color:#fff}
 .note{background:#fff;border-left:6px solid var(--accent);padding:8px 12px;margin:10px 0}
 .desc{font-size:15px;margin:6px 0}
-</style></head><body>
+button,input[type=button],select{min-height:44px}</style><style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js"></script>
+</head><body>
 <h1>ANIMATIONS CIVILES</h1>
-<div class="note">Les passants du fond n'utilisent plus les cycles de combat : ils ont une bibliotheque propre (src/civil.rs) construite sur le MEME rig que les combattants (epaules abaissees, cou raccorde, memes proportions), mais avec des demarches de civils. Les jambes sont calculees par cinematique inverse : la phase du pas suit la distance parcourue, donc le pied d'appui est immobile par rapport au sol (pas de glissade), le bassin monte au milieu de l'appui, les bras balancent en opposition aux jambes et la tete reste stable. Chaque individu a sa morphologie (taille, longueur de pas, posture, amplitude des bras), deterministe par graine. Les points roses de chaque planche sont les articulations du rig ; les disques rouges marquent les pieds au sol. Les GIF montrent le squelette que le jeu dessine (meme calcul que le moteur, bonhomme a plat des passants) a vitesse reelle du decor, puis au ralenti x0,25 sur la fenetre la plus mouvementee, puis a cote d'un combattant (cycle d'origine). Les passants ne sont jamais frappables.</div>
+<div class="note">Les passants du fond n'utilisent plus les cycles de combat : ils ont une bibliotheque propre (src/civil.rs) construite sur le MÊME rig que les combattants (epaules abaissees, cou raccorde, mêmes proportions), mais avec des demarches de civils. Les jambes sont calculees par cinematique inverse : la phase du pas suit la distance parcourue, donc le pied d'appui est immobile par rapport au sol (pas de glissade), le bassin monte au milieu de l'appui, les bras balancent en opposition aux jambes et la tête reste stable. Chaque individu a sa morphologie (taille, longueur de pas, posture, amplitude des bras), deterministe par graine. Les points roses de chaque planche sont les articulations du rig ; les disques rouges marquent les pieds au sol. Les GIF montrent le squelette que le jeu dessine (même calcul que le moteur, bonhomme a plat des passants) a vitesse réelle du décor, puis au ralenti x0,25 sur la fenêtre la plus mouvementee, puis a cote d'un combattant (cycle d'origine). Les passants ne sont jamais frappables.</div>
 <div id="root"></div>
 <h2>Mon texte</h2>
 <button class="gen" id="gen">Generer mon texte</button>

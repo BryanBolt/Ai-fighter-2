@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Armes comiques</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -23,24 +23,34 @@ textarea{width:100%;box-sizing:border-box;border:2px solid var(--encre);border-r
 #o{white-space:pre-wrap;background:var(--encre);color:var(--papier);padding:12px;border-radius:10px;margin-top:14px}
 .gen{background:var(--accent);color:#fff;font-family:Silkscreen,monospace;margin-top:14px}
 table{border-collapse:collapse;font-size:13px;margin-top:8px;background:#fff}td,th{border:2px solid var(--encre);padding:4px 8px;text-align:left}th{background:var(--encre);color:var(--papier)}
-</style></head><body>
+button,input[type=button],select{min-height:44px}</style><style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js"></script>
+</head><body>
 <h1>Armes comiques</h1>
-<p class="lead">Quatre chantiers : <b>la savate</b> (une seule, ridicule), <b>l'expulsion a pleine charge</b> comme la batte (chaque arme a son gag), <b>l'agrafeuse</b> (tir a distance, utile pour de vrai) et <b>l'audit</b> des armes inutiles. Les GIF sont du vrai moteur. Pour chaque carte : Valider ou A refaire (+ remarque), puis genere le texte et colle-le dans le chat.</p>
+<p class="lead">Quatre chantiers : <b>la savate</b> (une seule, ridicule), <b>l'expulsion a pleine charge</b> comme la batte (chaque arme a son gag), <b>l'agrafeuse</b> (tir a distance, utile pour de vrai) et <b>l'audit</b> des armes inutiles. Les GIF sont du vrai moteur. Pour chaque carte : Valider ou À refaire (+ remarque), puis genere le texte et colle-le dans le chat.</p>
 
 <h2>1. La savate : 16 variantes de design (une seule savate, aplats, charte)</h2>
-<p class="lead">Dans le jeu, la variante <span class="tag d">PAR DEFAUT</span> est deja integree (charentaise rose usee). Dis laquelle tu preferes : je la mets a la place.</p>
+<p class="lead">Dans le jeu, la variante <span class="tag d">PAR DEFAUT</span> est déjà integree (charentaise rose usee). Dis laquelle tu preferes : je la mets a la place.</p>
 <div class="g" id="gs"></div>
 
 <h2>2. L'agrafeuse : 16 variantes de design</h2>
-<p class="lead">La variante <span class="tag d">PAR DEFAUT</span> (agrafeuse-pistolet rouge) est integree. Elle tire des rafales de 3 agrafes perforantes qui ricochent une fois sur le mur ; 6 agrafes en reserve, une de rechargee toutes les 0,6 s apres un court delai.</p>
+<p class="lead">La variante <span class="tag d">PAR DEFAUT</span> (agrafeuse-pistolet rouge) est integree. Elle tire des rafales de 3 agrafes perforantes qui ricochent une fois sur le mur ; 6 agrafes en réserve, une de rechargee toutes les 0,6 s après un court délai.</p>
 <div class="g" id="gt"></div>
 
 <h2>3. Gags a pleine charge et agrafeuse en action (GIF du vrai moteur)</h2>
-<p class="lead">Maintenir le bouton de coup : l'arme tremble, puis l'ennemi est expulse (ralenti, onde, cri, etoile « ding » dans le ciel, rebonds sur les murs). Chaque arme a son cri et sa trajectoire. Pour chaque arme : <b>tape</b>, <b>charge a fond</b>, <b>lancer</b>, <b>dernier coup</b> (lancer qui brise l'arme, inchange).</p>
+<p class="lead">Maintenir le bouton de coup : l'arme tremble, puis l'ennemi est expulse (ralenti, onde, cri, étoile « ding » dans le ciel, rebonds sur les murs). Chaque arme a son cri et sa trajectoire. Pour chaque arme : <b>tape</b>, <b>charge a fond</b>, <b>lancer</b>, <b>dernier coup</b> (lancer qui brise l'arme, inchange).</p>
 <div class="g gw" id="ga"></div>
 
 <h2>4. Audit des armes (mesures)</h2>
-<p class="lead">Tableau complet dans <code>tools/audit_armes.md</code> (genere par un test en lot : degats/s, portee, risque, lancer, charge, expulsion, usage IA). Aucune arme ne reste inutile ni ecrasante : chacune a un role.</p>
+<p class="lead">Tableau complet dans <code>tools/audit_armes.md</code> (genere par un test en lot : dégâts/s, portee, risque, lancer, charge, expulsion, usage IA). Aucune arme ne reste inutile ni ecrasante : chacune a un role.</p>
 <div id="aud"></div>
 
 <button class="gen" onclick="out()">Generer mon texte</button><div id="o"></div>

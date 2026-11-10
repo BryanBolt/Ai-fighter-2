@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>AI Fighter 2 - Cinematiques muettes</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
@@ -31,19 +31,29 @@ textarea{width:100%;min-height:54px;font:16px Nunito,sans-serif;border:2px solid
 .tag{font:700 12px Silkscreen,monospace;color:var(--acc)}
 .rule{background:var(--card);border-left:6px solid var(--acc);padding:8px 12px;border-radius:6px}
 </style>
+<style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js" data-keys="ci_state"></script>
 </head>
 <body>
 <header>
 <h1>CINEMATIQUES MUETTES</h1>
-<p class="lead">Tout est rendu par le moteur du jeu (jamais une video externe), sans une ligne de texte : on comprend par l'image. Chaque GIF est une capture du vrai moteur (400 px, 48 couleurs, vitesse reelle). Les transitions entre chapitres durent 4 s ; la cinematique du chapitre suit. Un tap passe a la suite et le bouton PASSER est toujours visible.</p>
-<p class="rule"><b>Fil rouge cryptique</b> : Kevin qui est toujours la (la petite regle de 47 traits en haut = la nuit 47, le trait du chapitre est en Accent), le daemon qui mange les regrets, la sortie qui change de cote, l'horloge bloquee a 06:58, le vrai boss qui dort. Le ciel suit l'heure et la meteo du terrain d'arrivee. Les cartes d'etage et de lieu (en combat) montrent maintenant, sans mot, le cadran du jour (soleil ou lune, pluie) a gauche et le daemon mascotte a droite. Mode « Reduction des effets » : memes scenes, sans secousse, sans eclair ni lignes de vitesse.</p>
+<p class="lead">Tout est rendu par le moteur du jeu (jamais une video externe), sans une ligne de texte : on comprend par l'image. Chaque GIF est une capture du vrai moteur (400 px, 48 couleurs, vitesse réelle). Les transitions entre chapitres durent 4 s ; la cinematique du chapitre suit. Un tap passe a la suite et le bouton PASSER est toujours visible.</p>
+<p class="rule"><b>Fil rouge cryptique</b> : Kevin qui est toujours la (la petite règle de 47 traits en haut = la nuit 47, le trait du chapitre est en Accent), le daemon qui mange les regrets, la sortie qui change de cote, l'horloge bloquee a 06:58, le vrai boss qui dort. Le ciel suit l'heure et la météo du terrain d'arrivee. Les cartes d'étage et de lieu (en combat) montrent maintenant, sans mot, le cadran du jour (soleil ou lune, pluie) a gauche et le daemon mascotte a droite. Mode « Reduction des effets » : mêmes scènes, sans secousse, sans éclair ni lignes de vitesse.</p>
 </header>
 <main id="main"></main>
 <main>
 <p><button class="gen" id="gen">GENERER MON TEXTE</button></p>
 <textarea id="out" readonly placeholder="Ton texte apparait ici : copie-le dans le chat."></textarea>
 </main>
-<footer><small>Charte Encre #221834, Papier #fff3e0, Accent #d8456b. Deterministe : chaque image ne depend que du temps (parties en ligne synchronisees, rien ne touche au lockstep).</small></footer>
+<footer><small>Charte Encre #221834, Papier #fff3e0, Accent #d8456b. Deterministe : chaque image ne depend que du temps (parties en ligne synchronisees, rien ne touche au synchro en ligne).</small></footer>
 <script>
 const S=[
 ["Transitions entre chapitres (4 s, une par passage de chapitre)",[

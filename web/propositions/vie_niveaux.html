@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Vie des niveaux</title>
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -10,12 +10,22 @@ h1,h2{font-family:Silkscreen,monospace;margin:.3em 0}
 .card{border:3px solid var(--encre);border-radius:10px;padding:12px;background:#fff}
 .card img{width:100%;image-rendering:auto;border:2px solid var(--encre)}
 button{font-family:Silkscreen,monospace;border:2px solid var(--encre);background:#fff;padding:8px 12px;margin:4px 4px 0 0;cursor:pointer;border-radius:6px}
-button.ok.on{background:#3b9c5a;color:#fff}button.ko.on{background:var(--accent);color:#fff}
+button.ok.on{background:#2f8f5b;color:#fff}button.ko.on{background:var(--accent);color:#fff}
 textarea{width:100%;min-height:140px;font-family:Nunito,sans-serif;border:2px solid var(--encre);border-radius:6px;padding:8px;box-sizing:border-box}
 .gen{background:var(--accent);color:#fff}
-</style></head><body>
+button,input[type=button],select{min-height:44px}</style><style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js"></script>
+</head><body>
 <h1>VIE DES NIVEAUX</h1>
-<p>Renforts, groupes au repos, accessoires cassables, details d'arriere-plan. Valide ou renvoie chaque element, puis genere ton texte.</p>
+<p>Renforts, groupes au repos, accessoires cassables, détails d'arrière-plan. Valide ou renvoie chaque element, puis genere ton texte.</p>
 <div class="grid" id="g"></div>
 <h2>Mon texte</h2>
 <button class="gen" id="gen">Generer mon texte</button>

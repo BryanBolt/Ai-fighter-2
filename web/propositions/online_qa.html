@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>QA en ligne</title>
 <style>
 :root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b}
@@ -10,9 +10,19 @@ h1{margin:.2em 0}
 button{font:inherit;border:2px solid var(--encre);background:var(--papier);color:var(--encre);border-radius:8px;padding:6px 12px;cursor:pointer}
 button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
 textarea{width:100%;box-sizing:border-box;margin-top:8px;border:2px solid var(--encre);border-radius:8px;padding:6px;font:inherit;background:var(--papier);color:var(--encre)}
-</style></head><body>
+button,input[type=button],select{min-height:44px}</style><style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js" data-keys="qa"></script>
+</head><body>
 <h1>QA du multijoueur</h1>
-<p>Chaque point est couvert par un test automatique. Valide, ou demande a refaire avec un commentaire (enregistre dans ce navigateur).</p>
+<p>Chaque point est couvert par un test automatique. Valide, ou demande à refaire avec un commentaire (enregistre dans ce navigateur).</p>
 <div id="l"></div>
 <script>
 const items=[

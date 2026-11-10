@@ -1,0 +1,31 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Statuts - test joueur</title>
+<style>:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b}
+body{margin:0;font:16px system-ui,sans-serif;background:var(--papier);color:var(--encre);padding:16px;line-height:1.4}
+.c{background:#fff;border:3px solid var(--encre);border-radius:14px;padding:12px;margin:12px 0;max-width:720px;box-shadow:4px 4px 0 var(--accent)}
+button{font:inherit;font-weight:700;padding:10px 14px;min-height:44px;border-radius:999px;border:2px solid var(--encre);margin:4px 6px 0 0;background:var(--papier);color:var(--encre);cursor:pointer}
+button.v{background:#2f8f5b;color:#fff}button.x{background:var(--accent);color:#fff}
+textarea{width:100%;box-sizing:border-box;border:2px solid var(--encre);border-radius:10px;padding:6px;margin-top:6px;background:var(--papier);color:var(--encre);font:inherit}
+#o{white-space:pre-wrap;background:var(--encre);color:var(--papier);padding:12px;border-radius:12px;margin-top:14px;max-width:720px}</style><script src="verdicts.js"></script>
+<style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style></head><body>
+<h1>Statuts : test joueur</h1>
+<p>Mesures dans le vrai moteur (18 statuts, 16 reactions). Journal : tools/playtest/statuts.md.</p>
+<div id="g"></div><button class="x" onclick="out()">Generer mon texte</button><div id="o"></div>
+<script>
+var C=[["choc","Choc entretenu corrige","Avant : joueur en attaque 0,2 % du temps sous choc entretenu (verrou continu). Apres : 94 %, le tremblement ne freine que la marche."],
+["lev","Levitation entretenue","63 % du temps en attaque contre 94 % : garde tel quel (immunite 60 images, rendements decroissants)."],
+["boss","Immunites des boss","Sommeil, Charme, Confusion, Peur, Levitation : immunises. Gel, Paralysie, Etourdissement : x0,3 et 50 images maxi."],
+["dur","Controles durs","Plafond 150 images, x1 / x0,5 / x0,25, immunite 60 images, joueur x0,5 : pas de verrou sans issue."]];
+var st={};var g=document.getElementById('g');
+C.forEach(function(c){var d=document.createElement('div');d.className='c';d.innerHTML='<b>'+c[1]+'</b><p>'+c[2]+'</p><button class="v" data-k="'+c[0]+'" data-v="1">Valider</button><button class="x" data-k="'+c[0]+'" data-v="-1">A refaire</button><textarea id="t_'+c[0]+'" rows="2" placeholder="Commentaire"></textarea>';g.appendChild(d);});
+g.onclick=function(e){var k=e.target.dataset&&e.target.dataset.k;if(k)st[k]=+e.target.dataset.v;};
+function out(){document.getElementById('o').textContent=C.map(function(c){var v=st[c[0]];var t=document.getElementById('t_'+c[0]).value.trim();return (v>0?'VALIDE':v<0?'A REFAIRE':'NON VU')+' : '+c[1]+(t?' - '+t:'');}).join('\n');}
+</script></body></html>

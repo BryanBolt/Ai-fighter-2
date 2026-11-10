@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Touches hors du jeu</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -18,14 +18,24 @@ button.v{background:var(--ok);color:#fff}button.x{background:var(--accent);color
 textarea{width:100%;box-sizing:border-box;border:2px solid var(--encre);border-radius:6px;padding:6px;margin-top:6px;font:inherit;background:var(--papier)}
 #o{white-space:pre-wrap;background:var(--encre);color:var(--papier);padding:12px;border-radius:10px;margin-top:14px}
 .gen{background:var(--accent);color:#fff;font-family:Silkscreen,monospace;margin-top:14px}
-</style></head><body>
+button,input[type=button],select{min-height:44px}</style><style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js"></script>
+</head><body>
 <h1>Les touches ne genent plus le jeu</h1>
-<p class="lead">Regle : aucune touche tactile ne cache jamais le personnage, les ennemis, le terrain, les projectiles ou le HUD. Les commandes vivent dans une bande reservee SOUS l'allee de combat (paysage) ou dans le panneau du bas (portrait) ; si la place manque, c'est le monde qui se resserre. Chaque planche = captures du VRAI moteur, tactile force, sur 10 formats : Fold 4 ferme (1090x344), 19,5:9, 20:9, 16:9 tablette, 16:9 PC, 4:3, Fold 4 ouvert (1056x880), puis 3 portraits (20:9, 19,5:9, tablette). Ordre de lecture : ligne par ligne.</p>
+<p class="lead">Règle : aucune touche tactile ne cache jamais le personnage, les ennemis, le terrain, les projectiles ou le HUD. Les commandes vivent dans une bande reservee SOUS l'allee de combat (paysage) ou dans le panneau du bas (portrait) ; si la place manque, c'est le monde qui se resserre. Chaque planche = captures du VRAI moteur, tactile force, sur 10 formats : Fold 4 ferme (1090x344), 19,5:9, 20:9, 16:9 tablette, 16:9 PC, 4:3, Fold 4 ouvert (1056x880), puis 3 portraits (20:9, 19,5:9, tablette). Ordre de lecture : ligne par ligne.</p>
 <ul class="k">
 <li><b>Corrige</b> : « Ramasser » (contextuel) flottait au-dessus du panneau en portrait, donc sur la vue de jeu : il est maintenant range DANS le panneau, entre Pause et Saut.</li>
-<li><b>Corrige</b> : la bulle d'aide « Glisse pour bouger » sortait de l'ecran sous le stick en paysage ; elle reste au-dessus du bandeau, a gauche.</li>
+<li><b>Corrige</b> : la bulle d'aide « Glisse pour bouger » sortait de l'écran sous le stick en paysage ; elle reste au-dessus du bandeau, a gauche.</li>
 <li><b>Verifie</b> : dialogues, bilan, kill cam, replay, menus : aucune touche de combat n'y recouvre quoi que ce soit (les menus n'affichent que leurs propres boutons).</li>
-<li><b>Teste en lot</b> : 16 formats (Fold 4, 16:9, 20:9, 4:3, tablettes, ultra-large) x droitier/gaucher x 4 reglages extremes x encoches : aucun bouton, stick ni « Ramasser » sur la zone de jeu ; pieds du plus grand combattant au-dessus des touches, tete dans l'ecran, zone de jeu >= moitie de l'ecran.</li>
+<li><b>Teste en lot</b> : 16 formats (Fold 4, 16:9, 20:9, 4:3, tablettes, ultra-large) x droitier/gaucher x 4 réglages extremes x encoches : aucun bouton, stick ni « Ramasser » sur la zone de jeu ; pieds du plus grand combattant au-dessus des touches, tête dans l'écran, zone de jeu >= moitie de l'écran.</li>
 </ul>
 <div class="g" id="g"></div>
 <button class="gen" onclick="out()">Generer mon texte</button><div id="o"></div>

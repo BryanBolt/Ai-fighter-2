@@ -1,4 +1,4 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Refonte B - coups reimagines</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -11,16 +11,26 @@ h1{font:700 26px Silkscreen,monospace;color:var(--accent);margin:8px 0}h2{font:7
 .duo figcaption.av{color:#c8bde0}.duo figcaption.ap{color:var(--ok)}
 .c img.gif{width:100%;border-radius:8px;background:#000;display:block}h3{font:700 14px Silkscreen,monospace;margin:10px 0 2px}
 .k{color:#ffbe78;font-weight:800;font-size:14px}p{margin:4px 0;font-size:14px;opacity:.93}p.why{color:var(--bleu);opacity:1}
-button{font:800 15px Nunito,sans-serif;padding:10px 14px;border-radius:9px;border:0;margin:6px 6px 0 0;color:#fff;background:#5a4a78;cursor:pointer;min-height:44px}
-button.v{background:#2e9b5b}button.x{background:#c03a62}button.main{background:var(--accent);font-size:17px;margin-top:18px}
+button{font:800 15px Nunito,sans-serif;padding:10px 14px;border-radius:8px;border:0;margin:6px 6px 0 0;color:#fff;background:#5a4a78;cursor:pointer;min-height:44px}
+button.v{background:#2f8f5b}button.x{background:#c03a62}button.main{background:var(--accent);font-size:17px;margin-top:18px}
 details{margin-top:6px}summary{cursor:pointer;color:#ffbe78;font-weight:700}details img{width:100%;margin-top:6px;border-radius:6px}
 textarea{width:100%;border-radius:8px;border:0;padding:8px;margin-top:6px;background:#17102a;color:var(--papier);font:inherit}
 #o{white-space:pre-wrap;background:#120c22;padding:12px;border-radius:10px;margin-top:14px;min-height:40px}
 .tag{display:inline-block;background:var(--accent);color:#fff;border-radius:6px;padding:1px 8px;font:12px Silkscreen,monospace}
 @media(max-width:520px){.g{grid-template-columns:1fr}}
-</style></head><body>
+</style><style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js"></script>
+</head><body>
 <h1>REFONTE B / COUPS REIMAGINES</h1>
-<p class="intro">Sora, Piege, Zui, Yume : les coups qui se lisaient mal ou se ressemblaient ont ete reecrits en poses-cles (anticipation, chargement, impact, retour) dans le style des combos de Kaze : epaules abaissees, buste et hanches qui accompagnent, jambes qui alternent, sabre tenu a la main avant. Pour chaque coup : <b>AVANT</b> = le coup actuel du jeu, <b>APRES</b> = la proposition (GIF du vrai moteur en temps reel, 300 px, 24 couleurs ; le ralenti x0,25 et la planche d'images-cles sont dans le menu deroulant). Rien n'est change dans le jeu tant que tu n'as pas valide (variante activee par la variable d'environnement AFH_MOVEVAR). Valide ou « A refaire » (+ remarque), puis « Generer mon texte » et colle le resultat dans le chat.</p>
+<p class="intro">Sora, Piège, Zui, Yume : les coups qui se lisaient mal ou se ressemblaient ont été reecrits en poses-cles (anticipation, chargement, impact, retour) dans le style des combos de Kaze : epaules abaissees, buste et hanches qui accompagnent, jambes qui alternent, sabre tenu a la main avant. Pour chaque coup : <b>AVANT</b> = le coup actuel du jeu, <b>APRÈS</b> = la proposition (GIF du vrai moteur en temps réel, 300 px, 24 couleurs ; le ralenti x0,25 et la planche d'images-cles sont dans le menu deroulant). Rien n'est change dans le jeu tant que tu n'as pas valide (variante activee par la variable d'environnement AFH_MOVEVAR). Valide ou « À refaire » (+ remarque), puis « Generer mon texte » et colle le résultat dans le chat.</p>
 <div id="root"></div>
 <button class="main" onclick="out()">Generer mon texte</button><div id="o"></div>
 <script>

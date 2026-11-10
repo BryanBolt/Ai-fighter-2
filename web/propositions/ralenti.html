@@ -1,11 +1,21 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Coups au ralenti</title>
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Coups au ralenti</title>
 <style>body{margin:0;font:16px system-ui,sans-serif;background:#1c1d2e;color:#eee;padding:12px}h1{font-size:20px}
 .g{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}.c{background:#2a2c44;border-radius:10px;padding:10px}.c.ok{outline:3px solid #4cd07d}.c.no{outline:3px solid #e0507a}
 img{width:100%;border-radius:8px;background:#000}h2{font-size:16px;margin:6px 0 2px}.n{color:#f5c542;font-weight:700}p{margin:4px 0;font-size:14px;opacity:.9}
-button{font:inherit;padding:9px 12px;border-radius:8px;border:0;margin:4px 4px 0 0;color:#fff;background:#555}button.v{background:#2e9b5b}button.x{background:#c03a62}
-textarea{width:100%;box-sizing:border-box;border-radius:6px;border:0;padding:6px;margin-top:6px;background:#15162a;color:#eee}#o{white-space:pre-wrap;background:#111;padding:10px;border-radius:8px;margin-top:12px}</style></head><body>
+button{font:inherit;padding:9px 12px;border-radius:8px;border:0;margin:4px 4px 0 0;color:#fff;background:#555}button.v{background:#2f8f5b}button.x{background:#c03a62}
+textarea{width:100%;box-sizing:border-box;border-radius:6px;border:0;padding:6px;margin-top:6px;background:#15162a;color:#eee}#o{white-space:pre-wrap;background:#111;padding:10px;border-radius:8px;margin-top:12px}button,input[type=button],select{min-height:44px}</style><style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js"></script>
+</head><body>
 <h1>Coups au ralenti (vrai moteur) : 3 variantes cote a cote</h1>
-<p>Chaque image du coup, ralenti x4, phases etiquetees. Pour chaque coup : Valider ou A refaire (+ remarque), puis genere le texte et colle-le dans le chat.</p>
+<p>Chaque image du coup, ralenti x4, phases etiquetees. Pour chaque coup : Valider ou À refaire (+ remarque), puis genere le texte et colle-le dans le chat.</p>
 <div class="g" id="g"></div><button onclick="out()" style="background:#e0507a;font-weight:700;margin-top:12px">Generer mon texte</button><div id="o"></div>
 <script>var C=[{"key": "direct", "name": "Pied direct : variantes A / B / C", "n": "ralenti x4", "d": "A sec, B depuis le flamingo, C poussee lourde. Dis laquelle valider (ou melange).", "img": "slow_direct.webp"}, {"key": "circ", "name": "Circulaire : variantes A / B / C", "n": "ralenti x4", "d": "A arc haut, B fouet depuis l'arriere, C rotatif (dos a moitie tourne).", "img": "slow_circ.webp"}, {"key": "hache", "name": "Hache : variantes A / B / C", "n": "ralenti x4", "d": "A levee droite + plongeon, B talon, C bond.", "img": "slow_hache.webp"}],st={};
 var g=document.getElementById('g');

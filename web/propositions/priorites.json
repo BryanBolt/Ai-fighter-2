@@ -1,0 +1,19 @@
+{
+ "top5": [
+  "a_retirer",
+  "remplacements",
+  "boss_variantes",
+  "histoire_incoherences",
+  "coherence_audit"
+ ],
+ "ordre_groupes": [
+  "À TRANCHER EN PREMIER",
+  "COMBAT ET ANIMATIONS",
+  "BOSS, ENNEMIS, ÉVÉNEMENTS",
+  "MENUS, ÉCRANS, EN LIGNE",
+  "NOUVEAU : COMBAT, HÉROS, DAEMONS, ENNEMIS",
+  "NOUVEAU : ROGUELITE",
+  "NOUVEAU : NIVEAUX, MENUS, SYSTÈME",
+  "ROGUELITE"
+ ]
+}

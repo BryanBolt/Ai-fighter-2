@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cosmétiques et social : passage testeur</title>
+<style>:root{--e:#221834;--p:#fff3e0;--a:#d8456b}body{margin:0;background:var(--p);color:var(--e);font:600 16px/1.45 Nunito,system-ui,sans-serif;padding:16px}
+h1{font-size:22px}.c{background:#fff;border:3px solid var(--e);border-radius:14px;padding:12px;margin:10px 0;max-width:760px}
+button{min-height:44px;border:2px solid var(--e);border-radius:99px;padding:0 16px;font:800 14px Nunito;background:var(--p);cursor:pointer;margin-right:6px}
+button.on{background:var(--a);color:#fff}textarea{width:100%;min-height:48px;margin-top:8px;border:2px solid var(--e);border-radius:10px;padding:8px;font:15px Nunito;box-sizing:border-box}</style><script src="verdicts.js" data-keys="afh_cosm_social"></script>
+<style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style></head><body>
+<h1>Cosmétiques et social : passage testeur</h1>
+<p>Correctifs faits (détails dans tools/playtest/cosmetiques_social.md). Valide, ou demande à refaire, avec un commentaire.</p>
+<div id="l"></div>
+<script>
+var I=[["Pseudos : lien en pleine chasse refusé, coupe par caractère","Un pseudo type www.site.com en lettres pleine chasse passait le filtre."],
+["Classements : 3 identifiants par adresse et par tableau","Empêche de remplir le top 100 avec de faux joueurs."],
+["Chat : zalgo, inversion de texte, liens masqués, répétitions, spam","Même message refusé sous 10 s ; liens et mails remplacés par ***."],
+["Chat sur téléphone : ligne tronquée à l'écran","Avant : jusqu'à 144 caractères débordaient."],
+["À décider : liste de gros mots, bouton Masquer le chat","Non fait : choix de contenu."],
+["À décider : resserrer les bornes de score","Il faut des scores de vraies parties pour fixer les plafonds."]];
+var K="afh_cosm_social",S={};try{S=JSON.parse(localStorage.getItem(K)||"{}")}catch(e){}
+function sv(){try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}}
+var L=document.getElementById("l");
+I.forEach(function(c,i){var s=S[i]||(S[i]={}),d=document.createElement("div");d.className="c";d.innerHTML="<b></b><p></p><div></div><textarea placeholder='Commentaire'></textarea>";
+d.querySelector("b").textContent=c[0];d.querySelector("p").textContent=c[1];var v=d.querySelector("div");
+[["ok","Valider"],["no","À refaire"]].forEach(function(o){var b=document.createElement("button");b.textContent=o[1];if(s.v==o[0])b.className="on";
+b.onclick=function(){s.v=o[0];v.querySelectorAll("button").forEach(function(x){x.className=""});b.className="on";sv()};v.appendChild(b)});
+var t=d.querySelector("textarea");t.value=s.c||"";t.oninput=function(){s.c=t.value;sv()};L.appendChild(d)});
+</script></body></html>

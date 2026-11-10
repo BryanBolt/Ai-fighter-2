@@ -2,8 +2,8 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Musiques des decors - propositions v2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Musiques des décors - propositions v2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -44,14 +44,24 @@ input.com{flex:1 1 220px;min-width:0;background:var(--encre);color:var(--papier)
 #out{display:none;margin-top:18px}
 #out textarea{width:100%;min-height:200px;background:var(--encre);color:var(--papier);border:1px solid var(--ligne);border-radius:8px;padding:10px;font-family:ui-monospace,Consolas,monospace;font-size:13px}
 @media (max-width:560px){h1{font-size:20px}.wrap{padding:14px 16px 100px}}
-</style>
+button,input[type=button],select{min-height:44px}</style>
+<style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js" data-keys="af2_musiques_v2"></script>
 </head>
 <body>
 <div class="wrap">
 <h1>MUSIQUES <span>V2</span></h1>
-<p class="lead"><b style="color:var(--accent)">Version 2 : lignes melodiques entierement refaites.</b> Chaque decor a sa propre melodie principale originale, en mineur (eolien, harmonique ou phrygien, jamais de majeur), epique et suspense, style combat Mega Man X sur SNES : motif d'accroche de 3 a 8 notes (quinte montante, seconde mineure tendue, triton, sixte mineure), notes repetees staccato qui montent puis retombent, appels de cuivres, montee chromatique de 16es avant chaque refrain, contre-chant de guitare saturee, pedale grave et triton dans la rupture, reprise harmonisee et escalade finale (+1 ton). Basse slap syncopee, echo court SPC700. Environ 3 minutes par piste ; l'extrait de 36 s couvre la fin du theme B, la rupture et la reprise (traits roses sur le spectrogramme).</p>
+<p class="lead"><b style="color:var(--accent)">Version 2 : lignes melodiques entierement refaites.</b> Chaque décor a sa propre melodie principale originale, en mineur (eolien, harmonique ou phrygien, jamais de majeur), épique et suspense, style combat Mega Man X sur SNES : motif d'accroche de 3 a 8 notes (quinte montante, seconde mineure tendue, triton, sixte mineure), notes repetees staccato qui montent puis retombent, appels de cuivres, montee chromatique de 16es avant chaque refrain, contre-chant de guitare saturee, pedale grave et triton dans la rupture, reprise harmonisee et escalade finale (+1 ton). Basse slap syncopee, echo court SPC700. Environ 3 minutes par piste ; l'extrait de 36 s couvre la fin du thème B, la rupture et la reprise (traits roses sur le spectrogramme).</p>
 
-<div class="note"><b>Honnetete :</b> je ne peux pas ecouter. Tout ce qui suit repose sur des mesures (tempo, energie, spectre, stereo, spectrogramme), pas sur l'oreille. Les references et les nouvelles pistes ont ete mesurees avec la meme methode ; c'est a vous de dire si cela sonne juste.
+<div class="note"><b>Honnetete :</b> je ne peux pas ecouter. Tout ce qui suit repose sur des mesures (tempo, energie, spectre, stereo, spectrogramme), pas sur l'oreille. Les references et les nouvelles pistes ont été mesurees avec la même methode ; c'est a vous de dire si cela sonne juste.
 <table class="ref">
 <tr><th>Mesure</th><th>Final Escalation (4 versions)</th><th>Nouvelles pistes (15)</th></tr>
 <tr><td>Niveau RMS / crete</td><td>-17,5 a -18,7 / -2 a -4 dBFS</td><td>-18,4 a -18,7 / -2 a -4 dBFS (limiteur, jamais de saturation)</td></tr>
@@ -59,7 +69,7 @@ input.com{flex:1 1 220px;min-width:0;background:var(--encre);color:var(--papier)
 <tr><td>Energie &lt;150 / 150-600 / 600-2,5k / 2,5-8k Hz</td><td>33-43 / 18-26 / 28-33 / 8 %</td><td>25-57 / 12-43 / 13-38 / 1-9 %</td></tr>
 <tr><td>Attaques par seconde</td><td>3,2 a 4,6</td><td>3,5 a 5,5</td></tr>
 <tr><td>Regularite (ecart-type de l'energie par 0,25 s)</td><td>2 a 4 dB</td><td>1,5 a 2,3 dB</td></tr>
-<tr><td>Stereo (cote / centre)</td><td>0,40 a 0,51</td><td>0,21 a 0,35 (plus etroit)</td></tr>
+<tr><td>Stereo (cote / centre)</td><td>0,40 a 0,51</td><td>0,21 a 0,35 (plus étroit)</td></tr>
 </table></div>
 
 <div class="grid" id="grid"></div>

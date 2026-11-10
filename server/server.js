@@ -9,9 +9,11 @@ import zlib from 'node:zlib';
 import { fileURLToPath } from 'node:url';
 import { WebSocketServer } from 'ws';
 import { createScores } from './scores.js';
+import { createVerdicts } from './verdicts.js';
 import { createPush } from './push.js';
+import { createReports } from './reports.js';
 
-export const PROTOCOL_VERSION = 11; // 11 : accessoires COSMETIQUES (message cos, champ cos des joueurs du salon) ; 10 : daemon de chaque joueur au salon (champ `daemon` des messages lobby et room) ; 9 : mode ROGUELITE en coop (mode 3 : run d equipe, cartes personnelles, etages) ; 8 : nunchaku (nouvelle arme ramassable, serie de six coups, Pied = coups de pied avec l'arme) et armes au sol du dojo/temple changees ; 7 : entree Saisie (nouveau bit d'entree) + coups renommes (SCHEMA_VERSION 8) ; 6 : table des coups changee (grammaire X/Y des 9 autres heros, SCHEMA_VERSION 7) ; 5 : jusqu'a 8 joueurs, vague/PV de depart (solo -> en ligne) ; 4 : table des coups changee (aeriens, realisme, grammaire X/Y ; tir allie, QA). 3 : parties hebergees (jeu complet : loadout, cmd sequences). 2 : join_any / host. Seuls les clients v8 sont acceptes.
+export const PROTOCOL_VERSION = 15; // 15 : anti-sandwich (jetons d'attaque, plafond de coups subis, nouveaux etats dans l'empreinte) ; 14 : empreinte de simulation etendue (univers, tournoi), commande tourn, messages watch / emote (spectateur), idle / need_resync ; 13 : pouvoir actif du roguelite (bits 25-27 de l entree) ; 12 : modes de groupe (mode 5, commande group) ; 11 : accessoires COSMETIQUES (message cos, champ cos des joueurs du salon) ; 10 : daemon de chaque joueur au salon (champ `daemon` des messages lobby et room) ; 9 : mode ROGUELITE en coop (mode 3 : run d equipe, cartes personnelles, etages) ; 8 : nunchaku (nouvelle arme ramassable, serie de six coups, Pied = coups de pied avec l'arme) et armes au sol du dojo/temple changees ; 7 : entree Saisie (nouveau bit d'entree) + coups renommes (SCHEMA_VERSION 8) ; 6 : table des coups changee (grammaire X/Y des 9 autres heros, SCHEMA_VERSION 7) ; 5 : jusqu'a 8 joueurs, vague/PV de depart (solo -> en ligne) ; 4 : table des coups changee (aeriens, realisme, grammaire X/Y ; tir allie, QA). 3 : parties hebergees (jeu complet : loadout, cmd sequences). 2 : join_any / host. Seuls les clients v8 sont acceptes.
 const COMPAT_VERSIONS = [PROTOCOL_VERSION]; // derive de PROTOCOL_VERSION : ne peut plus diverger (v8 etait refuse par erreur, ancienne valeur [7]) ; // protocole 7 : les clients 1 a 6 n'ont pas la meme table de coups (et 1 a 4 ne savent pas lire des salons de 8 places), ils doivent se mettre a jour
 const HOSTED_SIZE = 2; // taille par defaut d une partie hebergee (anciens clients) ; le client actuel demande 4 avec `size` (places vides dormantes)
 const HOSTED_MIN = 2; // taille minimale demandable
@@ -28,6 +30,9 @@ const ROSTER = 10; // heros du roster en ligne
 const STAGES = 12;
 const FULL_STAGES = 16; // parties hebergees : tous les stages de la campagne
 const MAX_SLOTS = 8;
+const MAX_WATCHERS = 64; // spectateurs SANS place par salon (mode regarder / tournoi) : un envoi de plus par message et par spectateur, plafonne
+const EMOTES = 8; // reactions decoratives (icones) : jamais dans la simulation
+const EMOTE_GAP_MS = 900;
 const REJOIN_MIN = 15; // images d'avance minimales pour un evenement de controle (retour quasi immediat)
 const REJOIN_MAX = 590; // plafond (le journal accepte au plus +600 images)
 const HOLD_MS = 20 * 60 * 1000; // une place coupee reste reservee 20 min
@@ -40,7 +45,11 @@ const MAX_PEEK = 8; // salons verifies d'un coup (reprise : « mes dernieres par
 
 export function createServer(opts = {}) {
   const trustProxy = opts.trustProxy ?? process.env.TRUST_PROXY === '1';
-  const afkMs = opts.afkMs ?? Number(process.env.AFK_MS || 60000);
+  const afkMs = opts.afkMs ?? Number(process.env.AFK_MS || 8000);
+  // Joueur qui fige tout le monde (liaison morte mais socket encore ouverte, appli en arriere-plan) : l'IA prend sa place apres ce delai.
+  // Le client affiche « connexion lente » des 3 s ; il reprend la main d'une action (`resume`).
+  const stallMs = opts.stallMs ?? Number(process.env.STALL_MS || 6000);
+  const stats = { msgsIn: 0, bytesIn: 0, msgsOut: 0, bytesOut: 0, stallDrops: 0, since: Date.now(), lagMax: 0 };
   const holdMs = opts.holdMs ?? HOLD_MS;
   const idleMs = opts.idleMs ?? Number(process.env.IDLE_MS || 20 * 60 * 1000); // salon sans aucune action humaine
   const root = opts.root ?? process.env.WEB_ROOT ?? path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'web');
@@ -56,8 +65,13 @@ export function createServer(opts = {}) {
   const matchLog = new Map(); // ip -> horodatages des demandes de partie (fenetre glissante d'une minute)
   const reports = new Map(); // code -> Map(slot cible -> Set(jetons des signaleurs))
   const scores = createScores({ file: opts.scoresFile !== undefined ? opts.scoresFile : (process.env.SCORES_FILE || null), now: opts.now });
+  const verdicts = createVerdicts({ file: opts.verdictsFile !== undefined ? opts.verdictsFile : (process.env.VERDICTS_FILE || null), key: opts.verdictKey !== undefined ? opts.verdictKey : (process.env.VERDICT_KEY || null), now: opts.now });
   const push = createPush({ sender: opts.pushSender ?? null, env: opts.pushEnv ?? process.env, roomExists: (c) => rooms.has(c) });
+  const errReports = createReports(opts.reports || {}); // rapports d'erreurs anonymes (distinct de `reports` : signalements de joueurs)
 
+  // Expulsion : par adresse, SAUF si un autre joueur present partage cette adresse (meme foyer, meme wifi, meme operateur mobile) : on bannit alors le jeton, sinon l'hote expulserait aussi ses voisins et lui-meme.
+  const banKey = (room, t) => (room.slots.some((x) => x !== t && x.ws && x.ip === t.ip) ? 'tok:' + t.token : t.ip);
+  const isBanned = (code, c) => { const b = banned.get(code); return !!b && (b.has(c.ip) || b.has('tok:' + c.token)); };
   const rnd = (n) => crypto.randomInt(n);
   const newCode = () => {
     for (;;) {
@@ -82,9 +96,9 @@ export function createServer(opts = {}) {
     }));
     return { hero: int(l.hero, 0, ROSTER - 1), gear, moves: intList(l.moves, 24, 255), combos, special: int(l.special, 0, 40, null), bonuses: intList(l.bonuses, 48, 255), pet: int(l.pet, 0, 3), pet_level: int(l.pet_level, 1, 5, 1), daemon: int(l.daemon, 0, 9, null) };
   }
-  const send = (ws, msg) => { if (ws && ws.readyState === 1) ws.send(JSON.stringify(msg)); };
+  const send = (ws, msg) => { if (ws && ws.readyState === 1) { const j = JSON.stringify(msg); stats.msgsOut++; stats.bytesOut += j.length; ws.send(j); } };
   // Texte venu d'un joueur : sans caracteres de controle, espaces nettoyes, longueur bornee.
-  const cleanText = (v, max) => String(v ?? '').replace(/[\u0000-\u001f\u007f-\u009f\u200b-\u200f\u2028-\u202e]/g, '').replace(/\s+/g, ' ').trim().slice(0, max);
+  const cleanText = (v, max) => Array.from(String(v ?? '').normalize('NFC').replace(/[\u0000-\u001f\u007f-\u009f\u200b-\u200f\u2028-\u202e\u2060-\u206f\ufeff\ufff9-\ufffc]/g, '').replace(/(\p{M}{2})\p{M}+/gu, '$1').replace(/\s+/g, ' ').trim()).slice(0, max).join('').trim(); // sans controles ni inversion de texte, accents empiles bornes (zalgo), coupe par caractere
   // Pseudo assaini : pas de lien ni d'adresse mail (ni de donnees personnelles collees par erreur), au moins une lettre ou un chiffre.
   const cleanName = (v) => {
     let n = cleanText(v, 120).replace(/[a-z][a-z0-9+.-]*:\/\/\S*/gi, ' ').replace(/\S+@\S+\.\S+/g, ' ').replace(/www\.\S+/gi, ' ').replace(/\d{6,}/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 14).trim();
@@ -105,6 +119,13 @@ export function createServer(opts = {}) {
       res.writeHead(200, { 'content-type': 'application/json', 'access-control-allow-origin': '*' });
       res.end(JSON.stringify(publicList())); return;
     }
+    if (url.pathname === '/api/stats') {
+      // Mesures minimales pour l'hebergement gratuit : charge, memoire, debit, retard de boucle, gels traites. Aucune donnee personnelle.
+      const secs = Math.max(1, (Date.now() - stats.since) / 1000);
+      const mem = process.memoryUsage();
+      res.writeHead(200, { 'content-type': 'application/json', 'access-control-allow-origin': '*', 'cache-control': 'no-store' });
+      res.end(JSON.stringify({ v: PROTOCOL_VERSION, up: Math.round((Date.now() - bornAt) / 1000), rooms: rooms.size, conns: clients.size, humans: [...rooms.values()].reduce((n, r) => n + humans(r).length, 0), inPerSec: Math.round(stats.msgsIn / secs), outPerSec: Math.round(stats.msgsOut / secs), kbInPerSec: Math.round(stats.bytesIn / secs / 102.4) / 10, kbOutPerSec: Math.round(stats.bytesOut / secs / 102.4) / 10, rssMb: Math.round(mem.rss / 1048576), heapMb: Math.round(mem.heapUsed / 1048576), lagMaxMs: stats.lagMax, stallDrops: stats.stallDrops })); return;
+    }
     if (url.pathname === '/api/status') {
       res.writeHead(200, { 'content-type': 'application/json', 'access-control-allow-origin': '*' });
       res.end(JSON.stringify({ v: PROTOCOL_VERSION, rooms: rooms.size, players: [...rooms.values()].reduce((n, r) => n + humans(r).length, 0), hosted: [...rooms.values()].filter((r) => r.full).length, conns: clients.size, up: Math.round((Date.now() - bornAt) / 1000) })); return;
@@ -116,7 +137,11 @@ export function createServer(opts = {}) {
     }
     if (url.pathname === '/api/ideas' && req.method === 'POST') { handleIdea(req, res); return; }
     if (scores.handle(req, res, url, httpIp(req))) return;
+    if (verdicts.handle(req, res, url, httpIp(req))) return;
     if (push.handle(req, res, url.pathname)) return;
+    if (url.pathname === '/report') { errReports.handlePost(req, res); return; }
+    if (url.pathname === '/reports') { errReports.handleGet(req, res, url); return; }
+    if (url.pathname === '/admin/erreurs') { req.url = '/propositions/erreurs.html'; url.pathname = req.url; }
     // Chemin mal encode (« %E0%A4 », « % ») : 400 au lieu d'une exception non rattrapee qui arretait tout le serveur.
     let p;
     try { p = decodeURIComponent(url.pathname); } catch { res.writeHead(400, { 'content-type': 'text/plain' }); res.end('chemin invalide'); return; }
@@ -216,17 +241,17 @@ export function createServer(opts = {}) {
       ff: true, // tir allie (reglage de l'hote, annonce a tous dans la config de partie)
       options: { size: 2, stage: 0 }, // size = nombre de heros en partie (les places vides sont tenues par l'IA)
       slots: Array.from({ length: MAX_SLOTS }, emptySlot),
-      seed: 0, config: null, ctl: [], hashes: new Map(),
+      seed: 0, config: null, ctl: [], hashes: new Map(), watchers: new Set(),
     };
     rooms.set(room.code, room);
     return room;
   }
   const humans = (room) => room.slots.map((s, i) => [s, i]).filter(([s]) => s.ws);
   const lobbyView = (room) => ({
-    t: 'room', code: room.code, public: room.public, started: room.started, auto: room.auto, run: room.run, options: { ...room.options, ff: room.ff !== false, ffm: room.ffm, pal: room.pal !== false }, host: hostSlot(room), full: !!room.full, private: !room.public, keep: !!room.keep, ttl: Math.round(roomTtl / 60000),
+    t: 'room', code: room.code, public: room.public, started: room.started, auto: room.auto, run: room.run, options: { ...room.options, ff: room.ff !== false, ffm: room.ffm, pal: room.pal !== false }, host: hostSlot(room), full: !!room.full, mode: room.mode | 0, chapter: room.chapter | 0, private: !room.public, keep: !!room.keep, ttl: Math.round(roomTtl / 60000),
     players: room.slots.map((s, i) => ({ slot: i, name: s.name, char: s.char, color: s.color, daemon: s.daemon, cos: s.cos || '', ready: s.ready, online: !!s.ws, mode: s.mode })),
   });
-  const broadcast = (room, msg, except = null) => { for (const [s] of humans(room)) if (s.ws !== except) send(s.ws, msg); };
+  const broadcast = (room, msg, except = null) => { for (const [s] of humans(room)) if (s.ws !== except) send(s.ws, msg); for (const w of room.watchers) if (w !== except) send(w, msg); };
   // Liste publique : seulement les salons habites, les plus remplis (puis les plus recents) d'abord, bornee.
   const publicList = () => [...rooms.values()].filter((r) => r.public && humans(r).length > 0)
     .sort((a, b) => (humans(b).length / b.options.size - humans(a).length / a.options.size) || (b.created - a.created)).slice(0, 50)
@@ -241,6 +266,7 @@ export function createServer(opts = {}) {
     return {
       code, alive: true, public: room.public, started: room.started, auto: room.auto, full: !!room.full, n: hs.length, max: room.started ? Math.max(size, room.options.size) : room.options.size,
       open: hs.length < (room.started ? Math.max(size, room.options.size) : room.options.size), names: hs.map(([s]) => s.name).slice(0, 8),
+      watchers: room.watchers.size, watchable: room.started && room.watchers.size < MAX_WATCHERS,
       idle: Math.round((Date.now() - (hs.length ? room.lastAct : (room.emptySince || room.lastAct))) / 1000), ttl: room.keep ? Math.round(roomTtl / 1000) : 0,
     };
   }
@@ -252,7 +278,7 @@ export function createServer(opts = {}) {
     if (idx < 0) return -1;
     const s = room.slots[idx];
     s.ws = ws; s.name = uniqueName(room, cleanName(name), idx); s.token = c.token; s.ip = c.ip; s.heldUntil = 0; s.color = pickColor(room, idx, c.color); s.daemon = 255; s.cos = '';
-    s.ready = false; s.lastMove = now; s.afkWarned = false;
+    s.ready = false; s.lastMove = now; s.lastInputAt = now; s.afkWarned = false;
     c.room = room; c.slot = idx;
     if (!room.started) s.mode = 'human';
     return idx;
@@ -287,13 +313,15 @@ export function createServer(opts = {}) {
         // Place vide : pas d'IA (salon sans IA, parties automatiques et hebergees) -> heros absent, pseudo vide, jusqu'a l'arrivee d'un ami.
         s.name = (room.options.noai || room.auto || room.full) ? '' : 'IA';
       }
-      s.hi = -1; s.journal = []; s.lastMove = Date.now(); s.lastBits = 0; s.cmds = 0; s.loadouts = 0; s.afkWarned = false;
+      s.hi = -1; s.journal = []; s.lastMove = Date.now(); s.lastInputAt = Date.now(); s.lastBits = 0; s.cmds = 0; s.loadouts = 0; s.afkWarned = false;
     });
     room.started = true; room.ctl = []; room.hashes = new Map();
     // Revanche apres une defaite : MEME graine (meme terrain, memes vagues) ; nouvelle graine seulement apres une victoire.
     room.seed = (room.keepSeed && room.seed) ? room.seed : ((rnd(0x7fffffff) >>> 0) || 1);
     room.keepSeed = false;
-    room.config = { seed: room.seed, size, run: room.run, stage: room.options.stage | 0, full: !!room.full, mode: room.mode | 0, chapter: room.chapter | 0, wave: room.run === 0 ? (room.startWave | 0) : 0, hp: room.run === 0 ? (room.startHp | 0) : 0, ff: room.ff !== false, ffm: room.ffm, pal: room.pal !== false, slots: room.slots.slice(0, size).map((s, i) => ({ slot: i, char: s.char, name: s.name, ai: s.mode === 'ai' })) };
+    // Date de la salle (jours depuis 1970) : fixee une fois pour toute la vie de la salle, imposee a tous (saisons identiques).
+    room.day = room.day || Math.floor(Date.now() / 86400000);
+    room.config = { seed: room.seed, day: room.day, size, run: room.run, stage: room.options.stage | 0, full: !!room.full, mode: room.mode | 0, chapter: room.chapter | 0, wave: room.run === 0 ? (room.startWave | 0) : 0, hp: room.run === 0 ? (room.startHp | 0) : 0, ff: room.ff !== false, ffm: room.ffm, pal: room.pal !== false, slots: room.slots.slice(0, size).map((s, i) => ({ slot: i, char: s.char, name: s.name, ai: s.mode === 'ai' })) };
     broadcast(room, { t: 'start', ...room.config });
   }
 
@@ -326,15 +354,28 @@ export function createServer(opts = {}) {
   const noAiRoom = (room) => !!(room.full || room.auto || room.options.noai);
   // Parties sans IA (hebergees, automatiques) : l'IA tient la place (`bossDrop`) jusqu'au prochain boss, puis le heros s'efface cote clients ;
   // si le joueur revient avant (meme jeton), il reprend CE MEME heros immediatement.
-  function dropToAi(room, slot) {
+  // `live` : la connexion du joueur est encore ouverte (inactivite, reseau lent). Son client a pu SIMULER au-dela de `hi` (entrees encore en vol) : une bascule a hi+1
+  // le ferait diverger des autres (cause de la desynchro « l'IA a pris la main puis j'ai repris »). On laisse donc AI_LEAD images, remplies par des entrees
+  // identiques pour tous (les dernieres entrees du joueur), puis l'IA prend la place.
+  const AI_LEAD = 36;
+  function dropToAi(room, slot, live = false) {
     const s = room.slots[slot];
     if (s.mode !== 'human') return;
     s.mode = 'ai';
     s.dormantDue = false;
-    control(room, slot, s.hi + 1, noAiRoom(room) ? { ai: true, bossDrop: true } : { ai: true });
+    let from = s.hi + 1;
+    if (live) {
+      const f0 = s.hi + 1; const bits = [];
+      for (let f = f0; f < f0 + AI_LEAD; f++) { s.journal[f] = s.lastBits | 0; bits.push(s.lastBits | 0); }
+      for (let i = 0; i < bits.length; i += 8) broadcast(room, { t: 'input', slot, f0: f0 + i, bits: bits.slice(i, i + 8) });
+      s.hi = f0 + AI_LEAD - 1; from = s.hi + 1;
+    }
+    control(room, slot, from, noAiRoom(room) ? { ai: true, bossDrop: true } : { ai: true });
   }
 
   function closeRoom(room) {
+    for (const w of room.watchers) { const wc = clients.get(w); if (wc) wc.watch = null; send(w, { t: 'ended', code: room.code }); }
+    room.watchers.clear();
     if (room.restartTimer) clearTimeout(room.restartTimer);
     reports.delete(room.code);
     banned.delete(room.code); // la liste des expulses disparait avec le salon (sinon elle fuit en memoire)
@@ -361,12 +402,28 @@ export function createServer(opts = {}) {
     if (joinRate.size > 5000) joinRate.clear();
     return true;
   }
+  // Place deja tenue par ce jeton dans une partie en cours (meme si l'ancienne connexion semble ouverte) : on la reprend, on n'en cree jamais une seconde.
+  function reclaim(room, ws, c) {
+    if (!c.token || !room.started || !room.config) return -1;
+    const idx = room.slots.findIndex((x, i) => i < room.config.size && x.token && x.token === c.token);
+    if (idx < 0 || banned.get(room.code)?.has(c.ip)) return -1;
+    const s = room.slots[idx];
+    if (c.room && c.room !== room) leaveRoom(c, ws, true);
+    if (s.ws && s.ws !== ws) {
+      const old = s.ws; const oc = clients.get(old);
+      s.ws = null; if (oc) { oc.room = null; oc.slot = -1; }
+      send(old, { t: 'error', msg: 'Connexion reprise depuis un autre appareil', code: 'replaced' });
+      try { old.close(); } catch { /* deja fermee */ }
+    }
+    s.ws = ws; s.heldUntil = 0; s.afkWarned = false; s.ip = c.ip; c.room = room; c.slot = idx;
+    return idx;
+  }
   function takeAi(room, ws, c, char, now) {
     const cands = room.slots.map((s, i) => [s, i]).filter(([s, i]) => i < room.config.size && !s.ws && s.mode === 'ai');
     if (!cands.length) return -1;
     cands.sort((a, b) => ((a[0].heldUntil > now) - (b[0].heldUntil > now)) || ((b[0].char === char) - (a[0].char === char)));
     const [s, idx] = cands[0];
-    s.ws = ws; s.name = uniqueName(room, cleanName(c.name), idx); s.token = c.token; s.ip = c.ip; s.heldUntil = 0; s.color = pickColor(room, idx, c.color); s.cos = ''; s.ready = false; s.lastMove = now; s.afkWarned = false;
+    s.ws = ws; s.name = uniqueName(room, cleanName(c.name), idx); s.token = c.token; s.ip = c.ip; s.heldUntil = 0; s.color = pickColor(room, idx, c.color); s.cos = ''; s.ready = false; s.lastMove = now; s.lastInputAt = now; s.afkWarned = false;
     c.room = room; c.slot = idx;
     return idx;
   }
@@ -397,7 +454,7 @@ export function createServer(opts = {}) {
     room.auto = true; room.keep = !!keep; room.ownerIp = c.ip;
     if (typeof ff === 'boolean') room.ff = ff;
     if (full) {
-      room.full = true; room.mode = int(full.mode, 0, 4); room.chapter = int(full.chapter, 0, 64);
+      room.full = true; room.mode = int(full.mode, 0, 5); room.chapter = int(full.chapter, 0, 64);
       room.hostedSize = int(full.size, HOSTED_MIN, MAX_SLOTS, HOSTED_SIZE); // 2 a 8 joueurs (places vides dormantes)
       room.startWave = int(full.wave, 0, 64, 0); room.startHp = int(full.hp, 0, 100, 0); // solo transforme : on reprend a la vague et aux PV de l'hote
     }
@@ -417,8 +474,13 @@ export function createServer(opts = {}) {
     if (m.name) c.name = cleanName(m.name);
     if (Number.isInteger(m.color)) c.color = m.color;
     const now = Date.now();
+    for (const r of rooms.values()) {
+      if (!r.started || !r.auto) continue;
+      const back = reclaim(r, ws, c);
+      if (back >= 0) return finishJoin(r, ws, c, back);
+    }
     // La partie publique en cours la plus remplie qui a encore une place (a egalite : la plus ancienne).
-    const open = [...rooms.values()].filter((r) => r.auto && r.public && r.started && humans(r).length > 0 && humans(r).length < r.options.size && (!r.full || c.v >= 3) && !banned.get(r.code)?.has(c.ip))
+    const open = [...rooms.values()].filter((r) => r.auto && r.public && r.started && humans(r).length > 0 && humans(r).length < r.options.size && (!r.full || c.v >= 3) && !isBanned(r.code, c))
       .sort((a, b) => humans(b).length - humans(a).length)[0];
     if (open) {
       const idx = takeAi(open, ws, c, char, now);
@@ -476,6 +538,7 @@ export function createServer(opts = {}) {
     ws.on('pong', () => { c.alive = true; });
     ws.on('message', (data) => {
       c.alive = true;
+      stats.msgsIn++; stats.bytesIn += data.length || 0;
       let m;
       try { m = JSON.parse(data.toString()); } catch { return; }
       if (!m || typeof m.t !== 'string') return;
@@ -486,16 +549,33 @@ export function createServer(opts = {}) {
       try { handle(ws, c, m); } catch (e) { send(ws, { t: 'error', msg: 'message invalide' }); }
     });
     ws.on('close', () => {
-      leaveRoom(c, ws, false); clients.delete(ws);
+      unwatch(c, ws); leaveRoom(c, ws, false); clients.delete(ws);
       const n = (ipCount.get(ip) || 1) - 1; if (n <= 0) ipCount.delete(ip); else ipCount.set(ip, n);
     });
     ws.on('error', () => {});
   });
 
+  // Spectateur sans place : recoit le meme flux que les joueurs (entrees, commandes) et rejoue le journal ; n'envoie rien dans la simulation.
+  function unwatch(c, ws) {
+    if (c.watch) c.watch.watchers.delete(ws);
+    c.watch = null;
+  }
+  function watchRoom(ws, c, code) {
+    const room = rooms.get(cleanCode(code));
+    if (!room || !room.started) return send(ws, { t: 'error', msg: 'Rien a regarder : la partie est introuvable ou pas commencee', code: 'gone' });
+    if (banned.get(room.code)?.has(c.ip)) return send(ws, { t: 'error', msg: 'Tu as ete expulse de ce salon' });
+    if (c.room) leaveRoom(c, ws, true);
+    unwatch(c, ws);
+    if (room.watchers.size >= MAX_WATCHERS) return send(ws, { t: 'error', msg: `Trop de spectateurs (${MAX_WATCHERS} max)`, code: 'full' });
+    room.watchers.add(ws); c.watch = room; c.lastEmote = 0;
+    send(ws, { ...lobbyView(room), you: -1, token: c.token, watch: true });
+    send(ws, { ...resyncPayload(room), you: -1, watch: true });
+    broadcast(room, { t: 'watchers', n: room.watchers.size }, ws);
+  }
   function joinRoom(ws, c, code, m = {}) {
     const room = rooms.get(cleanCode(code));
     if (!room) return send(ws, { t: 'error', msg: 'Salon introuvable : la partie est peut-etre terminee', code: 'gone' });
-    if (banned.get(room.code)?.has(c.ip)) return send(ws, { t: 'error', msg: 'Tu as ete expulse de ce salon' });
+    if (isBanned(room.code, c)) return send(ws, { t: 'error', msg: 'Tu as ete expulse de ce salon' });
     if (room.full && c.v < 3) return send(ws, { t: 'error', msg: 'Partie complete : mets le jeu a jour pour la rejoindre', fatal: true });
     if (c.room) leaveRoom(c, ws, true);
     if (Number.isInteger(m.color)) c.color = m.color;
@@ -514,9 +594,12 @@ export function createServer(opts = {}) {
     send(ws, { ...lobbyView(room), you: idx, token: c.token });
     if (room.started) {
       // Arrivee en cours de partie : rejeu du journal cote client, la place est reprise a une image future identique pour tous.
-      const from = highest(room) + rejoinMargin(room);
       const s = room.slots[idx];
-      s.mode = 'human'; s.lastMove = Date.now();
+      // CAUSE RACINE du gel a la reconnexion : si la place etait encore « humaine » (ancienne connexion fantome), ses entrees entre sa derniere image connue
+      // et `from` n'existent nulle part : tous les autres clients attendaient ces images a jamais. L'IA reprend donc d'abord la place (ctl ai:true a hi+1).
+      if (s.mode === 'human') dropToAi(room, idx);
+      const from = highest(room) + rejoinMargin(room);
+      s.mode = 'human'; s.lastMove = Date.now(); s.lastInputAt = Date.now(); s.stalled = false;
       // Place jamais jouee par un humain : sans cela ses premieres entrees (image >> 600) seraient refusees (f > hi + 600).
       if (s.hi < from - 1) s.hi = from - 1;
       send(ws, { ...resyncPayload(room), you: idx });
@@ -534,6 +617,14 @@ export function createServer(opts = {}) {
         if (m.token && /^[0-9a-f]{24}$/.test(m.token)) c.token = m.token;
         return send(ws, { t: 'welcome', v: PROTOCOL_VERSION, id: c.id, token: c.token });
       case 'join_any': return joinAny(ws, c, m);
+      case 'watch': return watchRoom(ws, c, m.code);
+      case 'unwatch': { const r = c.watch; unwatch(c, ws); if (r) broadcast(r, { t: 'watchers', n: r.watchers.size }); return send(ws, { t: 'left' }); }
+      case 'emote': { // reaction d'un spectateur sans place : relayee a tous, decorative, une par EMOTE_GAP_MS
+        const r = c.watch; const e = m.e | 0;
+        if (!r || e < 0 || e >= EMOTES || Date.now() - (c.lastEmote || 0) < EMOTE_GAP_MS) return;
+        c.lastEmote = Date.now();
+        return broadcast(r, { t: 'emote', who: 255, e });
+      }
       case 'host': return hostGame(ws, c, m);
       case 'list': return send(ws, { t: 'rooms', rooms: publicList() });
       // Dimension sociale (sans compte, sans salon) : classements, oubli, presence des amis. Voir scores.js.
@@ -575,8 +666,9 @@ export function createServer(opts = {}) {
         if (typeof m.token !== 'string' || !/^[0-9a-f]{24}$/.test(m.token)) return send(ws, { t: 'error', msg: 'Reprise impossible', detail: 'Jeton de reprise invalide.', rejoin: true, code: 'token' });
         const idx = room.slots.findIndex((s) => s.token && s.token === m.token);
         if (idx < 0) return send(ws, { t: 'error', msg: 'Reprise impossible', detail: 'Ta place a ete reprise par un autre joueur.', rejoin: true, code: 'taken' });
-        if (banned.get(room.code)?.has(c.ip)) return send(ws, { t: 'error', msg: 'Reprise impossible', detail: 'Tu as ete expulse de ce salon.', rejoin: true, code: 'banned' });
+        if (isBanned(room.code, { ip: c.ip, token: m.token })) return send(ws, { t: 'error', msg: 'Reprise impossible', detail: 'Tu as ete expulse de ce salon.', rejoin: true, code: 'banned' });
         const s = room.slots[idx];
+        if (room.started && room.config && idx < room.config.size) { c.token = m.token; if (reclaim(room, ws, c) === idx) return finishJoin(room, ws, c, idx); }
         // Ce client occupait deja un autre salon : il le quitte (sinon sa place y reste « occupee » par une connexion fantome).
         if (c.room && c.room !== room) leaveRoom(c, ws, true);
         // Ancienne connexion encore ouverte (coupure que le serveur n'a pas encore vue, frequent sur telephone) : on la remplace.
@@ -590,7 +682,9 @@ export function createServer(opts = {}) {
         return finishJoin(room, ws, c, idx);
       }
       case 'leave': leaveRoom(c, ws, true); return send(ws, { t: 'left' });
-      case 'ping': return send(ws, { t: 'pong', n: typeof m.n === 'number' ? m.n : undefined });
+      case 'ping': // le client joint son dernier aller-retour mesure : le relais en tire le plus lent de la salle (delai d'entree de tous)
+        if (Number.isFinite(m.rtt)) c.rtt = Math.max(0, Math.min(5000, Math.round(m.rtt)));
+        return send(ws, { t: 'pong', n: typeof m.n === 'number' ? m.n : undefined });
       default: break;
     }
     const room = c.room;
@@ -635,7 +729,7 @@ export function createServer(opts = {}) {
         const others = humans(room).length - 1; // electeurs possibles (la cible exclue)
         if (who.size >= Math.max(2, Math.ceil(others / 2)) || (others === 1 && who.size >= 1 && room.public)) {
           if (!banned.has(room.code)) banned.set(room.code, new Set());
-          if (banned.get(room.code).size < MAX_BANNED) banned.get(room.code).add(t.ip);
+          if (banned.get(room.code).size < MAX_BANNED) banned.get(room.code).add(banKey(room, t));
           const kws = t.ws; const kc = clients.get(kws);
           send(kws, { t: 'kicked', reason: 'reports' });
           byTarget.delete(key);
@@ -648,7 +742,7 @@ export function createServer(opts = {}) {
         const k = room.slots[m.slot | 0];
         if (!k || !k.ws || k === s) return;
         if (!banned.has(room.code)) banned.set(room.code, new Set());
-        if (banned.get(room.code).size < MAX_BANNED) banned.get(room.code).add(k.ip);
+        if (banned.get(room.code).size < MAX_BANNED) banned.get(room.code).add(banKey(room, k));
         const kws = k.ws; const kc = clients.get(kws);
         send(kws, { t: 'kicked' });
         if (kc) leaveRoom(kc, kws, true);
@@ -659,6 +753,7 @@ export function createServer(opts = {}) {
         if (s.mode !== 'human') return;
         // Avance du journal limitee dans le temps (~240 images/s, salve 1500) : un client ne gonfle pas `hi` (et le journal RLE de reprise) a volonte.
         const nowI = Date.now();
+        s.lastInputAt = nowI;
         s.budget = Math.min(1500, (s.budget ?? 1500) + (nowI - (s.budgetAt ?? nowI)) * 0.24); s.budgetAt = nowI;
         m.bits.forEach((b, k) => {
           const f = m.f0 + k; b = b | 0;
@@ -693,10 +788,33 @@ export function createServer(opts = {}) {
         for (const k of room.hashes.keys()) if (k < f - 600) room.hashes.delete(k);
         return;
       }
+      case 'idle': { // page masquee / application changee (telephone) : l'IA tient la place tout de suite, visible pour tous, personne n'attend
+        if (!room.started || s.mode !== 'human' || s.ws !== ws) return;
+        s.stalled = true;
+        dropToAi(room, c.slot, true);
+        send(ws, { t: 'stalled' });
+        if (room.auto) broadcast(room, { t: 'presence', ev: 'stall', name: s.name, slot: c.slot }, ws);
+        return;
+      }
+      case 'need_resync': { // un client qui s'est vu bascule en IA apres avoir deja simule ces images demande l'etat complet (resynchronisation ciblee)
+        if (!room.started) return;
+        const nowR = Date.now();
+        if (nowR - s.lastResync < RESYNC_GAP_MS) return;
+        s.lastResync = nowR;
+        send(ws, { t: 'desync', f: 0 });
+        send(ws, { ...resyncPayload(room), you: c.slot, forced: true });
+        return;
+      }
       case 'resume': { // un joueur remplace par l'IA (AFK) reprend la main
         if (!room.started || s.mode !== 'ai' || s.ws !== ws) return;
-        s.mode = 'human'; s.lastMove = Date.now(); s.lastBits = 0;
-        return control(room, c.slot, highest(room) + rejoinMargin(room), { ai: false, name: s.name });
+        s.mode = 'human'; s.lastMove = Date.now(); s.lastBits = 0; s.lastInputAt = Date.now(); s.stalled = false;
+        if (room.auto) broadcast(room, { t: 'presence', ev: 'back', name: s.name, slot: c.slot }, ws);
+        // Seul (ou avec des places IA) le client a continue de simuler pendant l'absence : la reprise doit tomber APRES son image courante,
+        // sinon il attendait une entree d'une image deja passee (gel « En attente des autres joueurs » en jouant seul).
+        const tickC = Number.isInteger(m.tick) && m.tick >= 0 && m.tick < 2000000 ? m.tick : 0;
+        const fromR = Math.max(highest(room), tickC) + rejoinMargin(room);
+        if (s.hi < fromR - 1) s.hi = fromR - 1;
+        return control(room, c.slot, fromR, { ai: false, name: s.name });
       }
       case 'cos': { // accessoires cosmetiques : texte court a alphabet restreint, relaye tel quel (purement visuel)
         const code = typeof m.c === 'string' ? m.c : '';
@@ -714,22 +832,25 @@ export function createServer(opts = {}) {
         const lo = cleanLoadout(m.data);
         const now = Date.now();
         if (!lo || now - s.lastLoadout < 1000 || s.loadouts >= MAX_LOADOUTS) return;
-        s.lastLoadout = now; s.loadout = lo; s.loadouts++;
+        s.lastLoadout = now; s.loadout = lo; s.loadouts++; s.lastMove = now;
         return control(room, c.slot, highest(room) + rejoinMargin(room), { kind: 'loadout', data: lo });
       }
       case 'cmd': { // vote de recompense, chapitre suivant, fin de dialogue : sequence comme une entree
         if (!room.full || !room.started || s.mode !== 'human') return;
-        if (!['reward_pick', 'chapter_next', 'skip_dialog', 'arena'].includes(m.cmd) || s.cmds >= MAX_CMDS) return;
+        if (!['reward_pick', 'chapter_next', 'skip_dialog', 'arena', 'group', 'tourn'].includes(m.cmd) || s.cmds >= MAX_CMDS) return;
         const arg = int(m.arg, 0, 200);
-        s.cmds++;
+        s.cmds++; s.lastMove = Date.now(); // lire un dialogue / voter n'est pas etre AFK
         return control(room, c.slot, highest(room) + CMD_MARGIN, { kind: 'cmd', cmd: m.cmd, arg });
       }
       case 'chat': {
-        const text = cleanText(m.text, 120);
+        // Moderation de base : liens masques, lettres repetees ramenees, meme message repete refuse.
+        const text = cleanText(m.text, 120).replace(/[a-z][a-z0-9+.-]*:\/\/\S*|www\.\S+|\S+@\S+\.\S+/gi, '***').replace(/(.)\1{5,}/gu, '$1$1$1');
         const nowC = Date.now();
         if (!text) return;
+        if (text === s.lastChatText && nowC - s.lastChat < 10000) return send(ws, { t: 'error', msg: 'Doucement, un message a la fois', code: 'chat_rate' });
+        s.lastChatText = text;
         if (nowC - s.lastChat < CHAT_GAP_MS) return send(ws, { t: 'error', msg: 'Doucement, un message a la fois', code: 'chat_rate' });
-        s.lastChat = nowC;
+        s.lastChat = nowC; if (s.mode === 'human') s.lastMove = nowC; // il ecrit : il est la
         broadcast(room, { t: 'chat', slot: c.slot, name: s.name, text });
         return;
       }
@@ -747,6 +868,7 @@ export function createServer(opts = {}) {
           if (!room.restartTimer) { room.restartTimer = setTimeout(() => restartRun(room), restartMs); room.restartTimer.unref?.(); }
           return;
         }
+        if (c.slot !== hostSlot(room)) return; // salon d'attente : tous les clients envoient `end` a la meme image, seul celui de l'hote compte (un invite ne peut pas couper la partie des autres)
         room.started = false; room.config = null; room.ctl = [];
         room.slots.forEach((x) => { x.ready = false; x.hi = -1; x.journal = []; if (x.ws) x.mode = 'human'; else { x.mode = 'free'; x.name = ''; x.token = null; } });
         return broadcast(room, lobbyView(room));
@@ -755,13 +877,37 @@ export function createServer(opts = {}) {
   }
 
   // AFK et menage.
+  let lastTick = Date.now();
   const timer = setInterval(() => {
     const now = Date.now();
+    stats.lagMax = Math.max(stats.lagMax * 0.9, now - lastTick - 1000); lastTick = now; // retard de la boucle d'evenements (CPU sature)
     for (const room of [...rooms.values()]) {
       if (room.started) {
+        // Aller-retour le plus lent de la salle, rediffuse a tous (message additif `net`, ignore par les anciens clients) : chacun regle son delai d'entree dessus.
+        const worst = Math.max(0, ...humans(room).map(([x]) => (clients.get(x.ws)?.rtt) || 0));
+        if (worst > 0 && (Math.abs(worst - (room.netSent ?? -999)) > 15 || now - (room.netAt || 0) > 4000)) { room.netSent = worst; room.netAt = now; broadcast(room, { t: 'net', worst }); }
+        // Gel : tous attendent le meme joueur (son avance d'entrees est la plus basse et ne bouge plus). Un hic court ne declenche rien.
+        const hum = [];
+        for (let i = 0; i < room.config.size; i++) { const s = room.slots[i]; if (s.ws && s.mode === 'human' && s.hi >= 0) hum.push(i); }
+        if (hum.length >= 2) {
+          const his = hum.map((i) => room.slots[i].hi); const minHi = Math.min(...his); const maxHi = Math.max(...his);
+          const key = hum.join(',');
+          if (minHi !== room.stallMin || key !== room.stallKey) { room.stallMin = minHi; room.stallKey = key; room.stallAt = now; }
+          else if (now - room.stallAt > stallMs && maxHi - minHi >= 2) {
+            for (const i of hum) {
+              const s = room.slots[i];
+              if (s.hi !== minHi) continue;
+              stats.stallDrops++;
+              console.log(`gel : ${room.code} place ${i} silencieuse depuis ${Math.round((now - room.stallAt) / 1000)} s (image ${minHi}, les autres jusqu'a ${maxHi}) -> IA`);
+              dropToAi(room, i); send(s.ws, { t: 'afk', why: 'slow' });
+              if (room.auto) broadcast(room, { t: 'presence', ev: 'afk', name: s.name, slot: i }, s.ws);
+            }
+            room.stallAt = now;
+          }
+        } else room.stallAt = now;
         for (let i = 0; i < room.config.size; i++) {
           const s = room.slots[i];
-          if (s.ws && s.mode === 'human' && now - s.lastMove > afkMs) { dropToAi(room, i); send(s.ws, { t: 'afk' }); if (room.auto) broadcast(room, { t: 'presence', ev: 'afk', name: s.name, slot: i }, s.ws); s.afkWarned = false; }
+          if (s.ws && s.mode === 'human' && now - s.lastMove > afkMs) { dropToAi(room, i, true); send(s.ws, { t: 'afk' }); if (room.auto) broadcast(room, { t: 'presence', ev: 'afk', name: s.name, slot: i }, s.ws); s.afkWarned = false; }
           else if (s.ws && s.mode === 'human' && !s.afkWarned && now - s.lastMove > afkMs * 0.7) { s.afkWarned = true; send(s.ws, { t: 'afk_warn', in: Math.max(1, Math.round((afkMs - (now - s.lastMove)) / 1000)) }); }
           else if (s.afkWarned && now - s.lastMove < afkMs * 0.5) s.afkWarned = false;
         }
@@ -781,6 +927,29 @@ export function createServer(opts = {}) {
   timer.unref?.();
   // Battement de coeur : une connexion silencieuse (telephone sorti du reseau) est coupee, sa place passe a l'IA/dormante
   // et peut etre reprise ensuite. Les clients navigateur repondent aux pings WebSocket automatiquement.
+  // Personne ne doit bloquer personne : si un joueur connecte n'envoie plus rien alors que d'autres l'attendent, une IA prend sa place
+  // (ctl ai:true a hi+1 chez tous). Il reprend la main d'un geste (`resume`) ou en se reconnectant.
+  const idleStallMs = opts.idleStallMs ?? (opts.stallMs !== undefined ? opts.stallMs : 900);
+  const stallTimer = setInterval(() => {
+    const now = Date.now();
+    for (const room of rooms.values()) {
+      if (!room.started || !room.config) continue;
+      // Invariant : une place « humaine » sans connexion n'existe pas (les autres l'attendraient a jamais) -> IA tout de suite.
+      for (let i = 0; i < room.config.size; i++) if (room.slots[i].mode === 'human' && !room.slots[i].ws) dropToAi(room, i);
+      const hs = room.slots.map((x, i) => [x, i]).filter(([x, i]) => i < room.config.size && x.ws && x.mode === 'human');
+      if (hs.length < 2) continue;
+      const lo = hs.reduce((a, b) => (b[0].hi < a[0].hi ? b : a));
+      const ahead = hs.some(([x]) => x !== lo[0] && x.hi > lo[0].hi + 2);
+      if (ahead && now - (lo[0].lastInputAt || 0) > idleStallMs) {
+        lo[0].stalled = true;
+        dropToAi(room, lo[1], true);
+        send(lo[0].ws, { t: 'stalled' });
+        send(lo[0].ws, { t: 'afk', why: 'slow' }); // anciens clients et test net_quality : meme avis que le gel du relais
+        if (room.auto) broadcast(room, { t: 'presence', ev: 'stall', name: lo[0].name, slot: lo[1] }, lo[0].ws);
+      }
+    }
+  }, 150);
+  stallTimer.unref?.();
   const beat = setInterval(() => {
     for (const [ws, c] of clients) {
       if (!c.alive) { try { ws.terminate(); } catch { /* deja fermee */ } continue; }
@@ -793,7 +962,7 @@ export function createServer(opts = {}) {
   }, opts.beatMs ?? 20000);
   beat.unref?.();
 
-  return { server, wss, rooms, scores, pushCircles: push.circles, close: () => new Promise((r) => { clearInterval(timer); clearInterval(beat); scores.flush(); for (const w of wss.clients) w.terminate(); wss.close(() => server.close(() => r())); }) };
+  return { server, wss, rooms, scores, pushCircles: push.circles, close: () => new Promise((r) => { clearInterval(timer); clearInterval(beat); clearInterval(stallTimer); scores.flush(); verdicts.flush(); for (const w of wss.clients) w.terminate(); wss.close(() => server.close(() => r())); }) };
 }
 
 // Lancement direct.

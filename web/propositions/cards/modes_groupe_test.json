@@ -1,0 +1,20 @@
+[
+ {
+  "id": "horde_facile",
+  "titre": "Horde un peu plus facile ?",
+  "texte": "Les bots gagnent la horde 4 fois sur 18 : baisser les PV ennemis (0,7 -> 0,6) ?",
+  "page": "decisions.html"
+ },
+ {
+  "id": "colline_egalite",
+  "titre": "Colline : trop d'egalites",
+  "texte": "6 parties sur 18 finissent a egalite : ajouter une mort subite de 15 s ?",
+  "page": "decisions.html"
+ },
+ {
+  "id": "foot_egalite",
+  "titre": "Foot : egalites",
+  "texte": "4 parties sur 18 sans vainqueur : but en or en prolongation ?",
+  "page": "decisions.html"
+ }
+]

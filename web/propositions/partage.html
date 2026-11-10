@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Partage de moments - AI Fighter 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#221834;--paper:#fff3e0;--accent:#d8456b}
+*{box-sizing:border-box}
+body{margin:0;background:#15101f;color:var(--paper);font:600 15px/1.4 Nunito,system-ui,sans-serif;padding:14px 16px 90px}
+h1,h2,h3,.px{font-family:Silkscreen,monospace;font-weight:700;letter-spacing:.5px}
+h1{font-size:22px;margin:4px 0}.lead{max-width:780px;color:rgba(255,243,224,.8)}
+.top{position:sticky;top:0;z-index:5;background:#15101fee;padding:8px 0 8px 16px;margin:0 -16px 8px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.cnt{font:700 12px Silkscreen;color:var(--accent)}
+.gen{border:0;border-radius:99px;padding:10px 16px;font:800 14px Nunito;background:var(--accent);color:var(--paper);cursor:pointer;min-height:44px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}
+.card{background:rgba(255,243,224,.1);border-radius:16px;padding:10px;border:3px solid transparent}
+.card.ok{border-color:#59c36a}.card.ko{border-color:var(--accent)}
+.card img.g{width:100%;height:auto;border-radius:10px;display:block;background:#000;max-width:480px;margin:auto}
+.card h3{font-size:14px;margin:8px 0 2px}.card .n{color:var(--accent)}
+.card p{margin:0 0 6px;font-size:13px;color:rgba(255,243,224,.82)}
+.card .chg{font-size:12px;color:#ffd9a0}
+.row{display:flex;gap:8px}
+.row button{flex:1;border:0;border-radius:99px;padding:10px;min-height:44px;font:800 14px Nunito;cursor:pointer;background:var(--ink);color:var(--paper)}
+.row button.on.v{background:#59c36a;color:#12301a}.row button.on.x{background:var(--accent);color:var(--paper)}
+textarea{width:100%;margin-top:8px;border-radius:10px;border:0;padding:8px;font:600 13px Nunito;background:var(--paper);color:var(--ink);resize:vertical}
+#out{width:100%;min-height:140px;margin-top:12px}
+.note{font-size:13px;color:rgba(255,243,224,.65);max-width:780px}
+.priv{background:var(--paper);color:var(--ink);border-radius:14px;padding:10px 14px;max-width:780px;margin:12px 0}
+.priv b{color:var(--accent)}
+</style><script src="verdicts.js" data-keys="propos2_partage"></script>
+<style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style></head><body>
+<h1>Partage de moments</h1>
+<p class="lead">Un KO final, une super, un combo de 15+, un boss qui tombe, l'Ange : le jeu garde les derniers instants EN LOCAL et tu peux en faire un clip (web, mobile), une photo ou une carte de score. Rien n'est envoye a un serveur : le navigateur propose seulement Partager / Enregistrer.</p>
+<div class="priv"><b>Vie privee et acces.</b> Aucun envoi : pas de serveur, pas de compte. Les pseudos n'apparaissent jamais sur la carte tant que le bouton « Pseudos » n'est pas sur « oui » (defaut : non). Le filigrane « AI FIGHTER 2 » est discret et se coupe. L'option « moins d'effets » calme la camera (zoom et ralenti doux). Boutons de 44 px minimum, un appui sur l'écran annule un clip en cours.</div>
+<div class="top"><button class="gen" onclick="gen()">Generer mon texte</button><span class="cnt" id="cnt"></span></div>
+<textarea id="out" style="display:none" readonly></textarea>
+<section><div class="grid">
+<div class="card" data-k="partage_01" data-n="01" data-name="Camera auto"><img class="g" src="partage/cam_auto.webp" alt="Replay, camera auto" loading="lazy"><h3><span class="n">01</span> Camera auto</h3><p>Le replay existant : zoom sur chaque impact fort, ralenti court. Le moteur re-simule le clip, rien n'est filme.</p><div class="row"><button class="v" data-k="partage_01" data-v="1">Valider</button><button class="x" data-k="partage_01" data-v="-1">À refaire</button></div><textarea rows="2" data-k="partage_01" placeholder="Commentaire"></textarea></div>
+<div class="card" data-k="partage_02" data-n="02" data-name="Camera cine"><img class="g" src="partage/cam_cine.webp" alt="Replay, camera cine" loading="lazy"><h3><span class="n">02</span> Camera cine (nouveau)</h3><p>Zoom plus fort aux impacts, ralenti x0,2 sur les coups decisifs, et cadrage de groupe entre deux : la camera se recentre sur les combattants encore debout et recule s'ils s'ecartent.</p><div class="row"><button class="v" data-k="partage_02" data-v="1">Valider</button><button class="x" data-k="partage_02" data-v="-1">À refaire</button></div><textarea rows="2" data-k="partage_02" placeholder="Commentaire"></textarea></div>
+<div class="card" data-k="partage_03" data-n="03" data-name="Camera libre"><img class="g" src="partage/cam_libre.webp" alt="Replay, camera libre" loading="lazy"><h3><span class="n">03</span> Camera libre</h3><p>Glisser pour cadrer, molette ou pincement pour zoomer. Le bouton Camera fait Auto, Cine, Libre. Vitesses x0,1 a x2, filtres Chaud / Froid / Vignette / Cinema en mode photo.</p><div class="row"><button class="v" data-k="partage_03" data-v="1">Valider</button><button class="x" data-k="partage_03" data-v="-1">À refaire</button></div><textarea rows="2" data-k="partage_03" placeholder="Commentaire"></textarea></div>
+<div class="card" data-k="partage_04" data-n="04" data-name="Carte de score"><img class="g" src="partage/carte.png" alt="Carte de score produite par le jeu" loading="lazy"><h3><span class="n">04</span> Carte de score / trophee</h3><p>Image propre du moment + bandeau Encre / Papier / Accent : moment fort, héros, combo max, temps, étage. PNG, sans pseudo par defaut. Produite par le vrai moteur.</p><div class="row"><button class="v" data-k="partage_04" data-v="1">Valider</button><button class="x" data-k="partage_04" data-v="-1">À refaire</button></div><textarea rows="2" data-k="partage_04" placeholder="Commentaire (texte du bandeau, ordre, taille...)"></textarea></div>
+<div class="card" data-k="partage_05" data-n="05" data-name="Clip video web"><h3><span class="n">05</span> Clip video 3 / 5 / 8 s (web)</h3><p>Bouton « Clip » du replay (navigateur) : le jeu rejoue la fin du moment, interface masquee, pendant que le navigateur enregistre le canvas (MediaRecorder, MP4 sinon WebM). Un bandeau « Partager / Enregistrer » apparaît ensuite : navigator.share sur mobile (Fold 4, Brave), téléchargement sinon. Le jeu ne se fige jamais.</p><div class="row"><button class="v" data-k="partage_05" data-v="1">Valider</button><button class="x" data-k="partage_05" data-v="-1">À refaire</button></div><textarea rows="2" data-k="partage_05" placeholder="Commentaire (duree, filigrane...)"></textarea></div>
+<div class="card" data-k="partage_06" data-n="06" data-name="Replay en ligne local"><h3><span class="n">06</span> Replay en ligne, 100 % local</h3><p>En synchro en ligne chaque client a déjà toutes les entrees : le tampon est reconstruit localement (instantane + entrees, comme le solo), zero trafic en plus, état de la partie intact. Touche R ou le bandeau : la partie continue pendant ce temps, mes touches sont neutres. Test : le rejeu en ligne retrouve la même empreinte chez 2, 3 et 4 pairs. Nouveaux temps forts : boss vaincu, L'Ange tombe.</p><div class="row"><button class="v" data-k="partage_06" data-v="1">Valider</button><button class="x" data-k="partage_06" data-v="-1">À refaire</button></div><textarea rows="2" data-k="partage_06" placeholder="Commentaire"></textarea></div>
+</div></section>
+<p class="note">Sources : src/replay.rs, src/game_replay.rs, src/net.rs (tampon de session), src/share_card.rs, web/index.html (afh_clip_start / afh_clip_stop), tools/partage_gifs.py.</p>
+<script>
+var KEY='propos2_partage',S={};try{S=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function paint(){var ok=0,ko=0;document.querySelectorAll('.card').forEach(function(c){var k=c.dataset.k,s=S[k]||{};c.classList.toggle('ok',s.v===1);c.classList.toggle('ko',s.v===-1);
+c.querySelector('.v').classList.toggle('on',s.v===1);c.querySelector('.x').classList.toggle('on',s.v===-1);c.querySelector('textarea').value=s.t||'';if(s.v===1)ok++;if(s.v===-1)ko++});
+document.getElementById('cnt').textContent=ok+' validees / '+ko+' a refaire / '+(document.querySelectorAll('.card').length-ok-ko)+' sans avis'}
+document.addEventListener('click',function(e){var b=e.target.closest('button[data-v]');if(!b)return;var k=b.dataset.k;S[k]=S[k]||{};var v=+b.dataset.v;S[k].v=S[k].v===v?0:v;save();paint()});
+document.addEventListener('input',function(e){if(e.target.tagName!=='TEXTAREA'||!e.target.dataset.k)return;var k=e.target.dataset.k;S[k]=S[k]||{};S[k].t=e.target.value;save()});
+function gen(){var o={ok:[],ko:[],n:[]};document.querySelectorAll('.card').forEach(function(c){var k=c.dataset.k,s=S[k]||{};var lab=c.dataset.n+' '+c.dataset.name;
+if(s.v===1)o.ok.push(lab+(s.t?' ('+s.t+')':''));else if(s.v===-1)o.ko.push(lab+(s.t?' : '+s.t:''));else if(s.t)o.n.push(lab+' : '+s.t)});
+var L=['== Partage de moments ==','VALIDEES : '+(o.ok.join(' ; ')||'aucune'),'A REFAIRE : '+(o.ko.join(' ; ')||'aucune')];if(o.n.length)L.push('REMARQUES : '+o.n.join(' ; '));
+var t=L.join('\n');var x=document.getElementById('out');x.value=t;x.style.display='block';x.select();try{navigator.clipboard.writeText(t)}catch(e){}}
+paint();
+</script></body></html>

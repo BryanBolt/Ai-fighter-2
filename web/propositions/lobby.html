@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Lobby et invitation - AI Fighter 2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
@@ -11,17 +11,17 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.45 Nunito,system-ui,sans-serif;padding:16px}
 h1{font:700 22px Silkscreen,monospace;margin:0 0 4px}
-h1::after{content:"";display:block;width:56px;height:6px;border-radius:3px;background:var(--acc);margin-top:8px}
+h1::after{content:"";display:block;width:56px;height:6px;border-radius:4px;background:var(--acc);margin-top:8px}
 h2{font:700 16px Silkscreen,monospace;margin:4px 0}
 p{margin:6px 0}
 .lead{max-width:760px}
 .g{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:18px;margin-top:18px}
 .c{background:#fff;border-radius:26px;padding:14px;box-shadow:6px 6px 0 var(--acc);position:relative}
-.c.ok{outline:4px solid #2e9b5b}.c.no{outline:4px solid var(--acc)}
+.c.ok{outline:4px solid #2f8f5b}.c.no{outline:4px solid var(--acc)}
 .c img{width:100%;border-radius:16px;background:var(--paper);display:block}
 .row{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
 button{font:700 15px Nunito,sans-serif;padding:11px 16px;min-height:44px;border-radius:24px;border:0;background:#eadfcf;color:var(--ink);cursor:pointer}
-button.v{background:#2e9b5b;color:#fff}button.x{background:var(--accbtn);color:#fff}
+button.v{background:#2f8f5b;color:#fff}button.x{background:var(--accbtn);color:#fff}
 button:focus-visible,textarea:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 textarea{width:100%;border-radius:14px;border:2px solid #eadfcf;padding:8px;font:inherit;margin-top:8px;background:#fffaf2;color:var(--ink)}
 .gen{margin-top:22px;background:var(--accbtn);color:#fff;font-size:17px}
@@ -29,11 +29,21 @@ textarea{width:100%;border-radius:14px;border:2px solid #eadfcf;padding:8px;font
 .note{background:#fff;border-radius:18px;padding:10px 14px;margin-top:14px;max-width:760px;border-left:8px solid var(--acc)}
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 </style>
+<style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js"></script>
 </head>
 <body>
 <h1>Lobby et invitation</h1>
-<p class="lead">Captures du vrai moteur (ecrans en charte Encre / Papier / Accent). Pour chaque ecran : Valider ou A refaire, une remarque si tu veux, puis « Generer mon texte » et colle-le dans le chat.</p>
-<div class="note"><b>Ce qui change :</b> un seul ecran pour choisir <b>PRIVEE</b> (lien, QR, code) ou <b>PUBLIQUE</b> (des joueurs te rejoignent tout seuls, jusqu'a 8, l'IA complete) ; bouton <b>Inviter</b> avec feuille de partage native ; <b>Reprendre ma partie</b> en 1 tap (le lien ne change plus, salon garde 30 min) ; salon d'attente qui explique tout ; premiere connexion avec pseudo drole, heros et couleur (8 couleurs + 8 formes, sans rouge).</div>
+<p class="lead">Captures du vrai moteur (écrans en charte Encre / Papier / Accent). Pour chaque écran : Valider ou À refaire, une remarque si tu veux, puis « Generer mon texte » et colle-le dans le chat.</p>
+<div class="note"><b>Ce qui change :</b> un seul écran pour choisir <b>PRIVEE</b> (lien, QR, code) ou <b>PUBLIQUE</b> (des joueurs te rejoignent tout seuls, jusqu'a 8, l'IA complete) ; bouton <b>Inviter</b> avec feuille de partage native ; <b>Reprendre ma partie</b> en 1 tap (le lien ne change plus, salon garde 30 min) ; salon d'attente qui explique tout ; première connexion avec pseudo drole, héros et couleur (8 couleurs + 8 formes, sans rouge).</div>
 <div class="g" id="g"></div>
 <button class="gen" onclick="out()">Generer mon texte</button>
 <div id="o" aria-live="polite"></div>

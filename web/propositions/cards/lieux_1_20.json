@@ -1,0 +1,14 @@
+[
+ {
+  "id": "lieux-1",
+  "titre": "Auditer l'écran brut hors lieux",
+  "texte": "Une trentaine de fichiers UI utilisent encore la largeur de fenêtre réelle ; on les audite par capture ?",
+  "page": "decisions.html"
+ },
+ {
+  "id": "lieux-2",
+  "titre": "Captures golden des 20 lieux",
+  "texte": "Lancer la planche golden des lieux pour valider parallaxe et lisibilité après ce correctif ?",
+  "page": "decisions.html"
+ }
+]

@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bot de QA : résultats</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b;--ok:#2f8f5b;--mid:#c98a1c}
+body{margin:0;background:var(--papier);color:var(--encre);font:16px/1.45 Nunito,system-ui,sans-serif;padding:16px}
+h1,h2,h3{font-family:Silkscreen,monospace;letter-spacing:.02em;margin:0 0 6px}
+h1{font-size:22px}h2{font-size:16px;color:var(--accent)}
+.lead{max-width:820px}
+.k{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.k div{background:#fff;border:2px solid var(--encre);border-radius:10px;padding:6px 10px;font-size:13px}
+.k b{font-family:Silkscreen,monospace;font-size:15px;display:block}
+details{background:#fff;border:2px solid var(--encre);border-radius:12px;margin:10px 0;max-width:980px}
+summary{cursor:pointer;padding:10px 12px;font:700 13px Silkscreen,monospace;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+summary .n{margin-left:auto;font:700 12px Nunito,sans-serif}
+.tag{display:inline-block;font:700 11px Silkscreen,monospace;border:2px solid var(--encre);border-radius:6px;padding:1px 6px}
+.vert{background:#dff3e8}.orange{background:#fff0c9}.rouge{background:#f9d4dc}
+.c{border-top:2px dashed var(--encre);padding:8px 12px}
+.c.bad{outline:3px solid var(--accent);outline-offset:-3px}
+.c .t{display:flex;gap:8px;flex-wrap:wrap;align-items:baseline;font-size:14px}
+.c .m{font-size:12px;opacity:.75}
+.iss{font-size:13px;margin:4px 0 0 0}
+code{background:#f3e6cf;padding:0 4px;border-radius:4px;font-size:12px;word-break:break-all}
+button{font:inherit;font-weight:700;padding:7px 11px;border-radius:8px;border:2px solid var(--encre);margin:6px 4px 0 0;background:var(--papier);color:var(--encre);cursor:pointer}
+button.on.v{background:var(--ok);color:#fff}button.on.x{background:var(--accent);color:#fff}
+textarea{width:100%;box-sizing:border-box;border:2px solid var(--encre);border-radius:6px;padding:6px;margin-top:6px;font:inherit;background:var(--papier);min-height:36px}
+#o{white-space:pre-wrap;background:var(--encre);color:var(--papier);padding:12px;border-radius:10px;margin-top:14px;max-width:980px}
+.gen{background:var(--accent);color:#fff;font-family:Silkscreen,monospace;margin-top:14px}
+@media(max-width:560px){summary .n{margin-left:0}}
+button{min-height:44px}</style><script src="verdicts.js"></script>
+<style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style></head><body>
+<h1>Bot de QA : le jeu joue tout seul</h1>
+<p class="lead">Un bot sans fenêtre parcourt tous les modes et tous les lieux : victoire forcee (héros IA invincible), défaite forcee (héros immobile), fuzz a 8 places (appuis aleatoires, chaînes de coups, joueurs AFK, coupures réseau), runs de roguelite complets (solo, pactes, ascension, coop 1 a 8), run du jour, arene, labo, arbre des menus. A chaque image : pas de NaN, pas de combat fige, aucun joueur coince, tout ennemi atteignable, étage terminable, mêmes empreintes sur deux executions, budget de temps et de mémoire. Pour chaque ligne : Valider ou À refaire (+ remarque), puis « Generer mon texte » et colle-le dans le chat. Journal : <code>tools/audit_bot_log.md</code> ; donnees brutes : <code>tools/audit_bot_raw.md</code> ; relance : <code>tools/check_all.sh quick</code> ou <code>deep</code>.</p>
+<div class="k" id="k"></div>
+<div id="g"></div>
+<button class="gen" onclick="out()">Generer mon texte</button><div id="o"></div>
+<script src="bot_qa_data.js"></script>
+<script>
+var D=window.BOT_QA||{mode:"aucune donnee",games:0,frames:0,secs:0,rows:[]};
+var st={};
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function K(b,t){return '<div><b>'+b+'</b>'+t+'</div>'}
+var bad=D.rows.reduce(function(a,r){return a+r.i.filter(function(x){return !x.known}).length},0);
+var known=D.rows.reduce(function(a,r){return a+r.i.filter(function(x){return x.known}).length},0);
+document.getElementById('k').innerHTML=K(D.mode,'mode')+K(D.games,'parties / scenarios')+K((D.frames/216000).toFixed(1)+' h','de jeu simule')+K(Math.round(D.secs)+' s','de calcul')+K(bad,'anomalies inconnues')+K(known,'anomalies connues (documentees)');
+var groups={};D.rows.forEach(function(r,i){r.id=i;(groups[r.s]=groups[r.s]||[]).push(r)});
+var h='';
+Object.keys(groups).forEach(function(s){
+  var rs=groups[s],n=rs.reduce(function(a,r){return a+r.n},0),f=rs.reduce(function(a,r){return a+r.f},0);
+  var nb=rs.reduce(function(a,r){return a+r.i.filter(function(x){return !x.known}).length},0),nk=rs.reduce(function(a,r){return a+r.i.filter(function(x){return x.known}).length},0);
+  var cls=nb?'rouge':nk?'orange':'vert';
+  h+='<details'+(nb?' open':'')+'><summary><span class="tag '+cls+'">'+(nb?nb+' a traiter':nk?nk+' connue(s)':'vert')+'</span>'+esc(s)+'<span class="n">'+rs.length+' lieux, '+n+' parties, '+(f/216000).toFixed(2)+' h simulees</span></summary>';
+  rs.forEach(function(r){
+    var b=r.i.some(function(x){return !x.known});
+    h+='<div class="c'+(b?' bad':'')+'"><div class="t"><b>'+esc(r.p)+'</b><span class="m">'+r.n+' parties - '+r.w+' victoires - '+r.l+' defaites - '+r.ms+' ms/image</span></div>';
+    r.i.forEach(function(x){h+='<div class="iss"><span class="tag '+(x.known?'orange':'rouge')+'">'+(x.known?'connu':'nouveau')+'</span> <b>'+esc(x.k)+'</b> x'+x.n+' - '+esc(x.d)+'<br><code>'+esc(x.r)+'</code></div>'});
+    h+='<button class="v" data-k="'+r.id+'" data-v="1">Valider</button><button class="x" data-k="'+r.id+'" data-v="-1">A refaire</button><textarea id="t_'+r.id+'" placeholder="Remarque (facultatif)"></textarea></div>';
+  });
+  h+='</details>';
+});
+document.getElementById('g').innerHTML=h||'<p>Aucune donnee : lance <code>tools/check_all.sh quick</code> pour produire <code>bot_qa_data.js</code>.</p>';
+document.addEventListener('click',function(e){var b=e.target.closest('button[data-k]');if(!b)return;var k=b.dataset.k,v=+b.dataset.v;st[k]=st[k]===v?0:v;
+  var p=b.parentNode;p.querySelectorAll('button[data-k]').forEach(function(x){x.classList.toggle('on',st[k]===+x.dataset.v)})});
+function out(){var L=D.rows.map(function(r){var v=st[r.id],t=(document.getElementById('t_'+r.id)||{value:''}).value.trim();return (v>0?'VALIDE':v<0?'A REFAIRE':'NON VU')+' : '+r.s+' / '+r.p+(t?' - '+t:'')});
+  document.getElementById('o').textContent=L.join('\n')}
+</script></body></html>

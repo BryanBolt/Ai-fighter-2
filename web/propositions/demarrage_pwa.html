@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Démarrage PWA</title>
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b;--ok:#2f8f5b}
+body{margin:0;background:var(--papier);color:var(--encre);font:16px/1.45 system-ui,sans-serif;padding:16px;max-width:820px}
+h1{font-size:22px}.c{background:#fff;border:2px solid var(--encre);border-radius:12px;padding:10px 12px;margin:10px 0}
+.c.g{outline:4px solid var(--ok)}.c.r{outline:4px solid var(--accent)}
+button{font:inherit;font-weight:700;min-height:44px;padding:8px 12px;border-radius:8px;border:2px solid var(--encre);background:var(--papier);color:var(--encre);margin-right:6px}
+textarea{width:100%;box-sizing:border-box;border:2px solid var(--encre);border-radius:6px;padding:6px;margin-top:6px;font:inherit}
+#o{white-space:pre-wrap;background:var(--encre);color:var(--papier);padding:12px;border-radius:10px;margin-top:14px}
+</style><script src="verdicts.js"></script>
+<style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style></head><body>
+<h1>Démarrage et PWA : 3 correctifs</h1>
+<p>Corriges dans <code>web/sw.js</code> et <code>web/index.html</code>, rien deploye. Non teste sur vrai téléphone (le navigateur integre bloque les service workers).</p>
+<div id="g"></div><button style="background:var(--accent);color:#fff" onclick="out()">Generer mon texte</button><div id="o"></div>
+<script>
+var D=[["A","Serveur Render endormi (503)","Avant : barre figee sans message. Maintenant : 'Le serveur se reveille... (essai n)' puis, apres ~1 min, message + bouton Recharger. Le SW sert la copie en cache plutot qu'une erreur 5xx."],
+["B","1re visite 2x plus legere","Le wasm de 12 Mo n'est plus telecharge deux fois (page + pre-cache). Copie hors-ligne faite 3 s apres le chargement, sans retelecharger."],
+["C","Cache v4","Nettoie l'ancien cache v3 ; le nouveau wasm arrive deja sans manip (reseau d'abord + no-cache)."]];
+var st={},g=document.getElementById('g');
+D.forEach(function(d){var c=document.createElement('div');c.className='c';c.id='c_'+d[0];
+c.innerHTML='<b>'+d[0]+' - '+d[1]+'</b><p>'+d[2]+'</p><button data-i="'+d[0]+'" data-v="Valider">Valider</button><button data-i="'+d[0]+'" data-v="A refaire">A refaire</button><textarea id="t_'+d[0]+'" rows="1" placeholder="Commentaire"></textarea>';g.appendChild(c);});
+g.addEventListener('click',function(e){var b=e.target;if(!b.dataset||!b.dataset.v)return;st[b.dataset.i]=b.dataset.v;document.getElementById('c_'+b.dataset.i).className='c '+(b.dataset.v==='Valider'?'g':'r');});
+function out(){document.getElementById('o').textContent='Demarrage PWA :\n'+D.map(function(d){var t=document.getElementById('t_'+d[0]).value.trim();return (st[d[0]]||'NON VU').toUpperCase()+' : '+d[0]+' '+d[1]+(t?' - '+t:'');}).join('\n');}
+</script></body></html>

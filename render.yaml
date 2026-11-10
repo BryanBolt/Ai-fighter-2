@@ -14,6 +14,9 @@ services:
         value: "1"
       # Notifications push (invitation d'un ami) : a renseigner dans le tableau de bord Render (sync: false = valeur jamais dans le depot).
       # Voir tools/README_PERF.md (generation des cles). Sans ces 3 valeurs, le push reste simplement desactive.
+      # Verdicts des pages de propositions : voir tools/README_VERDICTS.md. Sans VERDICT_KEY, la synchro est simplement desactivee.
+      - key: VERDICT_KEY
+        sync: false
       - key: VAPID_PUBLIC
         sync: false
       - key: VAPID_PRIVATE

@@ -1,11 +1,21 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Coups de pied de Kaze - moteur du jeu</title>
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Coups de pied de Kaze - moteur du jeu</title>
 <style>body{margin:0;font:16px system-ui,sans-serif;background:#1c1d2e;color:#eee;padding:12px}h1{font-size:20px}
 .g{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}.c{background:#2a2c44;border-radius:10px;padding:10px}.c.ok{outline:3px solid #4cd07d}.c.no{outline:3px solid #e0507a}
 img{width:100%;border-radius:8px;background:#000}h2{font-size:16px;margin:6px 0 2px}.n{color:#f5c542;font-weight:700}p{margin:4px 0;font-size:14px;opacity:.9}
-button{font:inherit;padding:9px 12px;border-radius:8px;border:0;margin:4px 4px 0 0;color:#fff;background:#555}button.v{background:#2e9b5b}button.x{background:#c03a62}
-textarea{width:100%;box-sizing:border-box;border-radius:6px;border:0;padding:6px;margin-top:6px;background:#15162a;color:#eee}#o{white-space:pre-wrap;background:#111;padding:10px;border-radius:8px;margin-top:12px}</style></head><body>
+button{font:inherit;padding:9px 12px;border-radius:8px;border:0;margin:4px 4px 0 0;color:#fff;background:#555}button.v{background:#2f8f5b}button.x{background:#c03a62}
+textarea{width:100%;box-sizing:border-box;border-radius:6px;border:0;padding:6px;margin-top:6px;background:#15162a;color:#eee}#o{white-space:pre-wrap;background:#111;padding:10px;border-radius:8px;margin-top:12px}button,input[type=button],select{min-height:44px}</style><style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js"></script>
+</head><body>
 <h1>Coups de pied de Kaze dans le VRAI moteur</h1>
-<p>Captures du jeu lui-meme (effets epures). Pour chaque coup : Valider ou A refaire (+ remarque), puis genere le texte et colle-le dans le chat.</p>
+<p>Captures du jeu lui-même (effets epures). Pour chaque coup : Valider ou À refaire (+ remarque), puis genere le texte et colle-le dans le chat.</p>
 <div class="g" id="g"></div><button onclick="out()" style="background:#e0507a;font-weight:700;margin-top:12px">Generer mon texte</button><div id="o"></div>
 <script>var C=[{"key": "mv_round", "name": "Coup circulaire", "n": "coup 2", "d": "Pied fouette en arc (Kaze, moteur du jeu).", "img": "mv_round.webp"}, {"key": "mv_side", "name": "Pied brise-garde", "n": "coup 3", "d": "Pied de cote qui ouvre la garde.", "img": "mv_side.webp"}, {"key": "mv_vault", "name": "Pied volant", "n": "coup 4", "d": "Pied lance en saut.", "img": "mv_vault.webp"}, {"key": "mv_sweep", "name": "Balayage", "n": "coup 6", "d": "Balayage bas.", "img": "mv_sweep.webp"}, {"key": "mv_axe", "name": "Coup de hache", "n": "coup 12", "d": "Jambe levee qui s'abat.", "img": "mv_axe.webp"}, {"key": "mv_knee", "name": "Genou volant", "n": "coup 11", "d": "Genou en saut.", "img": "mv_knee.webp"}, {"key": "mv_air", "name": "Pied aerien", "n": "coup 10", "d": "Pied en l'air.", "img": "mv_air.webp"}, {"key": "cb1", "name": "Combo Fouet en trois", "n": "combo", "d": "3 pieds, expulsion finale", "img": "apres_1.webp"}, {"key": "cb2", "name": "Combo Rafale du flamingo", "n": "combo", "d": "5 pieds sans pause", "img": "apres_2.webp"}, {"key": "cb3", "name": "Combo Jab, genou, talons", "n": "combo", "d": "jab puis 3 coups", "img": "apres_3.webp"}, {"key": "cb4", "name": "Combo Lanceur du dragon", "n": "combo", "d": "pieds puis lanceur", "img": "apres_4.webp"}],st={};
 var g=document.getElementById('g');

@@ -1,0 +1,11 @@
+<style>button{min-height:44px}</style>
+<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lisibilite</title>
+<body style="font-family:sans-serif;max-width:640px;margin:16px auto;padding:0 16px">
+<h2>Lisibilite en melee</h2>
+<p><b>Corrige :</b> a 8 joueurs, soi-même se reconnait (grosse flèche + anneau pointille exterieur), les autres sont numerotes J2 a J8.</p>
+<p><b>Déjà present :</b> anneaux d'équipe, zones d'attaque rouges hachurees, projectiles ennemis cernes de rouge, objets avec nom, plafonds d'effets.</p>
+<p><b>Reste :</b> objets autour des autres joueurs, marqueur des projectiles allies, plafond d'anneaux de projectiles. Non verifie en capture.</p>
+<button onclick="r('Valide')">Valider</button> <button onclick="r('A refaire')">À refaire</button><br><br>
+<textarea id=c rows=3 style="width:100%" placeholder="Commentaire"></textarea><pre id=o></pre>
+<script src="verdicts.js"></script>
+<script>function r(v){document.getElementById('o').textContent=v+' : '+document.getElementById('c').value}</script></body>

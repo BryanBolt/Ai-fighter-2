@@ -1,0 +1,72 @@
+[
+ {
+  "id": "demarrage_pwa",
+  "titre": "Démarrage PWA (serveur endormi, cache)",
+  "texte": "3 correctifs : reessai propre si Render repond 503, 1re visite 2x plus légère, cache v4. À valider.",
+  "page": "demarrage_pwa.html",
+  "groupe": "Passage des agents (intégration)"
+ },
+ {
+  "id": "jouissance",
+  "titre": "Jouissance : coups finaux, combo, victoire",
+  "texte": "Audit du plaisir de jeu : compteur de combo qui claque, mots de palier ; propositions à valider.",
+  "page": "jouissance.html",
+  "groupe": "Passage des agents (intégration)"
+ },
+ {
+  "id": "sons2",
+  "titre": "Sons cohérents : familles, bruit de la rue, coups",
+  "texte": "Poing, arme, feu, glace, eau, poison, gestes : écoute chaque famille, avant / après du ronflement de la rue.",
+  "page": "sons2.html",
+  "groupe": "Passage des agents (intégration)"
+ },
+ {
+  "id": "statuts",
+  "titre": "Test des statuts : choc entretenu corrige",
+  "texte": "Joueur-testeur : verrou par electrisation trouve et supprime.",
+  "page": "statuts.html",
+  "groupe": "Passage des agents (intégration)"
+ },
+ {
+  "id": "coherence_ux",
+  "titre": "Cohérence textes et UX",
+  "texte": "10 arbitrages de vocabulaire et de navigation.",
+  "page": "coherence_ux.html",
+  "groupe": "Passage des agents (intégration)"
+ },
+ {
+  "id": "coherence_visuel",
+  "titre": "Cohérence visuelle : 6 arbitrages",
+  "texte": "Fonds des menus, bleu nuit des maquettes, gris, ombres, écran titre, restes de noir pur. Corrections sûres déjà faites.",
+  "page": "coherence_visuel.html",
+  "groupe": "Passage des agents (intégration)"
+ },
+ {
+  "id": "armes_objets",
+  "titre": "Armes et objets",
+  "texte": "Lancer rate sans explosion, tactile coop, plafond au sol.",
+  "page": "armes_objets.html",
+  "groupe": "Passage des agents (intégration)"
+ },
+ {
+  "id": "navigation_menus",
+  "titre": "Navigation des menus (joueur-testeur)",
+  "texte": "Clavier, manette, souris, tactile : rappels de touches corriges par famille de manette, 10 constats.",
+  "page": "navigation_menus.html",
+  "groupe": "Passage des agents (intégration)"
+ },
+ {
+  "id": "playtest_online",
+  "titre": "Playtest en ligne (bots)",
+  "texte": "3 defauts corriges (expulsion, AFK, fin de partie), 5 propositions.",
+  "page": "playtest_online.html",
+  "groupe": "Passage des agents (intégration)"
+ },
+ {
+  "id": "sauvegarde",
+  "titre": "Sauvegarde : test par fuzz",
+  "texte": "1000 profils abimes testes, 3 defauts corriges (deux onglets, stockage plein, pièces), 4 points à décider.",
+  "page": "sauvegarde.html",
+  "groupe": "Passage des agents (intégration)"
+ }
+]

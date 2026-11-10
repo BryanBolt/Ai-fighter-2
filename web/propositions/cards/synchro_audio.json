@@ -1,0 +1,20 @@
+[
+ {
+  "id": "sa1",
+  "titre": "Sons hors ecran",
+  "texte": "Attenuer ou couper les impacts dont la source est hors de la camera (en ligne a 8 joueurs) ?",
+  "page": "decisions.html"
+ },
+ {
+  "id": "sa2",
+  "titre": "Predecoder la musique suivante",
+  "texte": "Decoder en avance la piste de niveau pendant le titre (+~60 Mo memoire telephone) pour zero attente ?",
+  "page": "decisions.html"
+ },
+ {
+  "id": "sa3",
+  "titre": "Mesure de latence telephone",
+  "texte": "Valider sur un vrai iPhone/Android que le premier son suit le premier toucher (non mesurable ici).",
+  "page": "decisions.html"
+ }
+]

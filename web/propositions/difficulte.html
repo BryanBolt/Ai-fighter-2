@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Difficulte adaptative et assistances</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -22,26 +22,36 @@ td,th{border:2px solid var(--encre);padding:6px 8px;text-align:left;background:#
 .bar{display:flex;align-items:center;gap:8px;margin:4px 0;max-width:780px;font-size:13px}
 .bar b{width:150px;flex:none}.bar i{display:block;height:16px;border-radius:4px;background:var(--encre)}.bar i.a{background:var(--accent)}
 .bar span{white-space:nowrap}
-</style></head><body>
+button,input[type=button],select{min-height:44px}</style><style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js"></script>
+</head><body>
 <h1>Difficulte adaptative et assistances</h1>
 <p class="lead">Objectif : un jeu captivant pour tous les niveaux sans frustration (jouable par tout le monde, TDAH-friendly, aucun tutoriel bloquant). Tout est dans <b>Options &gt; Accessibilite</b> (lignes Niveau, Adaptation, Aide parade, Mode passe, Danger renforce, P1 a P5). Code : <code>src/difficulte.rs</code> ; mesures completes : <code>tools/difficulte_metrics.md</code> ; tests : <code>src/difficulte_tests.rs</code>.</p>
 
 <h3>1. Quatre niveaux nommes (effets mesures)</h3>
 <table>
-<tr><th>Niveau</th><th>Degats ennemis</th><th>PV ennemis</th><th>Attaquants a la fois</th><th>Reflexe de garde</th><th>Patience avant d'attaquer</th></tr>
+<tr><th>Niveau</th><th>Dégâts ennemis</th><th>PV ennemis</th><th>Attaquants a la fois</th><th>Reflexe de garde</th><th>Patience avant d'attaquer</th></tr>
 <tr><td>Detente</td><td>x0,7</td><td>x0,85</td><td>1</td><td>+2 images</td><td>5 s</td></tr>
 <tr><td>Normal</td><td>x1,0</td><td>x1,0</td><td>2</td><td>0</td><td>3,5 s</td></tr>
-<tr><td>Defi</td><td>x1,3</td><td>x1,15</td><td>3</td><td>-1</td><td>2,5 s</td></tr>
+<tr><td>Défi</td><td>x1,3</td><td>x1,15</td><td>3</td><td>-1</td><td>2,5 s</td></tr>
 <tr><td>Brutal</td><td>x1,6</td><td>x1,3</td><td>3 (plafond)</td><td>-2</td><td>1,8 s</td></tr>
 </table>
-<p class="why">Mesure (Kaze, 4 lieux, spam leger, PV effectifs x3 : modele de joueur moyen) : PV restants en fin de combat 92 % en Detente, 78 % en Normal, 24 % en Defi, 25 % en Brutal. Le plafond de 3 attaquants a la fois est respecte a tous les niveaux (maximum mesure : 2 attaquants en melee).</p>
+<p class="why">Mesure (Kaze, 4 lieux, spam léger, PV effectifs x3 : modèle de joueur moyen) : PV restants en fin de combat 92 % en Detente, 78 % en Normal, 24 % en Défi, 25 % en Brutal. Le plafond de 3 attaquants a la fois est respecte a tous les niveaux (maximum mesure : 2 attaquants en melee).</p>
 <div class="bar"><b>Detente</b><i style="width:276px"></i><span>92 % de PV restants</span></div>
 <div class="bar"><b>Normal</b><i style="width:234px"></i><span>78 %</span></div>
-<div class="bar"><b>Defi</b><i class="a" style="width:72px"></i><span>24 %</span></div>
+<div class="bar"><b>Défi</b><i class="a" style="width:72px"></i><span>24 %</span></div>
 <div class="bar"><b>Brutal</b><i class="a" style="width:75px"></i><span>25 %</span></div>
 
 <h3>2. Difficulte dynamique, discrete et optionnelle</h3>
-<p class="lead">Un cran de -3 a +3, jamais affiche comme une punition. <b>Trois echecs</b> : un cran plus doux (degats -8 %, coups annonces 3 images plus longtemps, 10 % de soins en plus ; a -2 un attaquant de moins). <b>Trois victoires nettes</b> (plus de 60 % de PV) : un cran de plus (+8 % de degats, 8 % d'elites a PV x1,5 par cran). Deux victoires suffisent pour remonter quand on etait aide. Plancher : -25 % de degats, jamais plus de 12 images de telegraphe en plus. Coop 1 a 8 : l'adaptation est celle de l'EQUIPE, calculee depuis l'etat du monde et des PV moyens (identique chez tous, test de determinisme 1 a 8 joueurs). Desactivable (ligne Adaptation).</p>
+<p class="lead">Un cran de -3 a +3, jamais affiche comme une punition. <b>Trois échecs</b> : un cran plus doux (dégâts -8 %, coups annonces 3 images plus longtemps, 10 % de soins en plus ; a -2 un attaquant de moins). <b>Trois victoires nettes</b> (plus de 60 % de PV) : un cran de plus (+8 % de dégâts, 8 % d'élites a PV x1,5 par cran). Deux victoires suffisent pour remonter quand on etait aide. Plancher : -25 % de dégâts, jamais plus de 12 images de telegraphe en plus. Coop 1 a 8 : l'adaptation est celle de l'ÉQUIPE, calculee depuis l'état du monde et des PV moyens (identique chez tous, test de determinisme 1 a 8 joueurs). Desactivable (ligne Adaptation).</p>
 <table>
 <tr><th>Cran</th><th>Victoires</th><th>Touches subies</th><th>PV restants</th></tr>
 <tr><td>-3</td><td>3/4</td><td>213</td><td>64 %</td></tr>
@@ -55,15 +65,15 @@ td,th{border:2px solid var(--encre);padding:6px 8px;text-align:left;background:#
 <p class="why">Lecture : l'aide fait passer le joueur moyen de 2 a 3 victoires sur 4 ; la domination durcit nettement (PV restants de 78 % a 36-51 %). Petit echantillon (4 lieux) : tendance, pas une courbe lisse.</p>
 
 <h3>3. Assistances</h3>
-<ul class="lead"><li><b>Aide parade / esquive</b> par palier : fenetre de parade 8, 10, 12 puis 14 images ; esquive parfaite jusqu'a 9 images plus tot (test : une garde levee depuis 9 images pare au palier 1, 13 images au palier 3).</li>
-<li><b>Mode passe</b> : degats subis x0,6 et telegraphes +6 images, sans l'annoncer ; pas d'ecran de defaite : le combat repart de la vague en cours, avec un peu plus d'aide a chaque echec. Mesure (niveau Defi, joueur modeste) : 64 % de PV restants contre 25 %.</li>
-<li><b>Danger renforce</b> : radar des coups ennemis (indicateur avant le depart du coup).</li>
-<li><b>Auto-face</b> et aide de saisie existent deja dans la meme page.</li></ul>
+<ul class="lead"><li><b>Aide parade / esquive</b> par palier : fenêtre de parade 8, 10, 12 puis 14 images ; esquive parfaite jusqu'a 9 images plus tot (test : une garde levee depuis 9 images pare au palier 1, 13 images au palier 3).</li>
+<li><b>Mode passe</b> : dégâts subis x0,6 et telegraphes +6 images, sans l'annoncer ; pas d'écran de défaite : le combat repart de la vague en cours, avec un peu plus d'aide a chaque échec. Mesure (niveau Défi, joueur modeste) : 64 % de PV restants contre 25 %.</li>
+<li><b>Danger renforce</b> : radar des coups ennemis (indicateur avant le départ du coup).</li>
+<li><b>Auto-face</b> et aide de saisie existent déjà dans la même page.</li></ul>
 
 <h3>4. Rythme de combat</h3>
-<p class="lead">Silence maximal mesure entre deux echanges : 5,6 s sur les quatre niveaux ; au-dela de 8 s, la meute devient impatiente et passe a l'offensive. Plafond de 3 attaquants a la fois (jetons, jamais 4).</p>
+<p class="lead">Silence maximal mesure entre deux échanges : 5,6 s sur les quatre niveaux ; au-dela de 8 s, la meute devient impatiente et passe a l'offensive. Plafond de 3 attaquants a la fois (jetons, jamais 4).</p>
 
-<h3>5. Cartes a valider</h3>
+<h3>5. Cartes à valider</h3>
 <div class="g" id="g"></div>
 <button class="gen" onclick="out()">Generer mon texte</button><div id="o"></div>
 <script>

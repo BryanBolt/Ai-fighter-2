@@ -1,0 +1,65 @@
+[
+ {
+  "id": "niveaux_vague2",
+  "titre": "23 nouveaux lieux",
+  "texte": "Paradis, enfers, Paris, Shibuya, etc.",
+  "page": "niveaux_vague2.html",
+  "groupe": "NOUVEAU : NIVEAUX, MENUS, SYSTÈME"
+ },
+ {
+  "id": "niveaux_vague3",
+  "titre": "8 lieux de plus + signatures de boss",
+  "texte": "Rio, Sydney, Agra, fête foraine, serre, surf, ferme, macaques.",
+  "page": "niveaux_vague3.html",
+  "groupe": "NOUVEAU : NIVEAUX, MENUS, SYSTÈME"
+ },
+ {
+  "id": "menus_hierarchie",
+  "titre": "Nouvelle hierarchie des menus",
+  "texte": "Titre court, 3 niveaux maxi.",
+  "page": "menus_hierarchie.html",
+  "groupe": "NOUVEAU : NIVEAUX, MENUS, SYSTÈME"
+ },
+ {
+  "id": "accessibilite",
+  "titre": "Accessibilite",
+  "texte": "Daltonisme, une main, effets, taille du texte.",
+  "page": "accessibilite.html",
+  "groupe": "NOUVEAU : NIVEAUX, MENUS, SYSTÈME"
+ },
+ {
+  "id": "manettes",
+  "titre": "Manettes",
+  "texte": "Glyphes par famille, tables de repli.",
+  "page": "manettes.html",
+  "groupe": "NOUVEAU : NIVEAUX, MENUS, SYSTÈME"
+ },
+ {
+  "id": "textes",
+  "titre": "Accents, glossaire, i18n",
+  "texte": "Avant / après.",
+  "page": "textes.html",
+  "groupe": "NOUVEAU : NIVEAUX, MENUS, SYSTÈME"
+ },
+ {
+  "id": "perf",
+  "titre": "Performance, poids, PWA",
+  "texte": "Tableaux avant / après.",
+  "page": "perf.html",
+  "groupe": "NOUVEAU : NIVEAUX, MENUS, SYSTÈME"
+ },
+ {
+  "id": "qa_visuel",
+  "titre": "QA visuel",
+  "texte": "Defauts trouves et corriges.",
+  "page": "qa_visuel.html",
+  "groupe": "NOUVEAU : NIVEAUX, MENUS, SYSTÈME"
+ },
+ {
+  "id": "online_qa",
+  "titre": "QA en ligne",
+  "texte": "Durcissement multijoueur.",
+  "page": "online_qa.html",
+  "groupe": "NOUVEAU : NIVEAUX, MENUS, SYSTÈME"
+ }
+]

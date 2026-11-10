@@ -311,7 +311,7 @@
         var rs = new ReadableStream({
           pull: function (c) {
             return rd.read().then(function (x) {
-              if (x.done) { p[k] = [1, 1]; if (k === "w") { try { localStorage.setItem(KEY, String(got)); } catch (e) {} } paint(); c.close(); return; }
+              if (x.done) { p[k] = [1, 1]; if (k === "w") { try { localStorage.setItem(KEY, String(got)); } catch (e) {} setTimeout(function () { try { W.afhWarm && W.afhWarm(); } catch (e) {} }, 3000); } paint(); c.close(); return; }
               got += x.value.length;
               if (total && got > total) total = 0; // reponse compressee : la taille annoncee ne vaut plus
               p[k] = [got, total]; paint(); c.enqueue(x.value);
@@ -323,6 +323,125 @@
       } catch (e) { return r; }
     });
   };
+})();
+</script>
+<style>
+  #afh-fatal { position: fixed; inset: 0; z-index: 20; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: var(--paper); color: var(--ink); font: 600 16px/1.4 ui-monospace, Menlo, Consolas, monospace; text-align: center; padding: 16px; -webkit-user-select: text; user-select: text; touch-action: auto; }
+  #afh-fatal h1 { margin: 0; font-size: 24px; color: var(--seal); letter-spacing: .06em; }
+  #afh-fatal pre { max-width: min(92vw, 720px); max-height: 30vh; overflow: auto; margin: 0; padding: 10px 12px; background: #fff; border: 1px solid var(--ink); border-radius: 6px; font: 12px/1.4 ui-monospace, Menlo, Consolas, monospace; text-align: left; white-space: pre-wrap; word-break: break-word; }
+  #afh-fatal small { font-weight: 400; opacity: .75; max-width: 90vw; }
+  #afh-fatal button { font: 600 15px ui-monospace, Menlo, Consolas, monospace; padding: 10px 18px; margin: 0 4px; border: 2px solid var(--ink); background: var(--paper); color: var(--ink); border-radius: 8px; }
+  #afh-fatal button.main { background: var(--seal); color: #fff; border-color: var(--seal); }
+</style>
+<script>
+// Rapports d'erreurs anonymes : fil d'Ariane (50 derniers evenements), erreurs JS, ressources manquantes, WebGL/audio/wasm,
+// panic Rust (afh_report). Envoi : POST /report (sendBeacon). Aucune donnee personnelle : un identifiant de session aleatoire.
+(function () {
+  var KEY = "afh_reports", on = true, crumbs = [], ctx = {}, sent = {}, nSent = 0, shown = false, lastRep = null, ready = false;
+  var sid = ""; try { sid = Array.prototype.map.call(crypto.getRandomValues(new Uint8Array(6)), function (b) { return ("0" + b.toString(16)).slice(-2); }).join(""); } catch (e) { sid = Math.random().toString(16).slice(2, 14); }
+  try { if (localStorage.getItem(KEY) === "0") on = false; } catch (e) {}
+  var url = "/report";
+  try {
+    if (location.protocol.indexOf("http") !== 0) url = "";
+    else if (/github\.io$/.test(location.hostname)) url = "https://ai-fighter-2-3zjq.onrender.com/report";
+    if (window.AFH_REPORT_URL) url = window.AFH_REPORT_URL;
+  } catch (e) {}
+  function crumb(k, m) {
+    crumbs.push({ t: Date.now(), k: String(k).slice(0, 16), m: String(m).slice(0, 160) });
+    if (crumbs.length > 50) crumbs.shift();
+    if (k === "start") ctx.build = String(m).slice(0, 48);
+  }
+  function gpu() {
+    try {
+      var c = document.createElement("canvas"), g = c.getContext("webgl") || c.getContext("experimental-webgl");
+      if (!g) return "aucun WebGL";
+      var x = g.getExtension("WEBGL_debug_renderer_info");
+      return x ? g.getParameter(x.UNMASKED_RENDERER_WEBGL) : g.getParameter(g.RENDERER);
+    } catch (e) { return "?"; }
+  }
+  var gpuName = null;
+  function env() {
+    if (gpuName === null) gpuName = gpu();
+    var e = { ua: navigator.userAgent, gpu: gpuName, screen: screen.width + "x" + screen.height, win: innerWidth + "x" + innerHeight, dpr: devicePixelRatio, touch: navigator.maxTouchPoints || 0, lang: navigator.language, page: location.pathname };
+    try { e.orient = (screen.orientation && screen.orientation.type) || (innerWidth < innerHeight ? "portrait" : "paysage"); } catch (x) {}
+    try { if (navigator.deviceMemory) e.mem = navigator.deviceMemory; } catch (x) {}
+    try { if (navigator.connection) e.net = navigator.connection.effectiveType; } catch (x) {}
+    return e;
+  }
+  function fp(kind, msg, loc) {
+    var t = kind + "\0" + String(msg).replace(/[0-9]/g, "").trim() + "\0" + loc, h = 0x811c9dc5;
+    for (var i = 0; i < t.length; i++) { h ^= t.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
+    return ("00000000" + h.toString(16)).slice(-8) + ("00000000" + (h ^ 0x5bd1e995 >>> 0).toString(16)).slice(-8);
+  }
+  function build(kind, msg, loc) {
+    var b = ctx.build || "", m = /\+p(\d+)/.exec(b);
+    return { kind: kind, msg: String(msg).slice(0, 600), loc: String(loc || "").slice(0, 200), fp: fp(kind, msg, loc || ""), build: b || "web", proto: m ? +m[1] : null, platform: "web", sid: sid, ping: ctx.ping ? +ctx.ping : null, ctx: ctx, env: env(), crumbs: crumbs.slice(-50) };
+  }
+  function post(rep) {
+    if (!url) return;
+    var body = JSON.stringify(rep);
+    try { if (navigator.sendBeacon && navigator.sendBeacon(url, new Blob([body], { type: "text/plain" }))) return; } catch (e) {}
+    try { fetch(url, { method: "POST", headers: { "content-type": "application/json" }, body: body, keepalive: true }).catch(function () {}); } catch (e) {}
+  }
+  // Dedoublonnage par empreinte (une fois par session) et limite de 8 rapports par session. `force` : bouton « Envoyer le rapport ».
+  function submit(kind, msg, loc, force) {
+    var rep = build(kind, msg, loc);
+    lastRep = rep;
+    if (!force) { if (!on || sent[rep.fp] || nSent >= 8) return false; }
+    if (!sent[rep.fp]) { sent[rep.fp] = 1; nSent++; }
+    post(rep);
+    return true;
+  }
+  function fatal(msg, loc, autoSent) {
+    if (shown) return; shown = true;
+    var d = document.createElement("div"); d.id = "afh-fatal";
+    var h = document.createElement("h1"); h.innerHTML = "Le jeu s&rsquo;est arr&ecirc;t&eacute;";
+    var pre = document.createElement("pre"); pre.textContent = msg + (loc ? "\n" + loc : "");
+    var st = document.createElement("small");
+    st.textContent = autoSent ? "Un rapport technique anonyme a \u00e9t\u00e9 envoy\u00e9 automatiquement." : (on ? "Rapport d\u00e9j\u00e0 connu ou limite atteinte." : "Envoi automatique d\u00e9sactiv\u00e9 (Options > Rapports d'erreurs anonymes).");
+    var b1 = document.createElement("button"); b1.className = "main"; b1.textContent = "Envoyer le rapport";
+    b1.onclick = function () { if (lastRep) { post(lastRep); } b1.disabled = true; st.textContent = "Merci, rapport anonyme envoy\u00e9 (erreur, \u00e9cran, version, sans pseudo ni adresse)."; };
+    var b2 = document.createElement("button"); b2.textContent = "Recharger"; b2.onclick = function () { location.reload(); };
+    var row = document.createElement("div"); row.appendChild(b1); row.appendChild(b2);
+    d.appendChild(h); d.appendChild(pre); d.appendChild(st); d.appendChild(row);
+    document.body.appendChild(d);
+    var l = document.getElementById("loading"); if (l) l.hidden = true;
+  }
+  var FATAL = /unreachable|RuntimeError|memory access out of bounds|WebAssembly|wasm/i;
+  window.addEventListener("error", function (e) {
+    var t = e.target;
+    if (t && t !== window && (t.src || t.href)) { crumb("asset", "echec " + (t.src || t.href)); submit("asset", "ressource introuvable : " + (t.src || t.href), "", false); return; }
+    var msg = e.message || (e.error && e.error.message) || "erreur JS", loc = (e.filename || "").split("/").pop() + ":" + (e.lineno || 0) + ":" + (e.colno || 0);
+    crumb("js", msg);
+    var wasm = FATAL.test(msg + " " + ((e.error && e.error.name) || ""));
+    var ok = submit(wasm ? "wasm" : "js", msg, loc, false);
+    // L'ecran d'erreur fatale est celui de G.fatal (plus haut) : ici on ne fait que rapporter.
+  }, true);
+  window.addEventListener("unhandledrejection", function (e) {
+    var r = e.reason, msg = (r && (r.message || r.toString())) || "promesse rejetee";
+    crumb("js", "rejet : " + msg);
+    submit("js", "promesse rejetee : " + msg, (r && r.stack ? String(r.stack).split("\n")[1] || "" : "").trim().slice(0, 120), false);
+  });
+  // Messages de la console du navigateur : echecs wasm / WebGL / audio rapportes par miniquad.
+  var ce = console.error;
+  console.error = function () {
+    try {
+      var m = Array.prototype.join.call(arguments, " ").slice(0, 300);
+      var kind = /webgl|gl context|shader/i.test(m) ? "webgl" : /audiocontext|audio/i.test(m) ? "audio" : /wasm|webassembly/i.test(m) ? "wasm" : "";
+      if (kind) { crumb(kind, m); submit(kind, m, "", false); }
+    } catch (e) {}
+    return ce.apply(console, arguments);
+  };
+  window.AFH_REPORT = {
+    crumb: crumb, submit: submit, fatal: fatal, on: function () { return on; },
+    ctx: function (k, v) { ctx[String(k).slice(0, 32)] = String(v).slice(0, 120); },
+    config: function (v) { on = !!v; try { localStorage.setItem(KEY, on ? "1" : "0"); } catch (e) {} },
+    ready: function () { ready = true; },
+  };
+  if (!gpu() || gpu() === "aucun WebGL") { crumb("webgl", "pas de contexte WebGL"); submit("webgl", "WebGL indisponible : pas de contexte", "", false); }
+  // Rien ne demarre apres 25 s : bug au lancement (wasm bloque, fichier manquant, memoire).
+  setTimeout(function () { if (!ready) { crumb("wasm", "pas de demarrage apres 25 s"); submit("wasm", "le jeu ne demarre pas apres 25 s", "", false); } }, 25000);
+  crumb("page", "chargement " + location.pathname);
 })();
 </script>
 <script src="mq_js_bundle.js"></script>
@@ -378,6 +497,8 @@ miniquad_add_plugin({
       return m;
     }
     musGet("final_escalation_title"); // l'ecran titre en a besoin tout de suite : telechargement en parallele du wasm
+    // Prechauffe : les deux musiques de niveau se telechargent pendant le titre (le changement d'ecran ne attend plus le reseau).
+    setTimeout(function () { musGet("level_1"); musGet("level_2"); }, 4000);
     importObject.env.afh_music_size = function (id, p, l) {
       var name = new TextDecoder().decode(new Uint8Array(wasm_memory.buffer, p, l)), m = musGet(name);
       return m.st === 2 ? m.buf.length : (m.st === 3 ? -1 : 0);
@@ -391,7 +512,7 @@ miniquad_add_plugin({
     importObject.env.afh_vibrate =function (ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} };
     // Motif de vibration (haptique par niveau) : vibre / pause alternes en ms, zeros de fin ignores.
     importObject.env.afh_vibrate_pat = function (a, b, c, d, e) { try { var p = [a, b, c, d, e]; while (p.length && p[p.length - 1] === 0) p.pop(); if (navigator.vibrate && p.length) navigator.vibrate(p); } catch (x) {} };
-    importObject.env.afh_ready = function () { var l = document.getElementById("loading"); if (!l) return; l.style.transition = "opacity .25s"; l.style.opacity = "0"; l.style.pointerEvents = "none"; setTimeout(function () { l.hidden = true; }, 300); };
+    importObject.env.afh_ready = function () { var l = document.getElementById("loading"); if (!l) return; l.style.transition = "opacity .25s"; l.style.opacity = "0"; l.style.pointerEvents = "none"; setTimeout(function () { l.hidden = true; }, 300); AFH_REPORT.ready(); AFH_REPORT.crumb("page", "jeu pret"); };
     // Zones sures (encoche, barre de gestes) : lues via une sonde CSS env(safe-area-inset-*), en centiemes de point.
     var probe = document.createElement("div");
     probe.style.cssText = "position:fixed;left:0;top:0;width:0;height:0;visibility:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)";
@@ -461,11 +582,11 @@ miniquad_add_plugin({
       try {
         var me = new WebSocket(UTF8ToString(p, l));
         ws = me;
-        me.onopen = function () { if (ws === me) wsState = 1; };
-        me.onclose = function () { if (ws === me) wsState = 2; };
-        me.onerror = function () { if (ws === me) wsState = 2; };
+        me.onopen = function () { if (ws === me) wsState = 1; AFH_REPORT.crumb("ws", "ouvert"); };
+        me.onclose = function (ev) { if (ws === me) wsState = 2; AFH_REPORT.crumb("ws", "ferme code " + (ev && ev.code) + (ev && ev.wasClean ? "" : " (non propre)")); };
+        me.onerror = function () { if (ws === me) wsState = 2; AFH_REPORT.crumb("ws", "erreur reseau"); };
         me.onmessage = function (e) { if (ws === me && typeof e.data === "string" && wsq.length < 2000) wsq.push(e.data); };
-      } catch (e) { wsState = 2; }
+      } catch (e) { wsState = 2; AFH_REPORT.crumb("ws", "WebSocket impossible : " + e); }
     };
     importObject.env.afh_ws_send = function (p, l) { try { if (ws && ws.readyState === 1) ws.send(UTF8ToString(p, l)); } catch (e) {} };
     importObject.env.afh_ws_state = function () { return wsState; };
@@ -483,7 +604,7 @@ miniquad_add_plugin({
       var s = "";
       try {
         if (kind === 0 && location.protocol.indexOf("http") === 0) s = (location.protocol === "https:" ? "wss://" : "ws://") + location.host + "/";
-        if (kind === 1) s = new URLSearchParams(location.search).get("salon") || "";
+        if (kind === 1) { var q = new URLSearchParams(location.search); s = q.get("salon") || (q.get("watch") ? "~" + q.get("watch") : ""); } // ?watch=CODE : mode spectateur (le jeu reconnait le prefixe ~)
         if (kind === 3 && new URLSearchParams(location.search).get("labo")) s = "1";
         if (kind === 4) s = window.afhNfcCode || "";
         if (kind === 5) s = (new URLSearchParams(location.search).get("defi") || "").slice(0, 40); // defi entre amis : ?defi=CODE.GRAINE
@@ -559,6 +680,55 @@ miniquad_add_plugin({
         setTimeout(function () { URL.revokeObjectURL(a.href); document.body.removeChild(a); }, 2000);
       } catch (e) {}
     };
+    // Clip video du dernier moment fort : MediaRecorder sur le canvas (rien n'est envoye a un serveur). Le jeu continue sans
+    // attendre ; la page propose ensuite Partager / Enregistrer par un geste de l'utilisateur (navigator.share l'exige).
+    var clipRec = null, clipChunks = [], clipMime = "";
+    importObject.env.afh_clip_start = function (fps) {
+      try {
+        var cv = document.getElementById("glcanvas");
+        if (!cv || !cv.captureStream || typeof MediaRecorder === "undefined") return 0;
+        var mt = "";
+        ["video/mp4;codecs=avc1", "video/webm;codecs=vp9", "video/webm;codecs=vp8", "video/webm"].some(function (t) {
+          try { if (MediaRecorder.isTypeSupported(t)) { mt = t; return true; } } catch (e) {}
+          return false;
+        });
+        clipChunks = []; clipMime = mt;
+        clipRec = new MediaRecorder(cv.captureStream(fps), mt ? { mimeType: mt, videoBitsPerSecond: 2500000 } : {});
+        clipRec.ondataavailable = function (e) { if (e.data && e.data.size) clipChunks.push(e.data); };
+        clipRec.start(400);
+        return 1;
+      } catch (e) { clipRec = null; return 0; }
+    };
+    importObject.env.afh_clip_stop = function (np, nl, keep) {
+      try {
+        var name = UTF8ToString(np, nl), r = clipRec; clipRec = null;
+        if (!r) return;
+        r.onstop = function () {
+          if (!keep || !clipChunks.length) return;
+          var type = (clipMime || "video/webm").split(";")[0];
+          var file = new File(clipChunks, name + (type === "video/mp4" ? ".mp4" : ".webm"), { type: type });
+          var url = URL.createObjectURL(file);
+          var box = document.createElement("div");
+          box.setAttribute("role", "dialog"); box.setAttribute("aria-label", "Clip pret");
+          box.style.cssText = "position:absolute;left:50%;bottom:max(14px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:6;display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center;padding:10px 12px;background:#fff3e0;color:#221834;border:2px solid #221834;border-radius:10px;font:600 14px monospace;max-width:94vw";
+          var mk = function (t, f) { var b = document.createElement("button"); b.textContent = t; b.style.cssText = "min-height:44px;padding:0 14px;font:600 14px monospace;border:2px solid #221834;background:#d8456b;color:#fff;border-radius:8px"; b.onclick = f; return b; };
+          var close = function () { try { URL.revokeObjectURL(url); document.body.removeChild(box); } catch (e) {} };
+          var lab = document.createElement("span"); lab.textContent = "Clip pret (" + Math.round(file.size / 1024) + " Ko)";
+          box.appendChild(lab);
+          if (navigator.canShare && navigator.share && navigator.canShare({ files: [file] })) {
+            box.appendChild(mk("Partager", function () { navigator.share({ files: [file], title: "AI Fighter 2" }).catch(function () {}); }));
+          }
+          box.appendChild(mk("Enregistrer", function () {
+            var a = document.createElement("a"); a.href = url; a.download = file.name; a.style.display = "none";
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+          }));
+          box.appendChild(mk("Fermer", close));
+          document.body.appendChild(box);
+          setTimeout(close, 120000);
+        };
+        if (r.state !== "inactive") r.stop(); else r.onstop();
+      } catch (e) {}
+    };
     importObject.env.afh_storage_set =function (kp, kl, vp, vl) {
       try { localStorage.setItem(UTF8ToString(kp, kl), UTF8ToString(vp, vl)); return 1; } catch (e) { return 0; }
     };
@@ -583,10 +753,53 @@ miniquad_add_plugin({
     };
   }
 });
+// Rapports d'erreurs : le jeu (Rust) alimente le fil d'Ariane et declare ses panics a la page.
+miniquad_add_plugin({
+  name: "afh_report", version: 1,
+  register_plugin: function (importObject) {
+    importObject.env.afh_crumb = function (kp, kl, mp, ml) { AFH_REPORT.crumb(UTF8ToString(kp, kl), UTF8ToString(mp, ml)); };
+    importObject.env.afh_ctx = function (kp, kl, vp, vl) { AFH_REPORT.ctx(UTF8ToString(kp, kl), UTF8ToString(vp, vl)); };
+    importObject.env.afh_report_config = function (on) { AFH_REPORT.config(on); };
+    importObject.env.afh_report = function (kp, kl, mp, ml, lp, ll) {
+      var kind = UTF8ToString(kp, kl), msg = UTF8ToString(mp, ml), loc = UTF8ToString(lp, ll);
+      var ok = AFH_REPORT.submit(kind, msg, loc, false);
+      // Un panic arrete le jeu : l'ecran « Le jeu s'est arrete » (message exact + bouton d'envoi) prend la place.
+      void ok; // l'ecran fatal est affiche par afh_panic (G.fatal)
+    };
+  }
+});
 // Telephone (tactile, pixels denses) : on dessine a la taille CSS et le navigateur agrandit, bien plus fluide qu'en pleine
 // resolution native (x7 pixels a remplir sur un ecran 3x). PC et ecrans peu denses : resolution native.
 high_dpi = !((navigator.maxTouchPoints > 0 || 'ontouchstart' in window) && window.devicePixelRatio > 1.5);
+// Demarrage a froid (serveur endormi : 503/502, coupure reseau) : le chargeur n'affiche qu'une erreur en console et la page
+// restait figee sur le chargement. On le dit a l'ecran et on retente seul (rechargement, delais croissants, 8 essais).
+(function () {
+  var tries = 0; try { tries = +sessionStorage.getItem("afh_load_tries") || 0; } catch (e) {}
+  function loading() { var l = document.getElementById("loading"); return l && !l.hidden && l.style.opacity !== "0"; }
+  function say(t) {
+    var l = document.getElementById("loading"); if (!l) return;
+    var m = document.getElementById("ld-msg");
+    if (!m) { m = document.createElement("div"); m.id = "ld-msg"; m.style.cssText = "position:absolute;left:0;right:0;bottom:12%;text-align:center;color:#fff3e0;font:600 15px/1.4 ui-monospace,Menlo,Consolas,monospace;padding:0 16px"; l.appendChild(m); }
+    m.textContent = t;
+  }
+  function retry() {
+    if (!loading()) return;
+    if (tries >= 8) { say("Le serveur ne repond pas. Recharge la page dans un instant."); return; }
+    say("Le serveur se reveille, nouvelle tentative (" + (tries + 1) + "/8)...");
+    try { sessionStorage.setItem("afh_load_tries", String(tries + 1)); } catch (e) {}
+    setTimeout(function () { location.reload(); }, Math.min(2000 + tries * 1500, 9000));
+  }
+  var ce = console.error;
+  console.error = function () { ce.apply(console, arguments); if (loading()) retry(); };
+  window.addEventListener("unhandledrejection", function () { if (loading()) retry(); });
+  setTimeout(function () { if (loading()) say("Connexion lente, le chargement continue..."); }, 25000);
+  window.addEventListener("load", function () { setTimeout(function () { if (!loading()) { try { sessionStorage.removeItem("afh_load_tries"); } catch (e) {} } }, 4000); });
+})();
 load("ai_fighter_2.wasm");
+(function () {
+  // Wasm charge : on demande au service worker de garder une copie pour le hors-ligne (sans re-telecharger).
+  window.afhWarm = function () { try { var sw = navigator.serviceWorker; if (!sw) return; if (sw.controller) sw.controller.postMessage({ t: "warm" }); else sw.ready.then(function (r) { if (r.active) r.active.postMessage({ t: "warm" }); }); } catch (e) {} };
+})();
 document.getElementById("fs").addEventListener("click", function () {
   try { var d = document.documentElement; if (document.fullscreenElement) document.exitFullscreen(); else if (d.requestFullscreen) { d.requestFullscreen().then(function () {}).catch(function () {}); } } catch (e) {}
 });

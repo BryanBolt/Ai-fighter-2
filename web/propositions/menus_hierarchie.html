@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Hierarchie des menus</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -20,8 +20,18 @@ textarea{width:100%;box-sizing:border-box;border:2px solid var(--encre);border-r
 #o{white-space:pre-wrap;background:var(--encre);color:var(--papier);padding:12px;border-radius:10px;margin-top:12px}
 table{border-collapse:collapse;width:100%;font-size:14px;background:#fff}td,th{border:2px solid var(--encre);padding:5px 8px;text-align:left}th{font-family:Silkscreen,monospace;font-size:12px}
 @media(max-width:640px){.cols{grid-template-columns:1fr}}
-</style></head><body><div class="w">
-<h1>Hierarchie des menus : avant / apres</h1>
+</style><style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js"></script>
+</head><body><div class="w">
+<h1>Hierarchie des menus : avant / après</h1>
 <p>Objectif : « multi d'abord », 3 niveaux maximum, aucun doublon, <b>aucune fonction supprimee</b>. Captures du vrai moteur.</p>
 
 <h2>1. Arbre</h2>
@@ -29,34 +39,34 @@ table{border-collapse:collapse;width:100%;font-size:14px;background:#fff}td,th{b
 <div class="t old"><b>AVANT</b> (titre : 5 entrees, 4 niveaux)
 <ul><li>Continuer / Reprendre en ligne</li>
 <li>Jouer
-<ul><li>Mode histoire &gt; chapitre / recommencer / choisir</li><li>Campagne</li><li>Duel du maitre</li><li>Defis proceduraux</li><li>Entrainement et techniques</li><li>Roguelite (beta)</li><li>Roguelite en ligne</li><li>Run du jour et defis <i>(ouvrait le roguelite : doublon code 120, bug)</i></li></ul></li>
+<ul><li>Mode histoire &gt; chapitre / recommencer / choisir</li><li>Campagne</li><li>Duel du maître</li><li>Défis proceduraux</li><li>Entraînement et techniques</li><li>Roguelite (beta)</li><li>Roguelite en ligne</li><li>Run du jour et défis <i>(ouvrait le roguelite : doublon code 120, bug)</i></li></ul></li>
 <li>Jouer en ligne</li>
-<li>Personnaliser : combos, equipement, boutique, daemons, studio, nemesis</li>
+<li>Personnaliser : combos, équipement, boutique, daemons, studio, nemesis</li>
 <li>Options</li><li>Quitter</li></ul></div>
-<div class="t new"><b>APRES</b> (titre : 5 entrees + Quitter, 3 niveaux)
+<div class="t new"><b>APRÈS</b> (titre : 5 entrees + Quitter, 3 niveaux)
 <ul><li>Continuer / Reprendre en ligne <i>(si existant)</i></li>
 <li><b>JOUER ENSEMBLE</b> : lien, QR, salon, code, rejoindre a tout moment (1 decision)</li>
 <li><b>HISTOIRE SOLO</b> : continuer / choisir un chapitre / recommencer / campagne</li>
-<li><b>ROGUELITE</b> : solo / coop 1-8 / run du jour et defis</li>
-<li><b>ENTRAINEMENT</b> : techniques / defis proceduraux / duel du maitre</li>
-<li><b>OPTIONS</b> : reglages / mon combattant (combos, equipement, boutique, daemons) / plus (studio, nemesis)</li>
+<li><b>ROGUELITE</b> : solo / coop 1-8 / run du jour et défis</li>
+<li><b>ENTRAÎNEMENT</b> : techniques / défis proceduraux / duel du maître</li>
+<li><b>OPTIONS</b> : réglages / mon combattant (combos, équipement, boutique, daemons) / plus (studio, nemesis)</li>
 <li>Quitter</li></ul></div></div>
 
 <h2>2. Maquettes (vrai moteur)</h2>
 <div class="tabs" id="tabs"></div>
 <div class="shots" id="shots"></div>
 
-<h2>3. A decider (rien n'est supprime)</h2>
-<table><tr><th>Element</th><th>Etat</th><th>Proposition</th></tr>
-<tr><td>Banc de sons (Options)</td><td>reste dans Reglages</td><td>masquer derriere un indicateur de dev ?</td></tr>
-<tr><td>Studio de creation IA, Nemesis</td><td>deplaces dans Options &gt; Plus</td><td>garder ou retirer ?</td></tr>
-<tr><td>Duel du maitre</td><td>sous Entrainement</td><td>garder ou fusionner avec les defis ?</td></tr>
-<tr><td>Menus classiques, Physique des membres, Tir allie, Jouer hors ligne</td><td>inchanges dans Reglages</td><td>voir tools/audit_a_retirer.md (O3, O5, O7, O8)</td></tr>
+<h2>3. À décider (rien n'est supprime)</h2>
+<table><tr><th>Element</th><th>État</th><th>Proposition</th></tr>
+<tr><td>Banc de sons (Options)</td><td>reste dans Réglages</td><td>masquer derrière un indicateur de dev ?</td></tr>
+<tr><td>Studio de création IA, Nemesis</td><td>deplaces dans Options &gt; Plus</td><td>garder ou retirer ?</td></tr>
+<tr><td>Duel du maître</td><td>sous Entraînement</td><td>garder ou fusionner avec les défis ?</td></tr>
+<tr><td>Menus classiques, Physique des membres, Tir allie, Jouer hors ligne</td><td>inchanges dans Réglages</td><td>voir tools/audit_a_retirer.md (O3, O5, O7, O8)</td></tr>
 <tr><td>Icones sur les pastilles du titre</td><td>non faites (le rendu partage menu() est texte seul)</td><td>a faire si tu valides la hierarchie</td></tr>
-<tr><td>Run coop (4 chapitres)</td><td>reste dans Campagne &gt; choix du stage</td><td>l'ajouter aussi sous Jouer ensemble ?</td></tr></table>
+<tr><td>Run coop (4 chapitres)</td><td>reste dans Campagne &gt; choix du niveau</td><td>l'ajouter aussi sous Jouer ensemble ?</td></tr></table>
 
 <h2>4. Ta decision</h2>
-<div class="vb"><button data-v="Valider">Valider</button><button data-v="A refaire">A refaire</button></div>
+<div class="vb"><button data-v="Valider">Valider</button><button data-v="A refaire">À refaire</button></div>
 <textarea id="c" rows="3" placeholder="Commentaire (facultatif)"></textarea>
 <div><button style="font:inherit;font-weight:700;min-height:48px;padding:8px 14px;border-radius:24px;border:2px solid var(--encre);background:var(--accent);color:#fff;margin-top:8px;cursor:pointer" onclick="out()">Generer mon texte</button></div>
 <div id="o"></div>

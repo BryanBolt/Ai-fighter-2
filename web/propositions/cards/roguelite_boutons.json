@@ -1,0 +1,26 @@
+[
+ {
+  "id": "rlb_debut",
+  "titre": "Début de run : joystick, Poing, Pied, Saut",
+  "texte": "Rien d'autre à l'écran ; chaque bouton apparaît avec son pouvoir.",
+  "page": "roguelite_boutons.html"
+ },
+ {
+  "id": "rlb_gains",
+  "titre": "Garde, Spécial, Super, Saisie, Course",
+  "texte": "Garde au 1er pouvoir, Saisie et Course au 2e, Spécial avec un daemon, Super avec un super ou une forme.",
+  "page": "roguelite_boutons.html"
+ },
+ {
+  "id": "rlb_actif",
+  "titre": "Pouvoir actif sur le bouton Spécial",
+  "texte": "Glyphe d'élément et jauge dans l'icône, 4 pouvoirs au plus, Tab ou direction + Spécial pour choisir.",
+  "page": "roguelite_boutons.html"
+ },
+ {
+  "id": "rlb_16",
+  "titre": "16 variantes de sélection des pouvoirs",
+  "texte": "La variante 1 (pastilles en éventail) est dans le jeu ; choisis ou refais.",
+  "page": "roguelite_boutons.html"
+ }
+]

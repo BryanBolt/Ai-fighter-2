@@ -1,11 +1,21 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Variantes de coups de pied</title>
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Variantes de coups de pied</title>
 <style>body{margin:0;font:16px system-ui,sans-serif;background:#1c1d2e;color:#eee;padding:12px}h1{font-size:20px}
 .g{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}.c{background:#2a2c44;border-radius:10px;padding:10px}.c.ok{outline:3px solid #4cd07d}.c.no{outline:3px solid #e0507a}
 img{width:100%;border-radius:8px;background:#000}h2{font-size:16px;margin:6px 0 2px}.n{color:#f5c542;font-weight:700}p{margin:4px 0;font-size:14px;opacity:.9}
-button{font:inherit;padding:9px 12px;border-radius:8px;border:0;margin:4px 4px 0 0;color:#fff;background:#555}button.v{background:#2e9b5b}button.x{background:#c03a62}
-textarea{width:100%;box-sizing:border-box;border-radius:6px;border:0;padding:6px;margin-top:6px;background:#15162a;color:#eee}#o{white-space:pre-wrap;background:#111;padding:10px;border-radius:8px;margin-top:12px}</style></head><body>
+button{font:inherit;padding:9px 12px;border-radius:8px;border:0;margin:4px 4px 0 0;color:#fff;background:#555}button.v{background:#2f8f5b}button.x{background:#c03a62}
+textarea{width:100%;box-sizing:border-box;border-radius:6px;border:0;padding:6px;margin-top:6px;background:#15162a;color:#eee}#o{white-space:pre-wrap;background:#111;padding:10px;border-radius:8px;margin-top:12px}button,input[type=button],select{min-height:44px}</style><style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js"></script>
+</head><body>
 <h1>3 variantes par coup (vrai moteur)</h1>
-<p>Poses ecrites pour la comparaison, rendues par le moteur ; rien n'est encore dans le jeu. Pour chaque coup : Valider ou A refaire (+ remarque), puis genere le texte et colle-le dans le chat.</p>
+<p>Poses ecrites pour la comparaison, rendues par le moteur ; rien n'est encore dans le jeu. Pour chaque coup : Valider ou À refaire (+ remarque), puis genere le texte et colle-le dans le chat.</p>
 <div class="g" id="g"></div><button onclick="out()" style="background:#e0507a;font-weight:700;margin-top:12px">Generer mon texte</button><div id="o"></div>
 <script>var C=[{"key": "var_direct_A", "name": "Pied direct A : sec", "n": "variante A", "d": "Genou haut, claque, retour immediat.", "img": "var_direct_A.webp"}, {"key": "var_direct_B", "name": "Pied direct B : depuis le flamingo", "n": "variante B", "d": "Garde flamingo (genou releve, mains basses), detente, retour au flamingo.", "img": "var_direct_B.webp"}, {"key": "var_direct_C", "name": "Pied direct C : poussee lourde", "n": "variante C", "d": "Le corps se charge puis le buste suit le pied vers l'avant.", "img": "var_direct_C.webp"}, {"key": "var_circ_A", "name": "Circulaire A : arc haut", "n": "variante A", "d": "Buste renverse, bras arriere en balancier, jambe a hauteur de tete.", "img": "var_circ_A.webp"}, {"key": "var_circ_B", "name": "Circulaire B : fouet depuis l'arriere", "n": "variante B", "d": "La jambe part derriere le corps et monte en arc.", "img": "var_circ_B.webp"}, {"key": "var_circ_C", "name": "Circulaire C : rotatif", "n": "variante C", "d": "Dos a moitie tourne a l'armement, le corps se deroule dans le coup.", "img": "var_circ_C.webp"}, {"key": "var_hache_A", "name": "Hache A : levee droite + plongeon", "n": "variante A", "d": "Jambe toute droite, temps d'arret, claque et le buste plonge.", "img": "var_hache_A.webp"}, {"key": "var_hache_B", "name": "Hache B : talon", "n": "variante B", "d": "Genou plie qui monte, se deplie vers le haut, talon qui fouette.", "img": "var_hache_B.webp"}, {"key": "var_hache_C", "name": "Hache C : bond", "n": "variante C", "d": "Le corps decolle, la jambe monte en l'air et retombe avec lui.", "img": "var_hache_C.webp"}],st={};
 var g=document.getElementById('g');

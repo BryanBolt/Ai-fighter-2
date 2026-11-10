@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Combat design : audit et propositions</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -23,40 +23,50 @@ td,th{border:2px solid var(--encre);padding:6px 8px;text-align:left;background:#
 .bar{display:flex;align-items:center;gap:8px;margin:4px 0;max-width:780px;font-size:13px}
 .bar b{width:150px;flex:none}.bar i{display:block;height:16px;border-radius:4px;background:var(--encre)}.bar i.a{background:var(--accent)}
 .bar span{white-space:nowrap}
-</style></head><body>
+button,input[type=button],select{min-height:44px}</style><style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js"></script>
+</head><body>
 <h1>Combat design : audit chiffre et propositions</h1>
-<p class="lead">Objectif : un combat captivant, lisible et style. J'ai fait jouer l'IA contre toutes les vagues de 13 terrains avec 9 heros (PV illimites pour mesurer les degats subis), puis 7 « styles de joueur » (spam, tortue...) sur trois terrains. Details : <code>tools/combat_design.md</code>, tableaux complets : <code>tools/combat_metrics_avant.md</code> et <code>_apres.md</code>. Un changement est deja applique (lisibilite des coups ennemis) ; cinq autres touchent l'equilibre et attendent ton avis.</p>
+<p class="lead">Objectif : un combat captivant, lisible et style. J'ai fait jouer l'IA contre toutes les vagues de 13 terrains avec 9 héros (PV illimites pour mesurer les dégâts subis), puis 7 « styles de joueur » (spam, tortue...) sur trois terrains. Détails : <code>tools/combat_design.md</code>, tableaux complets : <code>tools/combat_metrics_avant.md</code> et <code>_après.md</code>. Un changement est déjà applique (lisibilite des coups ennemis) ; cinq autres touchent l'équilibre et attendent ton avis.</p>
 
-<h3>Avant / apres : coups d'ouverture ennemis sous le temps de reaction humain</h3>
+<h3>Avant / après : coups d'ouverture ennemis sous le temps de reaction humain</h3>
 <div class="bar"><b>Avant</b><i class="a" style="width:242px"></i><span>242 coups (Baffe, Jab, Pied frontal... a 8 images = 0,13 s)</span></div>
-<div class="bar"><b>Apres</b><i style="width:2px"></i><span>0 (12 / 15 / 18 images selon la gravite)</span></div>
+<div class="bar"><b>Après</b><i style="width:2px"></i><span>0 (12 / 15 / 18 images selon la gravite)</span></div>
 
 <h3>Rythme mesure (moyenne des 13 terrains)</h3>
 <table>
-<tr><th>Metrique</th><th>Avant</th><th>Apres</th><th>Lecture</th></tr>
+<tr><th>Metrique</th><th>Avant</th><th>Après</th><th>Lecture</th></tr>
 <tr><td>Duree d'un terrain</td><td>225 s</td><td>224 s</td><td>inchange</td></tr>
-<tr><td>Ecart entre deux echanges</td><td>0,67 s</td><td>0,68 s</td><td>rythme dense, pas de trou de neutre</td></tr>
+<tr><td>Ecart entre deux échanges</td><td>0,67 s</td><td>0,68 s</td><td>rythme dense, pas de trou de neutre</td></tr>
 <tr><td>Attaquants simultanes (moy. / max)</td><td>1,05 / 3</td><td>1,06 / 3</td><td>les jetons marchent : la meute attend son tour</td></tr>
 <tr><td>Hitstop (arret sur image)</td><td>17,2 %</td><td>17,1 %</td><td>eleve : perimetre « game feel », signale</td></tr>
-<tr><td>PV perdus par terrain (IA)</td><td>708</td><td>629</td><td>-11 % de degats subis, plus lisible</td></tr>
+<tr><td>PV perdus par terrain (IA)</td><td>708</td><td>629</td><td>-11 % de dégâts subis, plus lisible</td></tr>
 <tr><td>Coups differents utilises</td><td>15</td><td>15</td><td>diversite intacte ; terrains finis 137 a 140 sur 144</td></tr>
 </table>
 
 <h3>Strategies : laquelle bat le jeu sans effort ? (Kaze, 3 terrains, plafond 3 min)</h3>
-<div class="bar"><b>Spam leger</b><i class="a" style="width:89px"></i><span>89 PV perdus, finit 2/3 : DOMINANTE</span></div>
+<div class="bar"><b>Spam léger</b><i class="a" style="width:89px"></i><span>89 PV perdus, finit 2/3 : DOMINANTE</span></div>
 <div class="bar"><b>Esquive-tape</b><i style="width:132px"></i><span>132 PV, 1/3</span></div>
 <div class="bar"><b>Tortue (garde)</b><i style="width:182px"></i><span>182 PV, 0/3 : ne gagne pas</span></div>
 <div class="bar"><b>Spam lourd</b><i style="width:255px"></i><span>255 PV, 2/3</span></div>
 <div class="bar"><b>IA mixte</b><i style="width:382px"></i><span>382 PV, 1/3 : l'IA defend mal</span></div>
-<div class="bar"><b>Spam special / saisie</b><i style="width:9px"></i><span>9 / 45 PV, 0/3 : inoffensifs</span></div>
+<div class="bar"><b>Spam spécial / saisie</b><i style="width:9px"></i><span>9 / 45 PV, 0/3 : inoffensifs</span></div>
 
-<h3>GIF du vrai moteur : meme combat, avant et apres</h3>
+<h3>GIF du vrai moteur : même combat, avant et après</h3>
 <div class="g" id="gifs">
-<div class="c"><img src="combat_design/avant.webp" alt="Avant" loading="lazy"><h2>Avant</h2><p>Les sbires frappent en 8 images : le coup arrive sans etre lu.</p></div>
-<div class="c"><img src="combat_design/apres.webp" alt="Apres" loading="lazy"><h2>Apres</h2><p>Meme combat : la pose d'armement est visible (12 a 18 images) avant le coup.</p></div>
+<div class="c"><img src="combat_design/avant.webp" alt="Avant" loading="lazy"><h2>Avant</h2><p>Les sbires frappent en 8 images : le coup arrive sans être lu.</p></div>
+<div class="c"><img src="combat_design/apres.webp" alt="Apres" loading="lazy"><h2>Après</h2><p>Même combat : la pose d'armement est visible (12 a 18 images) avant le coup.</p></div>
 </div>
 
-<h3>Propositions a valider (non appliquees)</h3>
+<h3>Propositions à valider (non appliquees)</h3>
 <div class="g" id="g"></div>
 <button class="gen" onclick="out()">Generer mon texte</button><div id="o"></div>
 <script>

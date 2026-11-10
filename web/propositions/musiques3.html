@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Musique dynamique - propositions v3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b;--encre2:#33274d;--ligne:#4a3b69;--ok:#5fcf8f}
+*{box-sizing:border-box}
+body{margin:0;background:var(--encre);color:var(--papier);font-family:'Nunito',system-ui,sans-serif;line-height:1.5}
+.wrap{max-width:980px;margin:0 auto;padding:20px 16px 90px}
+h1{font-family:'Silkscreen',monospace;font-size:26px;margin:8px 0 4px;color:var(--papier);letter-spacing:1px}
+h1 span{color:var(--accent)}
+h2{font-family:'Silkscreen',monospace;font-size:15px;margin:0;color:var(--papier)}
+h3.grp{font-family:'Silkscreen',monospace;font-size:17px;margin:28px 0 4px;color:var(--accent);border-bottom:2px solid var(--ligne);padding-bottom:4px}
+p.lead{margin:0 0 14px;opacity:.92}
+p.sub{margin:0 0 6px;font-size:14px;opacity:.85}
+.note{background:var(--encre2);border:1px solid var(--ligne);border-left:4px solid var(--accent);border-radius:8px;padding:12px 14px;margin:14px 0;font-size:14px}
+.note b{color:var(--accent)}
+.note ul{margin:6px 0 0 18px;padding:0}
+.grid{display:grid;gap:14px;margin-top:10px}
+.card{background:var(--encre2);border:2px solid var(--ligne);border-radius:12px;padding:12px 14px;transition:border-color .15s}
+.card.ok{border-color:var(--ok)}
+.card.redo{border-color:var(--accent)}
+.head{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:baseline;justify-content:space-between}
+.decor{font-size:13px;opacity:.8}
+.tag{font-family:'Silkscreen',monospace;font-size:11px;background:var(--encre);border:1px solid var(--ligne);border-radius:6px;padding:2px 6px;color:var(--papier);margin-left:4px}
+.desc{margin:6px 0 8px;font-size:14px}
+audio{width:100%;height:38px;margin:2px 0}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+button{font-family:'Silkscreen',monospace;font-size:12px;border:2px solid var(--papier);background:transparent;color:var(--papier);padding:9px 14px;border-radius:8px;cursor:pointer}
+button:hover{background:rgba(255,243,224,.1)}
+button.v.on{background:var(--ok);border-color:var(--ok);color:var(--encre)}
+button.r.on{background:var(--accent);border-color:var(--accent);color:var(--papier)}
+button.main{background:var(--accent);border-color:var(--accent);color:var(--papier)}
+input.com{flex:1 1 220px;min-width:0;background:var(--encre);color:var(--papier);border:1px solid var(--ligne);border-radius:8px;padding:8px 10px;font-family:inherit;font-size:14px}
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--encre2);border-top:2px solid var(--accent);padding:10px 16px;display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;z-index:5}
+.bar .cnt{font-size:13px}
+#out{display:none;margin-top:18px}
+#out textarea{width:100%;min-height:200px;background:var(--encre);color:var(--papier);border:1px solid var(--ligne);border-radius:8px;padding:10px;font-family:ui-monospace,Consolas,monospace;font-size:13px}
+@media (max-width:560px){h1{font-size:20px}.wrap{padding:14px 16px 100px}}
+button{min-height:44px}</style>
+<script src="verdicts.js" data-keys="af2_musiques_v3"></script>
+<style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style></head>
+<body>
+<div class="wrap">
+<h1>MUSIQUE <span>DYNAMIQUE</span></h1>
+<p class="lead">Chaque famille de lieux a sa palette sonore (tempo, gamme, instruments), jouee en quatre couches synchrones. Cette page fait ecouter, pour chaque palette, la montee d'intensite d'un combat : deux mesures par palier.</p>
+
+<div class="note"><b>Comment lire un extrait.</b> Les couches s'ouvrent une a une, toujours sur le début d'une mesure (jamais de coupure) :
+<ul>
+<li>mesures 1-2 : le calme, une basse et une melodie discrete ;</li>
+<li>mesures 3-4 : le rythme entre (batterie, taiko, cordes en ostinato) ;</li>
+<li>mesures 5-6 : la melodie s'ouvre completement (arpege, cuivres, nappe, guitare) ;</li>
+<li>mesures 7-8 : le lead (rang de style très haut, boss, super ou danger).</li>
+</ul>
+Dans le jeu les couches montent avec le rang de style, un boss en vie, un super en cours et le danger (vie basse), puis redescendent au calme. Ce sont des extraits mono a 11 kHz, plus légers que le son du jeu (stereo, 22 kHz, reverberation).</div>
+
+<div class="note"><b>Garanties.</b> Une seule piste de fond a la fois (les quatre couches sont une seule piste). Le changement de palette attend la mesure suivante. Les bus musique / effets / interface / voix sont respectes et le fond baisse pendant les annonces et les jingles. Option d'accessibilite <b>Musique calme</b> (page Accessibilite) : pas de lead, rythme discret, volume et jingles adoucis. Au navigateur, rien n'est telecharge : tout est synthetise au besoin, une palette a la fois.</div>
+
+<div class="note"><b>Table lieu -> piste.</b> Un terrain sur trois (numéros multiples de 3) joue un morceau fourni Level 1 ou 2 (audio seulement, charge a la demande), les autres leur palette synthetisee. A vous de trancher la repartition.<table style="width:100%;font-size:13px;margin-top:8px"><tr><th>#</th><th>Lieu</th><th>Piste</th></tr><tr><td>0</td><td>Ruelle du quartier est</td><td>Level 1/2 fourni (OGG)</td></tr><tr><td>1</td><td>Dojo souterrain</td><td>palette dojo</td></tr><tr><td>2</td><td>Salle des serveurs</td><td>palette robots</td></tr><tr><td>3</td><td>Parking -3</td><td>Level 1/2 fourni (OGG)</td></tr><tr><td>4</td><td>Open space</td><td>palette bureau</td></tr><tr><td>5</td><td>Seminaire de l'Éveil</td><td>palette bureau</td></tr><tr><td>6</td><td>Étage presidentiel</td><td>Level 1/2 fourni (OGG)</td></tr><tr><td>7</td><td>Toits de la tour</td><td>palette ville_nuit</td></tr><tr><td>8</td><td>Senat</td><td>palette enfers</td></tr><tr><td>9</td><td>Temple de l'Éveil</td><td>Level 1/2 fourni (OGG)</td></tr><tr><td>10</td><td>Toit-jardin</td><td>palette nature</td></tr><tr><td>11</td><td>Parc de la tour</td><td>palette nature</td></tr><tr><td>12</td><td>Chantier aile Est</td><td>Level 1/2 fourni (OGG)</td></tr><tr><td>13</td><td>Marche de nuit</td><td>palette ville_nuit</td></tr><tr><td>14</td><td>Quai de metro</td><td>palette ville_nuit</td></tr><tr><td>15</td><td>Cantine</td><td>Level 1/2 fourni (OGG)</td></tr><tr><td>16</td><td>Paradis des nuages</td><td>palette nuages</td></tr><tr><td>17</td><td>Marais</td><td>palette marais</td></tr><tr><td>18</td><td>Forêt des murmures</td><td>Level 1/2 fourni (OGG)</td></tr><tr><td>19</td><td>Enfers</td><td>palette enfers</td></tr><tr><td>20</td><td>Royaume des Ombres</td><td>palette enfers</td></tr><tr><td>21</td><td>Arbre géant</td><td>Level 1/2 fourni (OGG)</td></tr><tr><td>22</td><td>Cascade</td><td>palette dojo</td></tr><tr><td>23</td><td>Montagne</td><td>palette nuages</td></tr><tr><td>24</td><td>Usine-ville robots</td><td>Level 1/2 fourni (OGG)</td></tr><tr><td>25</td><td>Souk</td><td>palette souk</td></tr><tr><td>26</td><td>Cafe du coin</td><td>palette bureau</td></tr><tr><td>27</td><td>Bar</td><td>Level 1/2 fourni (OGG)</td></tr><tr><td>28</td><td>Aeroport</td><td>palette bureau</td></tr><tr><td>29</td><td>Hokkaido</td><td>palette neige</td></tr><tr><td>30</td><td>Shibuya</td><td>Level 1/2 fourni (OGG)</td></tr><tr><td>31</td><td>Eiffel</td><td>palette monuments</td></tr><tr><td>32</td><td>Montmartre</td><td>palette monuments</td></tr><tr><td>33</td><td>Seine</td><td>Level 1/2 fourni (OGG)</td></tr><tr><td>34</td><td>Louvre</td><td>palette monuments</td></tr><tr><td>35</td><td>Times Square</td><td>palette ville_nuit</td></tr><tr><td>36</td><td>Westminster</td><td>Level 1/2 fourni (OGG)</td></tr><tr><td>37</td><td>Colisee</td><td>palette monuments</td></tr><tr><td>38</td><td>Pyramides</td><td>palette souk</td></tr><tr><td>39</td><td>Rio</td><td>Level 1/2 fourni (OGG)</td></tr><tr><td>40</td><td>Sydney</td><td>palette monuments</td></tr><tr><td>41</td><td>Agra</td><td>palette souk</td></tr><tr><td>42</td><td>Fête foraine</td><td>Level 1/2 fourni (OGG)</td></tr><tr><td>43</td><td>Serre tropicale</td><td>palette nature</td></tr><tr><td>44</td><td>Plage Gnarly Bay</td><td>palette plage</td></tr><tr><td>45</td><td>Ferme du Grand Meuh</td><td>Level 1/2 fourni (OGG)</td></tr><tr><td>46</td><td>Macaques</td><td>palette neige</td></tr></table></div>
+
+<div id="root"></div>
+
+<div id="out">
+<h2>Texte a copier</h2>
+<p class="lead">Collez-le dans la conversation.</p>
+<textarea id="txt" readonly></textarea>
+<div class="btns"><button class="main" id="copy">Copier</button></div>
+</div>
+</div>
+
+<div class="bar">
+<span class="cnt" id="cnt"></span>
+<button class="main" id="gen">Generer le texte</button>
+<button id="reset">Tout effacer</button>
+</div>
+
+<script>
+var TRACKS = [
+{
+"n": "ville_nuit",
+"t": "Ville de nuit",
+"d": "rues, bars, quais, toits, Shibuya, Times Square",
+"s": "Mineur, funk dur a 138 : pulse 8 bits, basse slap, cuivres qui claquent aux changements d'accord.",
+"bpm": 138,
+"g": "places",
+"m": "mineur"
+},
+{
+"n": "dojo",
+"t": "Dojo",
+"d": "dojo, temple, cascade",
+"s": "Phrygien en mi a 132 : koto pince, taiko lourd, galop de cordes ; quinte puis seconde mineure tendue.",
+"bpm": 132,
+"g": "places",
+"m": "phrygien"
+},
+{
+"n": "bureau",
+"t": "Bureau",
+"d": "open space, etages, cantine, aeroport, cafe",
+"s": "Dorien en la a 124 : funk froid, cuivres synthe, slap bondissant, swing ironique.",
+"bpm": 124,
+"g": "places",
+"m": "dorien"
+},
+{
+"n": "nature",
+"t": "Nature joyeuse",
+"d": "parcs, forets, serres, ferme, arbre geant",
+"s": "Mixolydien en do a 128 : flute et harpe carree, pulsation droite, nappes lumineuses.",
+"bpm": 128,
+"g": "places",
+"m": "mixolydien"
+},
+{
+"n": "monuments",
+"t": "Monuments",
+"d": "Paris, Londres, Rome, Sydney",
+"s": "Mineur noble a 112 : marche, cuivres larges, sauts d'octave des cordes ; grandeur et suspense.",
+"bpm": 112,
+"g": "places",
+"m": "mineur"
+},
+{
+"n": "nuages",
+"t": "Nuages",
+"d": "paradis des nuages, montagne",
+"s": "Lydien en mi a 100 : cloches, grande nappe, basse tenue ; aerien, presque immobile.",
+"bpm": 100,
+"g": "places",
+"m": "lydien"
+},
+{
+"n": "enfers",
+"t": "Enfers",
+"d": "enfers, royaume des ombres, senat",
+"s": "Mineur harmonique en si bemol a 150 : taiko massif, cuivres graves, octaves brisees ; fournaise.",
+"bpm": 150,
+"g": "places",
+"m": "mineur harmonique"
+},
+{
+"n": "robots",
+"t": "Robots",
+"d": "usine, serveurs, parking, chantier",
+"s": "Mineur a 146 : pulse ecrase, basse en doubles croches, galop mecanique, peu de nappes.",
+"bpm": 146,
+"g": "places",
+"m": "mineur"
+},
+{
+"n": "neige",
+"t": "Neige",
+"d": "Hokkaido, bain des macaques",
+"s": "Mineur en si a 96 : cloches cristallines, nappe froide, notes tres espacees.",
+"bpm": 96,
+"g": "places",
+"m": "mineur"
+},
+{
+"n": "marais",
+"t": "Marais",
+"d": "marais de la grenouille",
+"s": "Phrygien en do a 104 : pince visqueux, basse clairsemee, trémolo lent, swing qui gigote.",
+"bpm": 104,
+"g": "places",
+"m": "phrygien"
+},
+{
+"n": "fete",
+"t": "Fete foraine",
+"d": "fete foraine de la Grande Roue",
+"s": "Mixolydien en sol a 150 : carillon, marche d'orgue de barbarie, galop, octaves qui rebondissent.",
+"bpm": 150,
+"g": "places",
+"m": "mixolydien"
+},
+{
+"n": "plage",
+"t": "Plage",
+"d": "Rio, Gnarly Bay",
+"s": "Dorien en la a 118 : flute, funk balance, slap, cuivres souples ; soleil et vagues.",
+"bpm": 118,
+"g": "places",
+"m": "dorien"
+},
+{
+"n": "souk",
+"t": "Souk et orient",
+"d": "souk, pyramides, Taj Mahal",
+"s": "Mineur harmonique en re a 128 : oud pince, seconde augmentee, taiko souple, syncopes.",
+"bpm": 128,
+"g": "places",
+"m": "mineur harmonique"
+},
+{
+"n": "boss_p1",
+"t": "Boss, phase 1",
+"d": "boss",
+"s": "Mineur harmonique en la a 150 : notes repetees tendues, galop, cuivres.",
+"bpm": 150,
+"g": "boss",
+"m": "mineur harmonique"
+},
+{
+"n": "boss_p2",
+"t": "Boss, phase 2",
+"d": "boss",
+"s": "Meme tonalite, 164 bpm : cordes en sauts d'octave, arpege qui descend, taiko plein.",
+"bpm": 164,
+"g": "boss",
+"m": "mineur harmonique"
+},
+{
+"n": "boss_p3",
+"t": "Boss, phase 3",
+"d": "boss",
+"s": "Un demi-ton plus haut, 178 bpm, phrygien : tout a fond, le plus dense.",
+"bpm": 178,
+"g": "boss",
+"m": "phrygien"
+},
+{
+"n": "ange_pur",
+"t": "Ange, purete",
+"d": "l'Ange (debut)",
+"s": "Lydien en sol a 96 : cloches, nappe immense, aucun coup ; blanc et tres calme.",
+"bpm": 96,
+"g": "ange",
+"m": "lydien"
+},
+{
+"n": "ange_gris",
+"t": "Ange, decoloration",
+"d": "l'Ange (mi-combat)",
+"s": "Les memes notes, filtrees (coupe-haut 2,6 kHz), dorien, un taiko lointain : les aigus s'eteignent.",
+"bpm": 96,
+"g": "ange",
+"m": "dorien"
+},
+{
+"n": "ange_cendre",
+"t": "Ange, cendres",
+"d": "l'Ange (fin du combat)",
+"s": "Mineur, coupe-haut 900 Hz : cuivres sourds, taiko, tout est etouffe ; presque plus de couleur.",
+"bpm": 96,
+"g": "ange",
+"m": "mineur"
+},
+{
+"n": "ange_aube",
+"t": "Ange, retour des couleurs",
+"d": "l'Ange (vaincu)",
+"s": "Majeur en sol a 104 : flute, harpe, accords majeurs ; les couleurs reviennent.",
+"bpm": 104,
+"g": "ange",
+"m": "majeur"
+},
+{
+"n": "t01",
+"t": "Titre 01, marche des braises",
+"d": "titre",
+"s": "Mineur harmonique en la a 120, taiko lourd, cuivres larges : le theme d'origine, solennel.",
+"bpm": 120,
+"g": "titre",
+"m": "mineur harmonique"
+},
+{
+"n": "t02",
+"t": "Titre 02, cloches de veille",
+"d": "titre",
+"s": "Mineur en re a 88 : cloches et grande nappe, tres lent, la tension monte par les cordes.",
+"bpm": 88,
+"g": "titre",
+"m": "mineur"
+},
+{
+"n": "t03",
+"t": "Titre 03, rue sous la pluie",
+"d": "titre",
+"s": "Dorien en mi a 108 : funk sombre, slap, pulse 8 bits ; ville de nuit.",
+"bpm": 108,
+"g": "titre",
+"m": "dorien"
+},
+{
+"n": "t04",
+"t": "Titre 04, shogun",
+"d": "titre",
+"s": "Phrygien en mi a 112 : koto, taiko, galop ; le pays du Soleil-Levant en armure.",
+"bpm": 112,
+"g": "titre",
+"m": "phrygien"
+},
+{
+"n": "t05",
+"t": "Titre 05, fanfare noire",
+"d": "titre",
+"s": "Mineur en fa a 126 : marche de cuivres, sauts d'octave ; une armee qui avance.",
+"bpm": 126,
+"g": "titre",
+"m": "mineur"
+},
+{
+"n": "t06",
+"t": "Titre 06, neon",
+"d": "titre",
+"s": "Mineur en re a 140 : tout electronique, pulse ecrase, basse en doubles croches.",
+"bpm": 140,
+"g": "titre",
+"m": "mineur"
+},
+{
+"n": "t07",
+"t": "Titre 07, aube blanche",
+"d": "titre",
+"s": "Lydien en sol a 92 : cloches, nappe lumineuse, aucun coup ; une promesse fragile.",
+"bpm": 92,
+"g": "titre",
+"m": "lydien"
+},
+{
+"n": "t08",
+"t": "Titre 08, forge",
+"d": "titre",
+"s": "Phrygien en si a 118 : industriel, cuivres rythmiques, grosse masse de taiko.",
+"bpm": 118,
+"g": "titre",
+"m": "phrygien"
+},
+{
+"n": "t09",
+"t": "Titre 09, serment",
+"d": "titre",
+"s": "Mineur harmonique en re a 100 : flute seule sur nappe, taiko discret qui s'eveille.",
+"bpm": 100,
+"g": "titre",
+"m": "mineur harmonique"
+},
+{
+"n": "t10",
+"t": "Titre 10, poursuite",
+"d": "titre",
+"s": "Mineur en do# a 160 : galop, notes repetees, arpeges qui sautent ; ca commence deja a courir.",
+"bpm": 160,
+"g": "titre",
+"m": "mineur"
+},
+{
+"n": "t11",
+"t": "Titre 11, rituel",
+"d": "titre",
+"s": "Phrygien en fa# a 100 : tambours rituels, cloches, trémolo ; l'Eveil.",
+"bpm": 100,
+"g": "titre",
+"m": "phrygien"
+},
+{
+"n": "t12",
+"t": "Titre 12, heros",
+"d": "titre",
+"s": "Mixolydien en do a 132 : appel de cuivres heroique, pulsation droite ; le seul theme presque lumineux.",
+"bpm": 132,
+"g": "titre",
+"m": "mixolydien"
+},
+{
+"n": "t13",
+"t": "Titre 13, souvenir filtre",
+"d": "titre",
+"s": "Mineur en la a 96, filtre a 2,4 kHz : le theme d'origine entendu a travers un mur.",
+"bpm": 96,
+"g": "titre",
+"m": "mineur"
+},
+{
+"n": "t14",
+"t": "Titre 14, orient noir",
+"d": "titre",
+"s": "Harmonique en re a 122 : oud pince, seconde augmentee, taiko souple.",
+"bpm": 122,
+"g": "titre",
+"m": "mineur harmonique"
+},
+{
+"n": "t15",
+"t": "Titre 15, siege",
+"d": "titre",
+"s": "Mineur en sol a 104 : rupture lourde, cuivres graves, cordes en trémolo ; le siege commence.",
+"bpm": 104,
+"g": "titre",
+"m": "mineur"
+},
+{
+"n": "t16",
+"t": "Titre 16, grand final",
+"d": "titre",
+"s": "Mineur harmonique en la a 144 : le plus dense, pour un titre qui donne tout de suite envie de se battre.",
+"bpm": 144,
+"g": "titre",
+"m": "mineur harmonique"
+},
+{
+"n": "jingle_victoire",
+"t": "Jingle de victoire",
+"d": "ecran de bilan apres une victoire (stage, chapitre, boss, defi)",
+"s": "Do majeur : appel de cuivres, roulement de caisse claire, accord final large et cloche. 5,5 s, le fond baisse pendant ce temps.",
+"bpm": 0,
+"g": "jingles",
+"m": ""
+},
+{
+"n": "jingle_defaite",
+"t": "Jingle de defaite",
+"d": "ecran de bilan apres une defaite",
+"s": "La mineur : descente lente de flute sur une nappe grave, coup de taiko sourd, cuivre qui s'eteint. 4,5 s.",
+"bpm": 0,
+"g": "jingles",
+"m": ""
+},
+{
+"n": "jingle_bilan",
+"t": "Jingle de bilan",
+"d": "bilan de vague ou d'etage",
+"s": "Cloches en arpege montant sur un accord doux : le compte est bon. 3 s.",
+"bpm": 0,
+"g": "jingles",
+"m": ""
+},
+{
+"n": "jingle_bonus",
+"t": "Jingle de bonus",
+"d": "choix de recompense",
+"s": "Etincelle 8 bits qui monte et cloche aigue. 1,8 s.",
+"bpm": 0,
+"g": "jingles",
+"m": ""
+}
+];
+var GROUPS = {
+ places:['Palettes par famille de lieux','13 palettes : une identite par famille (ville de nuit, dojo, bureau, nature, monuments, nuages, enfers, robots, neige, marais, fete foraine, plage, souk).'],
+ boss:['Themes de boss par phase','Meme tonalite, tempo et densite qui montent : phase 1, puis les variations des phases 2 et 3 (le changement se fait sur la mesure).'],
+ ange:['Theme de l\'Ange','La purete, puis la meme musique de plus en plus filtree (le decor se decolore), puis le retour des couleurs en accords majeurs quand il tombe.'],
+ titre:['Theme titre : 16 variantes','Extraits de 6 mesures, toutes couches ouvertes. Le jeu garde le morceau fourni tant qu\'une variante n\'est pas choisie : validez celles qui vous plaisent.'],
+ jingles:['Jingles','Victoire, defaite, bilan, bonus : courts, le fond baisse pendant ce temps.']
+};
+var KEY='af2_musiques_v3', state={};
+try{state=JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(e){state={}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+var root=document.getElementById('root');
+['places','boss','ange','titre','jingles'].forEach(function(g){
+  var h=document.createElement('h3');h.className='grp';h.textContent=GROUPS[g][0];root.appendChild(h);
+  var p=document.createElement('p');p.className='sub';p.textContent=GROUPS[g][1];root.appendChild(p);
+  var grid=document.createElement('div');grid.className='grid';root.appendChild(grid);
+  TRACKS.filter(function(k){return k.g===g}).forEach(function(k){
+    var c=document.createElement('div');c.className='card';c.id='c_'+k.n;
+    var tags=(k.bpm?'<span class="tag">'+k.bpm+' bpm</span>':'')+(k.m?'<span class="tag">'+k.m+'</span>':'');
+    c.innerHTML='<div class="head"><h2></h2><span>'+tags+'</span></div>'
+     +'<div class="decor"></div><p class="desc"></p>'
+     +'<audio controls preload="none" src="musiques3/'+k.n+'.wav"></audio>'
+     +'<div class="btns"><button class="v">Valider</button><button class="r">A refaire</button>'
+     +'<input class="com" type="text" placeholder="Remarque (facultatif) : plus lent, plus sombre, plus de basse..."></div>';
+    c.querySelector('h2').textContent=k.t;
+    c.querySelector('.decor').textContent=(g==='titre'?'':'Lieux / usage : ')+k.d;
+    c.querySelector('.desc').textContent=k.s;
+    grid.appendChild(c);
+    var s=state[k.n]||{};var v=c.querySelector('.v'),r=c.querySelector('.r'),i=c.querySelector('.com');
+    i.value=s.c||'';
+    function paint(){var st=(state[k.n]||{}).s;v.classList.toggle('on',st==='ok');r.classList.toggle('on',st==='redo');c.className='card'+(st==='ok'?' ok':st==='redo'?' redo':'');count()}
+    v.onclick=function(){var o=state[k.n]||{};o.s=o.s==='ok'?'':'ok';state[k.n]=o;save();paint()};
+    r.onclick=function(){var o=state[k.n]||{};o.s=o.s==='redo'?'':'redo';state[k.n]=o;save();paint()};
+    i.oninput=function(){var o=state[k.n]||{};o.c=i.value;state[k.n]=o;save()};
+    paint();
+  });
+});
+// Une seule piste a la fois.
+document.addEventListener('play',function(e){document.querySelectorAll('audio').forEach(function(a){if(a!==e.target)a.pause()})},true);
+function count(){
+  var ok=0,re=0;TRACKS.forEach(function(k){var s=(state[k.n]||{}).s;if(s==='ok')ok++;if(s==='redo')re++});
+  document.getElementById('cnt').textContent=ok+' validee(s), '+re+' a refaire, '+(TRACKS.length-ok-re)+' sans avis';
+}
+document.getElementById('gen').onclick=function(){
+  var L=['Retour sur la musique dynamique :'];
+  TRACKS.forEach(function(k){
+    var o=state[k.n]||{};var st=o.s==='ok'?'VALIDE':o.s==='redo'?'A REFAIRE':'sans avis';
+    L.push('- '+k.n+' ('+k.t+') : '+st+(o.c?' - '+o.c:''));
+  });
+  var t=document.getElementById('txt');t.value=L.join('\n');
+  document.getElementById('out').style.display='block';t.scrollIntoView({behavior:'smooth',block:'center'});
+};
+document.getElementById('reset').onclick=function(){if(confirm('Tout effacer ?')){state={};save();location.reload()}};
+document.getElementById('copy').onclick=function(){
+  var t=document.getElementById('txt');t.select();
+  try{navigator.clipboard.writeText(t.value)}catch(e){document.execCommand('copy')}
+  this.textContent='Copie !';var b=this;setTimeout(function(){b.textContent='Copier'},1500);
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+[
+ {
+  "id": "refonte_a",
+  "titre": "Refonte des coups : Gorr, Tetsu, Nova, Kage, Bo",
+  "texte": "26 coups refaits, avant / après.",
+  "page": "refonte_a.html",
+  "groupe": "COMBAT ET ANIMATIONS"
+ },
+ {
+  "id": "refonte_b",
+  "titre": "Refonte des coups : Sora, Piège, Zui, Yume",
+  "texte": "42 coups refaits, avant / après.",
+  "page": "refonte_b.html",
+  "groupe": "COMBAT ET ANIMATIONS"
+ },
+ {
+  "id": "coups_a",
+  "titre": "Galerie des mouvements, héros 1 a 5",
+  "texte": "255 mouvements. Les GIF des supers sont très comprimes : regarde les planches.",
+  "page": "coups_a.html",
+  "groupe": "COMBAT ET ANIMATIONS"
+ },
+ {
+  "id": "nunchaku",
+  "titre": "Nunchaku et cou du personnage",
+  "texte": "Combo de 6 coups, coups diriges, raccord du cou.",
+  "page": "nunchaku.html",
+  "groupe": "COMBAT ET ANIMATIONS"
+ },
+ {
+  "id": "pantoufles",
+  "titre": "Pantoufles et dernier coup lance",
+  "texte": "Sera refait en une seule savate comique : regarde le principe.",
+  "page": "pantoufles.html",
+  "groupe": "COMBAT ET ANIMATIONS"
+ },
+ {
+  "id": "objets",
+  "titre": "Jeter les objets, lait, tesson",
+  "texte": "Geste Jeter, boire le lait, tesson de 3 coups.",
+  "page": "objets.html",
+  "groupe": "COMBAT ET ANIMATIONS"
+ },
+ {
+  "id": "ragdoll",
+  "titre": "Ragdoll realiste",
+  "texte": "Limites des articulations, rebonds, glissades.",
+  "page": "ragdoll.html",
+  "groupe": "COMBAT ET ANIMATIONS"
+ },
+ {
+  "id": "supers2",
+  "titre": "Supers au sol",
+  "texte": "Tes validations precedentes.",
+  "page": "supers2.html",
+  "groupe": "COMBAT ET ANIMATIONS"
+ },
+ {
+  "id": "supers_air2",
+  "titre": "Supers aériennes",
+  "texte": "Tes validations precedentes.",
+  "page": "supers_air2.html",
+  "groupe": "COMBAT ET ANIMATIONS"
+ },
+ {
+  "id": "roulade2",
+  "titre": "Roulades et saltos",
+  "texte": "Tes validations precedentes.",
+  "page": "roulade2.html",
+  "groupe": "COMBAT ET ANIMATIONS"
+ }
+]

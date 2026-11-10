@@ -1,31 +1,41 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Tactile de haut niveau - AI Fighter 2</title>
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Tactile de haut niveau - AI Fighter 2</title>
 <style>
 :root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b}
 body{margin:0;font:16px system-ui,sans-serif;background:var(--papier);color:var(--encre);padding:14px;line-height:1.35}
 h1{font-size:22px;margin:0 0 4px}h2{font-size:17px;margin:8px 0 2px}h3{font-size:18px;margin:18px 0 4px}
 .g{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-top:12px}
 .c{background:#fff;border:3px solid var(--encre);border-radius:16px;padding:10px;box-shadow:5px 5px 0 var(--accent)}
-.c.ok{outline:4px solid #2e9b5b}.c.no{outline:4px solid var(--accent)}
+.c.ok{outline:4px solid #2f8f5b}.c.no{outline:4px solid var(--accent)}
 img{width:100%;border-radius:10px;background:var(--encre);display:block}
 p{margin:4px 0;font-size:14px}.tag{display:inline-block;background:var(--encre);color:var(--papier);border-radius:999px;padding:2px 10px;font-size:12px;font-weight:700}
 table{border-collapse:collapse;width:100%;background:#fff;border:3px solid var(--encre);border-radius:12px;overflow:hidden;font-size:14px}
 th,td{border-bottom:1px solid var(--encre);padding:6px 8px;text-align:left;vertical-align:top}th{background:var(--encre);color:var(--papier)}
 button{font:inherit;font-weight:700;padding:10px 14px;border-radius:999px;border:2px solid var(--encre);margin:4px 6px 0 0;cursor:pointer;background:var(--papier);color:var(--encre)}
-button.v{background:#2e9b5b;color:#fff}button.x{background:var(--accent);color:#fff}
+button.v{background:#2f8f5b;color:#fff}button.x{background:var(--accent);color:#fff}
 textarea{width:100%;box-sizing:border-box;border-radius:10px;border:2px solid var(--encre);padding:6px;margin-top:6px;background:var(--papier);color:var(--encre);font:inherit}
 #o{white-space:pre-wrap;background:var(--encre);color:var(--papier);padding:12px;border-radius:12px;margin-top:14px}
 .go{background:var(--accent);color:#fff;margin-top:14px}
-</style></head><body>
+button,input[type=button],select{min-height:44px}</style><style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js"></script>
+</head><body>
 <h1>Tactile de haut niveau</h1>
-<p>Captures du vrai moteur, une par disposition. Les gestes S'AJOUTENT aux boutons (jamais a leur place) et se coupent d'un reglage. Les boutons restent TOUJOURS dans la bande reservee sous la zone de jeu, quoi que le joueur deplace ou agrandisse (matrice de tests : 16 formats x 4 presets x gauche / droite x editions extremes). Pour chaque carte : Valider ou A refaire (+ remarque), puis genere le texte et colle-le dans le chat.</p>
+<p>Captures du vrai moteur, une par disposition. Les gestes S'AJOUTENT aux boutons (jamais a leur place) et se coupent d'un réglage. Les boutons restent TOUJOURS dans la bande reservee sous la zone de jeu, quoi que le joueur deplace ou agrandisse (matrice de tests : 16 formats x 4 presets x gauche / droite x editions extremes). Pour chaque carte : Valider ou À refaire (+ remarque), puis genere le texte et colle-le dans le chat.</p>
 
 <h3>Gestes</h3>
 <table>
-<tr><th>Geste</th><th>Effet</th><th>Apercu</th></tr>
-<tr><td>Glisser depuis Coup / Lourde / Special / Ki dans une direction</td><td>Le coup dirige : le bouton + la direction tenus ensemble (comme au clavier). Bas = attaque basse.</td><td>Halo + fleche + mot (&laquo; Coup gauche &raquo;), plein et pulse quand le geste est valide</td></tr>
+<tr><th>Geste</th><th>Effet</th><th>Aperçu</th></tr>
+<tr><td>Glisser depuis Coup / Lourde / Spécial / Ki dans une direction</td><td>Le coup dirige : le bouton + la direction tenus ensemble (comme au clavier). Bas = attaque basse.</td><td>Halo + flèche + mot (&laquo; Coup gauche &raquo;), plein et pulse quand le geste est valide</td></tr>
 <tr><td>Glisser depuis Saut</td><td>Saut dirige</td><td>idem</td></tr>
 <tr><td>Glisser depuis Garde</td><td>Roulade (garde + direction)</td><td>&laquo; Roulade droite &raquo;</td></tr>
-<tr><td>Balayage libre vers le haut (hors boutons, hors stick)</td><td>Saut</td><td>Fleche + mot</td></tr>
+<tr><td>Balayage libre vers le haut (hors boutons, hors stick)</td><td>Saut</td><td>Flèche + mot</td></tr>
 <tr><td>Balayage libre gauche / droite</td><td>Roulade</td><td>idem</td></tr>
 <tr><td>Balayage libre vers le bas</td><td>Garde basse</td><td>idem</td></tr>
 <tr><td>Double tap hors boutons</td><td>Saisie</td><td>-</td></tr>
@@ -34,7 +44,7 @@ textarea{width:100%;box-sizing:border-box;border-radius:10px;border:2px solid va
 
 <h3>Haptique (navigator.vibrate, Android / Chrome)</h3>
 <table>
-<tr><th>Evenement</th><th>Motif (ms, niveau normal)</th></tr>
+<tr><th>Événement</th><th>Motif (ms, niveau normal)</th></tr>
 <tr><td>Coup donne</td><td>6 a 18 (tic discret)</td></tr>
 <tr><td>Coup encaisse</td><td>22 a 60 (franc, selon la puissance)</td></tr>
 <tr><td>Garde</td><td>10</td></tr>
@@ -46,7 +56,7 @@ textarea{width:100%;box-sizing:border-box;border-radius:10px;border:2px solid va
 <tr><td>Phase de boss</td><td>70 - 60 - 70</td></tr>
 <tr><td>Bouton pose</td><td>4 (niveaux normal et fort)</td></tr>
 </table>
-<p>Intensite reglable : coupee / legere (x0,55) / normale / forte (x1,5), segments plafonnes a 120 ms. Coupee aussi par l'option Vibrations.</p>
+<p>Intensite reglable : coupee / légère (x0,55) / normale / forte (x1,5), segments plafonnes a 120 ms. Coupee aussi par l'option Vibrations.</p>
 
 <div class="g" id="g"></div>
 <button class="go" onclick="out()">Generer mon texte</button><div id="o"></div>

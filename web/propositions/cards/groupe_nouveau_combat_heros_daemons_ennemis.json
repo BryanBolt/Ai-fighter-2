@@ -1,0 +1,58 @@
+[
+ {
+  "id": "heros_identite",
+  "titre": "Identite des 10 héros",
+  "texte": "Choisis les idles et gardes (16 variantes) pour chaque héros.",
+  "page": "heros_identite.html",
+  "groupe": "NOUVEAU : COMBAT, HÉROS, DAEMONS, ENNEMIS"
+ },
+ {
+  "id": "supers3",
+  "titre": "Supers (50) : poses lissees et mise en scène",
+  "texte": "Variantes de rendu de super, GIF a jour partiel.",
+  "page": "supers3.html",
+  "groupe": "NOUVEAU : COMBAT, HÉROS, DAEMONS, ENNEMIS"
+ },
+ {
+  "id": "daemons2",
+  "titre": "Daemons : 8 nouveaux + pastille HUD",
+  "texte": "Choisis le dessin A ou B de chaque nouveau daemon.",
+  "page": "daemons2.html",
+  "groupe": "NOUVEAU : COMBAT, HÉROS, DAEMONS, ENNEMIS"
+ },
+ {
+  "id": "bestiaire",
+  "titre": "Bestiaire : 13 nouveaux ennemis, 15 mini-boss",
+  "texte": "Planche de 16 designs pour 4 ennemis phares.",
+  "page": "bestiaire.html",
+  "groupe": "NOUVEAU : COMBAT, HÉROS, DAEMONS, ENNEMIS"
+ },
+ {
+  "id": "armes_comiques",
+  "titre": "Armes comiques : savate, agrafeuse, expulsion",
+  "texte": "16 variantes de savate et d'agrafeuse a choisir.",
+  "page": "armes_comiques.html",
+  "groupe": "NOUVEAU : COMBAT, HÉROS, DAEMONS, ENNEMIS"
+ },
+ {
+  "id": "combat_design",
+  "titre": "Combat design : audit et propositions P1 a P5",
+  "texte": "Valide ou refuse chaque proposition d'equilibrage.",
+  "page": "combat_design.html",
+  "groupe": "NOUVEAU : COMBAT, HÉROS, DAEMONS, ENNEMIS"
+ },
+ {
+  "id": "feel",
+  "titre": "Game feel : 16 styles d'impact",
+  "texte": "Choisis le style d'impact par defaut.",
+  "page": "feel.html",
+  "groupe": "NOUVEAU : COMBAT, HÉROS, DAEMONS, ENNEMIS"
+ },
+ {
+  "id": "sons",
+  "titre": "Sound design",
+  "texte": "Écoute les familles de sons.",
+  "page": "sons.html",
+  "groupe": "NOUVEAU : COMBAT, HÉROS, DAEMONS, ENNEMIS"
+ }
+]

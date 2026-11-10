@@ -2,12 +2,20 @@
 // Strategie : reseau d'abord (version la plus recente), cache seulement en secours hors ligne ; jamais de version perimee
 // tant que le reseau repond. Hors ligne : la derniere copie vue ; une page (navigation) retombe sur index.html, mais une
 // ressource manquante (wasm, son) reste une vraie erreur : lui servir du HTML faisait planter l'instanciation du wasm.
-const CACHE = 'afh-shell-v3';
+const CACHE = 'afh-shell-v4';
 // Pre-cache du jeu a l'installation (hors ligne des la 1re visite) : au mieux, fichier par fichier (un echec ne bloque jamais
 // l'installation ; le wasm de ~12 Mo ne retient pas le demarrage : la page le telecharge deja en parallele).
 // Mise a jour sans casser une partie : skipWaiting + claim ne rechargent JAMAIS la page ouverte ; la nouvelle version n'est
 // utilisee qu'a la prochaine ouverture ou au prochain rechargement.
-const CORE = ['/', '/index.html', '/mq_js_bundle.js', '/manifest.webmanifest', '/icon-192.png', '/icon-512.png', '/icon-maskable-512.png', '/favicon.svg', '/apple-touch-icon.png', '/ai_fighter_2.wasm', '/music/final_escalation_title.ogg', '/music/level_1.ogg'];
+const CORE = ['/', '/index.html', '/mq_js_bundle.js', '/manifest.webmanifest', '/icon-192.png', '/icon-512.png', '/icon-maskable-512.png', '/favicon.svg', '/apple-touch-icon.png'];
+// Le wasm (~12 Mo) et la musique du titre ne sont PAS pre-caches a l'installation : la page les telecharge deja, les prendre deux fois
+// doublait les octets de la 1re visite (lenteur sur mobile). La page envoie {t:'warm'} une fois le wasm charge : copie alors depuis le
+// cache HTTP (revalidation 304), sans 2e telechargement.
+const WARM = ['/ai_fighter_2.wasm', '/music/final_escalation_title.ogg', '/music/level_1.ogg'];
+self.addEventListener('message', (e) => {
+  if (!e.data || e.data.t !== 'warm') return;
+  e.waitUntil((async () => { try { const c = await caches.open(CACHE); for (const u of WARM) { try { const r = await fetch(u); if (cacheable(r)) await c.put(u, r); } catch (_) {} } } catch (_) {} })());
+});
 self.addEventListener('install', (e) => {
   self.skipWaiting();
   e.waitUntil((async () => {
@@ -35,6 +43,13 @@ self.addEventListener('fetch', (e) => {
   e.respondWith((async () => {
     try {
       const res = await fetch(req);
+      // 5xx (Render qui se reveille : 502/503/504) : si on a une copie, on la sert plutot que l'erreur ; sinon l'erreur passe (la page reessaie).
+      if (res.status >= 500) {
+        const old = await caches.match(req, { ignoreSearch: true });
+        if (old) return old;
+        if (req.mode === 'navigate') { const sh = await caches.match('/index.html') || await caches.match('/'); if (sh) return sh; }
+        return res;
+      }
       if (cacheable(res)) {
         const copy = res.clone();
         e.waitUntil(caches.open(CACHE).then((c) => c.put(req, copy)).catch(() => {}));

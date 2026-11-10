@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AI Fighter 2 - La fin du jeu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#221834;--paper:#fff3e0;--acc:#d8456b;--card:#fffaf0;--mut:#6b5a78}
+@media (prefers-color-scheme:dark){:root{--ink:#fff3e0;--paper:#221834;--card:#2c2040;--mut:#c9b8d6}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 Nunito,sans-serif}
+header,main,footer{max-width:1020px;margin:0 auto;padding:16px}
+h1,h2,h3{font-family:Silkscreen,monospace;font-weight:700;letter-spacing:.02em}
+h1{font-size:26px;margin:.4em 0}
+h3{font-size:20px;margin:28px 0 4px;border-bottom:3px solid var(--acc);padding-bottom:4px}
+h2{font-size:17px;margin:0 0 6px}
+p.lead{color:var(--mut);margin-top:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(440px,100%),1fr));gap:18px}
+.grid.small{grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:14px}
+.card{background:var(--card);border:3px solid var(--ink);border-radius:10px;box-shadow:5px 5px 0 var(--ink);padding:12px}
+.card img{width:100%;max-width:400px;height:auto;display:block;border:2px solid var(--ink);border-radius:6px;margin:6px 0}
+.card small{color:var(--mut)}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+button{font:700 14px Silkscreen,monospace;border:3px solid var(--ink);border-radius:999px;padding:6px 14px;background:var(--card);color:var(--ink);cursor:pointer}
+button[aria-pressed=true].ok{background:#2f9e5b;color:#fff;border-color:#2f9e5b}
+button[aria-pressed=true].redo{background:var(--acc);color:#fff;border-color:var(--acc)}
+button.gen{background:var(--acc);color:#fff;border-color:var(--acc);font-size:16px;padding:10px 20px}
+textarea{width:100%;min-height:54px;font:16px Nunito,sans-serif;border:2px solid var(--ink);border-radius:8px;padding:6px;background:var(--paper);color:var(--ink)}
+#out{min-height:200px;margin-top:10px}
+.tag{font:700 12px Silkscreen,monospace;color:var(--acc)}
+.rule{background:var(--card);border-left:6px solid var(--acc);padding:8px 12px;border-radius:6px}
+table{border-collapse:collapse;width:100%;font-size:15px}
+td,th{border:2px solid var(--ink);padding:5px 8px;text-align:left}
+th{background:var(--card);font-family:Silkscreen,monospace;font-size:13px}
+.def{outline:4px solid var(--acc);outline-offset:2px}
+</style>
+<script src="verdicts.js"></script>
+<style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style></head>
+<body>
+<header>
+<h1>LA FIN DU JEU</h1>
+<p class="lead">L'Ange (boss final blanc, la purete poussee trop loin), le retour des couleurs quand il tombe, l'epilogue sans un mot, le generique, l'après-jeu et la musique qui monte. Chaque GIF est une capture du vrai moteur (400 px, 40 couleurs, vitesse réelle). Rien n'est publie : tout est à valider ici.</p>
+<p class="rule"><b>Le fil de la fin</b> : le blanc contient toutes les couleurs, il a voulu les fusionner ; quand il tombe, les couleurs reviennent par ou il s'est tenu. Après : lieux recolores, le héros et les daemons se retrouvent, Kevin debranche NUIT 48 (l'horloge reste a 06:58), un ruban de toutes les couleurs mene vers la lumière. Aucune ligne de narration, et jamais un mot pour dire que le héros rêve.</p>
+</header>
+<main id="main"></main>
+<main>
+<p><button class="gen" id="gen">GENERER MON TEXTE</button></p>
+<textarea id="out" readonly placeholder="Ton texte apparait ici : copie-le dans le chat."></textarea>
+</main>
+<footer><small>Charte Encre #221834, Papier #fff3e0, Accent #d8456b. Deterministe (synchro en ligne) : tout le rendu depend du temps seul ; la vie de l'Ange suit le nombre de joueurs de l'équipe (arrivee et départ en cours de combat compris).</small></footer>
+<script>
+const RET=[["Onde depuis l'Ange","Un front de couleur part de ses pieds et recolore le lieu en cercle. Gerbe d'anneaux."],
+["Rideau de gauche","Le decor se recolore de gauche a droite. Confettis."],
+["Rideau de droite","De droite a gauche. Petales."],
+["L'aube monte","Les couleurs montent du sol vers le ciel, etincelles qui s'elevent."],
+["Pluie de couleurs","Le decor se recolore du haut vers le bas, gouttes de peinture."],
+["Iris du centre","Un iris s'ouvre au centre de l'ecran, rayons prismatiques."],
+["Bandes de peinture","Dix bandes verticales s'allument dans le desordre. Confettis."],
+["Pixels qui s'allument","Chaque case de l'ecran retrouve sa couleur au hasard, etincelles."],
+["Ondes concentriques","Anneaux alternes qui pulsent depuis l'Ange, gerbe d'anneaux."],
+["Diagonale","Un balayage en diagonale, petales."],
+["Spirale","La couleur tourne autour du centre en spirale, rayons."],
+["Stores qui s'ouvrent","Neuf stores horizontaux s'ouvrent l'un apres l'autre, confettis."],
+["Petales","Un front irregulier a cinq petales part de l'Ange, petales."],
+["Deux battements de coeur","La couleur revient en deux battements (un premier a moitie, puis tout), anneaux."],
+["Coups de pinceau","Huit coups de pinceau horizontaux decales, gouttes de peinture."],
+["Gouttes qui s'etalent","Sept gouttes tombent et s'etalent jusqu'a se rejoindre, etincelles."]];
+const S=[
+["1. Le combat de l'Ange : phases, telegraphes, coop",[
+["ange_entree","Entree","Au dernier etage de sa cantine, tout est deja blanc. Aureole, ailes en lames, anneau d'effacement au sol."],
+["ange_p1","Phase 1 (100 a 75 %)","Il n'a encore rien efface. Les gros coups laissent des TRACES BLANCHES : anneau blanc cerne d'encre (zone), anneau qui se resserre, colonne de lumiere qui se dessine de bas en haut, clignotement dans les 22 dernieres images."],
+["ange_p2","Phase 2 (75 a 50 %)","Le decor palit (voile gris-clair). Une trace de plus. Les daemons ont un « ! » qui saute au changement de phase."],
+["ange_p3","Phase 3 (50 a 25 %)","L'aureole se fend en deux arcs qui tournent. Les daemons transpirent. Encore une trace."],
+["ange_p4","Phase 4 (25 a 0 %)","Tout est blanc, il ne reste que toi. Jusqu'a six traces a la fois."],
+["ange_coop1","Duel (1 joueur)","Sa vie est celle de la fiche."],
+["ange_coop4","4 joueurs","Vie x2,65 ; une trace de plus ; les traces visent chacun a son tour, pas toujours le premier joueur."],
+["ange_coop8","8 joueurs","Vie x4,85 ; trois traces de plus. Un joueur qui arrive ou repart en cours de combat : la vie suit en proportion, la barre ne saute pas."],
+["ange_ng","New Game+ (niveau 2)","Ennemis x1,75, voile d'encre au lieu du gris clair : la fin est la meme, la nuit est plus noire."]]],
+["2. Le retour des couleurs (le moment cle) : 16 variantes",[]],
+["3. L'epilogue (20 s, quatre scenes, aucun texte de narration)",[
+["epilogue","Les lieux, les retrouvailles, Kevin, le ruban","Scene 1 : six vignettes aux vraies couleurs des terrains visites se recolorent une a une. Scene 2 : le heros ouvre les bras, les daemons arrivent en sautillant, un coeur chacun. Scene 3 : gare a l'aube, l'horloge reste a 06:58 ; le panneau annonce NUIT 47, bafouille, affiche NUIT 48 ; Kevin le debranche tranquillement puis regarde l'ecran, pouce leve. Scene 4 : le heros marche vers la lumiere, un ruban des six couleurs derriere lui, les daemons a la queue."]]],
+["4. Le generique (motion design, ignorable)",[
+["generique","Version longue (premiere vue, ~40 s)","L'aube a la fenetre a gauche, cartes cinetiques a droite : titre, un groupe de roles par carte, AUX JOUEURS (noms de la partie dans leur couleur et leur forme), MERCI AUX LIEUX (six vignettes), Merci d'avoir joue / Va dormir."],
+["generique_court","Version courte (des la 2e vue, ~14 s, 8 joueurs)","Titre, joueurs, lieux, merci. B / Echap passe a la suite a tout moment, dans les deux versions."]]],
+["5. L'apres-jeu",[
+["apres_jeu","Carte de fin : ce qui s'ouvre","ASCENSION (roguelite au-dela du 10e etage, la chaleur monte), NEW GAME+ (campagne, ennemis x1,35 / x1,75 / x2,2, voile d'encre, un niveau a la fois), CARNET DE LIEUX. Succes de fin : Toutes les couleurs, Encore une nuit, Insomnie chronique, Carnet de voyage, Plus haut que le dernier etage."],
+["carnet","Carnet de lieux","Chaque terrain visite y garde ses couleurs (nombre de victoires) ; les autres restent « ??? ». Le carnet complet ouvre un succes."]]]
+];
+const st={};
+function card(id,t,d,extra){
+  const c=document.createElement('div');c.className='card';
+  c.innerHTML='<h2>'+t+'</h2><img src="fin/'+id+'.gif" alt="'+t+'" loading="lazy" onerror="this.style.display=\'none\'"><small>'+d+'</small>'+(extra||'')+
+  '<div class="btns"><button class="ok" aria-pressed="false">Valider</button><button class="redo" aria-pressed="false">A refaire</button></div><textarea placeholder="Commentaire (facultatif)"></textarea>';
+  const [ok,redo]=c.querySelectorAll('button'),ta=c.querySelector('textarea');
+  st[id]={t,v:'',c:''};
+  ok.onclick=()=>{st[id].v=st[id].v=='ok'?'':'ok';ok.setAttribute('aria-pressed',st[id].v=='ok');redo.setAttribute('aria-pressed','false')};
+  redo.onclick=()=>{st[id].v=st[id].v=='redo'?'':'redo';redo.setAttribute('aria-pressed',st[id].v=='redo');ok.setAttribute('aria-pressed','false')};
+  ta.oninput=()=>{st[id].c=ta.value};
+  return c;
+}
+const main=document.getElementById('main');
+S.forEach(([title,items],si)=>{
+  const h=document.createElement('h3');h.textContent=title;main.appendChild(h);
+  const g=document.createElement('div');g.className='grid'+(si==1?' small':'');
+  if(si==1){
+    RET.forEach(([n,d],i)=>{const c=card('retour_'+('0'+i).slice(-2),(i+1)+'. '+n+(i==0?' (par defaut)':''),d);if(i==0)c.classList.add('def');g.appendChild(c)});
+  } else items.forEach(([id,t,d])=>g.appendChild(card(id,t,d)));
+  main.appendChild(g);
+});
+// Musique
+const mh=document.createElement('h3');mh.textContent='6. La musique finale en calques';main.appendChild(mh);
+const mt=document.createElement('div');mt.className='card';
+mt.innerHTML='<p>Cinq boucles de 8 s lancees ensemble (toujours en phase), synthetisees par le jeu, qui s\'ajoutent au morceau de boss : le volume de chaque calque monte avec la phase ET avec la vie perdue dans la phase. A sa chute tout se tait, puis l\'accord chaud (les couleurs) monte et les cloches scintillent.</p><table><tr><th>Calque</th><th>Contenu</th><th>P1</th><th>P2</th><th>P3</th><th>P4</th><th>Chute</th></tr><tr><td>0</td><td>Grondement la mineur (55 Hz, quinte, tremolo)</td><td>oui</td><td>oui</td><td>oui</td><td>oui</td><td>se tait</td></tr><tr><td>1</td><td>Choeur (accord la mineur, vibrato)</td><td>-</td><td>monte</td><td>oui</td><td>oui</td><td>se tait</td></tr><tr><td>2</td><td>Pulsation d\'arpege (croches)</td><td>-</td><td>-</td><td>monte</td><td>oui</td><td>coupee</td></tr><tr><td>3</td><td>Cloches clairsemees</td><td>-</td><td>-</td><td>-</td><td>monte</td><td>scintillent</td></tr><tr><td>4</td><td>Accord chaud do majeur 7 (le retour des couleurs)</td><td>-</td><td>-</td><td>-</td><td>-</td><td>monte</td></tr></table>';
+main.appendChild(mt);
+mt.appendChild(card('ange_p4','Ecouter en jeu','Les calques sont dans le jeu (aucun fichier) ; ce GIF est muet. Valider si le principe (la musique monte avec les phases) te convient.'));
+document.getElementById('gen').onclick=()=>{
+  const L=['TEXTE : LA FIN DU JEU'];
+  for(const k in st){const s=st[k];if(s.v||s.c)L.push('- '+k+' ('+s.t+') : '+(s.v=='ok'?'VALIDE':s.v=='redo'?'A REFAIRE':'')+(s.c?' / '+s.c:''))}
+  const ret=Object.keys(st).filter(k=>k.startsWith('retour_')&&st[k].v=='ok');
+  if(ret.length)L.push('Retour des couleurs retenu : '+ret.map(k=>st[k].t).join(' ; '));
+  document.getElementById('out').value=L.join('\n');
+};
+</script>
+</body>
+</html>

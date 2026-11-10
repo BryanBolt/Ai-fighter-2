@@ -1,0 +1,20 @@
+[
+ {
+  "id": "replay_png_compact",
+  "titre": "Photos de replay compactes",
+  "texte": "Les photos PNG du replay passent d'environ 1,5 Mo a quelques dizaines de Ko (sans dependance) : on garde ce format pour le partage ?",
+  "page": "replay.html"
+ },
+ {
+  "id": "replay_seed_pin",
+  "titre": "Graines du jour epinglees",
+  "texte": "Le defi du jour a la meme graine sur toutes les plateformes, verrouillee par test : on accepte de ne jamais la changer ?",
+  "page": "tournoi.html"
+ },
+ {
+  "id": "replay_determinisme",
+  "titre": "Rejeu et seek verifies",
+  "texte": "Le rejeu et le saut dans le temps redonnent le meme state_hash (teste) : on peut s'en servir comme preuve pour les classements ?",
+  "page": "replay.html"
+ }
+]

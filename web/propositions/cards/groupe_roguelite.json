@@ -1,0 +1,16 @@
+[
+ {
+  "id": "roguelite",
+  "titre": "Roguelite : objets et pouvoirs",
+  "texte": "Tes verdicts precedents.",
+  "page": "roguelite.html",
+  "groupe": "ROGUELITE"
+ },
+ {
+  "id": "roguelite_profondeur",
+  "titre": "Roguelite : salles, reliques, progression",
+  "texte": "20 idees a classer. Seule la logique est ecrite, pas encore branchee.",
+  "page": "roguelite_profondeur.html",
+  "groupe": "ROGUELITE"
+ }
+]

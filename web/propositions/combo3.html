@@ -1,11 +1,21 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Combo 3 - enchainements fondus</title>
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Combo 3 - enchaînements fondus</title>
 <style>body{margin:0;font:16px system-ui,sans-serif;background:#1c1d2e;color:#eee;padding:12px}h1{font-size:20px}
 .g{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}.c{background:#2a2c44;border-radius:10px;padding:10px}.c.ok{outline:3px solid #4cd07d}.c.no{outline:3px solid #e0507a}
 img{width:100%;border-radius:8px;background:#000}h2{font-size:16px;margin:6px 0 2px}.n{color:#f5c542;font-weight:700}p{margin:4px 0;font-size:14px;opacity:.9}
-button{font:inherit;padding:9px 12px;border-radius:8px;border:0;margin:4px 4px 0 0;color:#fff;background:#555}button.v{background:#2e9b5b}button.x{background:#c03a62}
-textarea{width:100%;box-sizing:border-box;border-radius:6px;border:0;padding:6px;margin-top:6px;background:#15162a;color:#eee}#o{white-space:pre-wrap;background:#111;padding:10px;border-radius:8px;margin-top:12px}</style></head><body>
-<h1>Combo Jab, genou, talons : avant / apres</h1>
-<p>Captures du vrai moteur. Pour chaque coup : Valider ou A refaire (+ remarque), puis genere le texte et colle-le dans le chat.</p>
+button{font:inherit;padding:9px 12px;border-radius:8px;border:0;margin:4px 4px 0 0;color:#fff;background:#555}button.v{background:#2f8f5b}button.x{background:#c03a62}
+textarea{width:100%;box-sizing:border-box;border-radius:6px;border:0;padding:6px;margin-top:6px;background:#15162a;color:#eee}#o{white-space:pre-wrap;background:#111;padding:10px;border-radius:8px;margin-top:12px}button,input[type=button],select{min-height:44px}</style><style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js"></script>
+</head><body>
+<h1>Combo Jab, genou, talons : avant / après</h1>
+<p>Captures du vrai moteur. Pour chaque coup : Valider ou À refaire (+ remarque), puis genere le texte et colle-le dans le chat.</p>
 <div class="g" id="g"></div><button onclick="out()" style="background:#e0507a;font-weight:700;margin-top:12px">Generer mon texte</button><div id="o"></div>
 <script>var C=[{"key": "c3n", "name": "Jab, genou, talons : NOUVEAU (enchainements fondus)", "n": "combo", "d": "Chaque coup glisse depuis la pose du precedent : plus de saut de bras ni de jambe entre le jab, le genou et les talons.", "img": "nouveau_3.webp"}, {"key": "c3o", "name": "Jab, genou, talons : avant", "n": "combo", "d": "Version que tu as jugee saccadee.", "img": "avant_3.webp"}, {"key": "c4n", "name": "Lanceur du dragon : apres la meme correction", "n": "combo", "d": "Verifie que le combo valide est reste identique.", "img": "nouveau_4.webp"}, {"key": "c4o", "name": "Lanceur du dragon : version validee", "n": "combo", "d": "Reference.", "img": "avant_4.webp"}],st={};
 var g=document.getElementById('g');

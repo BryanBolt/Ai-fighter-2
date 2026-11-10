@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Galerie des poses</title>
 <style>
 body{margin:0;font:15px system-ui,sans-serif;background:#1c1d2e;color:#eee;padding:10px}
@@ -9,10 +9,20 @@ h1{font-size:19px;margin:4px 0}h2{font-size:16px;margin:18px 0 6px;color:#ffd166
 .c.del{border-color:#e0507a;opacity:.55}.c.keep{border-color:#4cd07d}
 .c img{width:100%;border-radius:6px;background:#000;display:block}
 .c b{display:block;font-size:12px;margin:5px 0}
-button{font:inherit;font-size:13px;padding:6px 9px;border-radius:7px;border:0;margin:2px;color:#fff;background:#555}
-button.k{background:#2e9b5b}button.d{background:#c03a62}button.big{background:#e0507a;padding:10px 14px;font-weight:700}
+button{font:inherit;font-size:13px;padding:6px 9px;border-radius:8px;border:0;margin:2px;color:#fff;background:#555}
+button.k{background:#2f8f5b}button.d{background:#c03a62}button.big{background:#e0507a;padding:10px 14px;font-weight:700}
 #o{white-space:pre-wrap;background:#111;padding:10px;border-radius:8px;margin-top:12px;font:12px monospace}
-</style></head><body>
+button,input[type=button],select{min-height:44px}</style><style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js"></script>
+</head><body>
 <h1>Galerie des poses (vrai moteur)</h1>
 <p>Marque chaque pose : <b style="color:#4cd07d">Garder</b> / <b style="color:#e0507a">Supprimer</b>. Boutons rapides : par section ou pour tout. Puis « Generer mon texte » et colle-le dans le chat.</p>
 <p><button class="d" onclick="all_(-1)">TOUT SUPPRIMER</button><button class="k" onclick="all_(1)">Tout garder</button><button onclick="all_(0)">Tout effacer</button></p>

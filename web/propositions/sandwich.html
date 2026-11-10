@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Anti-sandwich : mesures et protections</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b;--ok:#2f8f5b}
+body{margin:0;background:var(--papier);color:var(--encre);font:16px/1.45 Nunito,system-ui,sans-serif;padding:16px}
+h1,h2{font-family:Silkscreen,monospace;letter-spacing:.02em;margin:0 0 6px}
+h1{font-size:22px}h2{font-size:15px;color:var(--accent)}h3{font-size:16px;margin:18px 0 6px}
+.lead{max-width:780px}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px;margin-top:14px}
+.c{background:#fff;border:2px solid var(--encre);border-radius:12px;padding:10px}
+.c.ok{outline:4px solid var(--ok)}.c.no{outline:4px solid var(--accent)}
+img{width:100%;border-radius:8px;background:var(--encre);display:block}
+p{margin:6px 0;font-size:14px}.why{opacity:.75;font-size:13px}
+button{font:inherit;font-weight:700;padding:9px 12px;border-radius:8px;border:2px solid var(--encre);margin:4px 4px 0 0;background:var(--papier);color:var(--encre);cursor:pointer}
+button.v{background:var(--ok);color:#fff}button.x{background:var(--accent);color:#fff}
+textarea{width:100%;box-sizing:border-box;border:2px solid var(--encre);border-radius:6px;padding:6px;margin-top:6px;font:inherit;background:var(--papier)}
+#o{white-space:pre-wrap;background:var(--encre);color:var(--papier);padding:12px;border-radius:10px;margin-top:14px}
+.gen{background:var(--accent);color:#fff;font-family:Silkscreen,monospace;margin-top:14px}
+table{border-collapse:collapse;margin:10px 0;font-size:14px;max-width:820px;width:100%}
+td,th{border:2px solid var(--encre);padding:6px 8px;text-align:left;background:#fff}th{background:var(--encre);color:var(--papier)}
+.bar{display:flex;align-items:center;gap:8px;margin:4px 0;max-width:820px;font-size:13px}
+.bar b{width:170px;flex:none}.bar i{display:block;height:16px;border-radius:4px;background:var(--encre)}.bar i.a{background:var(--accent)}
+.bar span{white-space:nowrap}
+button,input[type=button],select{min-height:44px}</style></head><body>
+<h1>Anti-sandwich : mesures et protections</h1>
+<p class="lead">Plainte : « on se fait souvent prendre en sandwich, on prend plein de coups d'un coup et on ne peut rien faire ». J'ai fait jouer des bots (9 héros, 18 chapitres, solo normal / difficile, spam léger, tortue, coop 2 / 4 / 8 : 1134 parties, 8 heures de jeu) et mesuré les coups subis en chaîne sans image libre. Détails : <code>tools/playtest/sandwich.md</code>, tableaux : <code>tools/sandwich_report_avant.md</code> et <code>_apres.md</code>. Les combats de boss ne changent pas.</p>
+
+<h3>Coups subis d'affilée sans pouvoir agir (maximum mesuré)</h3>
+<div class="bar"><b>Avant</b><i class="a" style="width:224px"></i><span>14 coups d'affilée (14 en 1,5 s)</span></div>
+<div class="bar"><b>Après</b><i style="width:48px"></i><span>3 coups (plafond) ; 4 une seule fois, coup d'un allié en coop 8</span></div>
+
+<h3>Avant / après, tous modes confondus</h3>
+<table>
+<tr><th>Mesure</th><th>Avant</th><th>Après</th><th>Lecture</th></tr>
+<tr><td>Séries de 4 coups ou plus (par heure de jeu)</td><td>170</td><td>19 (toutes des saisies)</td><td>plafond tenu en solo, coop 2 / 4 / 8 (la saisie se contre par la lutte)</td></tr>
+<tr><td>Temps passé en sandwich</td><td>2,4 %</td><td>1,8 %</td><td>la meute n'entre plus de l'autre côté d'un camarade</td></tr>
+<tr><td>Coups pris en sandwich</td><td>6 %</td><td>3 %</td><td>passif : 13 % -> 8 %</td></tr>
+<tr><td>2 attaquants ou plus en même temps</td><td>0,6 % du temps</td><td>0,4 %</td><td>décisions simultanées vues par le jeton</td></tr>
+<tr><td>Coups subis par minute</td><td>43,9</td><td>33,5</td><td>-24 %</td></tr>
+<tr><td>PV perdus par minute</td><td>260</td><td>212</td><td>-18 %</td></tr>
+<tr><td>Victoires des bots</td><td>52 %</td><td>56 %</td><td>+4 points seulement (solo normal : 15 % -> 24 %, difficile : 7 % -> 14 %)</td></tr>
+<tr><td>Incapacité continue max</td><td>6,7 s</td><td>6,2 s</td><td>chute + réveil protégé comptés</td></tr>
+</table>
+
+<h3>GIF du vrai moteur : un héros entre six sbires (l'IA du jeu joue le héros)</h3>
+<div class="g" id="gifs">
+<div class="c"><img src="sandwich/avant.webp" alt="Avant" loading="lazy"><h2>Avant</h2><p>Les sbires frappent des deux côtés en même temps, le héros enchaîne les stuns.</p></div>
+<div class="c"><img src="sandwich/apres.webp" alt="Apres" loading="lazy"><h2>Après</h2><p>Flanc tenu d'un seul côté, coup annoncé (« ! » orange), anneau et flèches rouges quand on est encerclé, 3 coups maximum puis réveil protégé.</p></div>
+</div>
+
+<h3>Protections à valider</h3>
+<div class="g" id="g"></div>
+<button class="gen" onclick="out()">Generer mon texte</button><div id="o"></div>
+<script>
+var C=[
+{k:"s1",n:"Plafond de 3 coups en chaine",d:"Le 3e coup d'une serie met le héros à terre (protégé), puis 20 images d'invulnérabilité au réveil (13 après un seul coup) pour esquiver ou riposter.",w:"Si trop facile : plafond à 4 ou réveil plus court. Si encore dur : plafond à 2."},
+{k:"s2",n:"Jetons par cible et par côté",d:"1 / 2 / 3 ennemis maximum sur un héros (facile / normal / difficile), 2 s'il est encerclé, jamais deux côtés opposés en même temps, coop : plafond global.",w:"Difficulté Hades-like conservée : la meute presse encore, mais lisiblement."},
+{k:"s3",n:"Coup annoncé plus longtemps quand on est encerclé",d:"20 images d'armement visibles avec un « ! » orange avant un coup contre un héros pris en sandwich.",w:"Les boss et leurs combats gardent leurs télégraphes d'origine."},
+{k:"s4",n:"Respiration après un coup",d:"Quand un héros est touché, les autres ennemis proches reculent et attendent 0,7 s.",w:"Rythme : un peu moins de pression continue."},
+{k:"s5",n:"Alerte visuelle et sonore",d:"Anneau rouge pulsant, flèches rouges sur les deux flancs, bandeau ENCERCLE ! et cornet d'alerte (son du boss, plus aigu et bref ; une fois toutes les 2,5 s au plus).",w:"A juger sur GIF : assez voyant sans masquer l'action ?"}
+],st={};
+var g=document.getElementById('g');
+C.forEach(function(c){var d=document.createElement('div');d.className='c';d.id='c_'+c.k;
+d.innerHTML='<h2>'+c.n+'</h2><p>'+c.d+'</p><p class="why">'+c.w+'</p><button class="v" data-k="'+c.k+'" data-v="1">Valider</button><button class="x" data-k="'+c.k+'" data-v="-1">A refaire</button><textarea id="t_'+c.k+'" rows="2" placeholder="Remarque"></textarea>';g.appendChild(d);});
+g.addEventListener('click',function(e){var b=e.target;if(!b.dataset||!b.dataset.k)return;var v=+b.dataset.v;st[b.dataset.k]=v;document.getElementById('c_'+b.dataset.k).className='c '+(v>0?'ok':'no');});
+function out(){var L=C.map(function(c){var v=st[c.k];var t=document.getElementById('t_'+c.k).value.trim();return (v>0?'VALIDE':v<0?'A REFAIRE':'NON VU')+' : '+c.n+(t?' - '+t:'');});document.getElementById('o').textContent='Anti-sandwich :\n'+L.join('\n');}
+</script></body></html>

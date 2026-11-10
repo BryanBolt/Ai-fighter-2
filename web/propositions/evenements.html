@@ -1,6 +1,6 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Evenements de decor</title>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Événements de décor</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b;--ok:#2f8f5b}
@@ -22,15 +22,25 @@ textarea{width:100%;box-sizing:border-box;border:2px solid var(--encre);border-r
 .gen{background:var(--accent);color:#fff;font-family:Silkscreen,monospace;margin-top:14px}
 .rules{background:#fff;border:2px solid var(--encre);border-radius:12px;padding:10px 14px;max-width:780px}
 .rules li{margin:3px 0;font-size:14px}
-</style></head><body>
-<h1>Evenements de decor</h1>
-<p class="lead">Treize passages ambiants, rares et optionnels, joues par le vrai moteur (400 px, 48 couleurs, 30 i/s). Sept d'entre eux touchent le combat (vehicules, chariot) : ils sont toujours annonces 1,2 a 2 s avant et s'evitent. Les six autres sont de l'ambiance pure. Pour chaque scene : Valider ou A refaire (+ remarque), puis genere le texte et colle-le dans le chat.</p>
-<div class="rules"><h2>Regles communes</h2><ul>
-<li><b>Jamais obligatoire, jamais injuste</b> : annonce (bande rouge a rayures au sol dont le bord arriere est la ligne de securite, phares et triangle « ! » au bord de l'ecran, moteur qui monte), puis passage. On l'evite en reculant derriere la ligne, en sautant (moto, voiture, chariot) ou en roulant.</li>
-<li><b>Degats faibles</b> (3 a 9 PV), une seule fois par combattant, heros comme ennemis projetes de facon coherente ; jamais un boss ; jamais mortel pour un joueur (il reste au moins 1 PV).</li>
-<li><b>Rare</b> : jamais avant 10 s dans l'etage, au plus deux passages par etage dont un seul de gameplay, 50 a 70 s de repos entre deux ; jamais au premier etage, ni pendant un boss, un evenement de niveau ou un eclair.</li>
+button,input[type=button],select{min-height:44px}</style><style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js"></script>
+</head><body>
+<h1>Événements de décor</h1>
+<p class="lead">Treize passages ambiants, rares et optionnels, joues par le vrai moteur (400 px, 48 couleurs, 30 i/s). Sept d'entre eux touchent le combat (vehicules, chariot) : ils sont toujours annonces 1,2 a 2 s avant et s'evitent. Les six autres sont de l'ambiance pure. Pour chaque scène : Valider ou À refaire (+ remarque), puis genere le texte et colle-le dans le chat.</p>
+<div class="rules"><h2>Règles communes</h2><ul>
+<li><b>Jamais obligatoire, jamais injuste</b> : annonce (bande rouge a rayures au sol dont le bord arrière est la ligne de securite, phares et triangle « ! » au bord de l'écran, moteur qui monte), puis passage. On l'évite en reculant derrière la ligne, en sautant (moto, voiture, chariot) ou en roulant.</li>
+<li><b>Dégâts faibles</b> (3 a 9 PV), une seule fois par combattant, héros comme ennemis projetes de facon coherente ; jamais un boss ; jamais mortel pour un joueur (il reste au moins 1 PV).</li>
+<li><b>Rare</b> : jamais avant 10 s dans l'étage, au plus deux passages par étage dont un seul de gameplay, 50 a 70 s de repos entre deux ; jamais au premier étage, ni pendant un boss, un événement de niveau ou un éclair.</li>
 <li><b>Coherent</b> : chaque terrain a sa liste (camion au chantier, rame au quai, moto a la ruelle...) ; pas d'oiseaux, de ballon ni de cycliste sous la pluie ou de nuit ; feu d'artifice seulement au crepuscule ou la nuit, par temps sec.</li>
-<li><b>Deterministe</b> : suite de tirage propre a l'etage (graine du moteur), etat dans l'empreinte de simulation, identique chez tous les joueurs (1 a 8), rejoindre en cours de passage reste synchrone. Rendu : aplats, sans contour noir, parallaxe, charte.</li>
+<li><b>Deterministe</b> : suite de tirage propre a l'étage (graine du moteur), état dans l'empreinte de simulation, identique chez tous les joueurs (1 a 8), rejoindre en cours de passage reste synchrone. Rendu : aplats, sans contour noir, parallaxe, charte.</li>
 </ul></div>
 <div class="g" id="g"></div>
 <button class="gen" onclick="out()">Generer mon texte</button><div id="o"></div>

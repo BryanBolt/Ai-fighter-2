@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tournoi et spectateur</title>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--papier);color:var(--encre);font-family:Nunito,sans-serif;padding:16px 16px 60px}
+h1,h2,h3{font-family:Silkscreen,monospace;margin:.3em 0}
+h1{font-size:28px}h2{font-size:20px;margin-top:1.4em}h3{font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:16px}
+.card{border:3px solid var(--encre);border-radius:10px;padding:10px;background:#fff;box-shadow:4px 4px 0 var(--encre)}
+.card svg,.card img{width:100%;display:block;border:2px solid var(--encre);border-radius:6px;background:var(--encre)}
+.card p{font-size:14px;margin:.5em 0}
+button{font-family:Silkscreen,monospace;font-size:12px;border:2px solid var(--encre);background:#fff;color:var(--encre);padding:8px 12px;margin:4px 4px 0 0;cursor:pointer;border-radius:6px;min-height:36px}
+button.ok.on{background:#2f8f5b;color:#fff}button.ko.on{background:var(--accent);color:#fff}
+textarea{width:100%;font-family:Nunito,sans-serif;border:2px solid var(--encre);border-radius:6px;padding:6px;margin-top:6px;min-height:44px}
+textarea.big{min-height:200px}
+.gen{background:var(--accent);color:#fff;font-size:14px;padding:10px 16px}
+.note{background:#fff;border-left:6px solid var(--accent);padding:8px 12px;margin:10px 0;font-size:14px}
+.rules li{margin:.25em 0}
+</style><script src="verdicts.js"></script>
+<style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style></head><body>
+<h1>TOURNOI ET SPECTATEUR</h1>
+<p>Soirees entre amis : tournoi a elimination directe (4 ou 8 joueurs, IA en renfort), spectateurs qui peuvent arriver et partir a tout moment, mode « regarder » par lien, podium et revanche.
+Chaque joueur = <b>une couleur ET une forme</b> (lisible en daltonisme). Valide ou renvoie chaque proposition, ajoute un commentaire, puis genere ton texte.</p>
+<div class="note"><b>Déjà dans le jeu</b> (moteur réel, deterministe, teste) : arbre a rondes dynamiques, byes, joueurs IA en renfort, arrivants inseres au tour suivant, duels 1v1 sur le ring de l'arene (PV egalises a 100, même arme tiree dans une banque de melee, Ki a zero), classement, podium, revanche par vote, emotes, spectateur sans place (jusqu'a 64 par salon, retard de 1,5 s).
+Les 18 variantes ci-dessous sont des <b>maquettes d'arbre / d'affiche</b> : choisis celle(s) a integrer.</div>
+
+<h2>GIF du vrai moteur</h2>
+<div class="grid" id="real"></div>
+
+<h2>Variantes d'arbre et d'affiche (18)</h2>
+<div class="grid" id="vars"></div>
+
+<h2>Autres propositions</h2>
+<div class="grid" id="oth"></div>
+
+<h2>Règles d'equite et de fonctionnement</h2>
+<ul class="rules">
+<li><b>Entrants</b> : les joueurs presents (jusqu'a 4 ou 8), completes par des IA si tu le veux ; un nombre impair donne un <b>bye</b> (jamais deux fois au même tant qu'un autre n'en a pas eu).</li>
+<li><b>Equite</b> : PV egalises (100), bonus de run et Ki retires, même ring, <b>même arme</b> pour les deux duellistes (banque de 8 armes de melee, pas d'armes a feu).</li>
+<li><b>Join anytime</b> : un arrivant est spectateur, puis insere au prochain tour (pas après la finale). Un départ ne casse rien : l'IA tient la place et finit le match.</li>
+<li><b>Spectateur sans place</b> : lien « regarder » (?watch=CODE ou QR), reçoit le même flux que les joueurs, n'envoie jamais d'entree, reste 1,5 s derrière le direct, plafond 64 par salon (un envoi de plus par message et par spectateur).</li>
+<li><b>Fin</b> : classement (tour atteint, puis manches gagnees - perdues), podium sur le ring, historique des matchs, revanche par vote a la majorite, titres de la soiree conserves.</li>
+</ul>
+
+<h2>Mon texte</h2>
+<button class="gen" id="gen">Generer mon texte</button>
+<textarea class="big" id="out" readonly></textarea>
+
+<script>
+/* ---------- palette et formes (identiques au jeu : arena_ui::SLOT_COL et tournoi_ui::shape) ---------- */
+const COL=['#d8456b','#3a8fd9','#e0a321','#4fae63','#9b6bd1','#e0703a','#2fb5b0','#8a8f9c'];
+const NAMES=['Kaze','Gorr','Nova','Sora','Yume','Tetsu','Zui','IA 8'];
+const E='#221834',P='#fff3e0',A='#d8456b';
+function poly(cx,cy,n,r,rot){let p=[];for(let k=0;k<n;k++){const a=(rot+360*k/n)*Math.PI/180;p.push((cx+r*Math.cos(a)).toFixed(1)+','+(cy+r*Math.sin(a)).toFixed(1))}return p.join(' ')}
+function shp(i,x,y,r){const c=COL[i%8],s=`fill="${c}" stroke="${E}" stroke-width="2"`;
+ switch(i%8){case 0:return `<circle cx="${x}" cy="${y}" r="${r}" ${s}/>`;
+ case 1:return `<rect x="${x-r*.85}" y="${y-r*.85}" width="${r*1.7}" height="${r*1.7}" ${s}/>`;
+ case 2:return `<polygon points="${poly(x,y,3,r*1.15,-90)}" ${s}/>`;
+ case 3:return `<polygon points="${poly(x,y,4,r*1.2,0)}" ${s}/>`;
+ case 4:return `<polygon points="${poly(x,y,5,r*1.1,-90)}" ${s}/>`;
+ case 5:return `<polygon points="${poly(x,y,6,r*1.1,0)}" ${s}/>`;
+ case 6:return `<polygon points="${poly(x,y,8,r*1.1,22.5)}" ${s}/>`;
+ default:{const t=r*.38;return `<path d="M${x-r} ${y-t}h${r-t}v${-(r-t)}h${2*t}v${r-t}h${r-t}v${2*t}h${-(r-t)}v${r-t}h${-2*t}v${-(r-t)}h${-(r-t)}z" ${s}/>`}}}
+const T=(x,y,s,t,o={})=>`<text x="${x}" y="${y}" font-size="${s}" fill="${o.f||P}" font-family="Silkscreen,monospace" text-anchor="${o.a||'middle'}" ${o.w?`font-weight="700"`:''}>${t}</text>`;
+const R=(x,y,w,h,f,o={})=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${o.r??6}" fill="${f}" stroke="${o.s||E}" stroke-width="${o.sw??3}"/>`;
+const L=(x1,y1,x2,y2,c=P,w=3)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/>`;
+const W=400,H=250;
+const svg=(b,vb=`0 0 ${W} ${H}`)=>`<svg viewBox="${vb}" xmlns="http://www.w3.org/2000/svg"><rect width="${W}" height="${H}" fill="${E}"/>${b}</svg>`;
+/* un match : deux lignes (forme + nom), vainqueur marque */
+function mbox(x,y,w,h,a,b,win){const rh=h/2;let s=R(x,y,w,h,P,{sw:2});
+ [a,b].forEach((p,k)=>{const yy=y+k*rh;s+=shp(p,x+rh*.55,yy+rh/2,Math.min(7,rh*.3))+T(x+rh*1.1,yy+rh/2+4,Math.min(11,rh*.5),p==null?'?':NAMES[p],{f:E,a:'start'});
+  if(win===p&&p!=null)s+=`<rect x="${x+w-8}" y="${yy+2}" width="6" height="${rh-4}" fill="${A}"/>`});
+ return s+L(x,y+rh,x+w,y+rh,E,1)}
+/* donnees de demonstration : 8 joueurs, resultats complets */
+const R1=[[0,1,0],[2,3,3],[4,5,4],[6,7,6]],R2=[[0,3,3],[4,6,4]],R3=[[3,4,3]];
+/* ---------- 18 variantes ---------- */
+const V=[];
+V.push(['Arbre classique (gauche vers droite)','Colonnes TOUR 1 / DEMI / FINALE, fils relies, match en cours encadre en accent. C\'est la version actuellement dessinee dans le jeu.',()=>{let s='';
+ [R1,R2,R3].forEach((r,ci)=>{r.forEach((m,k)=>{const n=r.length,y=18+(214/n)*(k+.5)-17,x=14+ci*130;s+=mbox(x,y,106,34,m[0],m[1],m[2]);
+  if(ci<2)s+=L(x+106,y+17,x+118,y+17)+L(x+118,y+17,x+118,18+(214/(n/2))*(Math.floor(k/2)+.5))+L(x+118,18+(214/(n/2))*(Math.floor(k/2)+.5),x+130,18+(214/(n/2))*(Math.floor(k/2)+.5))});});
+ s+=T(67,12,9,'TOUR 1')+T(197,12,9,'DEMI')+T(327,12,9,'FINALE');return s}]);
+V.push(['Arbre en miroir (finale au centre)','Deux moities qui convergent vers la finale : sensation de duel final, lisible sur ecran large.',()=>{let s='';
+ const side=(m,x,dir,y0)=>{s+=mbox(x,y0,86,32,m[0],m[1],m[2])};
+ R1.slice(0,2).forEach((m,k)=>side(m,10,1,22+k*100));R1.slice(2).forEach((m,k)=>side(m,304,-1,22+k*100));
+ side(R2[0],98,1,72);side(R2[1],216,-1,72);
+ s+=L(96,38,98,88)+L(96,138,98,88);s+=mbox(157,150,86,32,R3[0][0],R3[0][1],R3[0][2])+T(200,198,12,'FINALE',{f:A})+shp(3,200,222,14);
+ s+=L(184,88,200,150)+L(216,88,200,150);return s}]);
+V.push(['Arbre vertical (haut vers bas)','Les 8 joueurs en haut, le champion en bas : format telephone en portrait.',()=>{let s='';
+ [0,1,2,3,4,5,6,7].forEach(i=>{s+=shp(i,30+i*48,22,11)+T(30+i*48,46,8,NAMES[i].slice(0,5))});
+ [[0,1],[2,3],[4,5],[6,7]].forEach(([a,b],k)=>{const x=54+k*96;s+=L(30+a*48,34,30+a*48,70)+L(30+b*48,34,30+b*48,70)+L(30+a*48,70,30+b*48,70)+shp([0,3,4,6][k],x,84,10)});
+ s+=L(54,94,54,120)+L(150,94,150,120)+L(54,120,150,120)+shp(3,102,134,11)+L(246,94,246,120)+L(342,94,342,120)+L(246,120,342,120)+shp(4,294,134,11);
+ s+=L(102,146,102,176)+L(294,146,294,176)+L(102,176,294,176)+shp(3,198,196,15)+T(198,236,12,'CHAMPION',{f:A});return s}]);
+V.push(['Pyramide (champion en haut)','Le podium se lit d\'un coup d\'oeil : le sommet est le champion, la base les entrants.',()=>{let s='';
+ const row=(ids,y,gap)=>ids.forEach((i,k)=>{const x=W/2+(k-(ids.length-1)/2)*gap;s+=shp(i,x,y,13)});
+ row([3],36,0);row([3,4],92,110);row([0,3,4,6],148,80);row([0,1,2,3,4,5,6,7],208,46);
+ s+=L(200,50,145,80)+L(200,50,255,80)+T(200,16,11,'CHAMPION',{f:A});return s}]);
+V.push(['Anneaux concentriques','Les 8 joueurs sur l\'anneau exterieur, chaque tour rapproche du centre : le vainqueur occupe le disque central.',()=>{let s='';
+ [100,70,40].forEach(r=>s+=`<circle cx="200" cy="125" r="${r}" fill="none" stroke="${P}" stroke-opacity=".35" stroke-width="2"/>`);
+ const pos=(i,r)=>{const a=(i/8)*2*Math.PI-Math.PI/2;return [200+r*Math.cos(a),125+r*Math.sin(a)]};
+ [0,1,2,3,4,5,6,7].forEach(i=>{const [x,y]=pos(i,100);s+=shp(i,x,y,11)});
+ [0,3,4,6].forEach((i,k)=>{const [x,y]=pos(i,70);s+=L(...pos(i,100),x,y,COL[i],3)+shp(i,x,y,10)});
+ [3,4].forEach(i=>{const [x,y]=pos(i,40);s+=L(...pos(i,70),x,y,COL[i],3)+shp(i,x,y,9)});
+ s+=shp(3,200,125,15)+T(200,12,10,'ANNEAUX');return s}]);
+V.push(['Echelle (liste de lignes)','Une ligne par joueur, la barre grandit a chaque victoire : lisible meme avec 8 joueurs sur un petit ecran.',()=>{let s='';
+ const wins=[1,0,0,3,2,0,1,0];[0,1,2,3,4,5,6,7].forEach(i=>{const y=14+i*29;s+=R(10,y,380,24,P,{sw:2})+shp(i,28,y+12,8)+T(46,y+16,11,NAMES[i],{f:E,a:'start'});
+ for(let k=0;k<3;k++)s+=R(150+k*76,y+5,68,14,k<wins[i]?COL[i]:'#ddd2bd',{sw:1,r:3});s+=T(378,y+16,9,wins[i]==3?'CHAMP.':wins[i]?wins[i]+' V':'OUT',{f:wins[i]==3?A:E,a:'end'})});return s}]);
+V.push(['Cartes de match empilees','Chaque match est une carte VS ; la carte du match en cours est agrandie et en accent.',()=>{let s='';
+ R1.forEach((m,k)=>{const y=12+k*40;s+=R(10,y,230,34,P,{sw:2})+shp(m[0],34,y+17,10)+T(124,y+22,13,'VS',{f:A})+shp(m[1],214,y+17,10)});
+ s+=R(252,12,138,100,A,{sw:4})+shp(3,290,52,16)+T(321,60,15,'VS',{f:P})+shp(4,352,52,16)+T(321,96,9,'EN COURS')+
+ R(252,124,138,30,P,{sw:2})+T(321,144,9,'DEMI 2',{f:E})+R(252,164,138,30,P,{sw:2})+T(321,184,9,'FINALE',{f:E})+T(130,200,10,'TOUR 1');
+ s+=R(10,176,230,40,P,{sw:2})+T(125,202,10,'Prochain : Nova contre Sora',{f:E});return s}]);
+V.push(['Affiche VS plein cadre','Avant chaque match : deux grandes formes, noms, bilan, comme une affiche de combat.',()=>{let s=`<polygon points="0,0 220,0 180,250 0,250" fill="${COL[3]}"/><polygon points="220,0 400,0 400,250 180,250" fill="${COL[4]}"/>`;
+ s+=shp(3,90,110,46)+shp(4,310,110,46)+T(200,134,44,'VS',{f:P})+T(90,190,16,'NOVA')+T(310,190,16,'YUME')+T(200,30,13,'DEMI-FINALE 1',{f:P})+T(200,236,10,'meilleur des 3 - PV 100 - arme : Poele');return s}]);
+V.push(['Affiche soiree (ticket)','Le tournoi comme un billet de soiree : nom, date, joueurs inscrits, QR « regarder ».',()=>{let s=R(20,20,360,210,P,{sw:4})+L(290,20,290,230,E,2)+T(155,62,26,'TOURNOI',{f:A})+T(155,90,11,'SOIREE ENTRE AMIS',{f:E});
+ [0,1,2,3,4,5,6,7].forEach(i=>s+=shp(i,48+i*32,128,11));s+=T(155,166,10,'8 JOUEURS - IA EN RENFORT',{f:E})+T(155,192,10,'Spectateurs bienvenus',{f:E});
+ for(let k=0;k<49;k++){if((k*7+k%5)%3)s+=`<rect x="${298+(k%7)*10}" y="${70+Math.floor(k/7)*10}" width="9" height="9" fill="${E}"/>`}
+ s+=T(335,60,10,'REGARDER',{f:E})+T(335,160,8,'?watch=CODE',{f:E});return s}]);
+V.push(['Chaine de pastilles (HUD en match)','Pendant le duel : une pastille par joueur restant, grise quand elimine. Minimal, sans cacher le ring.',()=>{let s=T(200,24,12,'DEMI-FINALE - MATCH 2 / 2');
+ [0,1,2,3,4,5,6,7].forEach(i=>{const out=![3,4].includes(i);s+=`<g opacity="${out?.35:1}">${shp(i,40+i*45,70,out?10:14)}</g>`});
+ s+=L(40,100,360,100,P,2)+R(60,120,110,50,P,{sw:3})+shp(3,90,145,14)+T(130,150,11,'Nova',{f:E})+T(200,152,16,'VS',{f:A})+R(230,120,110,50,P,{sw:3})+shp(4,260,145,14)+T(305,150,11,'Yume',{f:E})+
+ T(200,210,10,'Spectateurs : 3   ♥ ★ !');return s}]);
+V.push(['Frise de temps (rondes en bandes)','Trois bandes horizontales : ce qui est joue, ce qui se joue, ce qui vient.',()=>{let s='';
+ const band=(y,label,items,live)=>{s+=R(10,y,380,64,live?A:'#3b2f55',{sw:3})+T(40,y+14,9,label,{a:'start'});items.forEach((m,k)=>{const x=30+k*92;s+=shp(m[0],x,y+42,10)+T(x+23,y+46,9,'v')+shp(m[1],x+46,y+42,10)})};
+ band(10,'TOUR 1 - termine',R1,false);band(86,'DEMI - en cours',[[0,3],[4,6]],true);band(162,'FINALE - a venir',[[null,null]],false);
+ s+=T(200,248,9,'Ligne du temps');return s}]);
+V.push(['Tableau a points (round robin visuel)','Matrice joueurs x joueurs pour savoir qui a deja battu qui (utile pour les revanches).',()=>{let s='';
+ for(let i=0;i<8;i++){s+=shp(i,50+i*40,26,9)+shp(i,22,52+i*22,8);for(let j=0;j<8;j++){const v=(i*3+j*5)%7;s+=R(38+j*40,41+i*22,36,18,i==j?'#3b2f55':v<2?COL[i]:v<4?'#ddd2bd':P,{sw:1,r:3})}}return s}]);
+V.push(['Ring et banderoles','L\'arbre accroche comme des banderoles au-dessus du ring ; le public (spectateurs) en silhouettes en bas.',()=>{let s=R(40,150,320,24,'#6b4a8b',{sw:3})+L(60,174,60,226,P,4)+L(340,174,340,226,P,4);
+ [[0,3],[4,6]].forEach((m,k)=>{const x=60+k*160;s+=R(x,14,130,60,P,{sw:3})+shp(m[0],x+30,44,12)+shp(m[1],x+100,44,12)+T(x+65,50,11,'VS',{f:A})+L(x+65,74,x+65,150,P,2)});
+ s+=shp(3,150,128,13)+shp(4,250,128,13)+T(200,120,10,'FIGHT');
+ for(let k=0;k<14;k++)s+=`<circle cx="${22+k*27}" cy="${236+Math.sin(k)*3}" r="9" fill="${COL[k%8]}" stroke="${E}" stroke-width="2"/>`;return s}]);
+V.push(['Camembert de la soiree','Chaque part = un joueur, la taille = victoires : bilan de fin de soiree (titres, revanches).',()=>{let s='';const v=[2,1,0,3,2,0,1,0],tot=v.reduce((a,b)=>a+b,0)+8;let a=-90;
+ v.forEach((n,i)=>{const sw=(n+1)/tot*360,a2=a+sw,p=(ang)=>[200+90*Math.cos(ang*Math.PI/180),125+90*Math.sin(ang*Math.PI/180)];const [x1,y1]=p(a),[x2,y2]=p(a2);
+  s+=`<path d="M200 125L${x1} ${y1}A90 90 0 ${sw>180?1:0} 1 ${x2} ${y2}Z" fill="${COL[i]}" stroke="${E}" stroke-width="3"/>`;const m=(a+sw/2)*Math.PI/180;s+=shp(i,200+58*Math.cos(m),125+58*Math.sin(m),8);a=a2});
+ s+=`<circle cx="200" cy="125" r="26" fill="${E}"/>`+T(200,130,11,'TITRES',{f:P});return s}]);
+V.push(['Bandeau de resultat','Apres chaque match : un bandeau pleine largeur, couleur du vainqueur, score et prochain match.',()=>{let s=R(0,70,400,110,COL[3],{sw:0,r:0})+shp(3,60,125,32)+T(250,112,22,'NOVA GAGNE !')+T(250,140,13,'Nova 2 - 1 Sora')+T(250,166,10,'Prochain : Yume contre Tetsu dans 5 s');
+ s+=T(200,40,12,'DEMI-FINALE 1')+T(200,220,10,'Arbre complet : maintenir B');return s}]);
+V.push(['Vue spectateur (arbre + direct)','Moitie ecran : le combat en direct ; moitie : l\'arbre. Emotes en bas, pastille SPECTATEUR.',()=>{let s=R(8,8,250,160,'#3b2f55',{sw:3})+shp(3,80,110,16)+shp(4,190,110,16)+T(133,40,11,'DIRECT')+R(270,8,122,160,'#2d2342',{sw:3});
+ [0,1,2,3].forEach(k=>s+=R(278,16+k*38,106,30,P,{sw:2})+shp([0,3,4,6][k],296,31+k*38,7)+T(335,35+k*38,9,'vs',{f:E})+shp([1,2,5,7][k],372,31+k*38,7));
+ s+=R(8,180,100,22,A,{sw:2})+T(58,196,9,'SPECTATEUR');for(let e=0;e<8;e++)s+=R(122+e*34,176,30,30,P,{sw:2})+shp(e,137+e*34,191,7);return s}]);
+V.push(['Bracket en forme de boucliers','Chaque match est un blason ; le champion recoit une couronne. Ton plus decoratif, plus enfantin.',()=>{let s='';
+ const sh=(x,y,i)=>`<path d="M${x-18} ${y-18}h36v22q0 18 -18 28q-18 -10 -18 -28z" fill="${COL[i]}" stroke="${E}" stroke-width="3"/>`+shp(i,x,y-2,7);
+ [0,1,2,3,4,5,6,7].forEach(i=>s+=sh(28+i*48,40,i));[0,3,4,6].forEach((i,k)=>s+=sh(52+k*96,110,i));[3,4].forEach((i,k)=>s+=sh(100+k*192,170,i));
+ s+=sh(200,230,3)+`<polygon points="182,196 190,208 200,198 210,208 218,196 218,210 182,210" fill="#e0a321" stroke="${E}" stroke-width="2"/>`;return s}]);
+V.push(['Metro (lignes de couleur)','Chaque joueur est une ligne de metro qui avance de station en station ; elimine = terminus.',()=>{let s='';
+ const stops=[40,130,230,330];[0,1,2,3,4,5,6,7].forEach(i=>{const y=22+i*28,reach=[1,0,0,3,2,0,1,0][i];s+=L(40,y,stops[reach],y,COL[i],7)+shp(i,40,y,9);
+  for(let k=1;k<=reach;k++)s+=`<circle cx="${stops[k]}" cy="${y}" r="5" fill="${P}" stroke="${E}" stroke-width="2"/>`;s+=T(380,y+4,9,NAMES[i],{a:'end'})});
+ ['T1','1/2','FIN','CHAMP'].forEach((t,k)=>s+=T(stops[k],244,8,t));return s}]);
+const tpl=document.getElementById('vars');
+/* ---------- cartes ---------- */
+const st={},cm={};
+function card(host,id,title,desc,body){const c=document.createElement('div');c.className='card';
+ c.innerHTML=`<h3>${title}</h3>${body}<p>${desc}</p><button class="ok">Valider</button><button class="ko">A refaire</button><textarea placeholder="Commentaire (optionnel)"></textarea>`;
+ const [ok,ko]=c.querySelectorAll('button'),ta=c.querySelector('textarea');
+ ok.onclick=()=>{st[id]=st[id]==='ok'?'':'ok';ok.classList.toggle('on',st[id]==='ok');ko.classList.remove('on')};
+ ko.onclick=()=>{st[id]=st[id]==='ko'?'':'ko';ko.classList.toggle('on',st[id]==='ko');ok.classList.remove('on')};
+ ta.oninput=()=>{cm[id]=ta.value};host.appendChild(c)}
+const items=[];
+V.forEach(([t,d,f],k)=>{const id='v'+(k+1);items.push([id,`Variante ${k+1} : ${t}`]);card(tpl,id,`${k+1}. ${t}`,d,svg(f()))});
+/* ---------- autres propositions ---------- */
+const emo=()=>{let s='';const names=['Bravo','Feu','Aie','Rire','Coeur','Choc','Zzz','Go'];
+ const ic=[(x,y)=>`<polygon points="${poly(x,y,5,16,-90)}" fill="${A}" stroke="${E}" stroke-width="2"/>`,
+ (x,y)=>`<polygon points="${x-12},${y+16} ${x+12},${y+16} ${x},${y-16}" fill="#e0703a"/><polygon points="${x-6},${y+16} ${x+6},${y+16} ${x},${y}" fill="${P}"/>`,
+ (x,y)=>L(x-14,y-14,x+14,y+14,A,7)+L(x-14,y+14,x+14,y-14,A,7),
+ (x,y)=>`<circle cx="${x}" cy="${y}" r="16" fill="#e0a321" stroke="${E}" stroke-width="2"/><circle cx="${x-6}" cy="${y-4}" r="2.5" fill="${E}"/><circle cx="${x+6}" cy="${y-4}" r="2.5" fill="${E}"/><rect x="${x-8}" y="${y+3}" width="16" height="6" fill="${E}"/>`,
+ (x,y)=>`<circle cx="${x-8}" cy="${y-4}" r="9" fill="${A}"/><circle cx="${x+8}" cy="${y-4}" r="9" fill="${A}"/><polygon points="${x-17},${y} ${x+17},${y} ${x},${y+17}" fill="${A}"/>`,
+ (x,y)=>`<rect x="${x-3}" y="${y-16}" width="6" height="20" fill="${P}"/><circle cx="${x}" cy="${y+12}" r="4" fill="${P}"/>`,
+ (x,y)=>T(x,y+6,22,'Zzz',{f:P}),
+ (x,y)=>`<rect x="${x-16}" y="${y-4}" width="18" height="8" fill="${P}"/><polygon points="${x},${y-14} ${x+16},${y} ${x},${y+14}" fill="${P}"/>`];
+ names.forEach((n,i)=>{const x=34+(i%4)*92,y=62+Math.floor(i/4)*100;s+=R(x-30,y-34,62,70,'#3b2f55',{sw:2})+ic[i](x,y-6)+T(x,y+26,9,n)+T(x-22,y-24,8,String(i+1))});return s};
+card(document.getElementById('oth'),'emotes','Emotes de spectateur (8 icones)','Touches 1 a 8 ou toucher : montent et s\'effacent en 3 s, couleur de l\'emetteur. Decoratives : aucune influence sur la simulation, une toutes les 0,9 s (spectateur) / 45 images (joueur).',svg(emo()));
+card(document.getElementById('oth'),'watch','Mode regarder (lien / QR)','Lien ?watch=CODE : spectateur sans place, flux identique, retard 1,5 s, camera automatique sur les duellistes, emotes. Plafond 64 par salon. A quitter a tout moment.',svg(R(20,20,230,180,'#3b2f55',{sw:3})+shp(3,100,110,18)+shp(4,170,110,18)+T(135,60,11,'CAMERA AUTO')+R(266,20,114,114,P,{sw:3})+T(323,80,24,'QR',{f:E})+T(323,150,10,'?watch=CODE')+R(266,160,114,40,A,{sw:3})+T(323,185,11,'REGARDER')));
+card(document.getElementById('oth'),'podium','Podium du tournoi','Trois colonnes, les heros posent sur le ring, classement complet (matchs, manches), historique, boutons Revanche / Quitter, titres conserves.',svg(R(150,110,100,90,COL[3],{sw:3})+R(40,150,100,50,COL[4],{sw:3})+R(260,170,100,30,COL[0],{sw:3})+T(200,150,34,'1')+T(90,185,26,'2')+T(310,196,22,'3')+shp(3,200,88,16)+shp(4,90,128,13)+shp(0,310,148,12)+T(200,24,14,'PODIUM DU TOURNOI',{f:'#e0a321'})+R(20,214,160,26,P,{sw:2})+T(100,232,10,'REVANCHE',{f:E})+R(220,214,160,26,P,{sw:2})+T(300,232,10,'QUITTER',{f:E})));
+card(document.getElementById('oth'),'equite','Equite : PV egalises, meme arme','Affichage avant le match : PV 100 pour les deux, meme arme tiree au sort dans la banque (8 armes de melee), Ki a zero, bonus de run retires.',svg(shp(3,90,90,28)+shp(4,310,90,28)+T(200,98,32,'=',{f:A})+R(30,140,150,30,P,{sw:2})+T(105,160,11,'PV 100',{f:E})+R(220,140,150,30,P,{sw:2})+T(295,160,11,'PV 100',{f:E})+R(130,190,140,34,A,{sw:3})+T(200,212,12,'ARME : POELE')));
+card(document.getElementById('oth'),'join','Arrivees et departs en plein tournoi','Un arrivant devient spectateur (pastille), puis entre au prochain tour ; un depart laisse l\'IA finir le match. Jamais d\'insertion apres la finale.',svg(R(10,20,170,200,'#3b2f55',{sw:3})+T(95,44,10,'TOUR 2')+shp(3,50,80,12)+shp(4,140,80,12)+T(95,86,9,'VS')+shp(6,95,150,12)+T(95,176,9,'BYE',{f:'#e0a321'})+L(190,120,230,120,A,6)+R(240,50,150,140,P,{sw:3})+shp(5,315,100,18)+T(315,140,10,'ARRIVANT',{f:E})+T(315,160,9,'insere au tour 2',{f:E})));
+card(document.getElementById('oth'),'charge','Charge serveur et plafond','Un spectateur coute un envoi de plus par message (entrees des joueurs). Plafond 64 par salon : 8 joueurs a 60 messages/s ~ 480 envois/s + 64 spectateurs x 480 = ~31 000 envois/s au maximum theorique, tres petits messages (quelques octets).',svg(T(200,60,13,'8 joueurs')+L(80,80,320,80,P,3)+`<g>${[...Array(16)].map((_,k)=>shp(k%8,30+k*22,130,7)).join('')}</g>`+T(200,180,11,'spectateurs : plafond 64 / salon')+R(60,200,280,18,'#3b2f55',{sw:2})+`<rect x="62" y="202" width="140" height="14" fill="${A}"/>`+T(200,236,9,'rien dans la simulation')));
+/* ---------- GIF du vrai moteur (si presents) ---------- */
+const gifs=[['arbre','Arbre entre deux matchs','Capture du vrai moteur : arbre a 8 joueurs entre deux duels.'],['duel','Duel et spectateurs','Duel 1v1 sur le ring, pastille spectateur et emotes en icones.'],['podium','Podium','Podium du tournoi, classement et historique.']];
+gifs.forEach(([f,t,d])=>{const id='g_'+f;items.push([id,'GIF moteur : '+t]);card(document.getElementById('real'),id,t,d,`<img src="tournoi/${f}.gif" alt="${t}" onerror="this.alt='(GIF a generer : tools/tournoi_gif.py)'">`)});
+['emotes','watch','podium','equite','join','charge'].forEach(id=>items.push([id,{emotes:'Emotes',watch:'Mode regarder',podium:'Podium',equite:'Equite',join:'Arrivees et departs',charge:'Charge serveur'}[id]]));
+document.getElementById('gen').onclick=()=>{
+ const l=items.map(([id,t])=>`- ${t} : ${st[id]==='ok'?'VALIDE':st[id]==='ko'?'A REFAIRE':'pas encore juge'}${cm[id]?' -- '+cm[id].replace(/\n/g,' '):''}`);
+ document.getElementById('out').value='Retours sur le tournoi et le mode spectateur :\n'+l.join('\n')};
+</script></body></html>

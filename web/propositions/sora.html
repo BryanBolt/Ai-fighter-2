@@ -1,4 +1,4 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Sora - mouvements au sabre</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -9,16 +9,26 @@ h1{font:700 26px Silkscreen,monospace;color:var(--accent);margin:8px 0}h2{font:7
 .c{background:var(--carte);border-radius:12px;padding:12px;border:3px solid transparent}.c.ok{border-color:var(--ok)}.c.no{border-color:var(--accent)}
 .c img.gif{width:100%;border-radius:8px;background:#000;display:block}h3{font:700 14px Silkscreen,monospace;margin:8px 0 2px}
 .k{color:#ffbe78;font-weight:800;font-size:14px}p{margin:4px 0;font-size:14px;opacity:.92}
-button{font:800 15px Nunito,sans-serif;padding:10px 14px;border-radius:9px;border:0;margin:6px 6px 0 0;color:#fff;background:#5a4a78;cursor:pointer;min-height:44px}
-button.v{background:#2e9b5b}button.x{background:#c03a62}button.main{background:var(--accent);font-size:17px;margin-top:18px}
+button{font:800 15px Nunito,sans-serif;padding:10px 14px;border-radius:8px;border:0;margin:6px 6px 0 0;color:#fff;background:#5a4a78;cursor:pointer;min-height:44px}
+button.v{background:#2f8f5b}button.x{background:#c03a62}button.main{background:var(--accent);font-size:17px;margin-top:18px}
 details{margin-top:6px}summary{cursor:pointer;color:#ffbe78;font-weight:700}details img{width:100%;margin-top:6px;border-radius:6px}
 textarea{width:100%;border-radius:8px;border:0;padding:8px;margin-top:6px;background:#17102a;color:var(--papier);font:inherit}
 #o{white-space:pre-wrap;background:#120c22;padding:12px;border-radius:10px;margin-top:14px;min-height:40px}
 .tag{display:inline-block;background:var(--accent);color:#fff;border-radius:6px;padding:1px 8px;font:12px Silkscreen,monospace}
-</style></head><body>
+</style><style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js"></script>
+</head><body>
 <h1>SORA / MOUVEMENTS AU SABRE</h1>
-<p class="intro">GIF du vrai moteur en temps reel (400 px, 48 couleurs), ralenti x0,25 et planche d'images-cles (garde, anticipation, impact, retour). Pour chaque enchainement ou coup : Valider ou A refaire (+ remarque), puis « Generer mon texte » et colle le resultat dans le chat. Les enchainements n'utilisent que des coups existants : rien n'est ajoute au jeu tant que tu n'as pas valide.</p>
-<h2>Enchainements proposes (10)</h2><div class="g" id="g1"></div>
+<p class="intro">GIF du vrai moteur en temps réel (400 px, 48 couleurs), ralenti x0,25 et planche d'images-cles (garde, anticipation, impact, retour). Pour chaque enchaînement ou coup : Valider ou À refaire (+ remarque), puis « Generer mon texte » et colle le résultat dans le chat. Les enchaînements n'utilisent que des coups existants : rien n'est ajoute au jeu tant que tu n'as pas valide.</p>
+<h2>Enchaînements proposes (10)</h2><div class="g" id="g1"></div>
 <h2>Coups isoles (11)</h2><div class="g" id="g2"></div>
 <button class="main" onclick="out()">Generer mon texte</button><div id="o"></div>
 <script>

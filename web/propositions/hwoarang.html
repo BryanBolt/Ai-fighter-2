@@ -1,11 +1,21 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Coups de Kaze - style Hwoarang</title>
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Coups de Kaze - style Hwoarang</title>
 <style>body{margin:0;font:16px system-ui,sans-serif;background:#1c1d2e;color:#eee;padding:12px}h1{font-size:20px}
 .g{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}.c{background:#2a2c44;border-radius:10px;padding:10px}.c.ok{outline:3px solid #4cd07d}.c.no{outline:3px solid #e0507a}
 img{width:100%;border-radius:8px;background:#000}h2{font-size:16px;margin:6px 0 2px}.n{color:#f5c542;font-weight:700}p{margin:4px 0;font-size:14px;opacity:.9}
-button{font:inherit;padding:9px 12px;border-radius:8px;border:0;margin:4px 4px 0 0;color:#fff;background:#555}button.v{background:#2e9b5b}button.x{background:#c03a62}
-textarea{width:100%;box-sizing:border-box;border-radius:6px;border:0;padding:6px;margin-top:6px;background:#15162a;color:#eee}#o{white-space:pre-wrap;background:#111;padding:10px;border-radius:8px;margin-top:12px}</style></head><body>
+button{font:inherit;padding:9px 12px;border-radius:8px;border:0;margin:4px 4px 0 0;color:#fff;background:#555}button.v{background:#2f8f5b}button.x{background:#c03a62}
+textarea{width:100%;box-sizing:border-box;border-radius:6px;border:0;padding:6px;margin-top:6px;background:#15162a;color:#eee}#o{white-space:pre-wrap;background:#111;padding:10px;border-radius:8px;margin-top:12px}button,input[type=button],select{min-height:44px}</style><style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js"></script>
+</head><body>
 <h1>Coups de pied de Kaze : style Hwoarang (flamingo)</h1>
-<p>Prototypes animes hors jeu. Pour chaque coup : Valider ou A refaire (+ remarque), puis genere le texte et colle-le dans le chat.</p>
+<p>Prototypes animes hors jeu. Pour chaque coup : Valider ou À refaire (+ remarque), puis genere le texte et colle-le dans le chat.</p>
 <div class="g" id="g"></div><button onclick="out()" style="background:#e0507a;font-weight:700;margin-top:12px">Generer mon texte</button><div id="o"></div>
 <script>var C=[{"key": "flamingo", "name": "Garde flamingo", "n": "Flamingo (maintenir)", "d": "La garde de Hwoarang : genou releve, pied replie, buste en arriere, mains basses qui rebondissent."}, {"key": "teep", "name": "Pied direct du flamingo", "n": "4", "d": "Le genou se deplie d'un coup : pied droit a hauteur de hanche, jambe d'appui verticale, retour au flamingo."}, {"key": "twin", "name": "Double pied (Twin Pistons)", "n": "4, 4", "d": "Deux pieds sans pause : la jambe qui frappe devient la jambe d'appui, l'autre part tout de suite."}, {"key": "round", "name": "Pied fouette haut", "n": "df+4", "d": "Le genou monte sur le cote, la jambe fouette en arc jusqu'a la tete de l'adversaire, puis retombe."}, {"key": "axe", "name": "Hache descendante", "n": "f+3", "d": "La jambe monte toute droite, marque un temps, puis s'abat sur le haut du corps : le buste plonge avec elle."}, {"key": "spin", "name": "Talon retourne", "n": "1+4 (rotation)", "d": "Une demi-rotation : bras ouverts en balancier, jambe tendue dans le dos du mouvement."}, {"key": "sweep", "name": "Balayage bas", "n": "d+4", "d": "Accroupi d'un coup, la jambe tendue rase le sol et fauche les chevilles."}, {"key": "fly", "name": "Pied sauté", "n": "f,f+4", "d": "Elan, bond et pied tendu devant, corps en diagonale ; atterrissage en flamingo."}, {"key": "rise", "name": "Lanceur (remontant)", "n": "u/f+4", "d": "Pied qui remonte de bas en haut sous le menton : la cible decolle."}, {"key": "combo", "name": "Enchainement flamingo (4,4,4)", "n": "4,4,4", "d": "Pied direct, pied de l'autre jambe, puis pied fouette qui expulse la cible : le rythme du flamingo."}],st={};
 var g=document.getElementById('g');

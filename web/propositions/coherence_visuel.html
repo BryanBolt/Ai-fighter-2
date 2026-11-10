@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cohérence visuelle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b;--ok:#2f8f5b;--mid:#c98a1c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--papier);color:var(--encre);font:16px/1.45 Nunito,system-ui,sans-serif;padding:16px 16px 90px}
+h1,h2{font-family:Silkscreen,monospace;letter-spacing:.02em;margin:0 0 6px}
+h1{font-size:22px}h2{font-size:16px;margin:26px 0 8px;color:var(--accent)}
+.lead{max-width:760px}
+.card{background:#fff;border:3px solid var(--encre);border-radius:14px;padding:12px 14px;margin:10px 0;max-width:760px;box-shadow:4px 4px 0 var(--encre)}
+.card h3{font-family:Silkscreen,monospace;font-size:14px;margin:0 0 4px}
+.card p{margin:4px 0 8px}
+.done{border-color:var(--ok)}
+.tag{font:12px Silkscreen,monospace;background:var(--ok);color:#fff;border-radius:6px;padding:2px 6px;margin-left:6px}
+.v{display:flex;gap:6px;flex-wrap:wrap}
+button{font:700 14px Nunito,sans-serif;border:2px solid var(--encre);background:var(--papier);color:var(--encre);border-radius:999px;padding:10px 14px;min-height:44px;cursor:pointer}
+button.on.ok{background:var(--ok);color:#fff}button.on.no{background:var(--accent);color:#fff}button.on.mid{background:var(--mid);color:#fff}
+textarea{width:100%;min-height:56px;margin-top:8px;border:2px solid var(--encre);border-radius:10px;padding:8px;font:15px Nunito,sans-serif;background:var(--papier);color:var(--encre)}
+table{border-collapse:collapse;max-width:760px;width:100%}td,th{border:2px solid var(--encre);padding:6px 8px;text-align:left;font-size:14px}
+</style><script src="verdicts.js" data-keys="afh_coherence_visuel_v1"></script>
+<style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style></head><body>
+<h1>Cohérence visuelle</h1>
+<p class="lead">Audit des 552 captures de référence (184 situations, 3 formats) et du code. Le jeu est déjà très homogène : aucun noir pur à l'écran, une seule police, une palette prune / crème / rose. Voici ce qui a été corrigé, et ce qui demande ton arbitrage.</p>
+<h2>Corrigé (sûr, vérifié par le garde-fou)</h2>
+<div class="card done"><h3>Un seul vert « ok »<span class="tag">FAIT</span></h3><p>30 presque-doublons ramenés au vert de la charte #2f8f5b dans les pages. Garde : <b>vert_doublon_pages</b> (doit rester à 0).</p></div>
+<div class="card done"><h3>Échelle de coins<span class="tag">FAIT</span></h3><p>Coins de 3, 5, 7 et 9 px ramenés à 4, 6 ou 8 px. Échelle : 4, 6, 8, 10, 12, 14, 16 px, puis pilule. Garde : <b>rayon_pages</b> (doit rester à 0).</p></div>
+<div class="card done"><h3>Garde-fous ajoutés<span class="tag">FAIT</span></h3><p><b>jeton_ui</b> (encre, papier, accent du jeu = charte), <b>statut_contour_noir</b> (glyphes de statut plats), <b>gris_neutre_pages</b> et <b>ombre_floue_pages</b> (dette qui ne peut que baisser).</p></div>
+<h2>Constats sans souci</h2>
+<table><tr><th>Sujet</th><th>Résultat</th></tr>
+<tr><td>Noir pur dans les captures</td><td>0 % sur 552 images (sauf 0,4 % sur le livre social, trait de reliure)</td></tr>
+<tr><td>Blanc pur</td><td>Seulement le QR de l'invitation en ligne (normal : il doit se scanner)</td></tr>
+<tr><td>Cibles tactiles</td><td>48 px et 56 px dans le jeu</td></tr>
+<tr><td>Polices</td><td>Nunito seule dans le jeu ; Nunito + Silkscreen dans les pages</td></tr></table>
+<h2>À arbitrer</h2>
+<div id="list"></div>
+<h2>Ton texte</h2>
+<textarea id="out" readonly placeholder="Choisis un avis ci-dessus"></textarea>
+<script>
+var C=[
+["cv_fond","Deux familles de fond dans les menus","Options, Comment jouer, Choix du combattant, Boutique, Entraînement : plein crème sans carte. Social, Classements, Défi, Vie privée, Trophées : carte crème bordée d'encre sur fond prune. Proposition : tous les menus en carte sur fond prune ou sur la scène floutée."],
+["cv_navy","Maquettes en bleu nuit","Une quinzaine de pages (#1c1d2e, #2a2c44, #15162a, 35 emplois) imitent l'écran de jeu en bleu nuit, hors charte. Proposition : les repasser en prune #2f2347 / #15101f déjà utilisés ailleurs."],
+["cv_gris","Gris neutres dans les pages","63 gris purs (#555, #888, #ccc...) alors que la charte n'a que des gris teintés prune. Proposition : remplacer par #6b5a80 (texte secondaire) et #c9b8e0 (filets). Le garde bloque toute nouvelle occurrence."],
+["cv_ombre","Ombres des pages","Les cartes ont une ombre dure décalée de 4 px à l'encre ; une page garde une ombre floue. Proposition : ombre dure partout, jamais de flou."],
+["cv_titre","Écran titre en rose couchant","Seul écran en ciel rose avec silhouette ; le reste est crème et prune. Proposition : garder (c'est l'écran signature) et reprendre ce rose dans le fond du menu Plus."],
+["cv_noir","20 restes de noir pur dans le code","Rendu du jeu : à remplacer par l'encre prune du jeu sans changer le gameplay. Le cliquet interdit d'en ajouter. Proposition : les résorber dans une passe dédiée."]
+];
+var K="afh_coherence_visuel_v1",S={};
+try{S=JSON.parse(localStorage.getItem(K)||"{}")}catch(e){}
+function save(){try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}}
+var NAME={ok:"VALIDE",no:"À REFAIRE",mid:"À DISCUTER"};
+function gen(){var o=[];C.forEach(function(c){var s=S[c[0]]||{};if(s.v||s.c)o.push("- "+c[1]+" ("+c[0]+") : "+(s.v?NAME[s.v]:"sans avis")+(s.c?" | "+s.c:""))});
+ document.getElementById("out").value=o.length?"Mes décisions (cohérence visuelle) :\n"+o.join("\n"):""}
+var L=document.getElementById("list");
+C.forEach(function(c){var id=c[0],s=S[id]||(S[id]={});
+ var d=document.createElement("div");d.className="card";
+ d.innerHTML='<h3></h3><p></p><div class="v"></div><textarea placeholder="Commentaire (facultatif)"></textarea>';
+ d.querySelector("h3").textContent=c[1];d.querySelector("p").textContent=c[2];
+ var v=d.querySelector(".v");
+ [["ok","Valider"],["no","À refaire"],["mid","À discuter"]].forEach(function(o){
+  var b=document.createElement("button");b.textContent=o[1];if(s.v===o[0])b.className="on "+o[0];
+  b.onclick=function(){s.v=(s.v===o[0]?"":o[0]);v.querySelectorAll("button").forEach(function(x){x.className=""});if(s.v)b.className="on "+o[0];save();gen()};
+  v.appendChild(b)});
+ var t=d.querySelector("textarea");t.value=s.c||"";t.oninput=function(){s.c=t.value;save();gen()};
+ L.appendChild(d)});
+gen();
+</script></body></html>

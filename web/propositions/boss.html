@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Boss, mini-boss et L'Ange - proposition</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -19,22 +19,32 @@ button.on.ok{background:var(--ok);color:#fff} button.on.no{background:var(--acc)
 input,textarea{background:#fff;border:2px solid var(--ink);border-radius:8px;padding:7px 9px;width:100%}
 .vb{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px} .vb button{flex:0 0 auto}
 .out{background:var(--ink);color:var(--paper);border-radius:10px;padding:14px 16px;margin-top:12px}
-</style></head><body><div class="wrap">
+button,input[type=button],select{min-height:44px}</style><style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js" data-keys="boss_v1"></script>
+</head><body><div class="wrap">
 <div class="pix" style="color:var(--acc);font-size:13px">AI FIGHTER 2 / BOSS / PROPOSITION</div>
-<h1>ETAGE DE BOSS, MINI-BOSS, L'ANGE</h1>
+<h1>ÉTAGE DE BOSS, MINI-BOSS, L'ANGE</h1>
 
-<h2>1. Etage de boss lisible</h2>
+<h2>1. Étage de boss lisible</h2>
 <div class="card"><ul>
 <li><b>Silence</b> : la musique se coupe en fondu des que le boss est annonce.</li>
-<li><b>Transition</b> : vignette d'encre, onde accent, petit zoom, bandeau « ETAGE DU BOSS », puis carte de nom (meme grammaire que les transitions du jeu).</li>
+<li><b>Transition</b> : vignette d'encre, onde accent, petit zoom, bandeau « ÉTAGE DU BOSS », puis carte de nom (même grammaire que les transitions du jeu).</li>
 <li><b>Reprise</b> sur le morceau de boss a la fin de l'introduction.</li>
-<li><b>Passer</b> : une touche (apres 0,6 s) accelere la meme logique hors ligne ; en ligne, seul MON affichage et MA musique changent (aucune desynchro, 1 a 8 joueurs, rejoindre en cours : on entend la musique normale).</li>
-<li>Option « Reduire les effets » : plus d'onde, vignette reduite.</li>
+<li><b>Passer</b> : une touche (après 0,6 s) accelere la même logique hors ligne ; en ligne, seul MON affichage et MA musique changent (aucune desynchro, 1 a 8 joueurs, rejoindre en cours : on entend la musique normale).</li>
+<li>Option « Réduire les effets » : plus d'onde, vignette réduite.</li>
 </ul></div>
 <div class="vb" data-sec="Etage de boss"></div>
 
 <h2>1b. GIF de l introduction</h2><img src="boss/intro_boss.webp" alt="intro de boss" loading="lazy"><div class="cap">Muette : vignette, onde, barres, zoom, icone de passage. Voir aussi <a href="boss_variantes.html">les 32 variantes de design</a>.</div><h2>2. Mini-boss</h2>
-<div class="card">Rare (25 % au depart, +2 % par terrain, 55 % max), tire de la graine : jamais l'etage 1, jamais un etage de boss. Version plus forte d'un ennemi (PV x2,4, degats x1,2, plus grand), nom propre au lieu (« Manager de proximite » a l'open space, « Maitre queux Gaston » a la cantine), epaulieres et crete dorees, plaque avec barre de vie, prime d'or versee par la simulation. IA = celle des ennemis (ai_intent).</div>
+<div class="card">Rare (25 % au départ, +2 % par terrain, 55 % max), tire de la graine : jamais l'étage 1, jamais un étage de boss. Version plus forte d'un ennemi (PV x2,4, dégâts x1,2, plus grand), nom propre au lieu (« Manager de proximite » a l'open space, « Maître queux Gaston » a la cantine), epaulieres et crete dorees, plaque avec barre de vie, prime d'or versee par la simulation. IA = celle des ennemis (ai_intent).</div>
 <img src="boss/miniboss.webp" alt="mini-boss" loading="lazy"><div class="cap">Capture du vrai moteur.</div>
 <div class="vb" data-sec="Mini-boss"></div>
 
@@ -43,12 +53,12 @@ input,textarea{background:#fff;border:2px solid var(--ink);border-radius:8px;pad
 <div class="vb" data-sec="Design des boss"></div>
 
 <h2>4. Boss final : L'Ange</h2>
-<div class="card">Stickman <b>entierement blanc</b> : le blanc contient toutes les couleurs, il a pousse la purete trop loin et veut tout fusionner. Aureole (qui se fend en deux arcs des la phase 3), ailes en lames, decor qui se decolore au fil des phases (75 / 50 / 25 %). Mecanique « Effacement » : ses gros coups laissent des traces blanches au sol qui deviennent des colonnes de lumiere. Dernier etage de la Cantine de la tour (fin de campagne), dialogues courts dans story.rs. Pas de chapitre final de run coop dans cette branche : integre a la campagne.</div>
-<div class="grid"><div><img src="boss/ange_phase1.webp" alt="phase 1" loading="lazy"><div class="cap">Phase 1.</div></div><div><img src="boss/ange_phase4.webp" alt="phase 4" loading="lazy"><div class="cap">Phase finale : decor decolore.</div></div></div>
+<div class="card">Stickman <b>entierement blanc</b> : le blanc contient toutes les couleurs, il a pousse la purete trop loin et veut tout fusionner. Aureole (qui se fend en deux arcs des la phase 3), ailes en lames, décor qui se decolore au fil des phases (75 / 50 / 25 %). Mecanique « Effacement » : ses gros coups laissent des traces blanches au sol qui deviennent des colonnes de lumière. Dernier étage de la Cantine de la tour (fin de campagne), dialogues courts dans story.rs. Pas de chapitre final de run coop dans cette branche : integre a la campagne.</div>
+<div class="grid"><div><img src="boss/ange_phase1.webp" alt="phase 1" loading="lazy"><div class="cap">Phase 1.</div></div><div><img src="boss/ange_phase4.webp" alt="phase 4" loading="lazy"><div class="cap">Phase finale : décor decolore.</div></div></div>
 <div class="vb" data-sec="L'Ange"></div>
 
 <h2>5. Victoire sur un boss : quand gagne-t-on ?</h2>
-<div class="card">Ecran de choix apres chaque etage : un bonus (plus rares apres un boss) ou Passer (+35 % PV). Un bandeau l'explique, avec une astuce la premiere fois de la session. Or, equipement et daemon arrivent au bilan de fin de stage.</div>
+<div class="card">Écran de choix après chaque étage : un bonus (plus rares après un boss) ou Passer (+35 % PV). Un bandeau l'explique, avec une astuce la première fois de la session. Or, équipement et daemon arrivent au bilan de fin de niveau.</div>
 <div class="vb" data-sec="Victoire et bonus"></div>
 
 <h2>6. Ton avis</h2>

@@ -1,12 +1,22 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>QA visuel</title>
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>QA visuel</title>
 <style>:root{--ink:#221834;--paper:#fff3e0;--acc:#d8456b}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 system-ui,sans-serif;padding:16px}
 h1{font-size:24px}section{background:#fff;border:3px solid var(--ink);border-radius:14px;padding:12px;margin:16px 0}img{max-width:100%;border-radius:8px;display:block;margin:8px 0}
 button{min-height:48px;padding:0 16px;border:3px solid var(--ink);border-radius:24px;background:var(--paper);color:var(--ink);font:inherit;margin:4px}button.on{background:var(--acc);color:#fff}
-textarea{width:100%;box-sizing:border-box;min-height:48px;font:inherit}</style></head><body>
-<h1>QA visuel en lot</h1><p>Planches du vrai moteur sur 8 formats. Avant puis apres correction.</p>
+textarea{width:100%;box-sizing:border-box;min-height:48px;font:inherit}</style><style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js"></script>
+</head><body>
+<h1>QA visuel en lot</h1><p>Planches du vrai moteur sur 8 formats. Avant puis après correction.</p>
 <section data-k="nemesis"><h2>Tableau des nemesis (568x320 vide)</h2><img src="qa_visuel/nemesis_avant.png" alt="avant"><img src="qa_visuel/nemesis_apres.png" alt="apres"></section>
 <section data-k="bilan"><h2>Bilan boss (pastilles qui debordent)</h2><img src="qa_visuel/bilan_avant.png" alt="avant"><img src="qa_visuel/bilan_apres.png" alt="apres"></section>
-<section data-k="combat"><h2>Planche combat (aucune correction : bulles d'aide a reduire)</h2><img src="qa_visuel/combat_planche.png" alt="planche"></section>
+<section data-k="combat"><h2>Planche combat (aucune correction : bulles d'aide a réduire)</h2><img src="qa_visuel/combat_planche.png" alt="planche"></section>
 <script>document.querySelectorAll('section').forEach(s=>{const k='qav_'+s.dataset.k;let v={};try{v=JSON.parse(localStorage[k]||'{}')}catch(e){}
 s.insertAdjacentHTML('beforeend','<button data-v="ok">Valider</button><button data-v="redo">A refaire</button><textarea placeholder="Commentaire"></textarea>');
 const ta=s.querySelector('textarea');ta.value=v.c||'';const bs=s.querySelectorAll('button');

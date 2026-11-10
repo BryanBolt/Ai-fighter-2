@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Propositions : replay, photo, run du jour</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
@@ -30,11 +30,21 @@ textarea{width:100%;min-height:60px;margin-top:8px;border-radius:8px;border:2px 
 code{background:#000;padding:1px 5px;border-radius:4px}
 @media (prefers-reduced-motion:reduce){img{animation:none}}
 </style>
+<style id="afh-responsive">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;min-height:100dvh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body{overflow-wrap:anywhere;min-height:100dvh}
+img,video,canvas,svg,iframe{max-width:100%}
+img,video{height:auto}
+h1{font-size:clamp(18px,4.2vw,34px)}
+h2{font-size:clamp(14px,3vw,24px)}
+pre,textarea,input,select{max-width:100%}
+@media (max-width:480px){button,a.open,select{min-height:44px}}
+</style><script src="verdicts.js" data-keys="afh_replay_avis"></script>
 </head>
 <body>
 <header>
 <h1>REPLAY, PHOTO, RUN DU JOUR</h1>
-<p>Six fonctions ajoutees sans toucher a la simulation. Les images ci-dessous sont de vraies captures du moteur (pas des maquettes). Pour chacune : <b>Valider</b>, <b>A refaire</b>, ou un commentaire, puis « Generer mon texte ».</p>
+<p>Six fonctions ajoutees sans toucher a la simulation. Les images ci-dessous sont de vraies captures du moteur (pas des maquettes). Pour chacune : <b>Valider</b>, <b>À refaire</b>, ou un commentaire, puis « Generer mon texte ».</p>
 </header>
 <main id="cartes"></main>
 <footer>
