@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Evenements de decor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b;--ok:#2f8f5b}
+body{margin:0;background:var(--papier);color:var(--encre);font:16px/1.45 Nunito,system-ui,sans-serif;padding:16px}
+h1,h2{font-family:Silkscreen,monospace;letter-spacing:.02em;margin:0 0 6px}
+h1{font-size:22px}h2{font-size:15px;color:var(--accent)}h3{font-family:Silkscreen,monospace;font-size:16px;margin:22px 0 4px}
+.lead{max-width:780px}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;margin-top:10px}
+.c{background:#fff;border:2px solid var(--encre);border-radius:12px;padding:10px}
+.c.ok{outline:4px solid var(--ok)}.c.no{outline:4px solid var(--accent)}
+img{width:100%;border-radius:8px;background:var(--encre);display:block}
+p{margin:6px 0;font-size:14px}.why{opacity:.75;font-size:13px}
+.tag{display:inline-block;font:700 11px Silkscreen,monospace;border:2px solid var(--encre);border-radius:6px;padding:1px 6px;margin-right:4px}
+.tag.g1{background:var(--accent);color:#fff;border-color:var(--accent)}
+button{font:inherit;font-weight:700;padding:9px 12px;border-radius:8px;border:2px solid var(--encre);margin:4px 4px 0 0;background:var(--papier);color:var(--encre);cursor:pointer}
+button.v{background:var(--ok);color:#fff}button.x{background:var(--accent);color:#fff}
+textarea{width:100%;box-sizing:border-box;border:2px solid var(--encre);border-radius:6px;padding:6px;margin-top:6px;font:inherit;background:var(--papier)}
+#o{white-space:pre-wrap;background:var(--encre);color:var(--papier);padding:12px;border-radius:10px;margin-top:14px}
+.gen{background:var(--accent);color:#fff;font-family:Silkscreen,monospace;margin-top:14px}
+.rules{background:#fff;border:2px solid var(--encre);border-radius:12px;padding:10px 14px;max-width:780px}
+.rules li{margin:3px 0;font-size:14px}
+</style></head><body>
+<h1>Evenements de decor</h1>
+<p class="lead">Treize passages ambiants, rares et optionnels, joues par le vrai moteur (400 px, 48 couleurs, 30 i/s). Sept d'entre eux touchent le combat (vehicules, chariot) : ils sont toujours annonces 1,2 a 2 s avant et s'evitent. Les six autres sont de l'ambiance pure. Pour chaque scene : Valider ou A refaire (+ remarque), puis genere le texte et colle-le dans le chat.</p>
+<div class="rules"><h2>Regles communes</h2><ul>
+<li><b>Jamais obligatoire, jamais injuste</b> : annonce (bande rouge a rayures au sol dont le bord arriere est la ligne de securite, phares et triangle « ! » au bord de l'ecran, moteur qui monte), puis passage. On l'evite en reculant derriere la ligne, en sautant (moto, voiture, chariot) ou en roulant.</li>
+<li><b>Degats faibles</b> (3 a 9 PV), une seule fois par combattant, heros comme ennemis projetes de facon coherente ; jamais un boss ; jamais mortel pour un joueur (il reste au moins 1 PV).</li>
+<li><b>Rare</b> : jamais avant 10 s dans l'etage, au plus deux passages par etage dont un seul de gameplay, 50 a 70 s de repos entre deux ; jamais au premier etage, ni pendant un boss, un evenement de niveau ou un eclair.</li>
+<li><b>Coherent</b> : chaque terrain a sa liste (camion au chantier, rame au quai, moto a la ruelle...) ; pas d'oiseaux, de ballon ni de cycliste sous la pluie ou de nuit ; feu d'artifice seulement au crepuscule ou la nuit, par temps sec.</li>
+<li><b>Deterministe</b> : suite de tirage propre a l'etage (graine du moteur), etat dans l'empreinte de simulation, identique chez tous les joueurs (1 a 8), rejoindre en cours de passage reste synchrone. Rendu : aplats, sans contour noir, parallaxe, charte.</li>
+</ul></div>
+<div class="g" id="g"></div>
+<button class="gen" onclick="out()">Generer mon texte</button><div id="o"></div>
+<script>
+var C=[
+{k:"moto",g:1,n:"Moto (ruelle, marche de nuit)",d:"Annonce 1,3 s : bande rouge, phares et « ! » a gauche. La moto traverse a 17 px/image ; le heros resté dans la bande est projete (5 PV), l'ennemi aussi.",w:"Se saute (hauteur 45) ou on recule derriere la ligne. Aussi : voiture au parking et en ruelle."},
+{k:"voiture",g:1,n:"Voiture (parking, ruelle, chantier)",d:"Annonce 1,5 s puis passage a 13 px/image : les deux combattants de la bande sont projetes (7 PV).",w:"Se saute (55). Le decor reste lisible : la voiture passe devant ceux qui se sont abrites."},
+{k:"esquive",g:1,n:"Meme voiture : le heros s'ecarte",d:"Le heros recule pendant l'annonce : il passe derriere la voiture sans un degat, seul l'ennemi reste dans la bande.",w:"C'est la preuve que l'evenement est un choix du joueur, pas une punition."},
+{k:"camion",g:1,n:"Camion (chantier)",d:"Annonce 1,8 s (la plus longue des vehicules), caisse blanche a bandeau de couleur, 9 PV, trop haut pour etre saute : on recule ou on roule.",w:"Seulement au chantier. Bande plus large (z a partir de 70)."},
+{k:"metro",g:1,n:"Rame de metro (quai)",d:"Annonce 2 s, rame de deux voitures argentees a fenetres chaudes qui traverse tout l'ecran en 2 s (9 PV). Seule la bande avant est dangereuse, le quai du fond reste sur.",w:"Seulement au quai de metro (et chariot / pigeons)."},
+{k:"livraison",g:1,n:"Chariot de livraison (bureaux, cantine, marche, quai)",d:"Un livreur pousse lentement un chariot charge de caisses ; deux glissent et tombent derriere lui. Tres lent (4,5 px/image), 3 PV : surtout un gag qui se contourne.",w:"Les caisses tombees sont decoratives (aucun degat) et disparaissent en fondu."},
+{k:"cycliste",g:0,n:"Cycliste (parc)",d:"Un cycliste passe au fond, pedale qui tourne, coup de sonnette (« ding » et son aigu) au milieu de l'ecran.",w:"Ambiance seule, jamais sous la pluie ni de nuit."},
+{k:"chat",g:0,n:"Chat qui traverse (ruelle, dojo, parc, temple...)",d:"Un chat traverse au premier plan, s'assoit au milieu, regarde la scene, la queue bat, puis repart. 4 pelages.",w:"Ambiance seule : aucun effet, aucune collision."},
+{k:"oiseaux",g:0,n:"Vol d'oiseaux (toits, parc, temple, chantier)",d:"Une volee de 7 oiseaux en V traverse le ciel, ailes qui battent, silhouettes douces (pas de noir).",w:"Jamais de nuit ni sous la pluie."},
+{k:"ballon",g:0,n:"Ballon (open space, seminaire, toits, parc...)",d:"Un ballon s'echappe : il monte en oscillant, sa ficelle ondule.",w:"Ambiance seule. Meme couleur de corps que les vehicules (5 teintes)."},
+{k:"feu",g:0,n:"Feu d'artifice (marche de nuit, toits, temple...)",d:"Trois fusees, bouquets de traits aux couleurs de la charte (accent, or, papier), detonation sourde a chaque bouquet. Pas de flash plein ecran.",w:"Seulement au crepuscule ou la nuit, par temps sec et sans brouillard."},
+{k:"lourd",g:1,n:"Air lourd (parking, serveurs, dojo, quai, toit-jardin)",d:"Brume, gaz ou parfum : voiles ondulants violets, annonce 1,5 s avant (le voile monte). Pendant 6 s tout le monde, ennemis compris, avance 30 % plus lentement au sol (touches inchangees). Aucun degat.",w:"Jamais punitif seul : le rythme baisse pour tous. Rampe de 0,5 s a l'entree."},
+{k:"vapeurs",g:1,n:"Vapeurs d'alcool (ruelle, seminaire, marche de nuit, cantine)",d:"Une zone de 320 px de bulles colorees qui montent (annonce 1,3 s). Dedans : deplacement 45 % plus lent et une legere derive qui fait tituber, ennemis aussi. Hors zone rien ne change ; elle disparait au bout de 7 s.",w:"Zone fixe, lisible (halo au sol), sans degat : on la contourne ou on y attire un ennemi."},
+{k:"pigeons",g:0,n:"Manifestation de pigeons (parc, ruelle, toits, quai)",d:"Huit pigeons defilent en file avec des pancartes (plume barree, « ! »), un porte-voix en tete.",w:"Ambiance seule, passent devant les combattants sans les gener."}
+],st={};
+var g=document.getElementById('g');
+C.forEach(function(c){var d=document.createElement('div');d.className='c';d.id='c_'+c.k;
+d.innerHTML='<img src="evenements/passage_'+c.k+'.gif" alt="'+c.n+'" loading="lazy"><h2>'+c.n+'</h2><p><span class="tag'+(c.g?' g1':'')+'">'+(c.g?'GAMEPLAY ANNONCE':'AMBIANCE')+'</span></p><p>'+c.d+'</p><p class="why">'+c.w+'</p><button class="v" data-k="'+c.k+'" data-v="1">Valider</button><button class="x" data-k="'+c.k+'" data-v="-1">A refaire</button><textarea id="t_'+c.k+'" rows="2" placeholder="Remarque"></textarea>';g.appendChild(d);});
+g.addEventListener('click',function(e){var b=e.target;if(!b.dataset||!b.dataset.k)return;var v=+b.dataset.v;st[b.dataset.k]=v;document.getElementById('c_'+b.dataset.k).className='c '+(v>0?'ok':'no');});
+function out(){var L=C.map(function(c){var v=st[c.k];var t=document.getElementById('t_'+c.k).value.trim();return (v>0?'VALIDE':v<0?'A REFAIRE':'NON VU')+' : '+c.n+(t?' - '+t:'');});document.getElementById('o').textContent='Evenements de decor :\n'+L.join('\n');}
+</script></body></html>

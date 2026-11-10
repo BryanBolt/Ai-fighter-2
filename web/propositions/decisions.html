@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mes decisions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b;--ok:#2f8f5b;--mid:#c98a1c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--papier);color:var(--encre);font:16px/1.45 Nunito,system-ui,sans-serif;padding:16px 16px 90px}
+h1,h2{font-family:Silkscreen,monospace;letter-spacing:.02em;margin:0 0 6px}
+h1{font-size:22px}h2{font-size:16px;margin:26px 0 8px;color:var(--accent)}
+.lead{max-width:760px;margin:0 0 10px}
+.bar{position:sticky;top:0;background:var(--papier);padding:8px 0;z-index:5;display:flex;gap:8px;flex-wrap:wrap;align-items:center;border-bottom:2px solid var(--encre)}
+.bar .n{font-family:Silkscreen,monospace;font-size:13px}
+.card{background:#fff;border:3px solid var(--encre);border-radius:14px;padding:12px 14px;margin:10px 0;max-width:760px;box-shadow:4px 4px 0 var(--encre)}
+.card h3{font-family:Silkscreen,monospace;font-size:14px;margin:0 0 4px}
+.card p{margin:4px 0 8px}
+.card a.open{display:inline-block;font-weight:700;color:var(--accent);margin-bottom:6px}
+.v{display:flex;gap:6px;flex-wrap:wrap}
+button{font:700 14px Nunito,sans-serif;border:2px solid var(--encre);background:var(--papier);color:var(--encre);border-radius:999px;padding:10px 14px;min-height:44px;cursor:pointer}
+button.on.ok{background:var(--ok);color:#fff}button.on.no{background:var(--accent);color:#fff}button.on.mid{background:var(--mid);color:#fff}
+textarea{width:100%;min-height:56px;margin-top:8px;border:2px solid var(--encre);border-radius:10px;padding:8px;font:15px Nunito,sans-serif;background:var(--papier);color:var(--encre)}
+#out{width:100%;max-width:760px;min-height:160px}
+.fixed{position:fixed;left:0;right:0;bottom:0;background:var(--encre);padding:10px 16px;display:flex;gap:8px;justify-content:center}
+.fixed button{background:var(--accent);color:#fff;border-color:#fff}
+.tag{font:12px Silkscreen,monospace;background:var(--encre);color:var(--papier);border-radius:6px;padding:2px 6px;margin-left:6px}
+</style></head><body>
+<h1>Mes decisions</h1>
+<p class="lead">Tout ce qui attend ton avis, au meme endroit. Pour chaque fiche : ouvre la page, puis choisis Valider, A refaire ou A discuter, et ajoute un commentaire si tu veux. Tes choix restent dans ce navigateur. Le bouton en bas fabrique le texte a me coller.</p>
+<div class="bar"><span class="n" id="count"></span></div>
+<div id="list"></div>
+<h2>Ton texte</h2>
+<textarea id="out" readonly placeholder="Appuie sur « Generer mon texte »"></textarea>
+<div class="fixed"><button id="gen">Generer mon texte</button><button id="copy">Copier</button></div>
+<script>
+var G=[
+["A TRANCHER EN PREMIER",[
+["a_retirer","Vieux trucs a retirer ?","50 elements (options, modes, code mort, poids). Pour chacun : retirer, garder ou revoir. Le dossier de propositions pese 337 Mo : on l'exclut du deploiement ?"],
+["remplacements","Coups remplaces par les nouvelles animations","Les variantes des refontes A et B sont maintenant actives par defaut, y compris des coups que tu n'avais peut-etre pas valides. Lesquelles retirer ?"],
+["boss_variantes","Design des boss et de l'Ange (32 variantes)","Choisis la variante preferee pour l'Ange, la Brute, Valerie, Kaze PDG et le Rappel."],
+["histoire_incoherences","Incoherences de l'histoire (10 points)","Ce qu'on enleve ou garde dans l'histoire."]
+]],
+["COMBAT ET ANIMATIONS",[
+["refonte_a","Refonte des coups : Gorr, Tetsu, Nova, Kage, Bo","26 coups refaits, avant / apres."],
+["refonte_b","Refonte des coups : Sora, Piege, Zui, Yume","42 coups refaits, avant / apres."],
+["coups_a","Galerie des mouvements, heros 1 a 5","255 mouvements. Les GIF des supers sont tres comprimes : regarde les planches."],
+["nunchaku","Nunchaku et cou du personnage","Combo de 6 coups, coups diriges, raccord du cou."],
+["pantoufles","Pantoufles et dernier coup lance","Sera refait en une seule savate comique : regarde le principe."],
+["objets","Jeter les objets, lait, tesson","Geste Jeter, boire le lait, tesson de 3 coups."],
+["ragdoll","Ragdoll realiste","Limites des articulations, rebonds, glissades."],
+["supers2","Supers au sol","Tes validations precedentes."],
+["supers_air2","Supers aeriennes","Tes validations precedentes."],
+["roulade2","Roulades et saltos","Tes validations precedentes."]
+]],
+["BOSS, ENNEMIS, EVENEMENTS",[
+["boss","Annonce de boss, mini-boss, Ange","Intro muette de boss, mini-boss, boss final blanc."],
+["evenements","Evenements de decor (13 passages)","Voitures, moto, metro, air lourd, vapeurs, oiseaux, feu d'artifice..."],
+["meteo","Meteo","Pluie, brume, etc."],
+["niveaux_neufs","Niveaux neufs","Les 3 niveaux deja ajoutes."],
+["nemesis","Nemesis","Ennemis recurrents."],
+["civils","Passants civils (29 demarches)","Marches, attentes, postures."]
+]],
+["MENUS, ECRANS, EN LIGNE",[
+["bilan","Bilan de fin de combat","Comprends-tu enfin ce que tu gagnes ?"],
+["dialogues","Dialogues et cinematiques","Les cinematiques sont maintenant muettes."],
+["transitions","Transitions entre niveaux","Cartes visuelles, pastilles d'etages."],
+["lobby","Salons, QR, partage","Prive / public, lien, QR, reprise."],
+["friendly_fire","Tirs amis, prise d'un ami, arene","Trois reglages de tirs amis, arene de fin de run."],
+["responsive","Boutons toujours visibles","Barre d'actions fixe."],
+["paysage","Touches jamais devant le jeu","Planches sur 10 formats d'ecran."],
+["style_guide","Charte graphique et coherence","175 incoherences, 64 corrigees."],
+["coherence","Coherence du jeu (KO, armes au sol)","Ce qui reste a decider."],
+["replay","Replay, mode photo, run du jour","Rejouer, photo, defi du jour."]
+]],
+["ROGUELITE",[
+["roguelite","Roguelite : objets et pouvoirs","Tes verdicts precedents."],
+["roguelite_profondeur","Roguelite : salles, reliques, progression","20 idees a classer. Seule la logique est ecrite, pas encore branchee."]
+]]
+];
+var K="afh_decisions_v1",S={};
+try{S=JSON.parse(localStorage.getItem(K)||"{}")}catch(e){}
+function save(){try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}}
+function count(){var n=0,t=0;G.forEach(function(g){g[1].forEach(function(c){t++;if(S[c[0]]&&S[c[0]].v)n++})});document.getElementById("count").textContent=n+" / "+t+" fiches traitees"}
+var L=document.getElementById("list");
+G.forEach(function(g){
+ var h=document.createElement("h2");h.textContent=g[0];L.appendChild(h);
+ g[1].forEach(function(c){
+  var id=c[0],s=S[id]||(S[id]={});
+  var d=document.createElement("div");d.className="card";
+  d.innerHTML='<h3></h3><p></p><a class="open" target="_blank"></a><div class="v"></div><textarea placeholder="Commentaire (facultatif)"></textarea>';
+  d.querySelector("h3").textContent=c[1];d.querySelector("p").textContent=c[2];
+  var a=d.querySelector("a");a.href=id+".html";a.textContent="Ouvrir la page";
+  var v=d.querySelector(".v");
+  [["ok","Valider"],["no","A refaire"],["mid","A discuter"]].forEach(function(o){
+   var b=document.createElement("button");b.textContent=o[1];if(s.v===o[0])b.className="on "+o[0];
+   b.onclick=function(){s.v=(s.v===o[0]?"":o[0]);v.querySelectorAll("button").forEach(function(x){x.className=""});if(s.v)b.className="on "+o[0];save();count()};
+   v.appendChild(b)});
+  var t=d.querySelector("textarea");t.value=s.c||"";t.oninput=function(){s.c=t.value;save()};
+  L.appendChild(d)})});
+count();
+var NAME={ok:"VALIDE",no:"A REFAIRE",mid:"A DISCUTER"};
+function gen(){var o=[];G.forEach(function(g){g[1].forEach(function(c){var s=S[c[0]]||{};if(s.v||s.c)o.push("- "+c[1]+" ("+c[0]+") : "+(s.v?NAME[s.v]:"sans avis")+(s.c?" | "+s.c:""))})});
+ document.getElementById("out").value=o.length?"Mes decisions :\n"+o.join("\n"):"Rien de traite pour l'instant."}
+document.getElementById("gen").onclick=function(){gen();document.getElementById("out").scrollIntoView()};
+document.getElementById("copy").onclick=function(){gen();var t=document.getElementById("out");t.select();try{document.execCommand("copy")}catch(e){}};
+</script></body></html>
