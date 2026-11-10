@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hierarchie des menus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b}
+body{margin:0;background:var(--papier);color:var(--encre);font:16px/1.45 Nunito,system-ui,sans-serif;padding:16px}
+h1,h2,h3{font-family:Silkscreen,monospace;margin:0 0 8px}h1{font-size:22px}h2{font-size:17px;margin-top:28px;color:var(--accent)}h3{font-size:14px}
+.w{max-width:980px;margin:auto}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.t{background:#fff;border:2px solid var(--encre);border-radius:12px;padding:10px 14px;font-size:14px}
+.t ul{margin:2px 0 2px 0;padding-left:18px}.t b{font-family:Silkscreen,monospace;font-size:12px}
+.old b{opacity:.55}.new b{color:var(--accent)}
+.tabs button,.vb button{font:inherit;font-weight:700;min-height:48px;padding:8px 14px;border-radius:24px;border:2px solid var(--encre);background:var(--papier);color:var(--encre);cursor:pointer;margin:3px 4px 3px 0}
+.tabs button.on,.vb button.on{background:var(--encre);color:var(--papier);box-shadow:3px 3px 0 var(--accent)}
+.shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin-top:8px}
+.shots figure{margin:0;background:#fff;border:2px solid var(--encre);border-radius:10px;padding:6px;text-align:center;font-size:12px}
+.shots img{max-width:100%;height:auto;max-height:340px;border-radius:6px}
+textarea{width:100%;box-sizing:border-box;border:2px solid var(--encre);border-radius:8px;padding:8px;font:inherit;background:var(--papier);margin-top:8px}
+#o{white-space:pre-wrap;background:var(--encre);color:var(--papier);padding:12px;border-radius:10px;margin-top:12px}
+table{border-collapse:collapse;width:100%;font-size:14px;background:#fff}td,th{border:2px solid var(--encre);padding:5px 8px;text-align:left}th{font-family:Silkscreen,monospace;font-size:12px}
+@media(max-width:640px){.cols{grid-template-columns:1fr}}
+</style></head><body><div class="w">
+<h1>Hierarchie des menus : avant / apres</h1>
+<p>Objectif : « multi d'abord », 3 niveaux maximum, aucun doublon, <b>aucune fonction supprimee</b>. Captures du vrai moteur.</p>
+
+<h2>1. Arbre</h2>
+<div class="cols">
+<div class="t old"><b>AVANT</b> (titre : 5 entrees, 4 niveaux)
+<ul><li>Continuer / Reprendre en ligne</li>
+<li>Jouer
+<ul><li>Mode histoire &gt; chapitre / recommencer / choisir</li><li>Campagne</li><li>Duel du maitre</li><li>Defis proceduraux</li><li>Entrainement et techniques</li><li>Roguelite (beta)</li><li>Roguelite en ligne</li><li>Run du jour et defis <i>(ouvrait le roguelite : doublon code 120, bug)</i></li></ul></li>
+<li>Jouer en ligne</li>
+<li>Personnaliser : combos, equipement, boutique, daemons, studio, nemesis</li>
+<li>Options</li><li>Quitter</li></ul></div>
+<div class="t new"><b>APRES</b> (titre : 5 entrees + Quitter, 3 niveaux)
+<ul><li>Continuer / Reprendre en ligne <i>(si existant)</i></li>
+<li><b>JOUER ENSEMBLE</b> : lien, QR, salon, code, rejoindre a tout moment (1 decision)</li>
+<li><b>HISTOIRE SOLO</b> : continuer / choisir un chapitre / recommencer / campagne</li>
+<li><b>ROGUELITE</b> : solo / coop 1-8 / run du jour et defis</li>
+<li><b>ENTRAINEMENT</b> : techniques / defis proceduraux / duel du maitre</li>
+<li><b>OPTIONS</b> : reglages / mon combattant (combos, equipement, boutique, daemons) / plus (studio, nemesis)</li>
+<li>Quitter</li></ul></div></div>
+
+<h2>2. Maquettes (vrai moteur)</h2>
+<div class="tabs" id="tabs"></div>
+<div class="shots" id="shots"></div>
+
+<h2>3. A decider (rien n'est supprime)</h2>
+<table><tr><th>Element</th><th>Etat</th><th>Proposition</th></tr>
+<tr><td>Banc de sons (Options)</td><td>reste dans Reglages</td><td>masquer derriere un indicateur de dev ?</td></tr>
+<tr><td>Studio de creation IA, Nemesis</td><td>deplaces dans Options &gt; Plus</td><td>garder ou retirer ?</td></tr>
+<tr><td>Duel du maitre</td><td>sous Entrainement</td><td>garder ou fusionner avec les defis ?</td></tr>
+<tr><td>Menus classiques, Physique des membres, Tir allie, Jouer hors ligne</td><td>inchanges dans Reglages</td><td>voir tools/audit_a_retirer.md (O3, O5, O7, O8)</td></tr>
+<tr><td>Icones sur les pastilles du titre</td><td>non faites (le rendu partage menu() est texte seul)</td><td>a faire si tu valides la hierarchie</td></tr>
+<tr><td>Run coop (4 chapitres)</td><td>reste dans Campagne &gt; choix du stage</td><td>l'ajouter aussi sous Jouer ensemble ?</td></tr></table>
+
+<h2>4. Ta decision</h2>
+<div class="vb"><button data-v="Valider">Valider</button><button data-v="A refaire">A refaire</button></div>
+<textarea id="c" rows="3" placeholder="Commentaire (facultatif)"></textarea>
+<div><button style="font:inherit;font-weight:700;min-height:48px;padding:8px 14px;border-radius:24px;border:2px solid var(--encre);background:var(--accent);color:#fff;margin-top:8px;cursor:pointer" onclick="out()">Generer mon texte</button></div>
+<div id="o"></div>
+<script>
+var SZ=["1280x720","800x450","1920x1080","412x915","915x412","360x640"];
+var SC=[["titre","Titre"],["jouer","Avant : Jouer (sous-menu)"],["entrainement","Entrainement"],["roguelite","Roguelite"],["options","Options"],["histoire","Histoire solo"],["plus","Plus"]];
+var cur="titre",v="";
+function show(){var s=document.getElementById('shots');s.innerHTML='';
+ SZ.forEach(function(z){var items=[];
+  if(cur==="titre"){items=[["avant_titre","avant"],["apres_titre","apres"]];}
+  else if(cur==="jouer"){items=[["avant_jouer","avant"]];}
+  else{items=[["apres_"+cur,"apres"]];}
+  items.forEach(function(it){var f=document.createElement('figure');var i=document.createElement('img');i.loading='lazy';i.src='menus_hierarchie/'+it[0]+'_'+z+'.png';i.alt=it[1]+' '+z;i.onerror=function(){f.style.display='none'};f.appendChild(i);f.appendChild(document.createElement('br'));f.appendChild(document.createTextNode(it[1]+' - '+z));s.appendChild(f);});});}
+var t=document.getElementById('tabs');
+SC.forEach(function(x){var b=document.createElement('button');b.textContent=x[1];b.onclick=function(){cur=x[0];[].forEach.call(t.children,function(e){e.classList.remove('on')});b.classList.add('on');show();};if(x[0]===cur)b.classList.add('on');t.appendChild(b);});
+show();
+[].forEach.call(document.querySelectorAll('.vb button'),function(b){b.onclick=function(){v=b.dataset.v;[].forEach.call(document.querySelectorAll('.vb button'),function(e){e.classList.remove('on')});b.classList.add('on');};});
+function out(){document.getElementById('o').textContent='Hierarchie des menus : '+(v||'(pas de choix)')+'\n'+document.getElementById('c').value;}
+</script></div></body></html>

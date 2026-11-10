@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Roguelite : evolution visuelle du heros - proposition</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#221834;--paper:#fff3e0;--acc:#d8456b;--card:#fffaf2;--line:#e9d3b4;--ok:#2f8f5b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/1.55 Nunito,system-ui,sans-serif}
+.wrap{max-width:1000px;margin:0 auto;padding:20px 16px 80px}
+h1,h2,.pix{font-family:Silkscreen,monospace;font-weight:700}
+h1{font-size:30px;margin:8px 0 4px;color:var(--acc)} h2{font-size:21px;margin:34px 0 10px;border-bottom:3px solid var(--acc);padding-bottom:6px}
+.card{background:var(--card);border:2px solid var(--ink);border-radius:10px;padding:12px 14px;margin:12px 0;box-shadow:4px 4px 0 var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+.grid .card{margin:0;padding:8px 10px}
+canvas{width:100%;height:auto;border:2px solid var(--ink);border-radius:8px;display:block;background:#7d7f92}
+img{max-width:100%;border:2px solid var(--ink);border-radius:8px;display:block}
+.cap{font-size:13px;opacity:.85;margin:2px 0 4px}
+button,input,textarea{font:700 14px Nunito,sans-serif;color:var(--ink)}
+button{background:var(--card);border:2px solid var(--ink);border-radius:8px;padding:6px 10px;cursor:pointer;box-shadow:2px 2px 0 var(--ink)}
+button.on.ok{background:var(--ok);color:#fff} button.on.no{background:var(--acc);color:#fff}
+input,textarea{background:#fff;border:2px solid var(--ink);border-radius:8px;padding:6px 8px;width:100%}
+.vb{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px} .vb input{flex:1 1 90px}
+.out{background:var(--ink);color:var(--paper);border-radius:10px;padding:14px 16px;margin-top:12px;font-size:15px}
+table{border-collapse:collapse;width:100%;font-size:14px} td,th{border:1px solid var(--line);padding:4px 8px;text-align:left}
+</style></head><body><div class="wrap">
+<div class="pix" style="color:var(--acc);font-size:13px">AI FIGHTER 2 / ROGUELITE / PROPOSITION</div>
+<h1>LE HEROS CHANGE AVEC SES BONUS</h1>
+<p>Le heros evolue par six paliers (0 sobre, 5 spectaculaire), lus dans l'etat de run deja synchronise : aucune donnee en plus, rendu seulement. Tout est en aplats (trois tons de l'element), sans contour noir, et petit devant le corps : la silhouette reste lisible. Les daemons gardent leur design ; chacun a sa propre orbite.</p>
+
+<h2>1. Les paliers</h2>
+<div class="card"><table>
+<tr><th>Palier</th><th>Ce qu'on voit</th><th>Declencheur typique</th></tr>
+<tr><td>0</td><td>sobre : rien</td><td>debut de run</td></tr>
+<tr><td>1</td><td>aura au sol (forme selon l'element) + echarpe ou bandeau</td><td>premier daemon</td></tr>
+<tr><td>2</td><td>+ lueur des yeux, lucioles, epaulieres</td><td>super / eveil debloque</td></tr>
+<tr><td>3</td><td>+ trainees de mouvement, brassards, halo</td><td>mobilite, effets croises</td></tr>
+<tr><td>4</td><td>+ ailes de lumiere</td><td>armure, formes, sorcier</td></tr>
+<tr><td>5</td><td>+ couronne, aura pleine</td><td>fin de run</td></tr></table>
+<p class="cap">Element : l'effet croise dominant (gel, feu, poison, foudre, barriere, berserk, epines), sinon l'espece du premier daemon. Formes d'aura : langues (feu, sang), eclats (glace, acier), zigzags (foudre, ki), volutes (vent, esprit), bulles (poison, bois).</p></div>
+
+<h2>2. Planche du vrai moteur : 10 heros x 6 paliers</h2>
+<div class="card"><img src="rl_look/planche.png" alt="planche heros x paliers" onerror="this.parentNode.innerHTML='<p>(planche non generee)</p>'">
+<p class="cap">Chaque colonne est un palier, chaque ligne un heros ; captures du vrai moteur (tools/rl_look_board.py).</p>
+<img src="rl_look/paliers.webp" alt="GIF paliers" onerror="this.remove()"></div>
+
+<h2>3. Trois effets phares : 16 variantes chacun</h2>
+<p>Choisis une variante par effet (Valider) ou demande a refaire. Variantes = nombre de marques et hauteur (aura), nombre de plumes et ouverture (ailes), nombre de filets et longueur (trainees). Choix par defaut actuel : variante 6 pour chacun.</p>
+<h2>Aura au sol</h2><div class="grid" id="g-aura"></div>
+<h2>Ailes de lumiere</h2><div class="grid" id="g-wings"></div>
+<h2>Trainees de mouvement</h2><div class="grid" id="g-trail"></div>
+
+<h2>4. Joueurs 1 a 8, accessibilite</h2>
+<div class="card"><canvas id="pl" width="960" height="150"></canvas>
+<p class="cap">Anneau pointille au sol + pastille de forme au-dessus de la tete (disque, triangle, carre, losange, hexagone, croix, barre, anneau), palette Okabe-Ito sans rouge (le rouge est le camp ennemi). Daltonisme : les teintes passent par la palette daltonien du jeu ; la forme porte l'identite. Reduire les effets : plus de trainees ni de lucioles, aura calme. Budget : lucioles plafonnees par le reglage de particules (mode eco = moitie).</p>
+<div class="vb" data-sec="Joueurs 1-8 : couleur + forme"></div></div>
+<div class="card"><b>Commentaire general</b><textarea id="gen" rows="3" placeholder="Ce que tu veux changer..."></textarea></div>
+<div class="out"><b>Ton retour (copie-le et colle-le dans le chat)</b><div id="sum" style="margin-top:8px"></div><div class="vb"><button id="copy">Copier</button><button id="reset">Tout effacer</button></div></div>
+</div>
+<script>
+const T={Fire:['#c43412','#ff8c24','#ffe696'],Ice:['#468cd2','#96d7ff','#ecfaff'],Volt:['#785ae6','#8cc8ff','#f0faff'],Wind:['#5aaa96','#aaebd2','#f0fff8']};
+const FAM={Fire:0,Ice:1,Volt:2,Wind:3};
+function rgba(h,a){const n=parseInt(h.slice(1),16);return `rgba(${n>>16},${n>>8&255},${n&255},${a})`}
+const BH=84,TAU=Math.PI*2;
+function figure(c,x,y,dir){
+ c.strokeStyle='#e8d9c8';c.fillStyle='#e8d9c8';c.lineCap='round';c.lineWidth=7;
+ const P=(a,b)=>[x+a*dir,y-b];
+ const seg=(a,b,d,e)=>{c.beginPath();c.moveTo(...P(a,b));c.lineTo(...P(d,e));c.stroke()};
+ seg(-5,0,-8,30);seg(-8,30,-5,44);seg(5,0,9,28);seg(9,28,5,44);seg(0,44,0,66);seg(0,60,13,48);seg(0,60,-12,46);
+ c.beginPath();c.arc(...P(0,76),11,0,TAU);c.fill();
+}
+function aura(c,x,y,e,v,tier,t){const k=T[e],n=[6,8,10,12][v%4]+(tier>=3?2:0),hg=[.16,.22,.30,.38][(v>>2)%4]*(.55+.45*tier/5)*BH,R=.3*BH*(1+.05*tier),fam=FAM[e];
+ const tri=(ax,ay,bx,by,cx,cy,col)=>{c.fillStyle=col;c.beginPath();c.moveTo(ax,ay);c.lineTo(bx,by);c.lineTo(cx,cy);c.fill()};
+ const bar=(ax,ay,bx,by,wd,col)=>{c.strokeStyle=col;c.lineWidth=wd;c.beginPath();c.moveTo(ax,ay);c.lineTo(bx,by);c.stroke()};
+ for(let i=0;i<n;i++){const a=TAU*i/n+t*.025,w=.75+.25*Math.sin(t*.13+i*1.7),h=hg*w,bx=x+Math.cos(a)*R,by=y+Math.sin(a)*R*.9*.45,w0=.05*BH,c1=rgba(k[1],.46),c2=rgba(k[2],.6);
+  if(fam==0){tri(bx-w0,by,bx+w0,by,bx+.4*w0*Math.sin(t*.2+i),by-h,c1);tri(bx-w0*.45,by,bx+w0*.45,by,bx,by-h*.6,c2)}
+  else if(fam==1){tri(bx-w0*.6,by,bx+w0*.6,by,bx,by-h*1.1,c1);tri(bx-w0*.2,by,bx+w0*.3,by,bx,by-h*.85,c2)}
+  else if(fam==2){bar(bx,by,bx+w0*.8,by-h*.34,2,c1);bar(bx+w0*.8,by-h*.34,bx-w0*.8,by-h*.67,2,c1);bar(bx-w0*.8,by-h*.67,bx,by-h,1.4,c2)}
+  else{const tx=-Math.sin(a)*.8*w0*2;bar(bx,by-h*.2,bx+tx,by-h*.5,2.6,c1);bar(bx+tx,by-h*.5,bx+tx*2,by-h*.85,1.5,c2)}
+ }}
+function wings(c,x,y,e,v,dir,t){const k=T[e],nf=[3,4,5,6][v%4],sp=[40,55,70,85][(v>>2)%4]*Math.PI/180,fl=1+.08*Math.sin(t*.07),rx=x-.06*BH*dir,ry=y-.68*BH;
+ for(let i=0;i<nf;i++){const f=i/Math.max(nf-1,1),ang=(35*Math.PI/180+sp*f)*fl,len=(.44-.12*f)*BH,tx=rx-dir*Math.cos(ang)*len*.8,ty=ry-Math.sin(ang)*len,sx=-Math.sin(ang)*.035*BH*dir,sy=-Math.cos(ang)*.035*BH;
+  c.fillStyle=rgba(k[i%2==0?2:1],.5);c.beginPath();c.moveTo(rx+sx,ry-sy);c.lineTo(rx-sx,ry+sy);c.lineTo(tx,ty);c.fill()}}
+function trail(c,x,y,e,v,dir){const k=T[e],nl=[2,3,4,5][v%4],len=[.6,1,1.5,2.2][(v>>2)%4]*.5*BH;
+ for(let i=0;i<nl;i++){const yy=y-(.25+.55*i/Math.max(nl-1,1))*BH,l=Math.min(len*(1-.18*i/nl),.5*BH);c.strokeStyle=rgba(k[1+i%2],Math.max(.1,.4-.05*i));c.lineWidth=.02*BH;c.lineCap='round';c.beginPath();c.moveTo(x-dir*.07*BH,yy);c.lineTo(x-dir*(.07*BH+l),yy);c.stroke()}}
+const ELS=['Fire','Ice','Volt','Wind'];
+function tile(host,kind,v){const d=document.createElement('div');d.className='card';const cv=document.createElement('canvas');cv.width=200;cv.height=170;d.appendChild(cv);
+ const e=ELS[v%4],c=cv.getContext('2d');
+ const name=(kind==='aura'?'Aura':kind==='wings'?'Ailes':'Trainees')+' variante '+(v+1);
+ const cap=document.createElement('div');cap.className='cap';cap.innerHTML='<b>'+(v+1)+'.</b> '+(kind==='aura'?[6,8,10,12][v%4]+' marques, hauteur '+['.16','.22','.30','.38'][v>>2]:kind==='wings'?[3,4,5,6][v%4]+' plumes, ouverture '+[40,55,70,85][v>>2]+' deg':[2,3,4,5][v%4]+' filets, longueur x'+[.6,1,1.5,2.2][v>>2])+' ('+e+')';d.appendChild(cap);
+ const vb=document.createElement('div');vb.className='vb';vb.dataset.sec=name;d.appendChild(vb);host.appendChild(d);
+ let t=0;(function f(){c.clearRect(0,0,200,170);c.fillStyle='rgba(0,0,0,.12)';c.beginPath();c.ellipse(100,150,34,8,0,0,TAU);c.fill();
+  if(kind==='wings')wings(c,100,150,e,v,1,t);figure(c,100,150,1);
+  if(kind==='aura')aura(c,100,150,e,v,4,t);if(kind==='trail')trail(c,100,150,e,v,1);
+  t+=1.5;requestAnimationFrame(f)})();}
+for(const k of ['aura','wings','trail'])for(let v=0;v<16;v++)tile(document.getElementById('g-'+k),k,v);
+{const c=document.getElementById('pl').getContext('2d');const COL=['#e69f00','#56b4e9','#009e73','#f0e442','#005caa','#cc79a7','#cdcdcd','#6e46aa'];
+ for(let s=0;s<8;s++){const x=60+s*120,y=118;c.fillStyle='rgba(0,0,0,.12)';c.beginPath();c.ellipse(x,y,28,7,0,0,TAU);c.fill();
+  for(let k=0;k<10;k++){const a=TAU*k/10;c.fillStyle=rgba(COL[s],.62);c.beginPath();c.arc(x+Math.cos(a)*35,y+Math.sin(a)*35*.3,2.4,0,TAU);c.fill()}
+  figure(c,x,y,1);const by=y-84*1.12,r=4.2;c.fillStyle=COL[s];c.beginPath();
+  if(s==0)c.arc(x,by,r,0,TAU);else if(s==1){c.moveTo(x-r*1.1,by+r*.8);c.lineTo(x+r*1.1,by+r*.8);c.lineTo(x,by-r*1.25)}else if(s==2)c.rect(x-r,by-r,r*2,r*2);else if(s==3){c.moveTo(x-r*1.25,by);c.lineTo(x,by-r*1.25);c.lineTo(x+r*1.25,by);c.lineTo(x,by+r*1.25)}else if(s==4){for(let k=0;k<6;k++){const a=TAU*k/6;c.lineTo(x+Math.cos(a)*r*1.1,by+Math.sin(a)*r*1.1)}}else if(s==5){c.rect(x-r*1.1,by-r*.35,r*2.2,r*.7);c.rect(x-r*.35,by-r*1.1,r*.7,r*2.2)}else if(s==6)c.rect(x-r*.4,by-r*1.2,r*.8,r*2.4);else c.arc(x,by,r*1.15,0,TAU);
+  c.fill();if(s==7){c.fillStyle='#fff3e0';c.beginPath();c.arc(x,by,r*.5,0,TAU);c.fill()}
+  c.fillStyle='#fff';c.font='700 12px Nunito';c.textAlign='center';c.fillText('J'+(s+1),x,y+22)}}
+const KEY='rl_look_v1';let st={};try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}summ();};
+const esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+document.querySelectorAll('.vb[data-sec]').forEach(el=>{const s=el.dataset.sec;st[s]=st[s]||{v:'',c:''};
+ el.innerHTML='<button>Valider</button><button>A refaire</button><input placeholder="Commentaire">';
+ const [b1,b2]=el.querySelectorAll('button'),inp=el.querySelector('input');inp.value=st[s].c;
+ const paint=()=>{b1.classList.toggle('on',st[s].v=='ok');b1.classList.toggle('ok',1);b2.classList.toggle('on',st[s].v=='no');b2.classList.toggle('no',1);};paint();
+ b1.onclick=()=>{st[s].v=st[s].v=='ok'?'':'ok';paint();save();};b2.onclick=()=>{st[s].v=st[s].v=='no'?'':'no';paint();save();};inp.oninput=()=>{st[s].c=inp.value;save();};});
+const g=document.getElementById('gen');g.value=st._g||'';g.oninput=()=>{st._g=g.value;save();};
+function text(){let t='RETOUR ROGUELITE LOOK\n';for(const [k,v] of Object.entries(st)){if(k=='_g'||(!v.v&&!v.c))continue;t+='- '+k+' : '+(v.v=='ok'?'VALIDE':v.v=='no'?'A REFAIRE':'(commentaire)')+(v.c?' - '+v.c:'')+'\n';}if(st._g)t+='Commentaire : '+st._g+'\n';return t;}
+function summ(){document.getElementById('sum').innerHTML=esc(text()).replace(/\n/g,'<br>');}
+document.getElementById('copy').onclick=async()=>{try{await navigator.clipboard.writeText(text());}catch(e){window.prompt('Copie :',text());}};
+document.getElementById('reset').onclick=()=>{st={};try{localStorage.removeItem(KEY)}catch(e){}location.reload();};
+summ();
+</script></body></html>
