@@ -1,0 +1,6 @@
+[
+ {"id":"clign-retour-titre","titre":"Bouton Retour au titre","texte":"Le bouton Retour apparait sur la toute premiere animation du titre alors qu'il n'y a nulle part ou retourner : le masquer pendant l'intro ?","page":"clignotement"},
+ {"id":"clign-android","titre":"Verifier sur le telephone","texte":"Mesure faite en WebGL logiciel : recharger la PWA sur le telephone (cache vide) et confirmer que le clignotement du debut a disparu.","page":"clignotement"},
+ {"id":"clign-flash-titre","titre":"Flash blanc du logo","texte":"Une trame blanche sur l'impact du logo AI FIGHTER est voulue ; la garder, ou l'adoucir (sensibilite a la lumiere) ?","page":"clignotement"},
+ {"id":"clign-poids-wasm","titre":"Wasm de 6,7 Mo","texte":"Le telechargement du wasm domine le demarrage en 4G (15 s) : compresser (brotli) ou alleger pour raccourcir l'ecran de chargement ?","page":"clignotement"}
+]

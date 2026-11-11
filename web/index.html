@@ -505,6 +505,8 @@
 // Service worker : jamais servi depuis le cache HTTP (updateViaCache none) et verifie a chaque retour au premier plan,
 // pour qu'un testeur qui rouvre l'appli installee ait TOUJOURS la derniere version.
 if ("serviceWorker" in navigator) {
+  // Premiere installation (aucun SW ne controlait la page au depart) : skipWaiting + claim donnent un controleur a l'activation, ce n'est PAS une mise a jour : pas de bandeau (il surgissait en haut de l'ecran au tout premier lancement).
+  var afhHadSw = !!navigator.serviceWorker.controller;
   window.addEventListener("load", function () {
     navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) {
       // Nouvelle version detectee (un SW remplace celui qui controle la page) : bandeau « Nouvelle version, recharger » (jamais de rechargement automatique en partie).
@@ -519,7 +521,7 @@ if ("serviceWorker" in navigator) {
       window.afhShowUpdate = banner;
       reg.addEventListener("updatefound", function () {
         var nw = reg.installing; if (!nw) return;
-        nw.addEventListener("statechange", function () { if ((nw.state === "installed" || nw.state === "activated") && navigator.serviceWorker.controller) banner(); });
+        nw.addEventListener("statechange", function () { if ((nw.state === "installed" || nw.state === "activated") && afhHadSw) banner(); });
       });
       document.addEventListener("visibilitychange", function () { if (!document.hidden) { try { reg.update().catch(function () {}); } catch (e) {} } });
     }).catch(function () {});
