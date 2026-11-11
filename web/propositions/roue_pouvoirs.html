@@ -1,0 +1,40 @@
+<!doctype html><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><title>Roue des pouvoirs</title>
+<style>body{font:16px Nunito,system-ui;margin:16px;background:#221834;color:#fff3e0;line-height:1.45}h1,h2{margin:.5em 0}.g{display:flex;flex-wrap:wrap;gap:12px}figure{margin:0}figcaption{font-size:13px;max-width:260px}img{border:1px solid #5a4a78;max-width:100%}code{color:#ffd27a}</style>
+<h1>Roue des pouvoirs</h1>
+<p>Maintenir le bouton Pouvoir ouvre une roue : on glisse vers le pouvoir voulu (la direction compte), on relâche pour lancer, on relâche au centre (croix) pour annuler. Un tap bref lance le pouvoir par défaut (le dernier utilisé). L'entrée envoyée au jeu reste <code>Input.slot</code> : aucun changement de simulation.</p>
+<h2>Avant</h2><div class=g><figure><img src='boutons_combat/img/apres_tel-412x915_rlcmds3.webp' width=240><figcaption>Petites pastilles autour du bouton, direction fixe haut / bas / avant / arrière.</figcaption></figure></div>
+<h2>Après : planche de lisibilité (vrai moteur)</h2>
+<h2>412x915</h2><div class=g>
+<figure><img src='roue_pouvoirs/tel-412x915/w1.webp' width=190><figcaption>1 pouvoir, visé</figcaption></figure>
+<figure><img src='roue_pouvoirs/tel-412x915/w2.webp' width=190><figcaption>2 pouvoirs</figcaption></figure>
+<figure><img src='roue_pouvoirs/tel-412x915/w3.webp' width=190><figcaption>3 pouvoirs, 1 en recharge</figcaption></figure>
+<figure><img src='roue_pouvoirs/tel-412x915/w4.webp' width=190><figcaption>4 pouvoirs, 1 en recharge</figcaption></figure>
+<figure><img src='roue_pouvoirs/tel-412x915/w5.webp' width=190><figcaption>5 pouvoirs, 1 sans Ki</figcaption></figure>
+<figure><img src='roue_pouvoirs/tel-412x915/w6.webp' width=190><figcaption>6 pouvoirs, recharge + sans Ki</figcaption></figure>
+<figure><img src='roue_pouvoirs/tel-412x915/w4_annule.webp' width=190><figcaption>4 pouvoirs, doigt au centre : annuler</figcaption></figure>
+<figure><img src='roue_pouvoirs/tel-412x915/w6_haut.webp' width=190><figcaption>6 pouvoirs, 1er visé</figcaption></figure>
+<figure><img src='roue_pouvoirs/tel-412x915/w6_droite.webp' width=190><figcaption>6 pouvoirs, dernier visé</figcaption></figure>
+</div>
+<h2>360x800</h2><div class=g>
+<figure><img src='roue_pouvoirs/tel-360x800/w1.webp' width=190><figcaption>1 pouvoir, visé</figcaption></figure>
+<figure><img src='roue_pouvoirs/tel-360x800/w2.webp' width=190><figcaption>2 pouvoirs</figcaption></figure>
+<figure><img src='roue_pouvoirs/tel-360x800/w3.webp' width=190><figcaption>3 pouvoirs, 1 en recharge</figcaption></figure>
+<figure><img src='roue_pouvoirs/tel-360x800/w4.webp' width=190><figcaption>4 pouvoirs, 1 en recharge</figcaption></figure>
+<figure><img src='roue_pouvoirs/tel-360x800/w5.webp' width=190><figcaption>5 pouvoirs, 1 sans Ki</figcaption></figure>
+<figure><img src='roue_pouvoirs/tel-360x800/w6.webp' width=190><figcaption>6 pouvoirs, recharge + sans Ki</figcaption></figure>
+<figure><img src='roue_pouvoirs/tel-360x800/w4_annule.webp' width=190><figcaption>4 pouvoirs, doigt au centre : annuler</figcaption></figure>
+<figure><img src='roue_pouvoirs/tel-360x800/w6_haut.webp' width=190><figcaption>6 pouvoirs, 1er visé</figcaption></figure>
+<figure><img src='roue_pouvoirs/tel-360x800/w6_droite.webp' width=190><figcaption>6 pouvoirs, dernier visé</figcaption></figure>
+</div>
+<h2>844x390 paysage</h2><div class=g>
+<figure><img src='roue_pouvoirs/paysage/w1.webp' width=330><figcaption>1 pouvoir, visé</figcaption></figure>
+<figure><img src='roue_pouvoirs/paysage/w2.webp' width=330><figcaption>2 pouvoirs</figcaption></figure>
+<figure><img src='roue_pouvoirs/paysage/w3.webp' width=330><figcaption>3 pouvoirs, 1 en recharge</figcaption></figure>
+<figure><img src='roue_pouvoirs/paysage/w4.webp' width=330><figcaption>4 pouvoirs, 1 en recharge</figcaption></figure>
+<figure><img src='roue_pouvoirs/paysage/w5.webp' width=330><figcaption>5 pouvoirs, 1 sans Ki</figcaption></figure>
+<figure><img src='roue_pouvoirs/paysage/w6.webp' width=330><figcaption>6 pouvoirs, recharge + sans Ki</figcaption></figure>
+<figure><img src='roue_pouvoirs/paysage/w4_annule.webp' width=330><figcaption>4 pouvoirs, doigt au centre : annuler</figcaption></figure>
+<figure><img src='roue_pouvoirs/paysage/w6_haut.webp' width=330><figcaption>6 pouvoirs, 1er visé</figcaption></figure>
+<figure><img src='roue_pouvoirs/paysage/w6_droite.webp' width=330><figcaption>6 pouvoirs, dernier visé</figcaption></figure>
+</div>
+<p>Anneau plein = prêt ; arc partiel = recharge ; barre diagonale rouge = Ki insuffisant ; croix au centre = annuler. Le nom du pouvoir visé s'affiche au-delà de son icône (hors du doigt).</p>

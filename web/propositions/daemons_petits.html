@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Daemons petits, avec du caractère</title>
+<style>
+:root{--ink:#221834;--paper:#fff3e0;--acc:#d8456b;--gold:#ffd27a}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:Nunito,system-ui,sans-serif;line-height:1.45}
+main{max-width:980px;margin:0 auto;padding:16px}
+h1{font-size:1.5rem;margin:.4em 0}h2{font-size:1.15rem;margin:1.4em 0 .4em;color:var(--acc)}
+img{max-width:100%;height:auto;border:2px solid var(--ink);border-radius:8px;background:#fff}
+.row{display:flex;flex-wrap:wrap;gap:12px}.row figure{margin:0;flex:1 1 260px}
+figcaption{font-size:.9rem;margin-top:4px}
+li{margin:.25em 0}
+</style></head><body><main>
+<h1>Daemons plus petits, avec du caractère</h1>
+<p>Rendu seulement : la simulation, l'empreinte et le protocole ne changent pas. Captures du vrai moteur.</p>
+<h2>Avant (retour du téléphone, 412x915)</h2>
+<div class="row"><figure><img src="daemons_petits/avant_1.jpg" alt="avant 1"><figcaption>Noms « Yuki », « Rempart », lien long, pastille sur la tête, bouton Super empilé.</figcaption></figure>
+<figure><img src="daemons_petits/avant_2.jpg" alt="avant 2"><figcaption>Étiquettes « SPÉCIAL » au-dessus des daemons.</figcaption></figure></div>
+<h2>Après (vrai moteur)</h2>
+<div class="row"><figure><img src="daemons_petits/jeu_412x915.png" alt="après 412x915"><figcaption>412x915 : daemons à 60 %, plus aucun texte au-dessus d'eux.</figcaption></figure>
+<figure><img src="daemons_petits/jeu_844x390.png" alt="après 844x390"><figcaption>844x390 (paysage).</figcaption></figure></div>
+<h2>Planche contact des 19 daemons : attente, marche, attaque, touché</h2>
+<img src="daemons_petits/planche.png" alt="planche contact">
+<p>Chaque espèce a une attente, une démarche, une réaction quand son héros est touché, un signe d'humeur, une échelle de silhouette et une aura de sa couleur (au moins 5 traits propres ; test automatique).</p>
+<h2>Ce qui change</h2>
+<ul>
+<li>Lien héros-daemon : fil de 1 px presque transparent, seulement quand le daemon est loin.</li>
+<li>Pastille du pouvoir : sous les pieds du héros (anneau au sol), plus sur la tête.</li>
+<li>Bouton Super : plaque + glyphe, recharge en anneau fin, une seule petite pastille.</li>
+<li>Plus de noms ni d'étiquettes « SPÉCIAL » sur les daemons ; les noms d'attaques de boss restent.</li>
+</ul>
+</main></body></html>

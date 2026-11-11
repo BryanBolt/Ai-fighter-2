@@ -1,0 +1,8 @@
+[
+  {"id": "roue_1", "titre": "Roue des pouvoirs", "texte": "Tap sur Pouvoir = pouvoir par défaut ; maintenir et glisser vers l'icône voulue, relâcher pour lancer, relâcher au centre pour annuler.", "page": "roue_pouvoirs.html"},
+  {"id": "roue_2", "titre": "Éventail vers l'intérieur", "texte": "La roue s'ouvre vers le haut et le centre de l'écran (jamais sous le pouce), en miroir pour les gauchers.", "page": "roue_pouvoirs.html"},
+  {"id": "roue_3", "titre": "Nom hors du doigt", "texte": "Le nom du pouvoir visé s'affiche au-delà de son icône, pas au centre (le pouce le cacherait).", "page": "roue_pouvoirs.html"},
+  {"id": "roue_4", "titre": "Clavier / manette", "texte": "Aujourd'hui : Tab change de pouvoir, direction + Spécial = geste direct. Les touches 1 à 6 sont prises par les emotes : on garde Tab, ou on ajoute le stick droit ?", "page": "roue_pouvoirs.html"},
+  {"id": "roue_5", "titre": "Découverte sans texte", "texte": "Trois chevrons pulsent vers l'intérieur jusqu'au premier choix à la roue, puis disparaissent pour de bon.", "page": "roue_pouvoirs.html"},
+  {"id": "roue_6", "titre": "Garde et Saisie", "texte": "Même grammaire « maintenir + glisser » pour la Garde (roulade) : déjà là. Faut-il une roue aussi pour Ki/Super ? Je propose non (un seul geste par bouton).", "page": "roue_pouvoirs.html"}
+]

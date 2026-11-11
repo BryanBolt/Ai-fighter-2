@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-visual">
 <link rel="preload" href="ai_fighter_2.wasm" as="fetch" type="application/wasm" crossorigin>
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#221834">
@@ -228,7 +228,7 @@
   function settle() { flush(); setTimeout(again, 120); setTimeout(again, 500); }
   W.addEventListener("orientationchange", settle);
   D.addEventListener("fullscreenchange", settle);
-  try { if (W.visualViewport) W.visualViewport.addEventListener("resize", function () { setTimeout(again, 60); }); } catch (e) {}
+  try { if (W.visualViewport) W.visualViewport.addEventListener("resize", function () { if (window.AFH_TI && window.AFH_TI.isOpen()) return; setTimeout(again, 60); }); } catch (e) {}
   // Geste « retour » d'Android (balayage depuis le bord) et bouton retour du navigateur : sans cela ils QUITTENT la page en pleine
   // partie. On garde une entree d'historique de rechange et le geste devient la touche Echap du jeu (pause en combat, retour
   // dans les menus).
@@ -594,6 +594,254 @@ if ("serviceWorker" in navigator) {
   });
   window.addEventListener("appinstalled", function () { ev = null; if (b) b.hidden = true; });
 })();
+</script>
+<script>
+// SAISIE DE TEXTE (pont jeu <-> vrai champ HTML). Le jeu est un canvas : sans vrai <input> le clavier du telephone ne s'ouvre jamais.
+// Le jeu declare chaque image la zone de ses champs (afh_ti_want) ; un toucher DANS une zone fait apparaitre, dans le meme geste
+// (obligatoire sur iOS / Android), une barre « champ + OK » posee au-dessus du clavier (visualViewport) et donne le focus a son <input>
+// (inputmode, enterkeyhint, autocapitalize, autocomplete=off, maxlength). Chaque frappe est renvoyee au jeu (afh_ti_flags / afh_ti_value).
+// Le canvas n'est jamais redimensionne par le clavier (interactive-widget=resizes-visual + aucun resize force pendant la saisie).
+/*AFH_TI_BEGIN*/
+window.AFH_TI = (function () {
+  var W = window, D = document, S = {};
+  var F_FOCUSED = 1, F_CHANGED = 2, F_SUBMIT = 4, F_CLOSED = 8, F_FAILED = 16, F_ESC = 32;
+  var KINDS = { 0: ["text", "sentences", 0], 1: ["text", "characters", 0], 2: ["numeric", "none", 0], 3: ["url", "none", 0], 4: ["text", "sentences", 0], 5: ["text", "words", 0], 6: ["text", "characters", 0] };
+  var ENTER = { 0: "done", 1: "send", 2: "next", 3: "go" };
+  var ALPHA = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  var wants = {}, openId = 0, pending = 0, value = "", composing = false, failed = false, kbWas = false;
+  var bar = null, inp = null, lab = null, okb = null, gameText = "";
+  S.failed = function () { return failed; };
+  // Navigateur integre (Facebook, Instagram, WebView Android...) : le clavier n'y suit pas le focus programmatique -> repli sur le clavier du jeu.
+  S.inApp = /FBAN|FBAV|Instagram|Line\/|MicroMessenger|Snapchat|; wv\)|\bTikTok|Twitter/i.test((navigator.userAgent || ""));
+  S.avail = function () { return !S.inApp && !failed && !!D.body; };
+  S.forceMouse = false;
+  function now() { return (W.performance || Date).now(); }
+  function clean(v, kind, max) {
+    var m = max | 0 || 100;
+    if (kind === 1) { var k = /salon=([A-Za-z0-9]{5})/.exec(v); if (k) v = k[1]; }
+    v = String(v).replace(/[\r\n\t]/g, " ").replace(/[\u0000-\u001f\u007f]/g, "");
+    if (kind === 1) v = v.toUpperCase().split("").filter(function (c) { return ALPHA.indexOf(c) >= 0; }).join("");
+    else if (kind === 2) v = v.replace(/[^0-9]/g, "");
+    else if (kind === 3) v = v.replace(/[^\x21-\x7e]/g, "");
+    else if (kind === 6) v = v.toUpperCase().replace(/[^A-Z0-9]/g, "");
+    else if (kind === 5) v = v.replace(/[^\p{L}\p{N} \-_.']/gu, "");
+    return Array.from(v).slice(0, m).join("");
+  }
+  S.clean = clean;
+  function build() {
+    if (bar || !D.body) return;
+    var st = D.createElement("style");
+    st.textContent = "#afh_ti{position:fixed;left:0;right:0;top:0;z-index:30;box-sizing:border-box;display:flex;align-items:center;gap:8px;padding:8px max(10px,env(safe-area-inset-right)) 8px max(10px,env(safe-area-inset-left));background:#fff3e0;color:#221834;border-top:3px solid #221834;font:600 14px/1.2 ui-monospace,Menlo,Consolas,monospace;-webkit-user-select:text;user-select:text;touch-action:manipulation}" +
+      "#afh_ti[hidden]{display:none}#afh_ti label{flex:0 0 auto;max-width:28%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}" +
+      "#afh_ti input{flex:1 1 auto;min-width:0;box-sizing:border-box;height:44px;font:600 16px/1.2 ui-monospace,Menlo,Consolas,monospace;color:#221834;background:#fff;border:2px solid #221834;border-radius:22px;padding:0 14px;-webkit-user-select:text;user-select:text;-webkit-appearance:none;appearance:none;outline:none}" +
+      "#afh_ti input:focus{border-color:#d8456b}#afh_ti button{flex:0 0 auto;min-width:64px;height:44px;font:700 15px ui-monospace,Menlo,Consolas,monospace;border:0;border-radius:22px;background:#d8456b;color:#fff3e0;padding:0 16px}";
+    D.head.appendChild(st);
+    bar = D.createElement("div"); bar.id = "afh_ti"; bar.hidden = true; bar.setAttribute("role", "group");
+    lab = D.createElement("label"); lab.htmlFor = "afh_ti_i";
+    inp = D.createElement("input"); inp.id = "afh_ti_i"; inp.type = "text";
+    okb = D.createElement("button"); okb.type = "button"; okb.textContent = "OK";
+    bar.appendChild(lab); bar.appendChild(inp); bar.appendChild(okb); D.body.appendChild(bar);
+    // Le jeu (miniquad) annule « paste » et « cut » au niveau de la fenetre : sans ceci le coller natif du telephone ne marche pas.
+    ["paste", "cut", "copy", "keydown", "keyup", "keypress"].forEach(function (n) { inp.addEventListener(n, function (e) { e.stopPropagation(); }); });
+    inp.addEventListener("compositionstart", function () { composing = true; });
+    inp.addEventListener("compositionend", function () { composing = false; onInput(); });
+    inp.addEventListener("input", onInput);
+    inp.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") { e.preventDefault(); submit(); }
+      else if (e.key === "Escape") { e.preventDefault(); pending |= F_ESC; close(true); }
+    });
+    inp.addEventListener("blur", function () {
+      // Delai : un toucher sur OK ou sur le coller natif ne doit pas fermer avant d'etre pris en compte.
+      setTimeout(function () { if (openId && D.activeElement !== inp && !(bar && bar.contains(D.activeElement))) close(true); }, 200);
+    });
+    okb.addEventListener("touchstart", function (e) { e.preventDefault(); }, { passive: false });
+    okb.addEventListener("mousedown", function (e) { e.preventDefault(); });
+    okb.addEventListener("click", function () { submit(); });
+  }
+  function cur() { return openId ? wants[openId] : null; }
+  function onInput() {
+    var w = cur(); if (!w || !inp) return;
+    var v = inp.value;
+    if (!composing) { var c = clean(v, w.kind, w.max); if (c !== v) { inp.value = c; } v = c; }
+    else v = Array.from(v).slice(0, (w.max | 0) || 100).join("");
+    value = v; pending |= F_CHANGED;
+  }
+  function submit() {
+    var w = cur(); if (!w) return;
+    onInput(); pending |= F_SUBMIT; close(false);
+  }
+  function close(user) {
+    if (!openId) return;
+    var id = openId; openId = 0;
+    composing = false;
+    if (bar) bar.hidden = true;
+    try { if (inp) inp.blur(); } catch (e) {}
+    pending |= F_CLOSED;
+    S.closedId = id;
+  }
+  S.close = close;
+  function place() {
+    if (!bar || bar.hidden) return;
+    var vv = W.visualViewport, h = vv ? vv.height : W.innerHeight, top = vv ? vv.offsetTop : 0, left = vv ? vv.offsetLeft : 0, w = vv ? vv.width : W.innerWidth;
+    bar.style.left = left + "px"; bar.style.right = "auto"; bar.style.width = w + "px";
+    bar.style.top = Math.max(0, top + h - bar.offsetHeight) + "px";
+    // Certains navigateurs font defiler la page pour montrer le champ : le jeu est en position fixe, on remet tout a zero.
+    try { if (W.scrollX || W.scrollY) W.scrollTo(0, 0); } catch (e) {}
+    var kb = W.innerHeight - h;
+    if (kb > 120) kbWas = true;
+    else if (kbWas && kb < 60 && openId) { kbWas = false; close(true); }   // Android : le bouton retour ferme le clavier sans blur
+  }
+  S.place = place;
+  function openFor(id) {
+    var w = wants[id]; if (!w) return false;
+    build(); if (!bar) return false;
+    if (openId && openId !== id) close(false);
+    var k = KINDS[w.kind] || KINDS[0];
+    inp.setAttribute("inputmode", k[0]); inp.setAttribute("autocapitalize", k[1]);
+    inp.setAttribute("enterkeyhint", ENTER[w.enter] || "done");
+    inp.setAttribute("autocomplete", "off"); inp.setAttribute("autocorrect", w.kind === 0 || w.kind === 4 ? "on" : "off");
+    inp.setAttribute("spellcheck", w.kind === 0 || w.kind === 4 ? "true" : "false");
+    inp.setAttribute("maxlength", String(w.kind === 1 ? 200 : Math.max(1, w.max | 0 || 100)));
+    inp.setAttribute("aria-label", w.label || "Saisie");
+    if (w.kind === 2) inp.setAttribute("pattern", "[0-9]*"); else inp.removeAttribute("pattern");
+    lab.textContent = w.label || "";
+    inp.value = w.text || ""; value = inp.value;
+    pending = 0; bar.style.visibility = "hidden"; bar.hidden = false; openId = id; kbWas = false; composing = false;
+    place(); bar.style.visibility = "";
+    try { inp.focus({ preventScroll: true }); } catch (e) { try { inp.focus(); } catch (e2) {} }
+    if (D.activeElement !== inp) {   // le navigateur refuse le focus : le jeu bascule sur son clavier a l'ecran
+      failed = true; pending |= F_FAILED; bar.hidden = true; openId = 0; return false;
+    }
+    try { var n = inp.value.length; inp.setSelectionRange(n, n); } catch (e) {}
+    return true;
+  }
+  function inZone(w, x, y) {
+    if (w.w < 0) return false;                 // ligne hors ecran : aucune zone
+    if (!(w.w > 0 && w.h > 0)) return true;   // pas de zone : tout l'ecran de jeu
+    return x >= w.x && x <= w.x + w.w && y >= w.y && y <= w.y + w.h;
+  }
+  // Le champ voulu qui contient le point (le plus petit d'abord), tant que le jeu le declare encore (< 400 ms).
+  function pick(x, y) {
+    var t = now(), best = 0, ba = 1e18, bt = 0;
+    Object.keys(wants).forEach(function (k) {
+      var w = wants[k]; if (t - w.at > 400) return;
+      if (!inZone(w, x, y)) return;
+      var a = w.w > 0 ? w.w * w.h : 1e17;
+      if (a < ba || (a === ba && w.at > bt)) { ba = a; bt = w.at; best = +k; }   // le plus petit ; a egalite, le plus recemment declare (changement d ecran)
+    });
+    return best;
+  }
+  // Renvoie vrai si le toucher a ouvert / garde le champ (alors le navigateur ne doit pas lui voler le focus avec le clic emule).
+  function onTap(x, y, target) {
+    try {
+      if (bar && target && bar.contains(target)) return false;
+      var id = pick(x, y);
+      if (id && failed) return false;
+      if (id) { if (openId !== id) return openFor(id); try { inp.focus({ preventScroll: true }); } catch (e) {} return true; }
+      if (openId) close(true);   // toucher ailleurs : le clavier se ferme
+    } catch (e) {}
+    return false;
+  }
+  S.tap = onTap;
+  function touchEnd(e) {
+    var t = e.changedTouches && e.changedTouches[0]; if (!t) return;
+    var h = onTap(t.clientX, t.clientY, e.target);
+    // Sans cela le « clic » emule apres le toucher donnerait le focus au canvas et fermerait aussitot le clavier.
+    if (h && e.cancelable && e.target && e.target.id === "glcanvas") e.preventDefault();
+  }
+  D.addEventListener("touchend", touchEnd, { capture: true, passive: false });
+  D.addEventListener("pointerup", function (e) {
+    if (e.pointerType === "pen" || (S.forceMouse && e.pointerType === "mouse")) onTap(e.clientX, e.clientY, e.target);
+  }, { capture: true, passive: true });
+  if (W.visualViewport) { W.visualViewport.addEventListener("resize", place); W.visualViewport.addEventListener("scroll", place); }
+  W.addEventListener("orientationchange", function () { setTimeout(place, 150); setTimeout(place, 600); });
+  W.addEventListener("resize", function () { setTimeout(place, 50); });
+  // Page masquee ou fenetre sans focus : le clavier se ferme (le champ du jeu reste selectionne, un toucher le rouvre).
+  D.addEventListener("visibilitychange", function () { if (D.hidden && openId) close(true); });
+  W.addEventListener("pagehide", function () { if (openId) close(true); });
+  // Le jeu ne declare plus le champ (changement d'ecran) : fermeture silencieuse.
+  setInterval(function () {
+    var t = now();
+    Object.keys(wants).forEach(function (k) { if (t - wants[k].at > 2000) delete wants[k]; });
+    if (openId && (!wants[openId] || t - wants[openId].at > 500)) close(false);
+  }, 150);
+  // ---- Appels du jeu
+  S.want = function (id, kind, max, enter, x, y, w, h, text, label) {
+    var o = wants[id], t = now();
+    if (!o) { o = wants[id] = {}; }
+    o.id = id; o.kind = kind; o.max = max; o.enter = enter; o.x = x; o.y = y; o.w = w; o.h = h; o.label = label || ""; o.at = t;
+    o.text = text;
+    if (id === openId) {
+      gameText = text;
+      // Le jeu a change le texte de son cote (ex. « pseudo au hasard ») : on le recopie, sauf frappe en cours.
+      if (inp && !composing && !(pending & F_CHANGED) && inp.value !== text) { inp.value = text; value = text; }
+    }
+    S.lastWant = { id: id, kind: kind, max: max, text: text };
+  };
+  S.flags = function (id) {
+    if (!openId && !pending) return 0;
+    var mine = (id === openId) || (!openId && id === S.closedId);
+    if (!mine) return 0;
+    var f = pending | (openId === id ? F_FOCUSED : 0);
+    pending = 0;
+    if (!openId) S.closedId = 0;
+    return f;
+  };
+  // Presse-papiers (bouton « Coller ») : navigator.clipboard.readText, appele dans les secondes qui suivent le toucher (activation
+  // transitoire), avec la demande d'autorisation du navigateur ; refus ou API absente = « denied » (le jeu explique le collage natif).
+  var clip = { st: "idle", text: "" };
+  S.clipRequest = function () {
+    clip = { st: "wait", text: "" };
+    try {
+      if (navigator.clipboard && navigator.clipboard.readText) navigator.clipboard.readText().then(function (t) { clip = { st: "ok", text: String(t || "") }; }, function () { clip = { st: "denied", text: "" }; });
+      else clip = { st: "denied", text: "" };
+    } catch (e) { clip = { st: "denied", text: "" }; }
+  };
+  // -3 rien demande, -2 en attente, -1 refuse, sinon le texte (consomme) : lu avec S.clipText().
+  S.clipTake = function () {
+    if (clip.st === "idle") return -3;
+    if (clip.st === "wait") return -2;
+    var c = clip; clip = { st: "idle", text: "" };
+    if (c.st === "denied") return -1;
+    S.lastClip = c.text; return 0;
+  };
+  S.clipText = function () { return S.lastClip || ""; };
+  S.value = function () { return value; };
+  S.gameText = function () { return gameText; };
+  S.isOpen = function () { return !!openId; };
+  S.state = function () { return { open: !!openId, id: openId, value: value, gameText: gameText, failed: failed, active: D.activeElement === inp }; };
+  return S;
+})();
+/*AFH_TI_END*/
+miniquad_add_plugin({
+  name: "afh_textinput", version: 1,
+  register_plugin: function (importObject) {
+    importObject.env.afh_ti_avail = function () { return AFH_TI.avail() ? 1 : 0; };
+    importObject.env.afh_ti_want = function (id, kind, max, enter, x, y, w, h, tp, tl, lp, ll) {
+      try { AFH_TI.want(id, kind, max, enter, x, y, w, h, UTF8ToString(tp, tl), UTF8ToString(lp, ll)); } catch (e) {}
+    };
+    importObject.env.afh_ti_clip_request = function () { try { AFH_TI.clipRequest(); } catch (e) {} };
+    importObject.env.afh_ti_clip_take = function (dst, cap) {
+      try {
+        var r = AFH_TI.clipTake(); if (r !== 0) return r;
+        var b = new TextEncoder().encode(AFH_TI.clipText()), n = Math.min(b.length, cap);
+        while (n > 0 && n < b.length && (b[n] & 0xC0) === 0x80) n--;
+        new Uint8Array(wasm_memory.buffer, dst, n).set(b.subarray(0, n));
+        return n;
+      } catch (e) { return -1; }
+    };
+    importObject.env.afh_ti_flags = function (id) { try { return AFH_TI.flags(id); } catch (e) { return 0; } };
+    importObject.env.afh_ti_value = function (dst, cap) {
+      try {
+        var b = new TextEncoder().encode(AFH_TI.value()), n = Math.min(b.length, cap);
+        // Ne coupe jamais au milieu d'un caractere UTF-8.
+        while (n > 0 && n < b.length && (b[n] & 0xC0) === 0x80) n--;
+        new Uint8Array(wasm_memory.buffer, dst, n).set(b.subarray(0, n));
+        return n;
+      } catch (e) { return 0; }
+    };
+  }
+});
 </script>
 <script>
 // Sauvegarde dans le stockage local du navigateur (appelee par le jeu) et fin du chargement.

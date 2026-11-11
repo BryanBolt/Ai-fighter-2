@@ -1,0 +1,7 @@
+[
+  {"id": "clavier_mobile_1", "titre": "Vrai clavier du telephone", "texte": "Toucher un champ de texte ouvre maintenant le clavier du telephone (barre Valider au-dessus) : pseudo, code de partie, description du studio, signalement, chat, serveur, code d'ami.", "page": "clavier_mobile"},
+  {"id": "clavier_mobile_2", "titre": "Chat tactile", "texte": "Nouvelle puce « Ecrire » parmi les phrases rapides du chat en partie (avant : phrases toutes faites seulement sur mobile). A garder ?", "page": "clavier_mobile"},
+  {"id": "clavier_mobile_3", "titre": "Signalement tactile", "texte": "L'ecran « Signaler un probleme » a maintenant un champ a toucher et deux boutons Envoyer / Annuler (avant : aucun moyen d'ecrire sur mobile).", "page": "clavier_mobile"},
+  {"id": "clavier_mobile_4", "titre": "Coller par bouton", "texte": "Le bouton « Coller » du code demande l'autorisation du navigateur ; si elle est refusee, un message indique l'appui long dans le champ du code.", "page": "clavier_mobile"},
+  {"id": "clavier_mobile_5", "titre": "Navigateurs integres", "texte": "Dans Facebook / Instagram / WebView le pont est coupe et le jeu garde son propre clavier AZERTY a l'ecran. Faut-il aussi afficher un conseil « ouvre dans Chrome » ?", "page": "clavier_mobile"}
+]

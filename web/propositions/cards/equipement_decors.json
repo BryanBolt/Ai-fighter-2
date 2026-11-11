@@ -1,0 +1,8 @@
+[
+ {"id":"eqd_1","titre":"Équipement du roguelite rattaché au squelette","texte":"Épaulières, brassards, écharpe, bandeau, couronne et lueur des yeux suivent maintenant les articulations du héros dans toutes les poses : à valider sur téléphone.","page":"equipement_decors.html"},
+ {"id":"eqd_2","titre":"Enseigne du ramen recentrée","texte":"Le texte « RAMEN 24/24 » est centré dans son panneau, posé sur l'auvent par deux pieds, et se réduit tout seul s'il est trop large.","page":"equipement_decors.html"},
+ {"id":"eqd_3","titre":"Client assis sur un tabouret","texte":"Le client est assis sur un tabouret visible, pieds au sol, face au bol ; le cuisinier se tient derrière le comptoir et le regarde.","page":"equipement_decors.html"},
+ {"id":"eqd_4","titre":"Textes centrés partout","texte":"La mesure des textes du décor utilisait la mauvaise police : tous les titres, bulles et enseignes centrés se recalent (léger décalage visible sur les anciennes captures de référence).","page":"equipement_decors.html"},
+ {"id":"eqd_5","titre":"Convives de la cantine sur leurs tabourets","texte":"Les convives étaient assis sur la table ; ils s'assoient maintenant sur le tabouret, et les bureaux ont un fauteuil.","page":"equipement_decors.html"},
+ {"id":"eqd_6","titre":"Effets de souffle et de poitrine à rattacher ?","texte":"Les lueurs de cri (bouche) et de poitrine des pouvoirs du roguelite sont encore posées à hauteur fixe : à rattacher aussi à la tête et au torse ?","page":"equipement_decors.html"}
+]

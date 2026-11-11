@@ -1,0 +1,8 @@
+[
+  {"id": "dp_taille", "titre": "Daemons à 60 % de leur taille", "texte": "Le rendu des daemons est réduit à 0,6 (la hitbox de simulation ne bouge pas) : c'est la bonne taille, ou 0,7 ?", "page": "daemons_petits.html"},
+  {"id": "dp_caractere", "titre": "Un caractère par daemon", "texte": "Chaque espèce a une attente, une démarche, une réaction aux coups, un signe d'humeur et une aura propres : la planche contact te convient-elle ?", "page": "daemons_petits.html"},
+  {"id": "dp_texte", "titre": "Plus aucun texte sur les daemons", "texte": "Noms et étiquettes (SPÉCIAL, COUP, KI...) sont retirés : seuls restent les pictogrammes de charge et les noms d'attaques de boss.", "page": "daemons_petits.html"},
+  {"id": "dp_pastille", "titre": "Pastille de pouvoir sous les pieds", "texte": "La pastille du pouvoir prêt est sous le héros (au niveau de l'anneau) ; le triangle de joueur reste au-dessus : le déplacer aussi ?", "page": "daemons_petits.html"},
+  {"id": "dp_bouton", "titre": "Bouton SUPER nettoyé", "texte": "Plaque unie + glyphe du pouvoir, recharge en anneau fin, une seule pastille (le pouvoir suivant) : plus d'éventail de pastilles.", "page": "daemons_petits.html"},
+  {"id": "dp_lien", "titre": "Lien héros-daemon quasi invisible", "texte": "Fil de 1 px très transparent, seulement quand le daemon est loin ; supprimé quand il est proche : le supprimer tout à fait ?", "page": "daemons_petits.html"}
+]
