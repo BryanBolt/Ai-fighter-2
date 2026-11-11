@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Menus en run : avant / apres</title>
+<style>
+:root{--bg:#f4efe4;--ink:#2a1f35;--acc:#d9482b;--card:#fff}
+body{margin:0;font:16px/1.45 system-ui,sans-serif;background:var(--bg);color:var(--ink);padding:16px;max-width:1100px;margin-inline:auto}
+h1{font-size:24px}h2{font-size:19px;margin-top:32px}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start}
+figure{margin:0;background:var(--card);border-radius:14px;padding:8px;box-shadow:0 2px 0 var(--acc)}
+figure img{display:block;max-width:100%;height:auto;border-radius:8px}
+figcaption{font-size:13px;margin-top:4px}
+.av img{width:190px}.ap img{width:260px}.ap.l img{width:420px}
+.n{background:var(--card);padding:10px 14px;border-radius:12px}
+</style></head><body>
+<h1>Menus en run, demarrage, fin de run</h1>
+<p class="n"><b>Pressions</b> (test et lecture du code) : menu en run : voir un objet = 1 appui sur l'icone (avant : changer d'onglet + chercher ; Sac et Bonus repetaient les memes objets) ; quitter = 1 appui sur Quitter (avant : onglet Pause + bouton = 2) ; abandonner = 2 appuis (avant 2, mais sans protection du faux clic). Demarrer une run : 1 appui sur LANCER (avant : 1 apres lecture d'un bloc BETA, avec 5 boutons « Lancer la run ») ; rejouer apres la mort : 1 (avant : 1 parmi 3 libelles longs, sans changer de heros) ; changer de heros : 1 (avant : retour menu + roguelite + heros = 3).</p>
+
+<h2>Avant (telephone 412x915)</h2>
+<div class="row av">
+<figure><img src="menus_en_run/avant_demarrage.jpg" alt=""><figcaption>Demarrage : bloc BETA, stats, graine, 5 boutons</figcaption></figure>
+<figure><img src="menus_en_run/avant_pause_sac.jpg" alt=""><figcaption>Onglet Sac</figcaption></figure>
+<figure><img src="menus_en_run/avant_pause_pouvoirs.jpg" alt=""><figcaption>Onglet Pouvoirs : « Special » et « Ki » sans explication</figcaption></figure>
+<figure><img src="menus_en_run/avant_pause_bonus.jpg" alt=""><figcaption>Onglet Bonus (repete le Sac)</figcaption></figure>
+<figure><img src="menus_en_run/avant_pause_pause.jpg" alt=""><figcaption>Onglet Pause : moitie de l'ecran vide</figcaption></figure>
+</div>
+
+<h2>Apres (captures du vrai moteur)</h2>
+<div class="row ap" id="apres"></div>
+<script>
+const L=[["rlpause","Menu en run"],["rlhero","Demarrage"],["rlend","Fin de run"]];
+const S=["412x915","915x412","320x568","1280x720"];
+const box=document.getElementById("apres");
+for(const [k,t] of L)for(const s of S){const f=document.createElement("figure");if(s.split("x")[0]*1>s.split("x")[1]*1)f.className="l";
+f.innerHTML='<img src="menus_en_run/'+k+'_'+s+'.png" alt="" onerror="this.parentNode.remove()"><figcaption>'+t+' '+s+'</figcaption>';
+if(f.className)f.style.width="min(100%,430px)";box.appendChild(f);}
+</script>
+</body></html>

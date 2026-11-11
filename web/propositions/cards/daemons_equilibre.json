@@ -1,0 +1,26 @@
+[
+ {
+  "id": "daemons_equilibre_1",
+  "titre": "Daemons de boss : 3 coups chacun",
+  "texte": "Les 13 daemons de boss ont maintenant 3 coups annonces (>= 30 images, nom, zone au sol) ; garde-fous verts.",
+  "page": "daemons_boss_attaques_2.html"
+ },
+ {
+  "id": "daemons_equilibre_2",
+  "titre": "Rampe des lieux plus douce a la fin",
+  "texte": "Rampe lineaire 1,60 a 2,10 (avant : 1,56 a 2,45 en dents de scie) ; veux-tu un dernier lieu plus dur (pente 0,50 reglable) ?",
+  "page": "daemons_boss_attaques_2.html"
+ },
+ {
+  "id": "daemons_equilibre_3",
+  "titre": "Shogun reskinnes : deja justes",
+  "texte": "Mesure bot : les gros boss (x1,4+) ne sont pas plus durs que les petits ; rien change, garde-fou ajoute.",
+  "page": "daemons_boss_attaques_2.html"
+ },
+ {
+  "id": "daemons_equilibre_4",
+  "titre": "Paliers de depart conserves",
+  "texte": "Paliers 5/6/7 (boss) et 8/9/11 (sbires) gardes : lisibilite d'abord ; pas d'essai A/B mesure.",
+  "page": "daemons_boss_attaques_2.html"
+ }
+]

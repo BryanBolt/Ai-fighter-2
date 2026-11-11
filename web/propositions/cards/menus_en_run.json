@@ -1,0 +1,8 @@
+[
+ {"id":"menus_run_deux_familles","titre":"Menu en run : Pouvoirs / Passifs","texte":"Un seul ecran d'icones : Pouvoirs (touche + recharge) et Passifs (objets et bonus fusionnes), description en bas, Reprendre / Abandonner / Quitter.","page":"menus_en_run.html"},
+ {"id":"menus_run_abandon_confirme","titre":"Abandonner demande un 2e appui","texte":"Un faux clic tuait la run : le bouton passe en « Sur ? » au premier appui. A garder ?","page":"menus_en_run.html"},
+ {"id":"menus_demarrage_defilement","titre":"Demarrage : le heros en grand","texte":"Balayage ou fleches pour changer de heros, gros bouton LANCER, graine et objets derriere la roue dentee, Jouer a plusieurs dessous.","page":"menus_en_run.html"},
+ {"id":"menus_fin_de_run","titre":"Fin de run sans impasse","texte":"Score, etage, deblocages, puis Rejouer (meme heros, nouvelle graine) / Changer de heros / Menu. La meme graine se choisit dans la roue dentee.","page":"menus_en_run.html"},
+ {"id":"menus_pause_campagne","titre":"A faire : pause de la campagne","texte":"La pause campagne reste une liste de 13 lignes : proposer 4 gros boutons (Reprendre, Recommencer, Aide, Menu) + « Plus ».","page":"menus_en_run.html"},
+ {"id":"menus_defaite_campagne","titre":"A faire : ecran de defaite campagne","texte":"4 lignes de texte, libelles longs : passer au meme gabarit que la fin de run (un principal Continuer + 2 sorties).","page":"menus_en_run.html"}
+]
