@@ -1,0 +1,8 @@
+[
+ {"id":"titre-roguelite-direct","titre":"ROGUELITE : lancer un run solo directement ?","texte":"Aujourd'hui ROGUELITE ouvre un sous-menu (solo, coop, run du jour, pacte) : 2 pressions pour jouer. Option : un appui lance le run solo, le reste passe dans un bouton secondaire. A trancher quand le roguelite devient le mode principal.","page":"titre_arborescence"},
+ {"id":"titre-focus-neuf","titre":"Focus du nouveau joueur","texte":"Sans partie a continuer, le curseur est sur ROGUELITE (accent) et une phrase propose Roguelite ou Histoire solo. Preferes-tu que le tout premier lancement presselectionne HISTOIRE SOLO (parcours guide) ?","page":"titre_arborescence"},
+ {"id":"titre-options-hub","titre":"Roue dentee : Options directement ?","texte":"La roue dentee ouvre Options (Reglages, Mon combattant, Profil et extras) : 2 pressions pour Reglages, comme avant. Option : un appui ouvre Reglages et Mon combattant / Profil et extras deviennent des icones de plus.","page":"titre_arborescence"},
+ {"id":"titre-stats","titre":"Statistiques du titre","texte":"Une seule ligne reste (or et niveaux X/47) ; victoires, defaites et meilleur combo sont dans Options > Profil et extras > Progression. Veux-tu les voir au titre pour un joueur avance ?","page":"titre_arborescence"},
+ {"id":"titre-quitter","titre":"Quitter retire hors PC natif","texte":"L'icone Quitter n'existe plus sur le web, la PWA et le telephone (rien a quitter) ; elle reste sur PC natif, a droite de la roue dentee. Confirmer.","page":"titre_arborescence"},
+ {"id":"titre-noms","titre":"Noms alignes","texte":"Sous-menus renommes pour coller aux entrees : « Personnaliser » devient MON COMBATTANT, « Plus » devient PROFIL ET EXTRAS. Confirmer ces deux noms.","page":"titre_arborescence"}
+]

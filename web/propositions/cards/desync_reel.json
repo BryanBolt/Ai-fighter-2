@@ -1,0 +1,5 @@
+[
+  {"id": "dr-1", "titre": "Rejeu plus rapide", "texte": "Le rejeu du journal d'un arrivant prend plusieurs secondes sur telephone : prevoir un ecran de chargement et des instantanes periodiques du monde plutot qu'un rejeu depuis l'image 0.", "page": "tools/playtest/desync_reel.md"},
+  {"id": "dr-2", "titre": "Attente des amis a l'arrivee", "texte": "Pendant son rejeu l'arrivant est tenu par l'IA (il voit la partie, ne joue pas) : acceptable, ou preferer un petit decompte avant la reprise ?", "page": "tools/playtest/desync_reel.md"},
+  {"id": "dr-3", "titre": "Ecran « Recreer la partie »", "texte": "Apres deux reprises en 45 s le jeu s'arrete et propose de recreer la partie : valider le texte et le delai.", "page": "tools/playtest/desync_reel.md"}
+]

@@ -13,7 +13,7 @@ import { createVerdicts } from './verdicts.js';
 import { createPush } from './push.js';
 import { createReports, cleanReport } from './reports.js';
 
-export const PROTOCOL_VERSION = 21; // 21 : equilibre solo/duo du roguelite (nouvelles valeurs de simulation) ; 20 : roguelite en biomes (4 biomes, boss final, boucle plus dure, victoire dans l empreinte) ; 19 : roguelite coop : choix d un pouvoir parmi 3 propositions personnelles par etape (palier standard / cool apres un gros boss), minuterie 10 s, choix par defaut, nouveaux champs de cartes dans l empreinte ; 18 : une IA qui remplace un humain parti tient la place jusqu'a la fin du tableau (changement de vague) puis le heros s'efface, dans TOUS les salons ; 17 : empreinte de build (champ `b` du hello, un salon refuse un build different) ; 16 : roguelite coop (un pouvoir aleatoire par etape, vie partagee : le releveur paie 30 % de ses PV, nouveaux champs dans l'empreinte) ; 15 : anti-sandwich (jetons d'attaque, plafond de coups subis, nouveaux etats dans l'empreinte) ; 14 : empreinte de simulation etendue (univers, tournoi), commande tourn, messages watch / emote (spectateur), idle / need_resync ; 13 : pouvoir actif du roguelite (bits 25-27 de l entree) ; 12 : modes de groupe (mode 5, commande group) ; 11 : accessoires COSMETIQUES (message cos, champ cos des joueurs du salon) ; 10 : daemon de chaque joueur au salon (champ `daemon` des messages lobby et room) ; 9 : mode ROGUELITE en coop (mode 3 : run d equipe, cartes personnelles, etages) ; 8 : nunchaku (nouvelle arme ramassable, serie de six coups, Pied = coups de pied avec l'arme) et armes au sol du dojo/temple changees ; 7 : entree Saisie (nouveau bit d'entree) + coups renommes (SCHEMA_VERSION 8) ; 6 : table des coups changee (grammaire X/Y des 9 autres heros, SCHEMA_VERSION 7) ; 5 : jusqu'a 8 joueurs, vague/PV de depart (solo -> en ligne) ; 4 : table des coups changee (aeriens, realisme, grammaire X/Y ; tir allie, QA). 3 : parties hebergees (jeu complet : loadout, cmd sequences). 2 : join_any / host. Seuls les clients v8 sont acceptes.
+export const PROTOCOL_VERSION = 22; // 22 : arrivee / retour EN DEUX TEMPS (le client rejoue le journal pendant que la place reste a l'IA ou en attente neutre, puis annonce `ready` : la reprise tombe apres SON image, plus jamais de gel des autres ni de boucle de relance), empreintes envoyees meme pendant les remplissages du relais, entree locale deja simulee contredite par le relais = reprise ciblee ; 21 : equilibre solo/duo du roguelite (nouvelles valeurs de simulation) ; 20 : roguelite en biomes (4 biomes, boss final, boucle plus dure, victoire dans l empreinte) ; 19 : roguelite coop : choix d un pouvoir parmi 3 propositions personnelles par etape (palier standard / cool apres un gros boss), minuterie 10 s, choix par defaut, nouveaux champs de cartes dans l empreinte ; 18 : une IA qui remplace un humain parti tient la place jusqu'a la fin du tableau (changement de vague) puis le heros s'efface, dans TOUS les salons ; 17 : empreinte de build (champ `b` du hello, un salon refuse un build different) ; 16 : roguelite coop (un pouvoir aleatoire par etape, vie partagee : le releveur paie 30 % de ses PV, nouveaux champs dans l'empreinte) ; 15 : anti-sandwich (jetons d'attaque, plafond de coups subis, nouveaux etats dans l'empreinte) ; 14 : empreinte de simulation etendue (univers, tournoi), commande tourn, messages watch / emote (spectateur), idle / need_resync ; 13 : pouvoir actif du roguelite (bits 25-27 de l entree) ; 12 : modes de groupe (mode 5, commande group) ; 11 : accessoires COSMETIQUES (message cos, champ cos des joueurs du salon) ; 10 : daemon de chaque joueur au salon (champ `daemon` des messages lobby et room) ; 9 : mode ROGUELITE en coop (mode 3 : run d equipe, cartes personnelles, etages) ; 8 : nunchaku (nouvelle arme ramassable, serie de six coups, Pied = coups de pied avec l'arme) et armes au sol du dojo/temple changees ; 7 : entree Saisie (nouveau bit d'entree) + coups renommes (SCHEMA_VERSION 8) ; 6 : table des coups changee (grammaire X/Y des 9 autres heros, SCHEMA_VERSION 7) ; 5 : jusqu'a 8 joueurs, vague/PV de depart (solo -> en ligne) ; 4 : table des coups changee (aeriens, realisme, grammaire X/Y ; tir allie, QA). 3 : parties hebergees (jeu complet : loadout, cmd sequences). 2 : join_any / host. Seuls les clients v8 sont acceptes.
 const COMPAT_VERSIONS = [PROTOCOL_VERSION]; // derive de PROTOCOL_VERSION : ne peut plus diverger (v8 etait refuse par erreur, ancienne valeur [7]) ; // protocole 7 : les clients 1 a 6 n'ont pas la meme table de coups (et 1 a 4 ne savent pas lire des salons de 8 places), ils doivent se mettre a jour
 const HOSTED_SIZE = 2; // taille par defaut d une partie hebergee (anciens clients) ; le client actuel demande 4 avec `size` (places vides dormantes)
 const HOSTED_MIN = 2; // taille minimale demandable
@@ -37,6 +37,7 @@ const REJOIN_MIN = 15; // images d'avance minimales pour un evenement de control
 export const HOLD_AI_MS = 40000; // un joueur absent (arriere-plan, coupure, gel) : sa place est mise en attente (entrees neutres) ; l'IA ne la prend qu'apres ce delai
 const HOLD_LEAD = 12; // images neutres fournies d'avance a une place en attente (les autres ne l'attendent jamais)
 const HOLD_MIN_RETURN_MS = 300; // une entree perdue juste apres la mise en attente n'est pas un retour
+const READY_LEAD = 20; // images de plus apres `ready` : le message de reprise arrive chez le revenant avant qu'il n'atteigne l'image annoncee
 const HOLD_COOL_MS = 4000; // apres un retour, un nouveau gel passe directement a l'IA (pas de va-et-vient de resynchronisations)
 const REJOIN_MAX = 590; // plafond (le journal accepte au plus +600 images)
 const HOLD_MS = 20 * 60 * 1000; // une place coupee reste reservee 20 min
@@ -446,6 +447,17 @@ export function createServer(opts = {}) {
     }
     fillHeld(room);
   }
+  // REPRISE EN DEUX TEMPS d'un joueur deja en jeu (retour d'une attente, desaccord d'empreintes, demande de reprise ciblee) : le client va REJOUER le journal
+  // (plusieurs secondes) ; sa place est mise en attente neutre (ou reste a l'IA) pendant ce temps pour que personne ne l'attende, et `ready` la rend.
+  // Avant, une reprise complete laissait la place « humaine » : tous attendaient son rejeu, le relais le croyait gele, l'attente puis le retour relancaient une reprise.
+  function beginCatchup(room, ws, idx) {
+    const s = room.slots[idx]; const now = Date.now();
+    if (s.mode === 'human') { s.hold = now; s.pAt = now; s.dormantDue = false; }
+    s.catchup = now; s.stalled = false; s.lastMove = now; s.lastInputAt = now;
+    fillHeld(room);
+    send(ws, { ...resyncPayload(room), you: idx, catch: true });
+    presTick(room, true);
+  }
   // Fin de l'attente (le joueur est revenu : meme connexion qui reparle). Retourne true si une attente existait.
   function endHold(room, ws, idx) {
     const s = room.slots[idx];
@@ -469,7 +481,7 @@ export function createServer(opts = {}) {
     if (!s.token && !s.ws) return null;
     if (s.hold) return { st: s.ws ? 'bg' : 're', left: Math.max(0, holdAiMs - (now - s.hold)) };
     if (s.ws) {
-      if (s.mode === 'human') return { st: 'on', left: 0 };
+      if (s.mode === 'human' || s.catchup) return { st: 'on', left: 0 };
       const away = now - (s.pAt || now);
       return away >= bgGoneMs ? { st: 'gone', left: 0 } : { st: 'bg', left: bgGoneMs - away };
     }
@@ -621,7 +633,7 @@ export function createServer(opts = {}) {
     if (!room) return;
     const s = room.slots[c.slot];
     if (s && s.ws === ws) {
-      s.ws = null; s.ready = false;
+      s.ws = null; s.ready = false; s.catchup = 0;
       if (room.started) {
         // Depart volontaire ou coupure : meme traitement. L'IA tient la place jusqu'au prochain boss ; le meme jeton reprend le meme heros.
         if (permanent) { s.hold = 0; dropToAi(room, c.slot); } else startHold(room, c.slot); // depart voulu : IA tout de suite ; coupure : attente puis IA
@@ -731,6 +743,17 @@ export function createServer(opts = {}) {
     if (room.started) {
       // Arrivee en cours de partie : rejeu du journal cote client, la place est reprise a une image future identique pour tous.
       const s = room.slots[idx];
+      if (c.cu) {
+        // ARRIVEE EN DEUX TEMPS (CAUSE RACINE de la boucle de relance et du gel de l'hote) : le client doit REJOUER tout le journal (plusieurs secondes sur telephone).
+        // Avant, la place devenait humaine a `from` (quelques dizaines d'images plus loin) : tous les autres attendaient ses entrees pendant le rejeu, le relais le
+        // prenait pour un gel (attente puis IA), son premier message valait « retour » -> nouvelle reprise complete -> nouveau rejeu, sans fin.
+        // Maintenant la place reste a l'IA (ou en attente neutre) PENDANT le rejeu ; le client dit `ready` (son image) quand il a rattrape, et seulement alors la reprise
+        // est fixee apres cette image (ctl ai:false) : personne n'attend personne.
+        const nowJ = Date.now();
+        if (s.hold) { s.hold = nowJ; s.pAt = nowJ; } else if (s.mode === 'human') dropToAi(room, idx);
+        s.catchup = nowJ; s.stalled = false; s.lastMove = nowJ; s.lastInputAt = nowJ; s.afkWarned = false;
+        send(ws, { ...resyncPayload(room), you: idx, catch: true });
+      } else {
       // CAUSE RACINE du gel a la reconnexion : si la place etait encore « humaine » (ancienne connexion fantome), ses entrees entre sa derniere image connue
       // et `from` n'existent nulle part : tous les autres clients attendaient ces images a jamais. L'IA reprend donc d'abord la place (ctl ai:true a hi+1).
       let from = highest(room) + rejoinMargin(room);
@@ -742,6 +765,7 @@ export function createServer(opts = {}) {
       send(ws, { ...resyncPayload(room), you: idx });
       control(room, idx, from, { ai: false, name: s.name });
       if (room.full && s.loadout) control(room, idx, from, { kind: 'loadout', data: s.loadout });
+      }
       const known = !!s.pSent; // deja connu : c'est un retour (annonce « de retour »), pas une arrivee
       if (room.auto) { if (!known) broadcast(room, { t: 'presence', ev: 'join', name: s.name, slot: idx }, ws); broadcast(room, lobbyView(room), ws); }
       presTick(room, true);
@@ -752,7 +776,7 @@ export function createServer(opts = {}) {
     switch (m.t) {
       case 'hello':
         if (!COMPAT_VERSIONS.includes(m.v)) return send(ws, { t: 'error', msg: 'Version incompatible : mets le jeu a jour', fatal: true });
-        c.v = m.v; c.build = cleanBuild(m.b); c.name = cleanName(m.name); c.hello = true; if (Number.isInteger(m.color)) c.color = m.color;
+        c.v = m.v; c.cu = m.cu === 1; c.build = cleanBuild(m.b); c.name = cleanName(m.name); c.hello = true; if (Number.isInteger(m.color)) c.color = m.color;
         if (m.token && /^[0-9a-f]{24}$/.test(m.token)) c.token = m.token;
         return send(ws, { t: 'welcome', v: PROTOCOL_VERSION, id: c.id, token: c.token });
       case 'join_any': return joinAny(ws, c, m);
@@ -891,6 +915,12 @@ export function createServer(opts = {}) {
         if (!room.started || !Array.isArray(m.bits) || m.bits.length > 8 || !Number.isInteger(m.f0)) return;
         if (s.mode !== 'human') return;
         if (s.hold) { // place en attente : une entree d'une image deja fournie (neutre) = le joueur est de retour -> resynchronisation sans IA ; jamais relayee telle quelle
+          if (c.cu) { // retour en deux temps : reprise complete maintenant, la place reste en attente neutre pendant le rejeu du client, `ready` la rend
+            if (!s.catchup && Date.now() - s.hold >= HOLD_MIN_RETURN_MS && m.f0 <= s.hi) {
+              beginCatchup(room, ws, c.slot);
+            }
+            return;
+          }
           if (Date.now() - s.hold >= HOLD_MIN_RETURN_MS && m.f0 <= s.hi) endHold(room, ws, c.slot);
           return;
         }
@@ -929,8 +959,9 @@ export function createServer(opts = {}) {
             const sk = room.slots[k]; const nowH = Date.now();
             if (nowH - sk.lastResync < RESYNC_GAP_MS) continue; // pas de tempete de reprises si un client reste en desaccord
             sk.lastResync = nowH;
+            if (sk.catchup) continue;
             send(sk.ws, { t: 'desync', f, hashes: hashesObj });
-            send(sk.ws, { ...resyncPayload(room), you: k, forced: true });
+            if (clients.get(sk.ws)?.cu) beginCatchup(room, sk.ws, k); else send(sk.ws, { ...resyncPayload(room), you: k, forced: true });
           }
           room.hashes.delete(f);
         }
@@ -948,14 +979,14 @@ export function createServer(opts = {}) {
       case 'need_resync': { // un client qui s'est vu bascule en IA apres avoir deja simule ces images demande l'etat complet (resynchronisation ciblee)
         if (!room.started) return;
         const nowR = Date.now();
-        if (nowR - s.lastResync < RESYNC_GAP_MS) return;
+        if (nowR - s.lastResync < RESYNC_GAP_MS || s.catchup) return; // une reprise est deja en cours : une demande en vol de l'ancienne session ne la relance pas
         s.lastResync = nowR;
         send(ws, { t: 'desync', f: 0 });
-        send(ws, { ...resyncPayload(room), you: c.slot, forced: true });
+        if (c.cu) beginCatchup(room, ws, c.slot); else send(ws, { ...resyncPayload(room), you: c.slot, forced: true });
         return;
       }
       case 'resume': { // un joueur remplace par l'IA (AFK) reprend la main
-        if (!room.started || s.mode !== 'ai' || s.ws !== ws) return;
+        if (!room.started || s.mode !== 'ai' || s.ws !== ws || s.catchup) return; // pendant le rejeu, seul `ready` rend la place
         s.mode = 'human'; s.lastMove = Date.now(); s.lastBits = 0; s.lastInputAt = Date.now(); s.stalled = false;
 
         // Seul (ou avec des places IA) le client a continue de simuler pendant l'absence : la reprise doit tomber APRES son image courante,
@@ -965,6 +996,19 @@ export function createServer(opts = {}) {
         if (s.hi < fromR - 1) s.hi = fromR - 1;
         control(room, c.slot, fromR, { ai: false, name: s.name });
         return presTick(room);
+      }
+      case 'ready': { // fin du rejeu d'un arrivant / d'un revenant : sa reprise tombe APRES son image courante (jamais plus tot que ce qu'il a simule)
+        if (!room.started || !room.config || s.ws !== ws || !s.catchup) return;
+        const tickR = Number.isInteger(m.tick) && m.tick >= 0 && m.tick < 2000000 ? m.tick : 0;
+        const fromQ = Math.max(highest(room), tickR) + rejoinMargin(room) + READY_LEAD;
+        const nowQ = Date.now();
+        s.catchup = 0;
+        if (s.hold) { s.hold = 0; s.holdCoolUntil = nowQ + HOLD_COOL_MS; fillNeutral(room, c.slot, fromQ - 1); }
+        s.mode = 'human'; s.lastMove = nowQ; s.lastInputAt = nowQ; s.stalled = false; s.afkWarned = false;
+        if (s.hi < fromQ - 1) s.hi = fromQ - 1;
+        control(room, c.slot, fromQ, { ai: false, name: s.name });
+        if (room.full && s.loadout) control(room, c.slot, fromQ, { kind: 'loadout', data: s.loadout });
+        return presTick(room, true);
       }
       case 'cos': { // accessoires cosmetiques : texte court a alphabet restreint, relaye tel quel (purement visuel)
         const code = typeof m.c === 'string' ? m.c : '';
@@ -1056,6 +1100,8 @@ export function createServer(opts = {}) {
             room.stallAt = now;
           }
         } else room.stallAt = now;
+        const busy = room.slots.some((x) => x.catchup || x.hold); // quelqu'un rejoue / est attendu : personne n'est « inactif » (l'hote qui attend ne bouge pas)
+        if (busy) for (let i = 0; i < room.config.size; i++) if (room.slots[i].mode === 'human') room.slots[i].lastMove = Math.max(room.slots[i].lastMove, now - afkMs * 0.4);
         for (let i = 0; i < room.config.size; i++) {
           const s = room.slots[i];
           if (s.ws && s.mode === 'human' && !s.hold && now - s.lastMove > afkMs) { dropToAi(room, i, true); send(s.ws, { t: 'afk' }); s.afkWarned = false; }
