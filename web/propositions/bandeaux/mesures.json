@@ -1,0 +1,130 @@
+{
+ "paysage/camp_boss": {
+  "avant": 1,
+  "apres": 1
+ },
+ "paysage/camp_vague1": {
+  "avant": 1,
+  "apres": 1
+ },
+ "paysage/onstart": {
+  "avant": 3,
+  "apres": 0
+ },
+ "paysage/onstart_afk": {
+  "avant": 4,
+  "apres": 0
+ },
+ "paysage/onstart_join": {
+  "avant": 4,
+  "apres": 1
+ },
+ "paysage/onstart_t2": {
+  "avant": 3,
+  "apres": 0
+ },
+ "paysage/practice": {
+  "avant": 1,
+  "apres": 1
+ },
+ "paysage/rlfloor": {
+  "avant": 2,
+  "apres": 1
+ },
+ "pc/camp_boss": {
+  "avant": 1,
+  "apres": 1
+ },
+ "pc/camp_vague1": {
+  "avant": 1,
+  "apres": 1
+ },
+ "pc/onstart": {
+  "avant": 4,
+  "apres": 0
+ },
+ "pc/onstart_afk": {
+  "avant": 5,
+  "apres": 0
+ },
+ "pc/onstart_join": {
+  "avant": 5,
+  "apres": 1
+ },
+ "pc/onstart_t2": {
+  "avant": 4,
+  "apres": 0
+ },
+ "pc/practice": {
+  "avant": 1,
+  "apres": 1
+ },
+ "pc/rlfloor": {
+  "avant": 2,
+  "apres": 1
+ },
+ "tel-360x800/camp_boss": {
+  "avant": 1,
+  "apres": 1
+ },
+ "tel-360x800/camp_vague1": {
+  "avant": 1,
+  "apres": 1
+ },
+ "tel-360x800/onstart": {
+  "avant": 3,
+  "apres": 0
+ },
+ "tel-360x800/onstart_afk": {
+  "avant": 4,
+  "apres": 0
+ },
+ "tel-360x800/onstart_join": {
+  "avant": 4,
+  "apres": 1
+ },
+ "tel-360x800/onstart_t2": {
+  "avant": 3,
+  "apres": 0
+ },
+ "tel-360x800/practice": {
+  "avant": 1,
+  "apres": 1
+ },
+ "tel-360x800/rlfloor": {
+  "avant": 2,
+  "apres": 1
+ },
+ "tel-412x915/camp_boss": {
+  "avant": 1,
+  "apres": 1
+ },
+ "tel-412x915/camp_vague1": {
+  "avant": 1,
+  "apres": 1
+ },
+ "tel-412x915/onstart": {
+  "avant": 3,
+  "apres": 0
+ },
+ "tel-412x915/onstart_afk": {
+  "avant": 4,
+  "apres": 0
+ },
+ "tel-412x915/onstart_join": {
+  "avant": 4,
+  "apres": 1
+ },
+ "tel-412x915/onstart_t2": {
+  "avant": 3,
+  "apres": 0
+ },
+ "tel-412x915/practice": {
+  "avant": 1,
+  "apres": 1
+ },
+ "tel-412x915/rlfloor": {
+  "avant": 2,
+  "apres": 1
+ }
+}

@@ -1,0 +1,5 @@
+[
+  {"id": "bandeaux_invite", "titre": "Inviter : icone seule", "texte": "L'invitation est une petite icone (silhouette + plus) a cote du signal reseau, sans texte ni bandeau. Garder ainsi, ou remettre un mot « Inviter » sous l'icone ?", "page": "bandeaux.html"},
+  {"id": "bandeaux_rubans", "titre": "Annonces de vague / boss", "texte": "Les grands rubans diagonaux (VAGUE 2, BOSS, ETAGE NETTOYE...) deviennent une petite plaque de 2 s sous le HUD. Valider, ou garder un ruban seulement pour les boss ?", "page": "bandeaux.html"},
+  {"id": "bandeaux_transition", "titre": "Carte de passage opaque", "texte": "La carte lune/pluie + pastilles d'entree d'etage est maintenant pleine encre (plus rien ne transparait). La garder opaque, ou la supprimer en partie en ligne ?", "page": "bandeaux.html"}
+]
