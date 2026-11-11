@@ -1,0 +1,7 @@
+[
+{"id":"rlsd-1","titre":"Bonus de petite equipe visible ?","texte":"Solo : PV x2,8 et degats x1,75, duo 60 % de ce bonus. Faut-il l'afficher (pastille « soutien ») ou le garder cache ?","page":"tools/playtest/rl_solo_duo.md"},
+{"id":"rlsd-2","titre":"Duree d'une run solo","texte":"Le bot gagne en 19-26 min ; un humain sera plus lent. Faut-il ajouter des etages ou des vagues pour viser 30-40 min, au risque de lasser ?","page":"tools/playtest/rl_solo_duo.md"},
+{"id":"rlsd-3","titre":"Boss final trop doux ?","texte":"Boss final a 0,8 des PV du roster (avant 1,5) avec une garde plus faible : il reste la cause de la plupart des morts. Le durcir si les joueurs le trouvent trop facile.","page":"tools/playtest/rl_solo_duo.md"},
+{"id":"rlsd-4","titre":"Boucle 2","texte":"Boucle 2 durcie (coups +0,12 par tour, boss +40 % PV par tour) mais jamais jouee par le bot. Mesurer a la main avant de valider.","page":"tools/playtest/rl_solo_duo.md"},
+{"id":"rlsd-5","titre":"PROTOCOL_VERSION","texte":"Les valeurs de sim changent (vagues, PV, bonus solo) : a passer a la valeur suivante au moment de livrer (decision de l'utilisateur).","page":"tools/playtest/rl_solo_duo.md"}
+]
