@@ -1,0 +1,8 @@
+[
+{"id":"mgf_colline_egalites","titre":"Colline : departager les egalites","texte":"7 parties sur 18 (bots) finissent a egalite : proposer une mort subite de 15 s ou un bonus au dernier occupant (change le hash : a valider).","page":"modes_groupe_fusion.html"},
+{"id":"mgf_foot_but_en_or","titre":"Foot : but en or","texte":"4 parties sur 18 finissent a egalite : prolongation au but en or (change le hash).","page":"modes_groupe_fusion.html"},
+{"id":"mgf_rl_doublon","titre":"Roguelite coop en double","texte":"Roguelite coop est aussi dans Titre > Roguelite ; le garder la (sujet d'un autre agent) ou le retirer et ne laisser que Creer une partie ?","page":"modes_groupe_fusion.html"},
+{"id":"mgf_local_memoire","titre":"Seul / sur cet ecran : memoire du choix","texte":"Le bouton Jouer seul est remis a En ligne a chaque lancement ; le retenir dans le profil (foot en local = 2 pressions au lieu de 3) ?","page":"modes_groupe_fusion.html"},
+{"id":"mgf_same_screen","titre":"Vrai ecran partage a 2","texte":"Le mode local lance toi + des IA ; un vrai 2 joueurs sur le meme ecran (2e manette) demande un lancement a 2 humains : a faire ?","page":"modes_groupe_fusion.html"},
+{"id":"mgf_vote_texte","titre":"Fin de manche : mots sur les icones du vote","texte":"Le vote du mode suivant n'a que des icones : ajouter le nom du mode sous chaque icone (cibles deja > 54 px) ?","page":"modes_groupe_fusion.html"}
+]
