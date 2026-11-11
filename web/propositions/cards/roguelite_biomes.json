@@ -1,0 +1,8 @@
+[
+ {"id":"rb-1","titre":"Structure : 3 etages + boss de biome","texte":"Un biome = 3 etages de vagues puis l'etage du boss (4 etages au total, 4 biomes, boss final a l'etage 16). Alternative : 4 etages de vagues puis un etage de boss a part (5 par biome, run de 20 etages, plus longue).","page":"tools/playtest/roguelite_biomes.md"},
+ {"id":"rb-2","titre":"Mini-boss : 2e etage des biomes 2 a 4","texte":"Le biome 1 n'a pas de mini-boss (entree en douceur). Garder, ou en mettre aussi un au biome 1 (Lutteur) ?","page":"tools/playtest/roguelite_biomes.md"},
+ {"id":"rb-3","titre":"La boucle garde tous les pouvoirs","texte":"Apres le boss final, on garde TOUS les pouvoirs et les choix repartent du debut (standard, superieur, cool). Alternative : ne garder que les passifs et remettre les actifs a zero (plus dur, plus roguelike).","page":"tools/playtest/roguelite_biomes.md"},
+ {"id":"rb-4","titre":"Courbe de la boucle","texte":"Boucle +1 : ennemis plus nombreux (+1 par vague jusqu'a 8), PV des ennemis +25 % d'avance, boss +30 % de PV par tour, un peu de chaleur automatique (+2 par tour, 12 au plus). Plus raide ou plus douce ?","page":"tools/playtest/roguelite_biomes.md"},
+ {"id":"rb-5","titre":"Boss final : Shogun renforce + garde","texte":"Etage 16 : garde d'elite (Maitre Noir) puis Shogun a 150 % de PV. On peut ajouter un 5e boss dedie (nouvel ennemi) plus tard : le generateur est pret.","page":"tools/playtest/roguelite_biomes.md"},
+ {"id":"rb-6","titre":"Coop : la boucle repart seule","texte":"En coop, apres 10 s d'ecran de victoire puis les cartes cool, la boucle repart toute seule ; seul le bouton Menu quitte. Alternative : un vote Continuer / Menu (commande reseau de plus).","page":"tools/playtest/roguelite_biomes.md"}
+]

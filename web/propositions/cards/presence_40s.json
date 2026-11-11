@@ -1,0 +1,38 @@
+[
+ {
+  "id": "presence40-vote",
+  "titre": "Votes pendant l'attente",
+  "texte": "Un joueur en attente bloque un vote (recompense 15 s, dialogue 40 s) jusqu'au delai existant ; on peut faire voter l'IA des l'absence pour les ecrans de vote seulement.",
+  "page": "tools/playtest/presence_40s.md"
+ },
+ {
+  "id": "presence40-protege",
+  "titre": "Heros absent protege",
+  "texte": "Le heros en attente est immobile mais peut etre frappe ; l'invulnerabilite exige un nouvel etat de simulation et un changement de protocole : a decider avec l'autre agent protocole.",
+  "page": "tools/playtest/presence_40s.md"
+ },
+ {
+  "id": "presence40-afk",
+  "titre": "Inactif mais present",
+  "texte": "Page visible sans touche pendant 8 s : l'IA joue tout de suite (inchange) ; veux-tu aussi 40 s ici ?",
+  "page": "tools/playtest/presence_40s.md"
+ },
+ {
+  "id": "presence40-onglet",
+  "titre": "Lien ?salon= pendant une partie",
+  "texte": "Ouvrir un lien d'invitation dans un 2e onglet remplace l'ancien onglet (meme jeton) : proposer de demander confirmation avant de quitter la partie en cours.",
+  "page": "tools/playtest/presence_40s.md"
+ },
+ {
+  "id": "presence40-iab",
+  "titre": "Avis navigateur integre",
+  "texte": "L'avis discret d'installation (12 s, une fois par session) s'affiche aussi quand le jeu marche : le garder, ou le limiter aux seuls echecs de demarrage ?",
+  "page": "tools/playtest/presence_40s.md"
+ },
+ {
+  "id": "presence40-plein",
+  "titre": "Salon plein public",
+  "texte": "Une partie publique pleine renvoie automatiquement vers une autre partie publique (sinon en ouvre une) ; la privee reste refusee avec Creer ma partie / Reessayer.",
+  "page": "tools/playtest/presence_40s.md"
+ }
+]

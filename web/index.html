@@ -261,6 +261,7 @@
   var shown = false;
   function fatal(msg) {
     if (shown) return; shown = true;
+    try { if (W.afhInApp && W.afhInApp.fatal) W.afhInApp.fatal(); } catch (e) {}
     try {
       var l = D.getElementById("loading");
       if (!l) { l = D.createElement("div"); l.id = "loading"; D.body.appendChild(l); }
@@ -498,6 +499,62 @@
     setTimeout(watch, 2000);
   })();
   crumb("page", "chargement " + location.pathname);
+})();
+</script>
+<script>
+// Navigateur integre d'une appli (WhatsApp, Instagram, Messenger, Facebook, Snapchat, TikTok...) : on ne derange PAS tant que tout marche.
+// Bandeau « Ouvre ce lien dans Chrome / Safari » + « Copier le lien » seulement si le jeu ne peut pas demarrer (pas de WebAssembly / WebGL, erreur fatale,
+// chargement qui n'aboutit pas), ou, une seule fois par session et 12 s, quand l'installation de l'appli est impossible (jamais proposee dans ces navigateurs).
+(function () {
+  var W = window, D = document, ua = (navigator.userAgent || "");
+  var IAB = /FBAN|FBAV|FB_IAB|FBIOS|FB4A|Instagram|Messenger|MessengerLite|WhatsApp|Snapchat|TikTok|musical_ly|BytedanceWebview|Bytedance|Line\/|MicroMessenger|Twitter|LinkedInApp|Pinterest|GSA\/|KAKAOTALK|Telegram/i;
+  function detect(u) { return IAB.test(u || ""); }
+  var state = { inapp: detect(ua), shown: false, reason: "" };
+  W.afhInApp = state;
+  if (!state.inapp) return;
+  function link() { return String(location.href).split("#")[0]; }
+  function copy(btn) {
+    var t = link(), ok = function () { btn.textContent = "Lien copié"; };
+    try { if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(t).then(ok, fallback); return; } } catch (e) {}
+    fallback();
+    function fallback() {
+      try { var a = D.createElement("textarea"); a.value = t; a.setAttribute("readonly", ""); a.style.cssText = "position:fixed;left:-9999px;top:0"; D.body.appendChild(a); a.select(); a.setSelectionRange(0, t.length); var r = D.execCommand("copy"); D.body.removeChild(a); if (r) { ok(); return; } } catch (e) {}
+      btn.textContent = "Copie impossible : maintiens le lien";
+    }
+  }
+  function show(reason, soft) {
+    if (state.shown && !(state.soft && !soft)) return;
+    var old = D.getElementById("afh-iab"); if (old) old.parentNode.removeChild(old);
+    state.shown = true; state.soft = !!soft; state.reason = reason;
+    var d = D.createElement("div"); d.id = "afh-iab"; d.setAttribute("role", "alert");
+    d.style.cssText = "position:fixed;left:0;right:0;" + (soft ? "bottom:0" : "top:0") + ";z-index:100000;background:#1a1a22;color:#fff3e0;font:600 15px/1.35 sans-serif;padding:12px 14px calc(12px + env(safe-area-inset-bottom,0px));text-align:center;border-" + (soft ? "top" : "bottom") + ":3px solid #ffd27a";
+    var p = D.createElement("div"); p.textContent = soft ? "Pour installer le jeu et garder ta sauvegarde, ouvre ce lien dans Chrome ou Safari." : "Ouvre ce lien dans Chrome ou Safari : ce navigateur intégré ne permet pas de lancer le jeu.";
+    d.appendChild(p);
+    var b = D.createElement("button"); b.textContent = "Copier le lien"; b.setAttribute("style", "margin:10px 8px 0;min-height:48px;min-width:160px;font:700 16px sans-serif;border:2px solid #1a1a22;background:#ffd27a;color:#1a1a22;border-radius:8px");
+    b.addEventListener("click", function () { copy(b); });
+    d.appendChild(b);
+    if (soft) { var x = D.createElement("button"); x.textContent = "Fermer"; x.setAttribute("style", "margin:10px 8px 0;min-height:48px;min-width:96px;font:600 15px sans-serif;border:2px solid #ffd27a;background:transparent;color:#fff3e0;border-radius:8px"); x.addEventListener("click", function () { if (d.parentNode) d.parentNode.removeChild(d); }); d.appendChild(x); setTimeout(function () { if (d.parentNode) d.parentNode.removeChild(d); }, 12000); }
+    (D.body || D.documentElement).appendChild(d);
+  }
+  state.show = show; state.copy = copy;
+  // 1. Le jeu ne peut pas demarrer : pas de WebAssembly ou pas de WebGL.
+  function noWebgl() { try { var c = D.createElement("canvas"); return !(c.getContext("webgl") || c.getContext("experimental-webgl")); } catch (e) { return true; } }
+  function early() {
+    if (typeof WebAssembly !== "object") return show("wasm", false);
+    if (noWebgl()) return show("webgl", false);
+  }
+  if (D.body) early(); else D.addEventListener("DOMContentLoaded", early);
+  // 2. Erreur fatale du jeu (appelee par fatal()).
+  state.fatal = function () { show("fatal", false); };
+  // 3. Le chargement n'aboutit pas (45 s), ou, s'il aboutit, l'installation est impossible : avis discret une fois par session.
+  var t0 = Date.now(), iv = setInterval(function () {
+    var l = D.getElementById("loading"), done = !l || l.hidden || l.style.opacity === "0" || (W.afhLoad && W.afhLoad.done);
+    if (done) {
+      clearInterval(iv);
+      var seen = ""; try { seen = sessionStorage.getItem("afh_iab_seen") || ""; sessionStorage.setItem("afh_iab_seen", "1"); } catch (e) {}
+      if (!seen && !state.shown) setTimeout(function () { if (!state.shown) show("install", true); }, 4000);
+    } else if (Date.now() - t0 > 45000) { clearInterval(iv); show("timeout", false); }
+  }, 500);
 })();
 </script>
 <script src="mq_js_bundle.js"></script>
