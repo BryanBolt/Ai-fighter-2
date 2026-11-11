@@ -1,0 +1,7 @@
+[
+  {"id":"rld-1","titre":"Icones des passifs","texte":"Plusieurs passifs differents partagent la meme goutte (venin, poudre toxique, patient zero) et ressemblent a des doublons : donner une icone propre a chacun ?","page":"menu en run"},
+  {"id":"rld-2","titre":"Niveaux des pouvoirs a statut","texte":"Un statut au niveau 2 ou 3 ajoute seulement de la chance d'effet (plafonnee) : veux-tu un vrai bonus par niveau (duree, degats) ?","page":"rl_powers"},
+  {"id":"rld-3","titre":"Quand tout est au maximum","texte":"Si tous les pouvoirs sont au niveau max, on propose ration, bourse ou parchemin : preferes-tu un gros bonus de PV a la place ?","page":"cartes de choix"},
+  {"id":"rld-4","titre":"Amelioration prioritaire","texte":"Les ameliorations sont tirees au hasard avec les nouveaux pouvoirs : garantir une amelioration par choix quand on en possede une ?","page":"cartes de choix"},
+  {"id":"rld-5","titre":"Passifs du solo hors ligne","texte":"Les bonus de progress.rs (vitesse, soin, vampire) ont leur propre limite : a aligner sur n/3 dans une prochaine passe.","page":"solo"}
+]
