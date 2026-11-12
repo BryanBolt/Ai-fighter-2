@@ -1,0 +1,14 @@
+[
+ {
+  "id": "drapeau_terrain",
+  "titre": "Drapeau : terrain et durée",
+  "texte": "Terrain de 3000 (3,5 écrans paysage), 3 points ou 5 min, point en or en cas d'égalité : on garde, ou on raccourcit le terrain à 2400 ?",
+  "page": "drapeau.html"
+ },
+ {
+  "id": "drapeau_super",
+  "titre": "Drapeau : Super et Ki coupés",
+  "texte": "Super, Ki et spécial sont coupés pour tous en drapeau (comme avant) : on les réactive hors porteur ?",
+  "page": "drapeau.html"
+ }
+]

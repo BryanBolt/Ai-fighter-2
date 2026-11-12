@@ -1,0 +1,6 @@
+[
+{"id":"if_pause_discrete","titre":"Pause discrete en haut a droite ?","texte":"Aucune place libre pres du pouce droit : la deplacer gene le Super (portrait) ou la rangee haute (paysage). Garder pres du stick ?","page":"interface_finale"},
+{"id":"if_ff_pal","titre":"Tir ami : la prise suit-elle le reglage ?","texte":"Desactive = pas de tir ni de prise d'ami ; Reduit / Normal = les deux. Une prise sans tir ami (ancien reglage) disparait.","page":"interface_finale"},
+{"id":"if_dpad","titre":"D-pad pour la roue des pouvoirs ?","texte":"Le stick droit ouvre la roue ; le D-pad sert deja a se deplacer. Le laisser ainsi ?","page":"interface_finale"},
+{"id":"if_clavier_court","titre":"Clavier de 32 touches sur ecran court","texte":"Sous 640 pt de haut, on le remplace par le vrai clavier (toucher le code). Acceptable ?","page":"interface_finale"}
+]

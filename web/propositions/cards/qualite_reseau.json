@@ -1,0 +1,7 @@
+[
+  {"id": "qr_pastille", "titre": "Une pastille de qualite par joueur", "texte": "Vert bon, orange lent, rouge tres lent, au-dessus du heros, fusionnee avec la presence (une seule pastille). Ma propre pastille n'apparait que degradee.", "page": "qualite_reseau"},
+  {"id": "qr_seuils", "titre": "Seuils de la pastille", "texte": "Bon jusqu'a 150 ms d'aller-retour, lent jusqu'a 300 ms, rouge au-dela ; une gigue de plus de 60 ms retire le vert. A valider sur reseau reel.", "page": "qualite_reseau"},
+  {"id": "qr_attente", "titre": "Seuil d'attente neutre du relais", "texte": "Mesure : le gel des autres reste <= 0,85 s avec 900 ms comme avec 1500 ms ; je garde 900 ms.", "page": "qualite_reseau"},
+  {"id": "qr_message", "titre": "Message « Karim est lent »", "texte": "Dit a partir de 0,6 s d'attente continue (1,5 s ne parlerait jamais, le relais coupe avant). Plusieurs absents : « Connexion lente ».", "page": "qualite_reseau"},
+  {"id": "qr_salon", "titre": "Pastille dans la liste du salon", "texte": "La liste du salon d'attente montre la pastille de qualite des humains ; en partie, les marqueurs au-dessus des heros ([IA] et pastille) font office de liste.", "page": "qualite_reseau"}
+]

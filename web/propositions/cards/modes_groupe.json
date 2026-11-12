@@ -1,6 +1,14 @@
 [
-{"id":"mg_horde_ok","titre":"Horde : garder l'equilibre","texte":"Les bots gagnent la horde 11/18 en 235 s : pas trop dure, on ne touche pas (le 2/18 ne se reproduit pas).","page": "modes_groupe.html"},
-{"id":"mg_colline_egalites","titre":"Colline : departager les egalites","texte":"7 parties sur 18 finissent a egalite ; proposer une mort subite de 15 s sur la colline ou un bonus au dernier occupant.","page": "modes_groupe.html"},
-{"id":"mg_foot_egalites","titre":"Foot : but en or","texte":"4 parties sur 18 finissent a egalite ; ajouter une prolongation au but en or (change le hash, a valider).","page": "modes_groupe.html"},
-{"id":"mg_test_humains","titre":"Test avec humains","texte":"Join/leave en ligne et 1 joueur n'ont ete verifies que par tests unitaires ; prevoir une session reelle a 3-4 personnes.","page": "modes_groupe.html"}
+ {
+  "id": "mg_horde_ok",
+  "titre": "Horde : garder l'equilibre",
+  "texte": "Les bots gagnent la horde 11/18 en 235 s : pas trop dure, on ne touche pas (le 2/18 ne se reproduit pas).",
+  "page": "modes_groupe.html"
+ },
+ {
+  "id": "mg_test_humains",
+  "titre": "Test avec humains",
+  "texte": "Join/leave en ligne et 1 joueur n'ont ete verifies que par tests unitaires ; prevoir une session reelle a 3-4 personnes.",
+  "page": "modes_groupe.html"
+ }
 ]

@@ -365,7 +365,7 @@
   var KEY = "afh_reports", on = true, crumbs = [], ctx = {}, sent = {}, nSent = 0, shown = false, lastRep = null, ready = false;
   // Diagnostic de partie en ligne : le jeu (Rust) pose un JSON borne (cle reservee `_diag`) avant chaque rapport ; la page y ajoute la
   // console (100 dernieres lignes), le service worker et son cache. Envois automatiques (desync, stall) : 3 par type, espaces de 20 s.
-  var diagStr = "", comment = "", con = [], swInfo = "?", multi = {};
+  var diagStr = "", recStr = "", comment = "", con = [], swInfo = "?", multi = {};
   function conPush(l, a) { try { var m = Array.prototype.join.call(a, " ").replace(/[\u0000-\u001f]/g, " ").slice(0, 120); con.push([Date.now(), l + ": " + m]); if (con.length > 100) con.shift(); } catch (e) {} }
   ["log", "warn", "info"].forEach(function (l) { var o = console[l]; console[l] = function () { conPush(l, arguments); return o.apply(console, arguments); }; });
   try { if (window.caches) caches.keys().then(function (k) { swInfo = (k.filter(function (x) { return /^afh-/.test(x); }).join(",") || "aucun cache") + (navigator.serviceWorker && navigator.serviceWorker.controller ? " (sw actif)" : " (sw inactif)"); }); } catch (e) {}
@@ -381,6 +381,7 @@
     crumbs.push({ t: Date.now(), k: String(k).slice(0, 16), m: String(m).slice(0, 160) });
     if (crumbs.length > 50) crumbs.shift();
     if (k === "start") ctx.build = String(m).slice(0, 48);
+    if (k === "screen") { try { var tr = window.afhTrail || (window.afhTrail = []); tr.push(String(m).slice(0, 40)); var tt = window.afhTrailT || (window.afhTrailT = []); tt.push(Date.now()); if (tr.length > 400) { tr.shift(); tt.shift(); } } catch (e) {} } // banc de jeu : historique des ecrans
   }
   function gpu() {
     try {
@@ -409,7 +410,9 @@
     var b = ctx.build || "", m = /\+p(\d+)/.exec(b);
     var d = null; try { d = diagStr ? JSON.parse(diagStr) : null; } catch (e) { d = null; }
     d = d || {}; d.console = con.slice(-100);
-    return { kind: kind, msg: String(msg).slice(0, 600), loc: String(loc || "").slice(0, 200), fp: fp(kind, msg, loc || ""), build: b || "web", proto: m ? +m[1] : null, platform: "web", sid: sid, ping: ctx.ping ? +ctx.ping : null, ctx: ctx, env: env(), crumbs: crumbs.slice(-50), diag: d, comment: comment };
+    // Enregistrement de rejeu (cle reservee `_rec`, JSON {v, epochs}) : rend la partie rejouable a l'identique (tools/replay_report.sh).
+    var rc = null; try { rc = recStr ? JSON.parse(recStr) : null; } catch (e) { rc = null; }
+    return { kind: kind, msg: String(msg).slice(0, 600), loc: String(loc || "").slice(0, 200), fp: fp(kind, msg, loc || ""), build: b || "web", proto: m ? +m[1] : null, platform: "web", sid: sid, ping: ctx.ping ? +ctx.ping : null, ctx: ctx, env: env(), crumbs: crumbs.slice(-50), diag: d, rec: rc, comment: comment };
   }
   function post(rep) {
     if (!url) return;
@@ -480,6 +483,7 @@
     ctx: function (k, v) {
       k = String(k);
       if (k === "_diag") { diagStr = String(v); return; }   // diagnostic Rust (JSON), joint au prochain rapport
+      if (k === "_rec") { recStr = String(v); return; }   // enregistrement de rejeu (JSON), joint au prochain rapport
       if (k === "_comment") { comment = String(v).slice(0, 300); return; }
       ctx[k.slice(0, 32)] = String(v).slice(0, 120);
     },
@@ -618,7 +622,7 @@ window.AFH_TI = (function () {
   function now() { return (W.performance || Date).now(); }
   function clean(v, kind, max) {
     var m = max | 0 || 100;
-    if (kind === 1) { var k = /salon=([A-Za-z0-9]{5})/.exec(v); if (k) v = k[1]; }
+    if (kind === 1) { var k = /salon=\s*([A-Za-z0-9]{5})/i.exec(v); if (k) v = k[1]; }
     v = String(v).replace(/[\r\n\t]/g, " ").replace(/[\u0000-\u001f\u007f]/g, "");
     if (kind === 1) v = v.toUpperCase().split("").filter(function (c) { return ALPHA.indexOf(c) >= 0; }).join("");
     else if (kind === 2) v = v.replace(/[^0-9]/g, "");
@@ -952,6 +956,17 @@ miniquad_add_plugin({
     importObject.env.afh_pad_axis = function (i, a) { var g = pad(i); return g && g.axes.length > a ? Math.round(g.axes[a] * 1000) : 0; };
     // Jeu en ligne : WebSocket vers le serveur de relais (les messages recus sont mis en file pour le jeu).
     var ws = null, wsq = [], wsState = 2;
+    // Evenements reseau lus par le jeu (afh_ws_page kind 7, une fois par image) : 1 retour au premier plan, 2 « online », 4 « offline », 8 changement de reseau
+    // (wifi <-> 4G), 16 socket fermee anormalement (codes 1005 / 1006). Le jeu se reconnecte tout de suite avec son jeton : voir tools/playtest/checkpoints.md.
+    var netFlags = 0;
+    try {
+      document.addEventListener("visibilitychange", function () { if (!document.hidden) netFlags |= 1; });
+      window.addEventListener("pageshow", function () { netFlags |= 1; });
+      window.addEventListener("online", function () { netFlags |= 2; });
+      window.addEventListener("offline", function () { netFlags |= 4; });
+      var cn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+      if (cn && cn.addEventListener) cn.addEventListener("change", function () { netFlags |= 8; });
+    } catch (e) {}
     importObject.env.afh_ws_open = function (p, l) {
       // L'ancienne socket est detachee AVANT d'etre fermee : son « close » tardif ne doit pas marquer la nouvelle comme coupee.
       try { if (ws) { ws.onopen = ws.onclose = ws.onerror = ws.onmessage = null; ws.close(); } } catch (e) {}
@@ -960,7 +975,7 @@ miniquad_add_plugin({
         var me = new WebSocket(UTF8ToString(p, l));
         ws = me;
         me.onopen = function () { if (ws === me) wsState = 1; AFH_REPORT.crumb("ws", "ouvert"); };
-        me.onclose = function (ev) { if (ws === me) wsState = 2; AFH_REPORT.crumb("ws", "ferme code " + (ev && ev.code) + (ev && ev.wasClean ? "" : " (non propre)")); };
+        me.onclose = function (ev) { if (ws === me) { wsState = 2; if (ev && (ev.code === 1005 || ev.code === 1006)) netFlags |= 16; } AFH_REPORT.crumb("ws", "ferme code " + (ev && ev.code) + (ev && ev.wasClean ? "" : " (non propre)")); };
         me.onerror = function () { if (ws === me) wsState = 2; AFH_REPORT.crumb("ws", "erreur reseau"); };
         me.onmessage = function (e) { if (ws === me && typeof e.data === "string" && wsq.length < 2000) wsq.push(e.data); };
       } catch (e) { wsState = 2; AFH_REPORT.crumb("ws", "WebSocket impossible : " + e); }
@@ -981,10 +996,12 @@ miniquad_add_plugin({
       var s = "";
       try {
         if (kind === 0 && location.protocol.indexOf("http") === 0) s = (location.protocol === "https:" ? "wss://" : "ws://") + location.host + "/";
-        if (kind === 1) { var q = new URLSearchParams(location.search); s = q.get("salon") || (q.get("watch") ? "~" + q.get("watch") : ""); } // ?watch=CODE : mode spectateur (le jeu reconnait le prefixe ~)
+        if (kind === 1) { var q = new URLSearchParams(location.search); var sal = String(q.get("salon") || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8); s = sal || (q.get("watch") ? "~" + q.get("watch") : ""); } // ?salon=%20k7m2q%20 : espaces, minuscules, texte colle autour = meme code // ?watch=CODE : mode spectateur (le jeu reconnait le prefixe ~)
         if (kind === 3 && new URLSearchParams(location.search).get("labo")) s = "1";
         if (kind === 6 && new URLSearchParams(location.search).get("perf") === "1") s = "1"; // ?perf=1 : overlay de diagnostic (fps, ms, entites)
         if (kind === 4) s = window.afhNfcCode || "";
+        if (kind === 8) s = String(window.afhWake ? window.afhWake.st : 0); // chauffe du serveur : 1 en cours, 2 reveille, 3 echec
+        if (kind === 7) { s = netFlags ? String(netFlags) : ""; netFlags = 0; }
         if (kind === 5) s = (new URLSearchParams(location.search).get("defi") || "").slice(0, 40); // defi entre amis : ?defi=CODE.GRAINE
         if (kind === 2 && location.protocol.indexOf("http") === 0) s = location.origin + location.pathname.replace(/index\.html$/, "");
       } catch (e) {}
@@ -1131,6 +1148,53 @@ miniquad_add_plugin({
     };
   }
 });
+// Partage de l'invitation : feuille de partage du telephone (navigator.share : WhatsApp, SMS, AirDrop...) avec texte court + lien.
+// Repli : copie du message dans le presse-papiers (API asynchrone, puis execCommand) ; si tout est refuse, le jeu l'annonce.
+// Issue lue par le jeu : window.afhInviteDone = 2 partage fait, 3 copie faite, 4 impossible ; annuler la feuille ne dit rien.
+window.afhInviteShare = function (url, text) {
+  var nav = navigator, msg = (text ? text + " " : "") + url, mode = 0;
+  window.afhInviteDone = 0;
+  function legacy() {
+    try {
+      var t = document.createElement("textarea"); t.value = msg; t.setAttribute("readonly", ""); t.style.cssText = "position:fixed;left:-9999px;top:0;opacity:0";
+      document.body.appendChild(t); t.select(); try { t.setSelectionRange(0, msg.length); } catch (e) {}
+      var ok = document.execCommand("copy"); document.body.removeChild(t); return !!ok;
+    } catch (e) { return false; }
+  }
+  function copy() {
+    try { if (nav.clipboard && nav.clipboard.writeText) { nav.clipboard.writeText(msg).then(function () { window.afhInviteDone = 3; }, function () { window.afhInviteDone = legacy() ? 3 : 4; }); return; } } catch (e) {}
+    window.afhInviteDone = legacy() ? 3 : 4;
+  }
+  var data = { title: "AI Fighter 2", text: text || "", url: url };
+  try {
+    if (nav.share && (!nav.canShare || nav.canShare(data))) {
+      mode = 1;
+      nav.share(data).then(function () { window.afhInviteDone = 2; }, function (e) { if (!(e && e.name === "AbortError")) copy(); });
+      return mode;
+    }
+  } catch (e) { mode = 0; }
+  copy();
+  return mode;
+};
+miniquad_add_plugin({
+  name: "afh_invite", version: 1,
+  register_plugin: function (importObject) {
+    importObject.env.afh_invite_share = function (p, l, tp, tl) { try { return window.afhInviteShare(UTF8ToString(p, l), UTF8ToString(tp, tl)); } catch (e) { window.afhInviteDone = 4; return 0; } };
+    importObject.env.afh_invite_poll = function () { var d = window.afhInviteDone | 0; window.afhInviteDone = 0; return d; };
+  }
+});
+// Chauffe du serveur : des l'ouverture de la page (le titre), une requete legere reveille le serveur d'hebergement gratuit
+// (il met jusqu'a ~30 s : plus de « Connexion... » interminable a la creation d'une partie). Sans effet hors http(s).
+window.afhWake = { st: 0 };
+(function () {
+  try {
+    if (location.protocol.indexOf("http") !== 0 || !window.fetch) return;
+    window.afhWake.st = 1;
+    var ctl = window.AbortController ? new AbortController() : null;
+    var to = setTimeout(function () { try { if (ctl) ctl.abort(); } catch (e) {} }, 70000);
+    fetch("/api/status", { cache: "no-store", signal: ctl ? ctl.signal : undefined }).then(function (r) { clearTimeout(to); window.afhWake.st = r && r.ok ? 2 : 3; }, function () { clearTimeout(to); window.afhWake.st = 3; });
+  } catch (e) { window.afhWake.st = 3; }
+})();
 // Rapports d'erreurs : le jeu (Rust) alimente le fil d'Ariane et declare ses panics a la page.
 miniquad_add_plugin({
   name: "afh_report", version: 1,
@@ -1184,6 +1248,21 @@ high_dpi = !((navigator.maxTouchPoints > 0 || 'ontouchstart' in window) && windo
   window.addEventListener("load", function () { setTimeout(function () { if (!loading()) { try { sessionStorage.removeItem("afh_load_tries"); sessionStorage.removeItem("afh_resume"); } catch (e) {} } }, 4000); });
 })();
 load("ai_fighter_2.wasm");
+(function () {
+  // Reveil du relais des l'ouverture du titre : un serveur gratuit s'endort et met ~30 s a repondre ; une requete legere (/health, reponse ignoree) part tout de
+  // suite et se repete au retour au premier plan apres 4 min, pour qu'il soit eveille quand on veut jouer en ligne.
+  var last = 0;
+  function warmRelay() {
+    try {
+      var now = Date.now(); if (now - last < 240000) return; last = now;
+      var base = location.protocol.indexOf("http") === 0 ? location.origin : "https://ai-fighter-2-3zjq.onrender.com";
+      fetch(base + "/health", { mode: "no-cors", cache: "no-store" }).catch(function () {});
+    } catch (e) {}
+  }
+  window.afhWarmRelay = warmRelay;
+  warmRelay();
+  document.addEventListener("visibilitychange", function () { if (!document.hidden) warmRelay(); });
+})();
 (function () {
   // Wasm charge : on demande au service worker de garder une copie pour le hors-ligne (sans re-telecharger).
   window.afhWarm = function () { try { var sw = navigator.serviceWorker; if (!sw) return; if (sw.controller) sw.controller.postMessage({ t: "warm" }); else sw.ready.then(function (r) { if (r.active) r.active.postMessage({ t: "warm" }); }); } catch (e) {} };

@@ -1,0 +1,5 @@
+[
+  {"id": "fin_niveau_carte_unique", "titre": "Une seule carte de fin de niveau", "texte": "Etoiles, pieces (compteur), une nouveaute, puis Continuer : on garde ce format court pour la campagne et l'histoire ?", "page": "fin_de_niveau_solo"},
+  {"id": "fin_niveau_etoiles", "titre": "Etoiles dessinees", "texte": "Les etoiles s'affichent en texte (**-) faute de glyphe dans la police : veux-tu de vraies etoiles dessinees (petit lot de rendu) ?", "page": "fin_de_niveau_solo"},
+  {"id": "fin_niveau_bilan_profil", "titre": "Detail des gains", "texte": "Le bilan complet n'est plus montre automatiquement ; il reste dans la pause (Revoir le dernier bilan). Faut-il aussi un onglet dans Progression ?", "page": "fin_de_niveau_solo"}
+]

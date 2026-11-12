@@ -9,7 +9,7 @@ p,li{font-size:15px;margin:4px 0}
 code{background:var(--papier);padding:1px 5px;border-radius:6px}
 </style></head><body>
 <h1>Équipement et décors : avant / après (captures du vrai moteur)</h1>
-<p>Rendu seulement : aucun changement de simulation, de hash ni de protocole. Journal : <code>tools/playtest/equipement_decors.md</code>.</p>
+<p>Rendu seulement : aucun changement de simulation, de hash ni de protocole. Journal : <code>tools/playtest/équipement_décors.md</code>.</p>
 
 <h2>1. L'équipement du roguelite ne suivait pas le héros</h2>
 <div class="c"><p><b>Cause :</b> les pièces portées de l'évolution du héros (épaulières, brassards, écharpe, bandeau, ailes, couronne, lueur des yeux : <code>rl_look.rs</code>) étaient dessinées à des décalages MONDE fixes autour des pieds, pas sur le squelette dessiné. Dès que le héros frappait, sautait ou se baissait, les disques gris restaient à hauteur de torse, loin des épaules et des poignets.</p>
@@ -32,5 +32,5 @@ code{background:var(--papier);padding:1px 5px;border-radius:6px}
 
 <h2>Garde-fous ajoutés</h2>
 <ul><li><code>coherence_guard.py</code> : <code>enseigne_hors_cadre</code> (largeur Nunito mesurée du texte ≤ panneau, dur) et <code>figurant_sans_siege</code> (dur).</li>
-<li>Tests Rust : <code>rl_look::worn_pieces_follow_the_bones_over_a_series_of_poses</code>, <code>shoulder_pad_stays_on_the_shoulder</code>, <code>gear_shapes::every_piece_follows_its_joint_in_every_pose</code> (position = os + décalage sur 6 à 7 poses, deux sens de regard).</li></ul>
+<li>Tests Rust : <code>rl_look::worn_pièces_follow_the_bones_over_a_séries_of_poses</code>, <code>shoulder_pad_stays_on_the_shoulder</code>, <code>gear_shapes::every_pièce_follows_its_joint_in_every_pose</code> (position = os + décalage sur 6 à 7 poses, deux sens de regard).</li></ul>
 </body></html>

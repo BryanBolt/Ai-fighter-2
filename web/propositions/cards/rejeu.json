@@ -1,0 +1,6 @@
+[
+  {"id": "rejeu-1", "titre": "Rapports rejouables : a deployer", "texte": "Les rapports joignent maintenant un enregistrement exact de la partie ; il faut deployer (serveur 512 Ko + page + wasm) pour recevoir les premiers rapports rejouables.", "page": "tools/playtest/rejeu.md"},
+  {"id": "rejeu-2", "titre": "Bug web/PC corrige (IA confuse)", "texte": "Le statut Confusion de l'IA utilisait cos/sin de la plateforme : web et PC pouvaient diverger ; corrige avec detmath (change le hash dans ce seul cas).", "page": "tools/playtest/rejeu.md"},
+  {"id": "rejeu-3", "titre": "Solo hors ligne non enregistre", "texte": "Seules les parties en ligne (1 a 8 places) sont enregistrees ; faut-il aussi enregistrer le solo hors ligne (config d'un Run) ?", "page": "tools/playtest/rejeu.md"},
+  {"id": "rejeu-4", "titre": "Tests de reference figes", "texte": "Les 3 fichiers de tools/replays echouent a toute modification de la simulation ; regenerer avec la commande du journal quand le changement est voulu.", "page": "tools/playtest/rejeu.md"}
+]

@@ -1,0 +1,7 @@
+[
+ {"id":"ag-1","titre":"Objets equipes du profil","texte":"Le deblocage permanent « objet equipe au depart » (meta du profil) revient a chaque run solo en plus du pouvoir de depart : le garder (choix du joueur) ou le supprimer pour que SEUL le pouvoir de depart revienne ?","page":"tools/playtest/armes_grenades.md"},
+ {"id":"ag-2","titre":"Arme a feu vide","texte":"Une arme a feu vide est perdue a la derniere balle (comme le jeu normal). L'alternative : la garder en main pour frapper (coup de crosse) ou la jeter a l'ecran comme objet ramassable sans munitions.","page":"tools/playtest/armes_grenades.md"},
+ {"id":"ag-3","titre":"Palier cool a 9 pouvoirs","texte":"Apres tri, le palier cool n'a que 9 pouvoirs distincts (24 au total, aucune arme). Garder ainsi ou ajouter 3 a 5 nouveaux pouvoirs cool (invocations, auras) a l'avenir ?","page":"tools/playtest/armes_grenades.md"},
+ {"id":"ag-4","titre":"Armes a feu des ennemis","texte":"Les heros tirent plus fort (revolver 11 -> 16 hors roguelite), les ennemis armes gardent leurs anciennes valeurs pour ne pas durcir la campagne. Aligner aussi les ennemis ?","page":"tools/playtest/armes_grenades.md"},
+ {"id":"ag-5","titre":"Grenade : contact large","texte":"Une grenade lancee explose des qu'elle frole un adversaire (marge de 30 px de large et 60 px de haut) ou au premier rebond au sol. Trop permissif (elle ne passe jamais au-dessus d'une tete) ou a garder ?","page":"tools/playtest/armes_grenades.md"}
+]

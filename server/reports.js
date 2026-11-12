@@ -5,7 +5,8 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 
 export const KINDS = ['panic', 'js', 'net', 'asset', 'audio', 'webgl', 'wasm', 'ws', 'desync', 'stall', 'user', 'other'];
-const MAX_BODY = 64 * 1024;
+const MAX_BODY = 512 * 1024; // le rapport sans enregistrement reste sous 64 Ko ; l'enregistrement de rejeu (`rec`) peut en ajouter ~250 Ko
+const MAX_REC = 400 * 1024; // enregistrement de rejeu (base64, toutes epoques) : au-dela il est ecarte, le rapport est garde
 const MAX_DIAG = 40 * 1024; // diagnostic de partie en ligne (serialise)
 const MAX_CRUMBS = 50;
 
@@ -14,6 +15,28 @@ const cleanKey = (v, n) => clean(v, n).replace(/[^\w.:@+\-/ ]/g, '_');
 const PERSONAL = /^(name|nom|pseudo|ip|email|user|addr|token)/i;
 
 // Nettoyage recursif du diagnostic : profondeur, longueurs et nombres bornes, cles personnelles ecartees.
+// Enregistrement de rejeu (src/rejeu.rs) : liste d'epoques {b64 (zlib+base64), ticks, mode, slots, me, trunc, build, proto, platform}.
+// Opaque pour le serveur (aucune donnee perso : pas de pseudo, validé cote client) ; on ne garde que ce qui a la bonne forme.
+export function cleanRec(r) {
+  if (!r || typeof r !== 'object' || Array.isArray(r) || !Array.isArray(r.epochs)) return null;
+  const n = (v, hi) => (Number.isFinite(v) && v >= 0 && v <= hi ? Math.round(v) : null);
+  const epochs = [];
+  let total = 0;
+  for (const e of r.epochs.slice(0, 3)) {
+    if (!e || typeof e !== 'object' || typeof e.b64 !== 'string' || !/^[A-Za-z0-9+/=]+$/.test(e.b64)) continue;
+    total += e.b64.length;
+    if (total > MAX_REC) break;
+    epochs.push({ b64: e.b64, ticks: n(e.ticks, 1e9), mode: n(e.mode, 99), full: !!e.full, slots: n(e.slots, 8), me: n(e.me, 8), trunc: !!e.trunc, build: cleanKey(e.build, 48), proto: n(e.proto, 1000), platform: cleanKey(e.platform, 16) });
+  }
+  return epochs.length ? { v: 1, epochs } : null;
+}
+
+// Resume d'un enregistrement sans les donnees (liste des rapports) : { epochs: [{ticks, mode, slots, me, trunc, bytes}] }.
+const recSummary = (rec) => (rec ? { epochs: rec.epochs.map((e) => ({ ticks: e.ticks, mode: e.mode, slots: e.slots, me: e.me, trunc: e.trunc, build: e.build, bytes: e.b64.length })) } : undefined);
+
+// Identifiant court d'un rapport (calcule a la lecture : date + session + empreinte), pour tools/replay_report.sh.
+export const idOf = (r) => crypto.createHash('sha1').update(`${r.at}|${r.sid}|${r.fp}`).digest('hex').slice(0, 10);
+
 export function cleanDeep(v, depth = 0) {
   if (v === null || typeof v === 'boolean') return v;
   if (typeof v === 'number') return Number.isFinite(v) ? v : null;
@@ -71,13 +94,13 @@ export function cleanReport(r) {
     kind, msg, loc, fp,
     build: cleanKey(r.build, 48), proto: num(r.proto, 0, 1000), platform: cleanKey(r.platform, 16),
     sid: cleanKey(r.sid, 24), ping: num(r.ping, 0, 600000), tick: num(r.tick, 0, 1e9),
-    ctx, env, crumbs, diag, comment,
+    ctx, env, crumbs, diag, comment, ...(cleanRec(r.rec) ? { rec: cleanRec(r.rec) } : {}),
   };
 }
 
 export function createReports(opts = {}) {
   const file = opts.file ?? process.env.REPORTS_FILE ?? path.join('data', 'reports.jsonl');
-  const maxBytes = opts.maxBytes ?? Number(process.env.REPORTS_MAX_BYTES || 5 * 1024 * 1024);
+  const maxBytes = opts.maxBytes ?? Number(process.env.REPORTS_MAX_BYTES || 20 * 1024 * 1024);
   const keep = opts.keep ?? 3; // fichiers de rotation conserves : reports.jsonl.1 .. .3
   const adminKey = () => opts.adminKey ?? process.env.ADMIN_KEY ?? process.env.VERDICT_KEY ?? '';
   const perIpPerMin = opts.perIpPerMin ?? 12;
@@ -185,7 +208,7 @@ export function createReports(opts = {}) {
       if (r.platform) g.platforms.add(r.platform);
       if (r.ctx?.mode) g.modes.add(r.ctx.mode);
       if (r.sid) g.sessions.add(r.sid);
-      g.samples.push({ at: r.at, build: r.build, platform: r.platform, sid: r.sid, sproto: r.sproto, proto: r.proto, comment: r.comment, ctx: r.ctx, env: r.env, ping: r.ping, tick: r.tick, crumbs: r.crumbs, diag: r.diag });
+      g.samples.push({ id: idOf(r), rec: recSummary(r.rec), at: r.at, build: r.build, platform: r.platform, sid: r.sid, sproto: r.sproto, proto: r.proto, comment: r.comment, ctx: r.ctx, env: r.env, ping: r.ping, tick: r.tick, crumbs: r.crumbs, diag: r.diag });
       if (g.samples.length > 3) g.samples.shift();
     }
     const limit = Math.max(1, Math.min(500, Number(q.limit) || 100));
@@ -225,6 +248,7 @@ export function createReports(opts = {}) {
         const e = Object.entries(s.env || {}).map(([k, v]) => `${k}=${v}`).join(' ; ');
         if (e) L.push(`- environnement : ${e}`);
         if (s.comment) L.push(`- commentaire du joueur : ${s.comment}`);
+        L.push(`- rapport \`${s.id}\`${s.rec ? ` : enregistrement rejouable (${s.rec.epochs.map((e) => `${e.ticks} images${e.trunc ? ' TRONQUE' : ''}, ${Math.round(e.bytes / 1024)} Ko`).join(' + ')}) -> tools/replay_report.sh ${s.id}` : ' : sans enregistrement'}`);
         const d = s.diag;
         if (d) {
           L.push(`- versions : jeu ${d.game || '?'} ; build ${d.build || '?'} ; protocole client ${s.proto ?? d.proto ?? '?'} / serveur ${s.sproto ?? d.server_proto ?? '?'}${s.env?.sw ? ` ; service worker ${s.env.sw}` : ''}`);
@@ -259,6 +283,15 @@ export function createReports(opts = {}) {
     if (!authorized(url.searchParams.get('key'))) { res.writeHead(401, cors); res.end('cle invalide'); return; }
     const q = Object.fromEntries(url.searchParams);
     const items = readAll();
+    // Enregistrement de rejeu d'UN rapport : `format=rec&id=<id>` (ou `id=latest`) -> JSON {v, epochs} = contenu d'un fichier .afhrec.
+    if (q.format === 'rec') {
+      const withRec = items.filter((r) => r.rec && (!q.kind || r.kind === q.kind));
+      const hit = q.id === 'latest' || !q.id ? withRec[withRec.length - 1] : withRec.find((r) => idOf(r) === q.id);
+      if (!hit) { res.writeHead(404, cors); res.end('aucun enregistrement pour ce rapport'); return; }
+      res.writeHead(200, { ...cors, 'content-type': 'application/json', 'cache-control': 'no-store', 'x-report-id': idOf(hit) });
+      res.end(JSON.stringify(hit.rec));
+      return;
+    }
     const groups = group(items, q);
     if (q.format === 'md') { res.writeHead(200, { ...cors, 'content-type': 'text/markdown; charset=utf-8', 'cache-control': 'no-store' }); res.end(markdown(groups, items.length)); return; }
     res.writeHead(200, { ...cors, 'content-type': 'application/json', 'cache-control': 'no-store' });

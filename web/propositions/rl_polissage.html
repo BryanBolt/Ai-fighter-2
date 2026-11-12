@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Roguelite : polissage (avant / après)</title>
+<style>
+:root{--ink:#221834;--paper:#fff3e0;--acc:#d8456b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.45 system-ui,Segoe UI,sans-serif;padding:16px;max-width:1100px;margin-inline:auto}
+h1{font-size:26px;margin:8px 0}
+h2{font-size:20px;margin:28px 0 6px;border-bottom:3px solid var(--acc);padding-bottom:4px}
+p{margin:6px 0}
+.row{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start;margin:10px 0}
+figure{margin:0;background:#fff;border-radius:14px;padding:8px;box-shadow:4px 4px 0 var(--acc)}
+figure img{display:block;max-width:100%;height:auto;border-radius:8px}
+figcaption{font-size:13px;margin-top:6px}
+.tag{display:inline-block;background:var(--ink);color:var(--paper);border-radius:99px;padding:1px 10px;font-size:12px;margin-right:6px}
+.tag.apres{background:var(--acc)}
+.p img{width:260px}.l img{width:420px}.w img{width:100%}
+code{background:#0001;padding:0 4px;border-radius:4px}
+</style>
+</head>
+<body>
+<h1>Roguelite : polissage</h1>
+<p>Captures du vrai moteur (<code>python tools/rl_polissage_shots.py</code>). Journal : <code>tools/playtest/rl_polissage.md</code>.</p>
+
+<h2>1. Icônes : une par objet</h2>
+<p><span class="tag">avant</span>Choix par mot-cle : venin, poudre toxique, patient zero et dernier souffle partageaient la même goutte ; Spécial, Saisie, Courir et les synergies la même étoile.</p>
+<p><span class="tag apres">après</span>81 dessins propres, aucune paire proche (test de rasterisation). Planche contact du menu en run (24 icônes par page) :</p>
+<div class="row">
+<figure class="w"><img src="rl_polissage/planche_icones.png" alt="Planche contact des icones"><figcaption>Trois pages du menu en run, 1280x720.</figcaption></figure>
+</div>
+
+<h2>2. Renfort d'équipe</h2>
+<p><span class="tag">avant</span>Invisible. Première pose (sous le HUD) : elle recouvrait l'etiquette du 2e joueur en paysage.</p>
+<p><span class="tag apres">après</span>Pastille sous la pile de gauche ; 1 a 5 joueurs, rien a 6 ou plus.</p>
+<div class="row">
+<figure class="l"><img src="rl_polissage/avant_renfort_paysage.png" alt="avant"><figcaption><span class="tag">avant</span>paysage, 3 joueurs, boss final</figcaption></figure>
+<figure class="l"><img src="rl_polissage/boss_final_3j.png" alt="apres"><figcaption><span class="tag apres">après</span>même scène</figcaption></figure>
+</div>
+<div class="row">
+<figure class="p"><img src="rl_polissage/renfort_1j_portrait.png" alt="1 joueur"><figcaption>1 joueur</figcaption></figure>
+<figure class="p"><img src="rl_polissage/renfort_2j_portrait.png" alt="2 joueurs"><figcaption>2 joueurs</figcaption></figure>
+<figure class="p"><img src="rl_polissage/renfort_4j_portrait.png" alt="4 joueurs"><figcaption>4 joueurs</figcaption></figure>
+<figure class="p"><img src="rl_polissage/renfort_8j_portrait.png" alt="8 joueurs"><figcaption>8 joueurs : aucune pastille</figcaption></figure>
+</div>
+
+<h2>3. Carte NIVEAU n/3 et menu en run</h2>
+<p><span class="tag">avant</span>Une annonce (« Vague 1 », « MINI-BOSS ! ») se dessinait par-dessus le titre de la feuille et la description.</p>
+<p><span class="tag apres">après</span>Les feuilles modales masquent les annonces ; le récapitulatif dit « 2/3 » et non « x2 ».</p>
+<div class="row">
+<figure class="p"><img src="rl_polissage/avant_choix_portrait.png" alt="avant"><figcaption><span class="tag">avant</span>portrait</figcaption></figure>
+<figure class="p"><img src="rl_polissage/choix_niveau_portrait.png" alt="apres"><figcaption><span class="tag apres">après</span>portrait</figcaption></figure>
+<figure class="p"><img src="rl_polissage/avant_menu_portrait.png" alt="avant"><figcaption><span class="tag">avant</span>menu en run</figcaption></figure>
+<figure class="p"><img src="rl_polissage/menu_niveaux_portrait.png" alt="apres"><figcaption><span class="tag apres">après</span>menu en run</figcaption></figure>
+</div>
+<div class="row">
+<figure class="l"><img src="rl_polissage/avant_choix_paysage.png" alt="avant"><figcaption><span class="tag">avant</span>paysage</figcaption></figure>
+<figure class="l"><img src="rl_polissage/choix_niveau_paysage.png" alt="apres"><figcaption><span class="tag apres">après</span>paysage</figcaption></figure>
+<figure class="l"><img src="rl_polissage/menu_niveaux_paysage.png" alt="menu paysage"><figcaption>menu en run, paysage</figcaption></figure>
+</div>
+
+<h2>4. Intro du boss final en coop</h2>
+<p>Solo et coop annoncent l'étage par le même appel (<code>rl_menu::announce_floor</code>) : « BOSS FINAL ! » en priorité Attention.</p>
+<div class="row"><figure class="l"><img src="rl_polissage/boss_final_1j.png" alt="boss final 1 joueur"><figcaption>1 joueur, étage 16</figcaption></figure>
+<figure class="l"><img src="rl_polissage/boss_final_3j.png" alt="boss final 3 joueurs"><figcaption>3 joueurs, étage 16</figcaption></figure></div>
+</body>
+</html>

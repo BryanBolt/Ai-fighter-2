@@ -1,0 +1,6 @@
+[
+  {"id": "vo_salon_lobby", "titre": "Salon / lobby dans le multijoueur", "texte": "9 chaînes (lobby_hub, online_ui, online_screens, online_full*) disent encore « salon » ou « stage » : les passer à « Partie » / « Lieu » quand l'équipe multi aura fini ?", "page": "vocabulaire.html"},
+  {"id": "vo_roguelite_passif", "titre": "Roguelite : « Bonus » -> « Passif », « Étage » -> « Biome/Étage »", "texte": "Les écrans du roguelite (rl_*, roguelite.rs) gardent « bonus », « objets » et l'or : les faire adopter Passif / Jetons par l'équipe roguelite ?", "page": "vocabulaire.html"},
+  {"id": "vo_parcours_long", "titre": "Parcours « Premier jour » (31 étapes)", "texte": "Il n'est plus proposé dans les menus mais le lobby (bouton Entraînement) l'ouvre encore : supprimer ce code (~2 000 lignes) ou le garder derrière le lobby ?", "page": "vocabulaire.html"},
+  {"id": "vo_ok", "titre": "Boutons « OK » restants", "texte": "Trois « OK » en multi et roguelite, et le bouton tactile de validation : les passer à « Valider » (place réduite sur téléphone) ?", "page": "vocabulaire.html"}
+]

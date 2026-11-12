@@ -1,0 +1,5 @@
+[
+ {"id":"ac-1","titre":"Tir de Ki chargeable avec la roue","texte":"En roguelite (2 pouvoirs ou plus) le maintien sur Pouvoir ouvre la roue : le tir de Ki a 3 niveaux n'est plus accessible au tactile. Option : une touche dediee (regle de sim, hash et protocole changent).","page":"tools/playtest/attaque_chargee.md"},
+ {"id":"ac-3","titre":"Pied maintenu au contact : charge ou saisie","texte":"Au contact d'un ennemi saisissable, un Pied (meme maintenu) lance la SAISIE, jamais la charge. Option : si le bouton reste enfonce plus de 8 images, la saisie cede la place a la charge (regle de sim : hash change).","page":"tools/playtest/attaque_chargee.md"},
+ {"id":"ac-2","titre":"Anneau de charge : garder, agrandir ou discret","texte":"Anneau fin a 3 crans autour du bouton tenu et du heros, sans texte. Le garder tel quel, ou l'epaissir / ajouter une vibration a chaque cran.","page":"tools/playtest/attaque_chargee.md"}
+]
