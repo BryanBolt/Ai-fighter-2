@@ -1,0 +1,5 @@
+[
+ {"id":"qp-1","titre":"Doublon des écrans Choix du lieu","texte":"Les écrans « plan » et « stage » portent le même titre et listent les mêmes lieux : n'en garder qu'un (le plan) et retirer l'autre du parcours ?","page":"tools/playtest/qualite_percue.md"},
+ {"id":"qp-2","titre":"Reskins de lanceurs","texte":"Une vingtaine d'ennemis « Lanceur de X » ne changent que de nom, de teinte et de projectile : les fusionner en 4 ou 5 archétypes (équilibre à re-mesurer avec tools/swarm) ou garder un lanceur par lieu ?","page":"tools/playtest/qualite_percue.md"},
+ {"id":"qp-3","titre":"Pavé de flèches tactile dans les menus","texte":"Le pavé de 4 flèches + OK reste affiché à droite de tous les écrans de menu tactiles : le masquer quand le doigt navigue déjà (glisser/toucher les lignes) ?","page":"tools/playtest/qualite_percue.md"}
+]

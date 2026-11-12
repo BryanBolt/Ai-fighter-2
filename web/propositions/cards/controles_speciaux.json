@@ -1,0 +1,6 @@
+[
+ {"id":"cs-1","titre":"Icone du special au-dessus de la tete","texte":"Tu as demande une icone AU-DESSUS du personnage : elle remplace la pastille posee sous les pieds (choix d'avant, qui evitait la tete). Valider le dessus, ou remettre sous les pieds ?","page":"web/propositions/controles_speciaux.html"},
+ {"id":"cs-2","titre":"Stick droit : choisit, ne lance pas","texte":"A la manette, le stick droit CHOISIT le special (haut, bas, avant, retour au neutre) et la gachette Special le lance. Alternative : le stick droit lance directement le special pointe (ancien comportement de la roue).","page":"tools/playtest/controles_speciaux.md"},
+ {"id":"cs-3","titre":"Transformation gratuite hors roguelite","texte":"En roguelite la transformation exige l'objet Eveil du Ki. Hors roguelite (campagne, duel) elle reste un pouvoir de base du heros : la verrouiller aussi derriere un objet a ramasser, ou laisser comme aujourd'hui ?","page":"tools/playtest/controles_speciaux.md"},
+ {"id":"cs-4","titre":"Double touche Ki + Super","texte":"La double touche Ki + Super lance toujours la transformation d'un coup, mais seulement Ki PLEIN. La retirer pour que la seconde barre soit le seul chemin ?","page":"tools/playtest/controles_speciaux.md"}
+]

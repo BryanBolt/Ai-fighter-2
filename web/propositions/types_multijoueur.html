@@ -1,0 +1,20 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Types de multijoueur</title>
+<style>:root{--ink:#221834;--paper:#fff3e0;--acc:#c03a5e}body{font:16px system-ui;background:var(--paper);color:var(--ink);margin:0;padding:16px}h1{font-size:24px}h2{margin-top:32px}
+table{border-collapse:collapse;width:100%;max-width:980px}td,th{border:1px solid #0002;padding:8px;text-align:left;vertical-align:top}th{background:#2218340f}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start}figure{margin:0}figure img{display:block;max-width:420px;width:100%;height:auto;border-radius:8px;border:1px solid #0003}figcaption{font-size:14px}
+.pro{color:#0a6b2d;font-weight:700}.con{color:#9a2a2a;font-weight:700}a.btn{display:inline-block;min-height:44px;line-height:44px;padding:0 16px;background:var(--acc);color:#fff;border-radius:22px;text-decoration:none}</style></head><body>
+<h1>Type de partie réseau : à tester</h1>
+<p>Un réglage par partie, choisi par le chef, visible de tous, <b>changeable même en cours de partie</b> (il ne touche pas à la simulation). Le menu : accueil en ligne puis « Type de partie réseau », ou dans le salon « Mon héros et réglages ». Chaque choix montre ses avantages (<span class="pro">+</span>) et inconvénients (<span class="con">-</span>).</p>
+<h2>Avantages et inconvénients</h2>
+<table><tr><th>Type</th><th>Principe</th><th>Avantages</th><th>Inconvénients</th></tr>
+<tr><td><b>Choisir pour moi</b> (recommandé)</td><td>Le jeu choisit selon le nombre de joueurs et la qualité des connexions.</td><td>Rien à comprendre : Synchronisé jusqu'à 4 joueurs, Hôte autoritaire dès 5 joueurs ou si un ami a une connexion lente.</td><td>Le type peut changer en cours de partie quand des amis arrivent ou partent.</td></tr>
+<tr><td><b>Synchronisé</b></td><td>Tout le monde simule la même partie et s'échange ses touches.</td><td>Équitable : mêmes images pour tous, aucun avantage pour l'hôte.</td><td>Un joueur lent peut ralentir ou figer tout le monde un instant.</td></tr>
+<tr><td><b>Hôte autoritaire</b></td><td>Le temps est celui de l'hôte : il ne t'attend jamais, c'est lui qui fait foi.</td><td>Fluide pour l'hôte et ceux qui ont une bonne connexion ; un joueur lent ne fige personne.</td><td>L'hôte est avantagé ; le joueur lent voit son personnage continuer tout droit, puis se recaler. Si l'hôte part, le suivant devient l'horloge.</td></tr></table>
+<h2>Écran du sélecteur</h2>
+<div class="row">
+<figure><img loading="lazy" src="types_multijoueur/844x390_onnet.png" alt="Sélecteur en 844x390"><figcaption>844x390 (téléphone en paysage)</figcaption></figure>
+<figure><img loading="lazy" src="types_multijoueur/412x915_onnet.png" alt="Sélecteur en 412x915"><figcaption>412x915 (téléphone en portrait)</figcaption></figure>
+</div>
+<h2>Comment tester et lire les logs</h2>
+<p>Crée une partie, choisis un type, joue ; à la fin, deux boutons : « C'était bien » / « Pas terrible ». Les résultats arrivent chez l'orchestrateur : <code>python tools/telemetrie_resume.py</code> compare les types (gel médian, reprises par 10 min, % de « pas terrible », abandons) et écrit <code>tools/retour_jeu.md</code>. Détails dans le dossier <code>tools/playtest</code> (fiche sur le type de réseau).</p>
+</body></html>

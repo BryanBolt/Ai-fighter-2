@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Effets d'impact : deformation et lumière</title>
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b;--ok:#2f8f5b}
+body{margin:0;background:var(--papier);color:var(--encre);font:16px/1.45 system-ui,sans-serif;padding:16px}
+h1,h2{font-family:monospace;letter-spacing:.02em;margin:0 0 6px}
+h1{font-size:22px}h2{font-size:15px;color:var(--accent);margin-top:20px}
+.lead{max-width:780px}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px;margin-top:10px}
+.c{background:#fff;border:2px solid var(--encre);border-radius:12px;padding:10px}
+.c b{display:block;margin-bottom:4px}
+img{width:100%;border-radius:8px;background:var(--encre);display:block}
+p{margin:6px 0;font-size:14px}
+table{border-collapse:collapse;margin:10px 0;font-size:14px;max-width:780px;width:100%}
+td,th{border:2px solid var(--encre);padding:6px 8px;text-align:left;background:#fff}th{background:var(--encre);color:var(--papier)}
+button,input[type=button],select{min-height:44px}
+</style></head><body>
+<h1>Effets d'impact : deformation et lumière</h1>
+<p class="lead">Chaque coup touche maintenant avec un effet proportionne a sa puissance : onde de choc qui deforme l'image autour du point d'impact, halo chaud, étincelles, traits de vitesse, léger vignettage et aberration chromatique sur les gros coups. Capture du vrai moteur (Sora, 844x390), a gauche AVANT (couche coupee avec <code>AFH_NODEFORM=1</code>), a droite APRÈS. Serveur : <code>http://127.0.0.1:8765/</code>.</p>
+
+<h2>Coup léger : étincelles et petit anneau, aucune deformation</h2>
+<div class="g"><div class="c"><b>Avant</b><img src="effets_impact/leger_avant.webp" alt="coup leger avant"></div><div class="c"><b>Après</b><img src="effets_impact/leger_apres.webp" alt="coup leger apres"></div></div>
+
+<h2>Coup lourd : onde de choc, halo, traits de vitesse, aberration discrete</h2>
+<div class="g"><div class="c"><b>Avant</b><img src="effets_impact/lourd_avant.webp" alt="coup lourd avant"></div><div class="c"><b>Après</b><img src="effets_impact/lourd_apres.webp" alt="coup lourd apres"></div></div>
+
+<h2>Super : tout le paquet (deformation forte, vignettage, aberration)</h2>
+<div class="g"><div class="c"><b>Avant</b><img src="effets_impact/super_avant.webp" alt="super avant"></div><div class="c"><b>Après</b><img src="effets_impact/super_apres.webp" alt="super apres"></div></div>
+
+<h2>Boss : changement de phase, onde et étincelles a la teinte du boss</h2>
+<div class="g"><div class="c"><b>Avant</b><img src="effets_impact/boss_avant.webp" alt="boss avant"></div><div class="c"><b>Après</b><img src="effets_impact/boss_apres.webp" alt="boss apres"></div></div>
+
+<h2>Paliers et réglage « Effets »</h2>
+<table>
+<tr><th>Palier</th><th>Deformation</th><th>Halo</th><th>Vignettage</th><th>Aberration</th></tr>
+<tr><td>Léger</td><td>non</td><td>non</td><td>non</td><td>non</td></tr>
+<tr><td>Moyen</td><td>0,4 % de la hauteur</td><td>6 %</td><td>non</td><td>non</td></tr>
+<tr><td>Lourd</td><td>1,1 %</td><td>14 %</td><td>non</td><td>0,16 %</td></tr>
+<tr><td>Contre / Final</td><td>1,5 a 2 %</td><td>20 a 26 %</td><td>12 a 20 %</td><td>0,22 a 0,3 %</td></tr>
+<tr><td>Super / Boss</td><td>2,8 a 3,2 %</td><td>32 %</td><td>30 a 38 %</td><td>0,4 a 0,45 %</td></tr>
+</table>
+<p><b>Complets</b> : tout. <b>Reduits</b> : ni deformation ni aberration, halo et vignettage a moitie, moitie moins d'étincelles. <b>Minimaux</b> : aucun effet (ni flash, ni deformation, ni étincelle).</p>
+<p>Securite : halo plafonne a 35 % de mélange (jamais d'écran blanc), au plus un flash fort toutes les 0,34 s (moins de 3 par seconde), rien n'est écrit dans la simulation ni dans le hash.</p>
+<p>Mesures de cout : <code>tools/playtest/effets_impact.md</code>.</p>
+</body></html>

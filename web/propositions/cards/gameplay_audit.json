@@ -1,0 +1,6 @@
+[
+{"id":"audit_quotidien","titre":"Fusionner les armes du quotidien","texte":"11 armes de melee lentes aux roles proches : en garder 5 (balai, barre, poele, chandelier, pelle) ?","page":"tools/playtest/gameplay_audit.md"},
+{"id":"audit_pieces","titre":"Pieces d'arme equipees","texte":"Garder les pieces katana / baton / masse / nunchaku / kunai en plus des armes au sol, ou les retirer ?","page":"tools/playtest/gameplay_audit.md"},
+{"id":"audit_statuts","titre":"Statuts visibles","texte":"Ajouter une icone au-dessus de la tete pour poison, aveugle et ralenti ?","page":"tools/playtest/gameplay_audit.md"},
+{"id":"audit_orientation","titre":"Orientation du coup","texte":"Valider le cahier des charges : stick gauche = haut / bas / estoc / diagonales pour armes, poings, pieds.","page":"tools/playtest/armes_direction.md"}
+]

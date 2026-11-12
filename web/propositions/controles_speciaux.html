@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Contrôles spéciaux</title>
+<style>
+:root{--encre:#221834;--papier:#fff3e0;--accent:#d8456b;--ok:#2f8f5b;--creme:#fff9ee}
+body{margin:0;background:var(--papier);color:var(--encre);font:16px/1.45 system-ui,sans-serif;padding:16px}
+h1,h2{letter-spacing:.02em;margin:0 0 6px}
+h1{font-size:22px}h2{font-size:16px;color:var(--accent);margin-top:18px}
+.lead{max-width:780px}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-top:10px}
+.c{background:var(--creme);border:2px solid var(--encre);border-radius:12px;padding:10px}
+.tag{display:inline-block;font-weight:700;font-size:12px;padding:2px 8px;border-radius:99px;background:var(--encre);color:var(--papier);margin-bottom:6px}
+.tag.ap{background:var(--ok)}
+img{width:100%;border-radius:8px;background:var(--encre);display:block;margin-bottom:6px}
+p{margin:6px 0;font-size:14px}
+table{border-collapse:collapse;margin:10px 0;font-size:14px;max-width:780px}
+td,th{border:2px solid var(--encre);padding:6px 8px;text-align:left;background:var(--creme)}th{background:var(--encre);color:var(--papier)}
+button,input[type=button],select{min-height:44px}
+</style></head><body>
+<h1>Contrôles spéciaux : kit de départ, selecteur, deux barres, roulade, daemon</h1>
+<p class="lead">Retour : « seulement poing, pied, saut, garde au départ ; une icone au-dessus du personnage pour savoir quel pouvoir part ; le stick droit pour choisir ; d'abord le Ki, puis une seconde barre pour la transformation (un objet) ; une seule roulade, plus rapide que la course ; dire ce que fait un daemon libere ». Journal : <code>tools/playtest/contrôles_spéciaux.md</code>. Images : vrai moteur.</p>
+
+<h2>1. Roulade : une seule, plus rapide que la course</h2>
+<div class="g">
+<div class="c"><span class="tag">Avant</span><img src="controles_speciaux/roulade_avant.webp" alt="roulade avant" loading="lazy"><p>Trois familles tirees au hasard (roulade, salto, esquive de 20 images), 112 px : plus lent que courir.</p></div>
+<div class="c"><span class="tag ap">Après</span><img src="controles_speciaux/roulade_apres.webp" alt="roulade apres" loading="lazy"><p>Une roulade avant, une arrière, toujours la même. Vitesse effective 1,3 x la course du héros.</p></div>
+</div>
+<table>
+<tr><th>Mesure (test)</th><th>Résultat</th></tr>
+<tr><td>Distance de roulade contre course sur le même nombre d'images, 14 héros, avant et arrière</td><td>roulade > course x 1,05 pour tous</td></tr>
+<tr><td>Invulnerabilite</td><td>70 % de l'animation, la reception reste vulnerable</td></tr>
+<tr><td>Graines differentes du monde</td><td>même animation et même duree</td></tr>
+</table>
+
+<h2>2. Selecteur de spécial</h2>
+<div class="g">
+<div class="c"><span class="tag ap">Icone sur la tête</span><img src="controles_speciaux/selecteur.png" alt="icone au-dessus du heros" loading="lazy"><p>Glyphe du pouvoir qui part, anneau de recharge, un point par pouvoir (le choisi est allume).</p></div>
+<div class="c"><span class="tag ap">Direction tenue</span><img src="controles_speciaux/selecteur_dir.png" alt="direction tenue" loading="lazy"><p>Haut, bas ou avant tenu : l'icone montre le pouvoir de cette direction avant le lancement.</p></div>
+</div>
+<p>Manette : stick droit = choisir (haut, bas, avant ; direction sans pouvoir = retour au neutre), Spécial = lancer. Tactile : maintenir Pouvoir, glisser, relâcher. Clavier : Tab ou direction + Spécial. Même chose hors roguelite sur les cinq touches Spécial du héros.</p>
+
+<h2>3. Deux barres : Ki puis transformation</h2>
+<div class="g">
+<div class="c"><span class="tag ap">Ki plein, forme qui monte</span><img src="controles_speciaux/barres.png" alt="barre de forme" loading="lazy"><p>La barre FORME n'avance que Ki plein, et seulement si le héros a l'objet de transformation.</p></div>
+</div>
+
+<h2>4. Daemon libere : nom, effet, liste</h2>
+<div class="g">
+<div class="c"><span class="tag ap">Bandeau 3 s</span><img src="controles_speciaux/compagnon.png" alt="bandeau compagnon libere" loading="lazy"><p>Icone, nom et effet en six mots.</p></div>
+<div class="c"><span class="tag ap">Menu pause</span><img src="controles_speciaux/pause.png" alt="menu pause" loading="lazy"><p>Le daemon et son effet font partie des objets et bonus obtenus.</p></div>
+</div>
+</body></html>
