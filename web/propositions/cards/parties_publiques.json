@@ -1,0 +1,7 @@
+[
+  {"id": "pp_attente", "titre": "Compte a rebours de la salle d'attente", "texte": "20 s par defaut (le chef le change : 10, 20, 30, 60 s). Garder 20 s ?", "page": "parties_publiques.html"},
+  {"id": "pp_rattrapage", "titre": "Arrivee en cours d'etage", "texte": "Par defaut on rejoint tout de suite avec rattrapage ; « Attendre le prochain etage » existe dans la liste. Garder ce choix par defaut ?", "page": "parties_publiques.html"},
+  {"id": "pp_modes", "titre": "Modes en partie publique", "texte": "Ascension, Combat libre, Horde, Drapeau (un pool par mode). Ajouter un filtre par niveau de difficulte ?", "page": "parties_publiques.html"},
+  {"id": "pp_latence", "titre": "Latence dans la liste", "texte": "Le relais est unique : on affiche TON ping, pas un ping par partie. Suffisant ?", "page": "parties_publiques.html"},
+  {"id": "pp_kit", "titre": "Kit de rattrapage", "texte": "Pouvoir de depart + un par etage franchi (4 au plus). Faut-il plutot copier le niveau moyen de l'equipe ?", "page": "parties_publiques.html"}
+]

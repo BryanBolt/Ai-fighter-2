@@ -1080,6 +1080,14 @@ miniquad_add_plugin({
           }).catch(function () {});
         }
         if (kind === 3) window.afhNfcCode = "";
+        // kind 4 : METTRE A JOUR (version differente des autres joueurs) : desinscrit le service worker, vide les caches afh-, recharge.
+        if (kind === 4) {
+          var done = function () { location.reload(); };
+          var pr = [];
+          try { if (navigator.serviceWorker && navigator.serviceWorker.getRegistrations) pr.push(navigator.serviceWorker.getRegistrations().then(function (rs) { return Promise.all(rs.map(function (r) { return r.unregister(); })); })); } catch (e) {}
+          try { if (window.caches) pr.push(caches.keys().then(function (ks) { return Promise.all(ks.filter(function (k) { return /^afh-/.test(k); }).map(function (k) { return caches.delete(k); })); })); } catch (e) {}
+          Promise.all(pr).then(done, done); setTimeout(done, 4000);
+        }
       } catch (e) {}
       return 0;
     };

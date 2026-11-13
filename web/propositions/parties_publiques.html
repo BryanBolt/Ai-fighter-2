@@ -1,0 +1,37 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Parties publiques</title>
+<style>:root{--ink:#221834;--paper:#fff3e0;--acc:#c03a5e}body{font:16px system-ui;background:var(--paper);color:var(--ink);margin:0;padding:16px}h1{font-size:24px}h2{margin-top:32px}
+table{border-collapse:collapse;width:100%;max-width:980px}td,th{border:1px solid #0002;padding:8px;text-align:left;vertical-align:top}th{background:#2218340f}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start}figure{margin:0}figure img{display:block;max-width:420px;width:100%;height:auto;border-radius:8px;border:1px solid #0003}figcaption{font-size:14px}
+a.btn{display:inline-block;min-height:44px;line-height:44px;padding:0 16px;background:var(--acc);color:#fff;border-radius:22px;text-decoration:none}</style></head><body>
+<h1>Parties publiques : on se retrouve enfin</h1>
+<p><b>Ce qui n'allait pas</b> : Ascension, Horde et Drapeau n'avaient aucune partie publique (chacun créait sa propre partie privée), et un jeu pas à jour créait en silence une partie vide à part. Maintenant « Partie publique » = <b>rejoindre sinon créer</b>, par mode.</p>
+<h2>Le parcours</h2>
+<table><tr><th>Étape</th><th>Ce qui se passe</th></tr>
+<tr><td>1. Partie publique</td><td>Tu choisis le mode (Ascension, Combat libre, Horde, Drapeau). Chaque carte dit combien de joueurs sont déjà là.</td></tr>
+<tr><td>2. Salle d'attente</td><td>Une partie du même mode au départ ? Tu la rejoins. Sinon tu en ouvres une : « En attente de joueurs… », 1 à 8 places, départ dans 20 s (le chef peut changer la durée ou toucher « Lancer maintenant »). Deux joueurs qui appuient en même temps se retrouvent toujours dans la même salle.</td></tr>
+<tr><td>3. Arrivée en cours de partie</td><td>Au départ ou entre deux étages : arrivée propre. En cours d'étage : tu prends l'étage actuel (même monde pour tous), protégé quelques secondes, avec le kit de rattrapage ; l'équipe voit « X rejoint l'équipe ».</td></tr>
+<tr><td>4. Liste des parties</td><td>Mode, étage, joueurs n/max, état (au départ / en cours / entre deux étages), ton ping. Une partie en cours propose « Rejoindre à l'étage N » ou « Attendre le prochain étage ». « Créer ma partie » est toujours là.</td></tr>
+<tr><td>5. Échecs</td><td>Jeu pas à jour : <b>Mettre à jour</b> (vide le cache et recharge). Partie pleine : <b>Chercher une autre partie</b>. Hors ligne : <b>Réessayer</b>. Jamais d'écran sans issue.</td></tr></table>
+<h2>Choix du mode</h2>
+<div class="row">
+<figure><img loading="lazy" src="parties_publiques/844x390_onpublic.png" alt="Choix du mode en 844x390"><figcaption>844x390</figcaption></figure>
+<figure><img loading="lazy" src="parties_publiques/412x915_onpublic.png" alt="Choix du mode en 412x915"><figcaption>412x915</figcaption></figure>
+</div>
+<h2>Salle d'attente</h2>
+<div class="row">
+<figure><img loading="lazy" src="parties_publiques/844x390_onwait.png" alt="Salle d'attente en 844x390"><figcaption>844x390</figcaption></figure>
+<figure><img loading="lazy" src="parties_publiques/412x915_onwait.png" alt="Salle d'attente en 412x915"><figcaption>412x915</figcaption></figure>
+</div>
+<h2>Liste des parties publiques</h2>
+<div class="row">
+<figure><img loading="lazy" src="parties_publiques/844x390_onlist.png" alt="Liste en 844x390"><figcaption>844x390</figcaption></figure>
+<figure><img loading="lazy" src="parties_publiques/412x915_onlist.png" alt="Liste en 412x915"><figcaption>412x915</figcaption></figure>
+</div>
+<h2>Erreur claire</h2>
+<div class="row">
+<figure><img loading="lazy" src="parties_publiques/844x390_onerr.png" alt="Erreur en 844x390"><figcaption>844x390 (partie terminée : Créer une partie)</figcaption></figure>
+<figure><img loading="lazy" src="parties_publiques/412x915_onerr.png" alt="Erreur en 412x915"><figcaption>412x915</figcaption></figure>
+</div>
+<h2>Preuves</h2>
+<p>Relais : 11 tests (course à deux, attente, rattrapage, 8 joueurs, modes séparés, version refusée). Vrai relais avec de vrais clients : deux joueurs simultanés puis arrivée en cours avec rattrapage, empreintes de simulation identiques chez tous. Détails : <code>tools/playtest/parties_publiques.md</code>.</p>
+</body></html>

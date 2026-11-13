@@ -15,7 +15,7 @@ import { createPush } from './push.js';
 import { createReports, cleanReport } from './reports.js';
 import { createTelemetry } from './telemetry.js';
 
-export const PROTOCOL_VERSION = 33; // 33 : roulade arriere sans style de sprint ; 32 : roulade a la vitesse exacte de la course, poses uniques parade/recul/esquive ; 31 : roulade unique et plus rapide que la course (plus de tirage au hasard), transformation = Ki PLEIN puis seconde barre (ki_hold dans l empreinte) ; 30 : arme d origine jetable / cassable, agrafeuse de melee; // 29 : niveaux epures (oeufs retires, passage de pigeons retire) ; 28 : menu ouvert = heros protege (bit 28 de l'entree), ami qui rejoint protege 3 s ; 27 : modes de groupe : foot / course / sumo / colline retires, drapeau refait (capture de drapeau) ; 26 : armes et grenades (munitions finies sans recharge, grenade qui explose au contact ou au sol, degats de zone, portee de lancer +40 %), catalogue roguelite de 24 pouvoirs sans armes, adaptation d'equipe remise a zero a chaque run, parts d'equipe recalibrees ; 25 : terrains cohérents ; 24 : roguelite : vagues 2 a 4 ennemis, ennemis en plus, choix 35 s ; 23 : roguelite : niveaux n/max, offres sans doublon ; 22 : arrivee / retour EN DEUX TEMPS (le client rejoue le journal pendant que la place reste a l'IA ou en attente neutre, puis annonce `ready` : la reprise tombe apres SON image, plus jamais de gel des autres ni de boucle de relance), empreintes envoyees meme pendant les remplissages du relais, entree locale deja simulee contredite par le relais = reprise ciblee ; 21 : equilibre solo/duo du roguelite (nouvelles valeurs de simulation) ; 20 : roguelite en biomes (4 biomes, boss final, boucle plus dure, victoire dans l empreinte) ; 19 : roguelite coop : choix d un pouvoir parmi 3 propositions personnelles par etape (palier standard / cool apres un gros boss), minuterie 10 s, choix par defaut, nouveaux champs de cartes dans l empreinte ; 18 : une IA qui remplace un humain parti tient la place jusqu'a la fin du tableau (changement de vague) puis le heros s'efface, dans TOUS les salons ; 17 : empreinte de build (champ `b` du hello, un salon refuse un build different) ; 16 : roguelite coop (un pouvoir aleatoire par etape, vie partagee : le releveur paie 30 % de ses PV, nouveaux champs dans l'empreinte) ; 15 : anti-sandwich (jetons d'attaque, plafond de coups subis, nouveaux etats dans l'empreinte) ; 14 : empreinte de simulation etendue (univers, tournoi), commande tourn, messages watch / emote (spectateur), idle / need_resync ; 13 : pouvoir actif du roguelite (bits 25-27 de l entree) ; 12 : modes de groupe (mode 5, commande group) ; 11 : accessoires COSMETIQUES (message cos, champ cos des joueurs du salon) ; 10 : daemon de chaque joueur au salon (champ `daemon` des messages lobby et room) ; 9 : mode ROGUELITE en coop (mode 3 : run d equipe, cartes personnelles, etages) ; 8 : nunchaku (nouvelle arme ramassable, serie de six coups, Pied = coups de pied avec l'arme) et armes au sol du dojo/temple changees ; 7 : entree Saisie (nouveau bit d'entree) + coups renommes (SCHEMA_VERSION 8) ; 6 : table des coups changee (grammaire X/Y des 9 autres heros, SCHEMA_VERSION 7) ; 5 : jusqu'a 8 joueurs, vague/PV de depart (solo -> en ligne) ; 4 : table des coups changee (aeriens, realisme, grammaire X/Y ; tir allie, QA). 3 : parties hebergees (jeu complet : loadout, cmd sequences). 2 : join_any / host. Seuls les clients v8 sont acceptes.
+export const PROTOCOL_VERSION = 34; // 34 : matchmaking public « rejoindre sinon creer » (message `match`, salle d'attente avec compte a rebours, etat/etage dans la liste, rattrapage en cours d'etage) ; 33 : roulade arriere sans style de sprint ; 32 : roulade a la vitesse exacte de la course, poses uniques parade/recul/esquive ; 31 : roulade unique et plus rapide que la course (plus de tirage au hasard), transformation = Ki PLEIN puis seconde barre (ki_hold dans l empreinte) ; 30 : arme d origine jetable / cassable, agrafeuse de melee; // 29 : niveaux epures (oeufs retires, passage de pigeons retire) ; 28 : menu ouvert = heros protege (bit 28 de l'entree), ami qui rejoint protege 3 s ; 27 : modes de groupe : foot / course / sumo / colline retires, drapeau refait (capture de drapeau) ; 26 : armes et grenades (munitions finies sans recharge, grenade qui explose au contact ou au sol, degats de zone, portee de lancer +40 %), catalogue roguelite de 24 pouvoirs sans armes, adaptation d'equipe remise a zero a chaque run, parts d'equipe recalibrees ; 25 : terrains cohérents ; 24 : roguelite : vagues 2 a 4 ennemis, ennemis en plus, choix 35 s ; 23 : roguelite : niveaux n/max, offres sans doublon ; 22 : arrivee / retour EN DEUX TEMPS (le client rejoue le journal pendant que la place reste a l'IA ou en attente neutre, puis annonce `ready` : la reprise tombe apres SON image, plus jamais de gel des autres ni de boucle de relance), empreintes envoyees meme pendant les remplissages du relais, entree locale deja simulee contredite par le relais = reprise ciblee ; 21 : equilibre solo/duo du roguelite (nouvelles valeurs de simulation) ; 20 : roguelite en biomes (4 biomes, boss final, boucle plus dure, victoire dans l empreinte) ; 19 : roguelite coop : choix d un pouvoir parmi 3 propositions personnelles par etape (palier standard / cool apres un gros boss), minuterie 10 s, choix par defaut, nouveaux champs de cartes dans l empreinte ; 18 : une IA qui remplace un humain parti tient la place jusqu'a la fin du tableau (changement de vague) puis le heros s'efface, dans TOUS les salons ; 17 : empreinte de build (champ `b` du hello, un salon refuse un build different) ; 16 : roguelite coop (un pouvoir aleatoire par etape, vie partagee : le releveur paie 30 % de ses PV, nouveaux champs dans l'empreinte) ; 15 : anti-sandwich (jetons d'attaque, plafond de coups subis, nouveaux etats dans l'empreinte) ; 14 : empreinte de simulation etendue (univers, tournoi), commande tourn, messages watch / emote (spectateur), idle / need_resync ; 13 : pouvoir actif du roguelite (bits 25-27 de l entree) ; 12 : modes de groupe (mode 5, commande group) ; 11 : accessoires COSMETIQUES (message cos, champ cos des joueurs du salon) ; 10 : daemon de chaque joueur au salon (champ `daemon` des messages lobby et room) ; 9 : mode ROGUELITE en coop (mode 3 : run d equipe, cartes personnelles, etages) ; 8 : nunchaku (nouvelle arme ramassable, serie de six coups, Pied = coups de pied avec l'arme) et armes au sol du dojo/temple changees ; 7 : entree Saisie (nouveau bit d'entree) + coups renommes (SCHEMA_VERSION 8) ; 6 : table des coups changee (grammaire X/Y des 9 autres heros, SCHEMA_VERSION 7) ; 5 : jusqu'a 8 joueurs, vague/PV de depart (solo -> en ligne) ; 4 : table des coups changee (aeriens, realisme, grammaire X/Y ; tir allie, QA). 3 : parties hebergees (jeu complet : loadout, cmd sequences). 2 : join_any / host. Seuls les clients v8 sont acceptes.
 const COMPAT_VERSIONS = [PROTOCOL_VERSION]; // derive de PROTOCOL_VERSION : ne peut plus diverger (v8 etait refuse par erreur, ancienne valeur [7]) ; // protocole 7 : les clients 1 a 6 n'ont pas la meme table de coups (et 1 a 4 ne savent pas lire des salons de 8 places), ils doivent se mettre a jour
 const HOSTED_SIZE = 2; // taille par defaut d une partie hebergee (anciens clients) ; le client actuel demande 4 avec `size` (places vides dormantes)
 const HOSTED_MIN = 2; // taille minimale demandable
@@ -295,7 +295,7 @@ export function createServer(opts = {}) {
     if (rep) errReports.store(rep);
   }
   const lobbyView = (room) => ({
-    t: 'room', code: room.code, public: room.public, started: room.started, auto: room.auto, run: room.run, options: { ...room.options, ff: room.ff !== false, ffm: room.ffm, pal: room.pal !== false }, host: hostSlot(room), nm: room.nm | 0, nme: netMode(room), full: !!room.full, mode: room.mode | 0, chapter: room.chapter | 0, private: !room.public, keep: !!room.keep, ttl: Math.round(roomTtl / 60000),
+    t: 'room', code: room.code, public: room.public, started: room.started, auto: room.auto, run: room.run, options: { ...room.options, ff: room.ff !== false, ffm: room.ffm, pal: room.pal !== false }, host: hostSlot(room), nm: room.nm | 0, nme: netMode(room), full: !!room.full, mode: room.mode | 0, chapter: room.chapter | 0, private: !room.public, keep: !!room.keep, ttl: Math.round(roomTtl / 60000), wait: waitView(room), state: roomState(room), floor: room.floor | 0,
     players: room.slots.map((s, i) => ({ slot: i, name: s.name, char: s.char, color: s.color, daemon: s.daemon, cos: s.cos || '', pid: (s.ws && clients.get(s.ws)?.fpid) || '', ready: s.ready, online: !!s.ws, mode: s.mode })),
   });
   // Diffusion : le message est serialise UNE fois (avant : une serialisation par destinataire, 5 a 7 fois pour 6 a 8 joueurs sur 60 entrees/s par joueur).
@@ -328,7 +328,7 @@ export function createServer(opts = {}) {
   // Liste publique : seulement les salons habites, les plus remplis (puis les plus recents) d'abord, bornee.
   const publicList = () => [...rooms.values()].filter((r) => r.public && humans(r).length > 0)
     .sort((a, b) => (humans(b).length / b.options.size - humans(a).length / a.options.size) || (b.created - a.created)).slice(0, 50)
-    .map((r) => ({ code: r.code, auto: r.auto, stage: r.options.stage, run: r.run, wave: r.wave, n: humans(r).length, max: r.options.size, started: r.started, host: r.slots.find((s) => s.ws)?.name || '', full: !!r.full, mode: r.mode | 0, chapter: r.chapter | 0, open: humans(r).length < r.options.size, age: Math.round((Date.now() - r.created) / 1000), players: humans(r).map(([s]) => s.name) }));
+    .map((r) => ({ code: r.code, auto: r.auto, stage: r.options.stage, run: r.run, wave: r.wave, n: humans(r).length, max: roomCap(r), started: r.started, host: r.slots.find((s) => s.ws)?.name || '', full: !!r.full, mode: r.mode | 0, chapter: r.chapter | 0, key: r.mk || '', state: roomState(r), floor: r.floor | 0, open: humans(r).length < roomCap(r), wait: waitView(r), age: Math.round((Date.now() - r.created) / 1000), players: humans(r).map(([s]) => s.name) }));
   function hostSlot(room) { return room.slots.findIndex((s) => s.ws); }
   // Etat public d'un salon connu par son code : AUCUNE donnee personnelle (pseudos et heros seulement, jamais d'adresse).
   function peekRoom(code) {
@@ -388,7 +388,7 @@ export function createServer(opts = {}) {
       }
       s.hi = -1; s.journal = []; s.lastMove = Date.now(); s.lastInputAt = Date.now(); s.lastBits = 0; s.cmds = 0; s.loadouts = 0; s.afkWarned = false;
     });
-    room.started = true; room.ctl = []; room.hashes = new Map(); room.hlog = []; room.agreed = new Map();
+    room.started = true; room.startedAt = Date.now(); room.ctl = []; room.hashes = new Map(); room.hlog = []; room.agreed = new Map();
     // Revanche apres une defaite : MEME graine (meme terrain, memes vagues) ; nouvelle graine seulement apres une victoire.
     room.seed = (room.keepSeed && room.seed) ? room.seed : ((rnd(0x7fffffff) >>> 0) || 1);
     room.keepSeed = false;
@@ -607,6 +607,7 @@ export function createServer(opts = {}) {
     for (const w of room.watchers) { const wc = clients.get(w); if (wc) wc.watch = null; send(w, { t: 'ended', code: room.code }); }
     room.watchers.clear();
     if (room.restartTimer) clearTimeout(room.restartTimer);
+    if (room.waitTimer) clearTimeout(room.waitTimer);
     if (room.inT) clearTimeout(room.inT);
     reports.delete(room.code);
     banned.delete(room.code); // la liste des expulses disparait avec le salon (sinon elle fuit en memoire)
@@ -682,7 +683,7 @@ export function createServer(opts = {}) {
     evictOwned(c.ip);
     if (roomsOfIp(c.ip) >= MAX_ROOMS_PER_IP && !isLocal(c.ip)) return send(ws, { t: 'error', msg: 'Trop de parties ouvertes depuis cette connexion', code: 'limit' });
     const room = makeRoom(!priv); room.build = c.build;
-    room.auto = true; room.keep = !!keep; room.ownerIp = c.ip;
+    room.auto = true; room.keep = !!keep; room.ownerIp = c.ip; if (!full) room.mk = 'arena';
     if (typeof ff === 'boolean') room.ff = ff;
     if (nm !== undefined) room.nm = int(nm, 0, 2, 0);
     if (full) {
@@ -719,6 +720,103 @@ export function createServer(opts = {}) {
       if (idx >= 0) { if (open.full) open.slots[idx].loadout = cleanLoadout(m.loadout); finishJoin(open, ws, c, idx); return send(ws, { t: 'matched', how: 'joined', code: open.code, n: humans(open).length, max: open.options.size }); }
     }
     hostNew(ws, c, char, false, undefined, null, typeof m.ff === 'boolean' ? m.ff : undefined, m.keep === true, m.nm);
+  }
+
+  // ---- MATCHMAKING PUBLIC « rejoindre sinon creer » : une seule fonction synchrone (le relais traite les messages un par un) -> deux joueurs qui appuient
+  // en meme temps tombent TOUJOURS dans la meme salle (le premier la cree, le second la trouve) ; jamais deux salles vides.
+  const WAIT_MS = opts.waitMs ?? (Number(process.env.MATCH_WAIT_MS) || 20000); // compte a rebours de la salle d'attente (modifiable par l'hote : 5 a 60 s)
+  const ENTRY_GRACE_MS = opts.entryGraceMs ?? 25000; // apres le depart, la salle reste un « point d'entree propre » (aucun rattrapage a jouer)
+  const matchKey = (m) => (m.full && typeof m.full === 'object' ? `m${int(m.full.mode, 0, 5)}:${int(m.full.mode, 0, 5) === 5 ? int(m.full.chapter, 0, 64) % 8 : 0}` : 'arena');
+  const roomCap = (r) => (r.started && r.config ? Math.max(r.config.size, r.options.size) : (r.full ? (r.hostedSize || HOSTED_SIZE) : MAX_SLOTS));
+  function roomState(room) {
+    if (!room.started) return room.wait ? 'waiting' : 'lobby';
+    if (room.between) return 'between';
+    if ((room.floor | 0) === 0 && (room.wave | 0) === 0 && Date.now() - (room.startedAt || 0) < ENTRY_GRACE_MS) return 'start';
+    return 'live';
+  }
+  const waitView = (room) => (!room.started && room.wait ? { left: Math.max(0, room.wait.until - Date.now()), total: room.wait.total } : null);
+  function launchWaiting(room) {
+    if (room.waitTimer) { clearTimeout(room.waitTimer); room.waitTimer = null; }
+    if (room.started || !rooms.has(room.code) || humans(room).length === 0) return;
+    room.wait = null;
+    startAuto(room);
+    for (const [s, i] of humans(room)) if (room.full && s.loadout) control(room, i, 0, { kind: 'loadout', data: s.loadout });
+  }
+  function armWait(room, ms) {
+    if (room.waitTimer) clearTimeout(room.waitTimer);
+    room.wait = { until: Date.now() + ms, total: ms };
+    room.waitTimer = setTimeout(() => launchWaiting(room), ms); room.waitTimer.unref?.();
+  }
+  // « Attendre le prochain etage » : le joueur est mis en file ; au premier point d'entree propre (etage fini, cartes de pouvoir) il est assis comme par `join`.
+  function queueRoom(ws, c, m) {
+    const room = rooms.get(cleanCode(m.code));
+    if (!room || !room.started) return send(ws, { t: 'error', msg: 'Cette partie est introuvable ou terminee', code: 'gone' });
+    if (isBanned(room.code, c)) return send(ws, { t: 'error', msg: 'Tu as ete expulse de ce salon' });
+    if (buildClash(room, c)) return sendClash(ws);
+    if (c.room) leaveRoom(c, ws, true);
+    if (roomState(room) !== 'live') return joinRoom(ws, c, room.code, m);
+    if (!room.queue) room.queue = new Map();
+    if (room.queue.size >= 16) return send(ws, { t: 'error', msg: 'Trop de joueurs en attente pour cette partie', code: 'full' });
+    room.queue.set(ws, { char: m.char, color: m.color, loadout: m.loadout });
+    send(ws, { t: 'queued', code: room.code, floor: room.floor | 0 });
+  }
+  function flushQueue(room) {
+    const q = room.queue; room.queue = null;
+    if (!q) return;
+    for (const [w, m] of q) { const qc = clients.get(w); if (qc && !qc.room && w.readyState === 1) joinRoom(w, qc, room.code, m); }
+  }
+  function matchRoom(ws, c, m) {
+    if (!matchOk(ws, c)) return;
+    if (c.room) leaveRoom(c, ws, true);
+    const char = Math.max(0, Math.min(ROSTER - 1, m.char | 0));
+    if (m.name) c.name = cleanName(m.name);
+    if (Number.isInteger(m.color)) c.color = m.color;
+    const now = Date.now();
+    for (const r of rooms.values()) { if (!r.started) continue; const back = reclaim(r, ws, c); if (back >= 0) return finishJoin(r, ws, c, back); }
+    const key = matchKey(m);
+    const late = m.late !== false;
+    const fits = (r) => r.public && r.auto && r.mk === key && humans(r).length > 0 && humans(r).length < roomCap(r);
+    const cands = [...rooms.values()].filter((r) => fits(r) && !isBanned(r.code, c) && !buildClash(r, c));
+    const rank = (r) => ({ waiting: 0, start: 1, between: 1, live: 2 }[roomState(r)] ?? 3);
+    cands.sort((a, b) => (rank(a) - rank(b)) || (humans(b).length - humans(a).length) || (a.created - b.created));
+    const open = cands.find((r) => late || rank(r) < 2);
+    if (open) return seat(ws, c, open, char, m, now, 'joined');
+    // Des salles existent mais d'une AUTRE version du jeu : on le dit (sinon chacun se retrouve seul dans sa partie sans comprendre pourquoi).
+    const other = [...rooms.values()].some((r) => fits(r) && buildClash(r, c));
+    if (rooms.size >= maxRooms) return send(ws, { t: 'error', msg: 'Serveur plein, reessaie dans un instant', code: 'full' });
+    evictOwned(c.ip);
+    if (roomsOfIp(c.ip) >= MAX_ROOMS_PER_IP && !isLocal(c.ip)) return send(ws, { t: 'error', msg: 'Trop de parties ouvertes depuis cette connexion', code: 'limit' });
+    const room = makeRoom(true); room.build = c.build; room.auto = true; room.keep = m.keep !== false; room.ownerIp = c.ip; room.mk = key;
+    if (typeof m.ff === 'boolean') room.ff = m.ff;
+    if (m.nm !== undefined) room.nm = int(m.nm, 0, 2, 0);
+    if (m.full && typeof m.full === 'object') {
+      const f = m.full; room.full = true; room.mode = int(f.mode, 0, 5); room.chapter = int(f.chapter, 0, 64);
+      room.hostedSize = int(f.size, HOSTED_MIN, MAX_SLOTS, HOSTED_SIZE);
+      if (Number.isInteger(f.stage) && f.stage >= 0 && f.stage < FULL_STAGES) room.fixedStage = f.stage;
+    }
+    room.options = { size: roomCap(room), stage: 0 };
+    armWait(room, int(m.wait, 5000, 60000, WAIT_MS));
+    const idx = attach(room, ws, c, c.name);
+    room.slots[idx].char = char; if (room.full) room.slots[idx].loadout = cleanLoadout(m.loadout);
+    send(ws, { ...lobbyView(room), you: idx, token: c.token });
+    send(ws, { t: 'matched', how: 'created', code: room.code, state: 'waiting', n: 1, max: roomCap(room), other });
+  }
+  function seat(ws, c, room, char, m, now, how) {
+    if (!room.started) {
+      const idx = attach(room, ws, c, c.name);
+      if (idx < 0) return send(ws, { t: 'error', msg: 'Cette partie est pleine', code: 'full' });
+      room.slots[idx].char = char; if (room.full) room.slots[idx].loadout = cleanLoadout(m.loadout);
+      finishJoin(room, ws, c, idx);
+      send(ws, { t: 'matched', how, code: room.code, state: 'waiting', n: humans(room).length, max: roomCap(room) });
+      if (humans(room).length >= roomCap(room)) { if (room.waitTimer) clearTimeout(room.waitTimer); room.waitTimer = setTimeout(() => launchWaiting(room), 800); room.waitTimer.unref?.(); }
+      return;
+    }
+    const state = roomState(room);
+    const idx = takeAi(room, ws, c, char, now);
+    if (idx < 0) return send(ws, { t: 'error', msg: 'Cette partie est pleine', code: 'full' });
+    if (room.full) room.slots[idx].loadout = cleanLoadout(m.loadout);
+    finishJoin(room, ws, c, idx);
+    send(ws, { t: 'matched', how, code: room.code, state, floor: room.floor | 0, n: humans(room).length, max: roomCap(room), catchup: state === 'live' });
   }
   function hostGame(ws, c, m) {
     if (!rateOk(ws, c) || !matchOk(ws, c)) return;
@@ -847,7 +945,9 @@ export function createServer(opts = {}) {
     }
     const idx = attach(room, ws, c, c.name);
     if (idx < 0) return roomFull(room, ws, c, m);
+    if (room.wait) { room.slots[idx].char = int(m.char, 0, ROSTER - 1); if (room.full) room.slots[idx].loadout = cleanLoadout(m.loadout); }
     finishJoin(room, ws, c, idx);
+    if (room.wait && humans(room).length >= roomCap(room)) { if (room.waitTimer) clearTimeout(room.waitTimer); room.waitTimer = setTimeout(() => launchWaiting(room), 800); room.waitTimer.unref?.(); }
   }
   function finishJoin(room, ws, c, idx) {
     send(ws, { ...lobbyView(room), you: idx, token: c.token });
@@ -891,6 +991,8 @@ export function createServer(opts = {}) {
         if (m.token && /^[0-9a-f]{24}$/.test(m.token)) c.token = m.token;
         return send(ws, { t: 'welcome', v: PROTOCOL_VERSION, id: c.id, token: c.token });
       case 'join_any': return joinAny(ws, c, m);
+      case 'match': return matchRoom(ws, c, m);
+      case 'queue': return queueRoom(ws, c, m);
       case 'watch': return watchRoom(ws, c, m.code);
       case 'unwatch': { const r = c.watch; unwatch(c, ws); if (r) broadcast(r, { t: 'watchers', n: r.watchers.size }); return send(ws, { t: 'left' }); }
       case 'emote': { // reaction d'un spectateur sans place : relayee a tous, decorative, une par EMOTE_GAP_MS
@@ -999,6 +1101,7 @@ export function createServer(opts = {}) {
         if (Number.isInteger(m.ffm)) { room.ffm = Math.max(0, Math.min(2, m.ffm)); room.ff = room.ffm > 0; }
         if (typeof m.pal === 'boolean') room.pal = m.pal;
         if (m.nm !== undefined) room.nm = int(m.nm, 0, 2, room.nm | 0);
+        if (room.auto) return launchWaiting(room);
         return startGame(room);
       case 'report': { // signaler un joueur : assez de signalements distincts et il quitte le salon (public ou prive)
         const t = room.slots[m.slot | 0];
@@ -1181,9 +1284,16 @@ export function createServer(opts = {}) {
         broadcast(room, { t: 'chat', slot: c.slot, name: s.name, text });
         return;
       }
+      case 'wait': // salle d'attente : l'hote change le compte a rebours (5 a 60 s, repart de maintenant)
+        if (room.started || !room.wait || c.slot !== hostSlot(room)) return;
+        armWait(room, int(m.s, 5, 60, 20) * 1000);
+        return broadcast(room, lobbyView(room));
       case 'wave': // progression affichee dans la liste des parties en cours (seul un joueur actif la fait avancer)
         if (!room.started || s.mode !== 'human') return;
         room.wave = Math.max(0, Math.min(999, m.wave | 0));
+        if (Number.isInteger(m.floor)) room.floor = Math.max(0, Math.min(999, m.floor));
+        if (typeof m.between === 'boolean') room.between = m.between;
+        if (room.between && room.queue?.size) flushQueue(room);
         return;
       case 'end': // fin de partie : retour au salon (partie en cours : nouvelle partie apres un court ecran de resultats)
         if (!room.started) return;
