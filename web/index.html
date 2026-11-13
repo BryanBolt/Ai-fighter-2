@@ -1140,6 +1140,7 @@ miniquad_add_plugin({
         if (kind === 0 && location.protocol.indexOf("http") === 0) s = (location.protocol === "https:" ? "wss://" : "ws://") + location.host + "/";
         if (kind === 1) { var q = new URLSearchParams(location.search); var sal = String(q.get("salon") || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8); s = sal || (q.get("watch") ? "~" + q.get("watch") : ""); } // ?salon=%20k7m2q%20 : espaces, minuscules, texte colle autour = meme code // ?watch=CODE : mode spectateur (le jeu reconnait le prefixe ~)
         if (kind === 3 && new URLSearchParams(location.search).get("labo")) s = "1";
+        if (kind === 10 && new URLSearchParams(location.search).get("strikes") === "1") s = "1"; // ?strikes=1 : apercu des coups orientes (mannequin, tous les angles)
         if (kind === 6 && new URLSearchParams(location.search).get("perf") === "1") s = "1"; // ?perf=1 : overlay de diagnostic (fps, ms, entites)
         if (kind === 9) s = String(new URLSearchParams(location.search).get("transition") || "").slice(0, 12); // ?transition=droite|montee|descente|chute|glissade : apercu en boucle
         if (kind === 4) s = window.afhNfcCode || "";
