@@ -55,6 +55,7 @@ export function cleanSession(m) {
     screens: counters(m.screens), path: list(m.path, 16, (x) => cleanKey(x)), buttons: counters(m.buttons), moves: counters(m.moves),
     powers_offered: counters(m.powers_offered), powers_taken: counters(m.powers_taken), items_picked: counters(m.items_picked), items_used: counters(m.items_used),
     deaths: list(m.deaths, 20, (d) => (d && typeof d === 'object' ? { place: cleanKey(d.place), floor: num(d.floor, 9999), cause: cleanKey(d.cause), t: num(d.t, 1e7) } : null)),
+    text: (() => { const t = m.text && typeof m.text === 'object' ? m.text : {}; return { side: num(t.side, 16384), dpi: num(t.dpi, 16), glyphs: num(t.glyphs, 1e6), core: num(t.core, 1e6), used_h: num(t.used_h, 16384), lazy: num(t.lazy, 1e7), purges: num(t.purges, 1e6), refused: num(t.refused, 1e6), rebuilds: num(t.rebuilds, 1e6), sizes: num(t.sizes, 1e4) }; })(),
     floors: list(m.floors, 30, (d) => (d && typeof d === 'object' ? { place: cleanKey(d.place), floor: num(d.floor, 9999), s: num(d.s, 1e7), died: !!d.died } : null)),
   };
 }
@@ -143,7 +144,7 @@ export function createTelemetry(opts = {}) {
   }
   const CSV_COLS = ['sid', 'at', 'build', 'platform', 'device', 'browser', 'mode', 'place', 'floor', 'hero', 'dur', 'combat_s', 'menu_s', 'fps_med', 'outcome', 'abandon_s', 'rating', 'errors',
     'net.nm', 'net.nme', 'net.players', 'net.rtt_med', 'net.rtt_p95', 'net.rtt_worst_med', 'net.rtt_worst_p95', 'net.resumes', 'net.resync_fixed', 'net.resync_unfixed', 'net.reloads', 'net.soft_fills',
-    'freezes.n', 'freezes.over1s', 'freezes.total_ms', 'freezes.max_ms'];
+    'freezes.n', 'freezes.over1s', 'freezes.total_ms', 'freezes.max_ms', 'text.dpi', 'text.purges', 'text.refused', 'text.rebuilds', 'text.lazy'];
   const get = (o, p) => p.split('.').reduce((a, k) => (a == null ? a : a[k]), o);
   function toCsv(rows) {
     const esc = (v) => { const s = v == null ? '' : String(v); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
