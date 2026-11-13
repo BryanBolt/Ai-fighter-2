@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Menu sur la ville animee</title>
+<style>
+:root{--ink:#221834;--paper:#fff3e0;--acc:#d8456b;--ink2:#4a3d63;--card:#f6e6cc}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Nunito",system-ui,sans-serif;line-height:1.5}
+main{max-width:1100px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:1.6rem;margin:0 0 6px}
+h2{font-size:1.2rem;margin:34px 0 8px;border-bottom:3px solid var(--acc);padding-bottom:4px}
+p{margin:6px 0}
+.sub{color:var(--ink2)}
+.row{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start}
+figure{margin:0;background:var(--card);border-radius:14px;padding:10px}
+figure img{display:block;border-radius:8px;height:auto;max-width:100%}
+figcaption{font-size:.85rem;margin-top:6px;color:var(--ink2)}
+.p img{width:200px}.l img{width:420px}.t img{width:380px}
+.pick{border:3px solid var(--acc)}
+.tag{display:inline-block;background:var(--acc);color:var(--paper);border-radius:999px;padding:1px 10px;font-size:.8rem;margin-left:6px}
+ul{margin:6px 0 6px 20px;padding:0}
+button{min-height:44px;padding:0 18px;border:0;border-radius:999px;background:var(--ink);color:var(--paper);font:inherit;cursor:pointer}
+button.alt{background:var(--card);color:var(--ink)}
+textarea{width:100%;min-height:70px;border:2px solid var(--ink2);border-radius:10px;padding:8px;background:var(--paper);color:var(--ink);font:inherit}
+pre{white-space:pre-wrap}
+</style>
+</head>
+<body>
+<main>
+<h1>Le menu du titre sur la ville animee</h1>
+<p class="sub">Avant : l'animation n'occupait qu'un bandeau de 270 px en portrait, le reste etait une grande carte creme. Après : la ville sous la pluie remplit tout l'écran, le héros en garde se tient juste au-dessus du menu, et le menu est fait de plaques translucides posees dans la zone du pouce (bas en portrait, colonne de droite en paysage). Mêmes boutons, mêmes actions, mêmes cibles tactiles.</p>
+
+<h2>Avant (bandeau + grande carte)</h2>
+<div class="row">
+<figure class="p"><img src="menu_fond_anime/avant/portrait.webp" alt="Titre avant, portrait 412x915"><figcaption>Portrait 412x915</figcaption></figure>
+<figure class="l"><img src="menu_fond_anime/avant/paysage.webp" alt="Titre avant, paysage 844x390"><figcaption>Paysage 844x390 (la carte cachait la ville)</figcaption></figure>
+<figure class="t"><img src="menu_fond_anime/avant/tablette.webp" alt="Titre avant, tablette 1024x768"><figcaption>Tablette 1024x768</figcaption></figure>
+</div>
+
+<h2>Variante A : plaques creme <span class="tag">retenue</span></h2>
+<p>Chaque bouton est une plaque Papier a 90 % d'opacite (texte encre, contraste superieur a 12:1), bords arrondis, ombre portee, aplats sans flou. Le curseur clavier / manette = plaque pleine cerclee d'accent. Le plus proche de la charte actuelle.</p>
+<div class="row">
+<figure class="p pick"><img src="menu_fond_anime/apres_a/portrait.webp" alt="Variante A portrait"><figcaption>Portrait</figcaption></figure>
+<figure class="p pick"><img src="menu_fond_anime/apres_a/portrait_menu.webp" alt="Variante A sous-menu"><figcaption>Sous-menu (curseur)</figcaption></figure>
+<figure class="l pick"><img src="menu_fond_anime/apres_a/paysage.webp" alt="Variante A paysage"><figcaption>Paysage 844x390</figcaption></figure>
+<figure class="t pick"><img src="menu_fond_anime/apres_a/tablette.webp" alt="Variante A tablette"><figcaption>Tablette 1024x768</figcaption></figure>
+</div>
+
+<h2>Variante B : verre sombre</h2>
+<p>Plaques d'encre a 78 % avec texte creme : l'animation reste plus presente (la ville se devine derrière chaque bouton), ambiance plus nocturne. Moins proche du papier creme de la charte.</p>
+<div class="row">
+<figure class="p"><img src="menu_fond_anime/apres_b/portrait.webp" alt="Variante B portrait"><figcaption>Portrait</figcaption></figure>
+<figure class="l"><img src="menu_fond_anime/apres_b/paysage.webp" alt="Variante B paysage"><figcaption>Paysage 844x390</figcaption></figure>
+<figure class="t"><img src="menu_fond_anime/apres_b/tablette.webp" alt="Variante B tablette"><figcaption>Tablette 1024x768</figcaption></figure>
+</div>
+
+<h2>Variante C : une seule carte translucide</h2>
+<p>Un seul panneau creme a 86 % derrière tout le menu (boutons a l'ancienne, teintes d'encre), la ville visible autour. Plus calme, mais l'animation est plus masquee que dans A et B.</p>
+<div class="row">
+<figure class="p"><img src="menu_fond_anime/apres_c/portrait.webp" alt="Variante C portrait"><figcaption>Portrait</figcaption></figure>
+<figure class="l"><img src="menu_fond_anime/apres_c/paysage.webp" alt="Variante C paysage"><figcaption>Paysage 844x390</figcaption></figure>
+<figure class="t"><img src="menu_fond_anime/apres_c/tablette.webp" alt="Variante C tablette"><figcaption>Tablette 1024x768</figcaption></figure>
+</div>
+
+<h2>Autres formats (variante A)</h2>
+<div class="row">
+<figure class="p"><img src="menu_fond_anime/extra/petit.webp" alt="Petit telephone 360x640"><figcaption>Petit téléphone 360x640 : le héros rapetisse pour tenir entre le logo et le menu</figcaption></figure>
+<figure class="t"><img src="menu_fond_anime/extra/fold.webp" alt="Fold ouvert 884x1104"><figcaption>Fold ouvert 884x1104</figcaption></figure>
+</div>
+
+<h2>Ce que ca garantit</h2>
+<ul>
+<li>Texte : encre sur creme a 90 % (ou creme sur encre a 78 %), jamais sur la ville nue ; les petites lignes (stats, legendes) ont leur pastille.</li>
+<li>Budget : décor + menu = aplats et triangles, aucune allocation par image, aucun flou ni shader. Réglage Effets « Minimaux » : décor immobile.</li>
+<li>Responsive : portrait (menu en bas, le héros se glisse au-dessus), paysage et tablette (menu en colonne a droite, logo et héros a gauche), sous-menus sur le même principe.</li>
+<li>Hierarchie, actions, ordre clavier / manette et cibles tactiles inchanges.</li>
+</ul>
+
+<h2>Votre choix</h2>
+<p>Quelle variante garder ? A est en place par defaut.</p>
+<p><button onclick="r('Garder A')">Garder A</button> <button class="alt" onclick="r('Prendre B')">Prendre B</button> <button class="alt" onclick="r('Prendre C')">Prendre C</button> <button class="alt" onclick="r('A refaire')">À refaire</button></p>
+<textarea id="c" placeholder="Commentaire"></textarea>
+<pre id="o"></pre>
+</main>
+<script>function r(v){document.getElementById('o').textContent=v+' : '+document.getElementById('c').value}</script>
+</body>
+</html>

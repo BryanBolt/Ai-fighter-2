@@ -1,0 +1,6 @@
+[
+ {"id":"sr-1","titre":"Sons refaits : écoute","texte":"Écoute sons_refaits.html (avant / après rendus par le moteur) : les sons refaits (charge de Ki, rang de style, glace, sorcière, pas, ramassage, daemons, alertes, jingles) te conviennent-ils, ou lesquels refaire encore ?","page":"web/propositions/sons_refaits.html"},
+ {"id":"sr-2","titre":"Pluie en boucle","texte":"La pluie en boucle est désactivée par défaut (elle joue à -18 dB seulement si « Volume des ambiances » est à 70 % ou plus). La supprimer pour de bon, ou la garder derrière ce réglage ?","page":"tools/playtest/sons_mixage.md"},
+ {"id":"sr-3","titre":"Choc d'armes supprimé","texte":"Le choc d'armes a disparu : la parade parfaite joue le blocage libre retenu, le choc de Ki joue l'onde de choc grave. Cela te va, ou veux-tu un son dédié à la parade ?","page":"tools/playtest/sons_mixage.md"},
+ {"id":"sr-4","titre":"Jingles très discrets","texte":"Les quatre jingles (victoire, défaite, bilan, bonus) sont maintenant de courts motifs de notes rondes (0,6 à 1,2 s). Les garder, ou les supprimer là où ils dérangent (bonus, bilan) ?","page":"web/propositions/sons_refaits.html"}
+]

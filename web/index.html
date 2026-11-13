@@ -882,32 +882,58 @@ miniquad_add_plugin({
     importObject.env.afh_focus_lost =function () { try { return window.afhGuard ? window.afhGuard.takeHidden() : 0; } catch (e) { return 0; } };
     // Preference systeme « reduire les animations » (reglage d'accessibilite) : 1 si activee.
     importObject.env.afh_reduced_motion = function () { try { return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 1 : 0; } catch (e) { return 0; } };
-    // Musiques a la demande (hors du wasm : -11 Mo) : le jeu sonde afh_music_size (0 = en cours, -1 = echec, n = octets prets),
-    // puis copie le morceau avec afh_music_copy. Un echec reseau est retente 1 fois (3 s plus tard) avant d'etre definitif.
+    // Musiques a la demande (hors du wasm) : le jeu sonde afh_music_size (0 = en cours, -1 = echec, n = octets prets),
+    // puis copie le morceau avec afh_music_copy. Chaque .ogg est telecharge, decode (WebAudio), raccorde en boucle (fondu croise
+    // de 1 s fin -> debut, meme calcul que loop_crossfade cote Rust) et rendu en WAV mono 16 bits ; la copie vide l'entree
+    // (un morceau demande a nouveau est retelecharge depuis le cache HTTP) : jamais plus de 2 morceaux gardes cote jeu.
+    // Un echec reseau est retente 1 fois (3 s plus tard) avant d'etre definitif.
+    var MUS_NAMES = ["final_escalation_title", "final_escalation_v2", "final_escalation_finale", "final_escalation", "final_escalation_3", "final_escalation_4", "level_1", "level_2"];
     var mus = {};
-    function musGet(name, retry) {
+    function musLoopWav(ab) {
+      var OAC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+      var ctx = new OAC(1, 1, 44100);
+      return new Promise(function (ok, ko) { var pr = ctx.decodeAudioData(ab, ok, ko); if (pr && pr.then) pr.then(ok, ko); }).then(function (buf) {
+        var ch = buf.numberOfChannels, n = buf.length, rate = buf.sampleRate, x = new Float32Array(n), c, i;
+        for (c = 0; c < ch; c++) { var d = buf.getChannelData(c); for (i = 0; i < n; i++) x[i] += d[i] / ch; }
+        // Queue quasi muette retiree (fenetres de 50 ms, seuil RMS 0,01 = -40 dB : meme regle que trim_silent_tail cote Rust).
+        var w = Math.max(1, Math.floor(rate / 20));
+        while (n >= w * 2) { var e = 0; for (i = n - w; i < n; i++) e += x[i] * x[i]; if (Math.sqrt(e / w) > 0.01) break; n -= w; }
+        var k = Math.floor(rate), out;
+        if (n >= k * 6) {
+          out = new Float32Array(n - k);
+          for (i = 0; i < n - 2 * k; i++) out[i] = x[k + i];
+          for (var j = 0; j < k; j++) { var t = (j + 0.5) / k * Math.PI / 2; out[n - 2 * k + j] = x[n - k + j] * Math.cos(t) + x[j] * Math.sin(t); }
+        } else out = x.subarray(0, n);
+        var wav = new Uint8Array(44 + out.length * 2), dv = new DataView(wav.buffer);
+        function str(o, s2) { for (var q = 0; q < s2.length; q++) wav[o + q] = s2.charCodeAt(q); }
+        str(0, "RIFF"); dv.setUint32(4, 36 + out.length * 2, true); str(8, "WAVEfmt "); dv.setUint32(16, 16, true); dv.setUint16(20, 1, true); dv.setUint16(22, 1, true);
+        dv.setUint32(24, rate, true); dv.setUint32(28, rate * 2, true); dv.setUint16(32, 2, true); dv.setUint16(34, 16, true); str(36, "data"); dv.setUint32(40, out.length * 2, true);
+        for (i = 0; i < out.length; i++) { var v = Math.max(-1, Math.min(1, out[i])); dv.setInt16(44 + i * 2, v < 0 ? v * 32768 : v * 32767, true); }
+        return wav;
+      });
+    }
+    function musGet(name) {
       var m = mus[name] || (mus[name] = { st: 0, buf: null, tries: 0 });
       if (m.st === 0) {
         if (typeof fetch !== "function") { m.st = 3; return m; }
         m.st = 1;
         fetch("music/" + name + ".ogg").then(function (r) { if (!r.ok) throw 0; return r.arrayBuffer(); })
-          .then(function (b) { m.buf = new Uint8Array(b); m.st = 2; })
+          .then(musLoopWav)
+          .then(function (b) { m.buf = b; m.st = 2; })
           .catch(function () { m.tries++; if (m.tries < 2) setTimeout(function () { m.st = 0; musGet(name); }, 3000); else m.st = 3; });
       }
       return m;
     }
-    musGet("title"); // l'ecran titre en a besoin tout de suite : telechargement en parallele du wasm
-    // Prechauffe : les musiques des deux premiers terrains (neotokyo, dojo) se telechargent pendant le titre.
-    setTimeout(function () { musGet("neotokyo"); musGet("dojo"); }, 4000);
+    musGet("final_escalation_title"); // l'ecran titre en a besoin tout de suite : telechargement en parallele du wasm
+    // Prechauffe : les deux musiques de terrain (niveau 1 et 2) se telechargent pendant le titre.
+    setTimeout(function () { musGet("level_1"); musGet("level_2"); }, 4000);
     importObject.env.afh_music_size = function (id, p, l) {
       var name = new TextDecoder().decode(new Uint8Array(wasm_memory.buffer, p, l)), m = musGet(name);
       return m.st === 2 ? m.buf.length : (m.st === 3 ? -1 : 0);
     };
     importObject.env.afh_music_copy = function (id, dst) {
-      // Le morceau est retrouve par son numero (meme ordre que NAMES cote Rust).
-      var names = ["title", "affaires", "chateau", "dojo", "foret", "forteresse", "magique", "muraille", "neotokyo", "parlement", "prairie", "rangers", "secte", "toits", "boss"];
-      var mm = mus[names[id]]; if (!mm || !mm.buf) return;
-      new Uint8Array(wasm_memory.buffer, dst, mm.buf.length).set(mm.buf); mm.buf = new Uint8Array(0); mm.st = 4;
+      var mm = mus[MUS_NAMES[id]]; if (!mm || !mm.buf) return;
+      new Uint8Array(wasm_memory.buffer, dst, mm.buf.length).set(mm.buf); delete mus[MUS_NAMES[id]];
     };
     importObject.env.afh_vibrate =function (ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} };
     // Motif de vibration (haptique par niveau) : vibre / pause alternes en ms, zeros de fin ignores.

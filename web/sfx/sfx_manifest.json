@@ -1,0 +1,606 @@
+{
+ "version": 1,
+ "total_bytes": 1023777,
+ "files": [
+  {
+   "f": "beam_start.ogg",
+   "bytes": 10226,
+   "dur": 0.711
+  },
+  {
+   "f": "beam_start_1.ogg",
+   "bytes": 10088,
+   "dur": 0.733
+  },
+  {
+   "f": "beam_start_2.ogg",
+   "bytes": 9774,
+   "dur": 0.691
+  },
+  {
+   "f": "block.ogg",
+   "bytes": 7400,
+   "dur": 0.46
+  },
+  {
+   "f": "block_1.ogg",
+   "bytes": 7512,
+   "dur": 0.501
+  },
+  {
+   "f": "block_2.ogg",
+   "bytes": 7327,
+   "dur": 0.472
+  },
+  {
+   "f": "block_wood.ogg",
+   "bytes": 7013,
+   "dur": 0.475
+  },
+  {
+   "f": "block_wood_1.ogg",
+   "bytes": 7155,
+   "dur": 0.49
+  },
+  {
+   "f": "block_wood_2.ogg",
+   "bytes": 7009,
+   "dur": 0.461
+  },
+  {
+   "f": "bottle_smash.ogg",
+   "bytes": 11305,
+   "dur": 0.87
+  },
+  {
+   "f": "bottle_smash_1.ogg",
+   "bytes": 11208,
+   "dur": 0.896
+  },
+  {
+   "f": "bottle_smash_2.ogg",
+   "bytes": 11044,
+   "dur": 0.844
+  },
+  {
+   "f": "break.ogg",
+   "bytes": 12502,
+   "dur": 0.996
+  },
+  {
+   "f": "break_1.ogg",
+   "bytes": 11305,
+   "dur": 0.87
+  },
+  {
+   "f": "break_2.ogg",
+   "bytes": 12735,
+   "dur": 1.027
+  },
+  {
+   "f": "break_3.ogg",
+   "bytes": 11044,
+   "dur": 0.844
+  },
+  {
+   "f": "break_glass.ogg",
+   "bytes": 11305,
+   "dur": 0.87
+  },
+  {
+   "f": "break_glass_1.ogg",
+   "bytes": 11208,
+   "dur": 0.896
+  },
+  {
+   "f": "break_glass_2.ogg",
+   "bytes": 11044,
+   "dur": 0.844
+  },
+  {
+   "f": "break_wood.ogg",
+   "bytes": 12502,
+   "dur": 0.996
+  },
+  {
+   "f": "break_wood_1.ogg",
+   "bytes": 12735,
+   "dur": 1.027
+  },
+  {
+   "f": "break_wood_2.ogg",
+   "bytes": 12254,
+   "dur": 0.967
+  },
+  {
+   "f": "fire.ogg",
+   "bytes": 10226,
+   "dur": 0.711
+  },
+  {
+   "f": "fire_1.ogg",
+   "bytes": 10088,
+   "dur": 0.733
+  },
+  {
+   "f": "fire_2.ogg",
+   "bytes": 9774,
+   "dur": 0.691
+  },
+  {
+   "f": "guard_break.ogg",
+   "bytes": 7400,
+   "dur": 0.46
+  },
+  {
+   "f": "guard_break_1.ogg",
+   "bytes": 7512,
+   "dur": 0.501
+  },
+  {
+   "f": "guard_break_2.ogg",
+   "bytes": 7327,
+   "dur": 0.472
+  },
+  {
+   "f": "hit_counter.ogg",
+   "bytes": 6724,
+   "dur": 0.391
+  },
+  {
+   "f": "hit_counter_1.ogg",
+   "bytes": 6820,
+   "dur": 0.403
+  },
+  {
+   "f": "hit_counter_2.ogg",
+   "bytes": 6780,
+   "dur": 0.403
+  },
+  {
+   "f": "hit_counter_3.ogg",
+   "bytes": 6785,
+   "dur": 0.391
+  },
+  {
+   "f": "hit_heavy.ogg",
+   "bytes": 6724,
+   "dur": 0.391
+  },
+  {
+   "f": "hit_heavy_1.ogg",
+   "bytes": 6820,
+   "dur": 0.403
+  },
+  {
+   "f": "hit_heavy_2.ogg",
+   "bytes": 6780,
+   "dur": 0.403
+  },
+  {
+   "f": "hit_heavy_3.ogg",
+   "bytes": 6785,
+   "dur": 0.391
+  },
+  {
+   "f": "hit_light.ogg",
+   "bytes": 7165,
+   "dur": 0.391
+  },
+  {
+   "f": "hit_light_1.ogg",
+   "bytes": 9760,
+   "dur": 0.665
+  },
+  {
+   "f": "hit_light_2.ogg",
+   "bytes": 6610,
+   "dur": 0.361
+  },
+  {
+   "f": "hit_light_3.ogg",
+   "bytes": 7149,
+   "dur": 0.403
+  },
+  {
+   "f": "hit_light_4.ogg",
+   "bytes": 9891,
+   "dur": 0.645
+  },
+  {
+   "f": "hit_light_5.ogg",
+   "bytes": 6716,
+   "dur": 0.372
+  },
+  {
+   "f": "hit_medium.ogg",
+   "bytes": 6714,
+   "dur": 0.502
+  },
+  {
+   "f": "hit_medium_1.ogg",
+   "bytes": 6078,
+   "dur": 0.476
+  },
+  {
+   "f": "hit_medium_2.ogg",
+   "bytes": 7724,
+   "dur": 0.415
+  },
+  {
+   "f": "hit_medium_3.ogg",
+   "bytes": 7353,
+   "dur": 0.447
+  },
+  {
+   "f": "hit_medium_4.ogg",
+   "bytes": 6731,
+   "dur": 0.517
+  },
+  {
+   "f": "hit_medium_5.ogg",
+   "bytes": 6125,
+   "dur": 0.462
+  },
+  {
+   "f": "parry.ogg",
+   "bytes": 7400,
+   "dur": 0.46
+  },
+  {
+   "f": "parry_1.ogg",
+   "bytes": 7512,
+   "dur": 0.501
+  },
+  {
+   "f": "parry_2.ogg",
+   "bytes": 7327,
+   "dur": 0.472
+  },
+  {
+   "f": "pickup.ogg",
+   "bytes": 5112,
+   "dur": 0.546
+  },
+  {
+   "f": "pickup_1.ogg",
+   "bytes": 5238,
+   "dur": 0.563
+  },
+  {
+   "f": "pickup_2.ogg",
+   "bytes": 5165,
+   "dur": 0.53
+  },
+  {
+   "f": "power_hit.ogg",
+   "bytes": 6724,
+   "dur": 0.391
+  },
+  {
+   "f": "power_hit_1.ogg",
+   "bytes": 6820,
+   "dur": 0.403
+  },
+  {
+   "f": "power_hit_2.ogg",
+   "bytes": 6780,
+   "dur": 0.403
+  },
+  {
+   "f": "power_hit_3.ogg",
+   "bytes": 6785,
+   "dur": 0.391
+  },
+  {
+   "f": "slice.ogg",
+   "bytes": 7921,
+   "dur": 0.517
+  },
+  {
+   "f": "slice_1.ogg",
+   "bytes": 7691,
+   "dur": 0.648
+  },
+  {
+   "f": "slice_2.ogg",
+   "bytes": 6658,
+   "dur": 0.435
+  },
+  {
+   "f": "slice_3.ogg",
+   "bytes": 5944,
+   "dur": 0.289
+  },
+  {
+   "f": "slice_4.ogg",
+   "bytes": 7996,
+   "dur": 0.533
+  },
+  {
+   "f": "slice_5.ogg",
+   "bytes": 7532,
+   "dur": 0.629
+  },
+  {
+   "f": "slice_final.ogg",
+   "bytes": 12273,
+   "dur": 0.998
+  },
+  {
+   "f": "slice_final_1.ogg",
+   "bytes": 12352,
+   "dur": 1.029
+  },
+  {
+   "f": "slice_final_2.ogg",
+   "bytes": 11885,
+   "dur": 0.969
+  },
+  {
+   "f": "slice_guard.ogg",
+   "bytes": 7604,
+   "dur": 0.553
+  },
+  {
+   "f": "slice_guard_1.ogg",
+   "bytes": 7849,
+   "dur": 0.571
+  },
+  {
+   "f": "slice_guard_2.ogg",
+   "bytes": 7704,
+   "dur": 0.537
+  },
+  {
+   "f": "step.ogg",
+   "bytes": 8035,
+   "dur": 0.476
+  },
+  {
+   "f": "step_1.ogg",
+   "bytes": 7080,
+   "dur": 0.42
+  },
+  {
+   "f": "step_2.ogg",
+   "bytes": 8108,
+   "dur": 0.491
+  },
+  {
+   "f": "step_3.ogg",
+   "bytes": 7061,
+   "dur": 0.408
+  },
+  {
+   "f": "step_run.ogg",
+   "bytes": 8035,
+   "dur": 0.476
+  },
+  {
+   "f": "step_run_1.ogg",
+   "bytes": 7080,
+   "dur": 0.42
+  },
+  {
+   "f": "step_run_2.ogg",
+   "bytes": 8108,
+   "dur": 0.491
+  },
+  {
+   "f": "step_run_3.ogg",
+   "bytes": 7061,
+   "dur": 0.408
+  },
+  {
+   "f": "super_cutin.ogg",
+   "bytes": 16074,
+   "dur": 1.1
+  },
+  {
+   "f": "super_cutin_1.ogg",
+   "bytes": 15942,
+   "dur": 1.134
+  },
+  {
+   "f": "super_cutin_2.ogg",
+   "bytes": 15433,
+   "dur": 1.068
+  },
+  {
+   "f": "swing_metal.ogg",
+   "bytes": 7921,
+   "dur": 0.517
+  },
+  {
+   "f": "swing_metal_1.ogg",
+   "bytes": 7691,
+   "dur": 0.648
+  },
+  {
+   "f": "swing_metal_2.ogg",
+   "bytes": 6658,
+   "dur": 0.435
+  },
+  {
+   "f": "swing_metal_3.ogg",
+   "bytes": 5944,
+   "dur": 0.289
+  },
+  {
+   "f": "swing_metal_4.ogg",
+   "bytes": 7996,
+   "dur": 0.533
+  },
+  {
+   "f": "swing_metal_5.ogg",
+   "bytes": 7532,
+   "dur": 0.629
+  },
+  {
+   "f": "throw_toss.ogg",
+   "bytes": 7822,
+   "dur": 0.522
+  },
+  {
+   "f": "throw_toss_1.ogg",
+   "bytes": 7111,
+   "dur": 0.448
+  },
+  {
+   "f": "throw_toss_2.ogg",
+   "bytes": 8735,
+   "dur": 0.653
+  },
+  {
+   "f": "throw_toss_3.ogg",
+   "bytes": 7874,
+   "dur": 0.538
+  },
+  {
+   "f": "throw_toss_4.ogg",
+   "bytes": 6962,
+   "dur": 0.434
+  },
+  {
+   "f": "throw_toss_5.ogg",
+   "bytes": 8845,
+   "dur": 0.673
+  },
+  {
+   "f": "transform_start.ogg",
+   "bytes": 16074,
+   "dur": 1.1
+  },
+  {
+   "f": "transform_start_1.ogg",
+   "bytes": 15942,
+   "dur": 1.134
+  },
+  {
+   "f": "transform_start_2.ogg",
+   "bytes": 15433,
+   "dur": 1.068
+  },
+  {
+   "f": "ui_buy.ogg",
+   "bytes": 5112,
+   "dur": 0.546
+  },
+  {
+   "f": "ui_buy_1.ogg",
+   "bytes": 5238,
+   "dur": 0.563
+  },
+  {
+   "f": "ui_buy_2.ogg",
+   "bytes": 5165,
+   "dur": 0.53
+  },
+  {
+   "f": "ui_coin.ogg",
+   "bytes": 5112,
+   "dur": 0.546
+  },
+  {
+   "f": "ui_coin_1.ogg",
+   "bytes": 5238,
+   "dur": 0.563
+  },
+  {
+   "f": "ui_coin_2.ogg",
+   "bytes": 5165,
+   "dur": 0.53
+  },
+  {
+   "f": "ult.ogg",
+   "bytes": 16074,
+   "dur": 1.1
+  },
+  {
+   "f": "ult_1.ogg",
+   "bytes": 15942,
+   "dur": 1.134
+  },
+  {
+   "f": "ult_2.ogg",
+   "bytes": 15433,
+   "dur": 1.068
+  },
+  {
+   "f": "weapon_pickup.ogg",
+   "bytes": 5112,
+   "dur": 0.546
+  },
+  {
+   "f": "weapon_pickup_1.ogg",
+   "bytes": 5238,
+   "dur": 0.563
+  },
+  {
+   "f": "weapon_pickup_2.ogg",
+   "bytes": 5165,
+   "dur": 0.53
+  },
+  {
+   "f": "whoosh_heavy.ogg",
+   "bytes": 7822,
+   "dur": 0.522
+  },
+  {
+   "f": "whoosh_heavy_1.ogg",
+   "bytes": 7111,
+   "dur": 0.448
+  },
+  {
+   "f": "whoosh_heavy_2.ogg",
+   "bytes": 8735,
+   "dur": 0.653
+  },
+  {
+   "f": "whoosh_heavy_3.ogg",
+   "bytes": 7874,
+   "dur": 0.538
+  },
+  {
+   "f": "whoosh_heavy_4.ogg",
+   "bytes": 6962,
+   "dur": 0.434
+  },
+  {
+   "f": "whoosh_heavy_5.ogg",
+   "bytes": 8845,
+   "dur": 0.673
+  },
+  {
+   "f": "whoosh_light.ogg",
+   "bytes": 7822,
+   "dur": 0.522
+  },
+  {
+   "f": "whoosh_light_1.ogg",
+   "bytes": 7111,
+   "dur": 0.448
+  },
+  {
+   "f": "whoosh_light_2.ogg",
+   "bytes": 8735,
+   "dur": 0.653
+  },
+  {
+   "f": "whoosh_light_3.ogg",
+   "bytes": 7874,
+   "dur": 0.538
+  },
+  {
+   "f": "whoosh_light_4.ogg",
+   "bytes": 6962,
+   "dur": 0.434
+  },
+  {
+   "f": "whoosh_light_5.ogg",
+   "bytes": 8845,
+   "dur": 0.673
+  }
+ ]
+}

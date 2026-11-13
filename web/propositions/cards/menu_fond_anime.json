@@ -1,0 +1,4 @@
+[
+  {"id": "menu_fond_variante", "titre": "Menu du titre sur la ville animee : quelle variante ?", "texte": "A (plaques creme, retenue), B (verre sombre) ou C (une seule carte translucide) : A est en place par defaut, a vous de trancher sur les captures.", "page": "menu_fond_anime.html"},
+  {"id": "menu_fond_paysage", "titre": "Paysage : colonne de menu a droite", "texte": "En paysage et sur tablette le menu est une colonne a droite (logo et heros a gauche) ; garder, ou le centrer comme avant ?", "page": "menu_fond_anime.html"}
+]

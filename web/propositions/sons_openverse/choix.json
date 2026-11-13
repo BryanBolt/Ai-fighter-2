@@ -1,0 +1,310 @@
+{
+ "version": 1,
+ "retenus": [
+  {
+   "fichier": "coup_leger/coup_leger_6.ogg",
+   "mode": "garder"
+  },
+  {
+   "fichier": "coup_leger/coup_leger_7.ogg",
+   "mode": "garder"
+  },
+  {
+   "fichier": "coup_leger/coup_leger_8.ogg",
+   "mode": "garder"
+  },
+  {
+   "fichier": "coup_moyen/coup_moyen_3.ogg",
+   "mode": "remplacer"
+  },
+  {
+   "fichier": "coup_moyen/coup_moyen_4.ogg",
+   "mode": "remplacer"
+  },
+  {
+   "fichier": "coup_moyen/coup_moyen_6.ogg",
+   "mode": "garder"
+  },
+  {
+   "fichier": "coup_moyen/coup_moyen_7.ogg",
+   "mode": "garder"
+  },
+  {
+   "fichier": "coup_lourd/coup_lourd_3.ogg",
+   "mode": "garder"
+  },
+  {
+   "fichier": "coup_lourd/coup_lourd_7.ogg",
+   "mode": "garder"
+  },
+  {
+   "fichier": "lame/lame_1.ogg",
+   "mode": "garder"
+  },
+  {
+   "fichier": "lame/lame_2.ogg",
+   "mode": "garder"
+  },
+  {
+   "fichier": "lame/lame_4.ogg",
+   "mode": "garder"
+  },
+  {
+   "fichier": "lame/lame_5.ogg",
+   "mode": "garder"
+  },
+  {
+   "fichier": "lame/lame_6.ogg",
+   "mode": "garder",
+   "usage": "coup final : un ennemi meurt d'un coup d'épée",
+   "note": "pas mal pour le COUP FINAL : dès qu'un ennemi meurt d'un coup d'épée"
+  },
+  {
+   "fichier": "lame/lame_8.ogg",
+   "mode": "garder",
+   "usage": "coup d'épée arrêté par une garde",
+   "note": "pas mal pour le coup d'épée ARRÊTÉ PAR UNE GARDE"
+  },
+  {
+   "fichier": "souffle/souffle_1.ogg",
+   "mode": "garder"
+  },
+  {
+   "fichier": "souffle/souffle_3.ogg",
+   "mode": "garder"
+  },
+  {
+   "fichier": "souffle/souffle_4.ogg",
+   "mode": "garder"
+  },
+  {
+   "fichier": "blocage/blocage_5.ogg",
+   "mode": "garder"
+  },
+  {
+   "fichier": "blocage/blocage_7.ogg",
+   "mode": "garder",
+   "usage": "seulement si l'arme ou l'objet est en bois",
+   "note": "wood block : faut que ça bloque, mais seulement quand on utilise un truc qui pourrait être en BOIS"
+  },
+  {
+   "fichier": "casse/casse_6.ogg",
+   "mode": "garder"
+  },
+  {
+   "fichier": "casse/casse_7.ogg",
+   "mode": "garder"
+  },
+  {
+   "fichier": "magie/magie_1.ogg",
+   "mode": "garder"
+  },
+  {
+   "fichier": "power_up/power_up_7.ogg",
+   "mode": "garder"
+  },
+  {
+   "fichier": "pas/pas_2.ogg",
+   "mode": "garder"
+  },
+  {
+   "fichier": "pas/pas_4.ogg",
+   "mode": "garder"
+  },
+  {
+   "fichier": "ramassage/ramassage_5.ogg",
+   "mode": "garder"
+  }
+ ],
+ "rejetes": [
+  {
+   "fichier": "coup_leger/coup_leger_4.ogg"
+  },
+  {
+   "fichier": "coup_leger/coup_leger_5.ogg"
+  },
+  {
+   "fichier": "coup_lourd/coup_lourd_5.ogg"
+  },
+  {
+   "fichier": "coup_lourd/coup_lourd_8.ogg"
+  },
+  {
+   "fichier": "saut_chute/saut_chute_1.ogg"
+  },
+  {
+   "fichier": "saut_chute/saut_chute_2.ogg"
+  },
+  {
+   "fichier": "saut_chute/saut_chute_3.ogg"
+  },
+  {
+   "fichier": "saut_chute/saut_chute_4.ogg"
+  },
+  {
+   "fichier": "saut_chute/saut_chute_5.ogg"
+  },
+  {
+   "fichier": "saut_chute/saut_chute_6.ogg"
+  },
+  {
+   "fichier": "saut_chute/saut_chute_7.ogg"
+  },
+  {
+   "fichier": "saut_chute/saut_chute_8.ogg"
+  },
+  {
+   "fichier": "pas/pas_1.ogg"
+  },
+  {
+   "fichier": "pas/pas_3.ogg"
+  },
+  {
+   "fichier": "pas/pas_5.ogg"
+  },
+  {
+   "fichier": "pas/pas_6.ogg"
+  },
+  {
+   "fichier": "pas/pas_7.ogg",
+   "note": "CC BY : rejeté, aucune attribution à gérer"
+  },
+  {
+   "fichier": "pas/pas_8.ogg",
+   "note": "CC BY : rejeté, aucune attribution à gérer"
+  },
+  {
+   "fichier": "explosion/explosion_1.ogg"
+  },
+  {
+   "fichier": "explosion/explosion_2.ogg"
+  },
+  {
+   "fichier": "explosion/explosion_3.ogg"
+  },
+  {
+   "fichier": "explosion/explosion_4.ogg"
+  },
+  {
+   "fichier": "explosion/explosion_5.ogg"
+  },
+  {
+   "fichier": "explosion/explosion_6.ogg"
+  },
+  {
+   "fichier": "explosion/explosion_7.ogg"
+  },
+  {
+   "fichier": "explosion/explosion_8.ogg"
+  },
+  {
+   "fichier": "casse/casse_1.ogg"
+  },
+  {
+   "fichier": "casse/casse_2.ogg"
+  },
+  {
+   "fichier": "casse/casse_3.ogg"
+  },
+  {
+   "fichier": "casse/casse_4.ogg"
+  },
+  {
+   "fichier": "casse/casse_5.ogg"
+  },
+  {
+   "fichier": "casse/casse_8.ogg"
+  },
+  {
+   "fichier": "magie/magie_2.ogg"
+  },
+  {
+   "fichier": "magie/magie_3.ogg"
+  },
+  {
+   "fichier": "magie/magie_4.ogg"
+  },
+  {
+   "fichier": "magie/magie_5.ogg"
+  },
+  {
+   "fichier": "magie/magie_6.ogg"
+  },
+  {
+   "fichier": "magie/magie_7.ogg"
+  },
+  {
+   "fichier": "magie/magie_8.ogg"
+  },
+  {
+   "fichier": "power_up/power_up_1.ogg"
+  },
+  {
+   "fichier": "power_up/power_up_2.ogg"
+  },
+  {
+   "fichier": "power_up/power_up_3.ogg"
+  },
+  {
+   "fichier": "power_up/power_up_4.ogg"
+  },
+  {
+   "fichier": "power_up/power_up_5.ogg"
+  },
+  {
+   "fichier": "power_up/power_up_6.ogg"
+  },
+  {
+   "fichier": "power_up/power_up_8.ogg"
+  },
+  {
+   "fichier": "ui/ui_1.ogg"
+  },
+  {
+   "fichier": "ui/ui_2.ogg"
+  },
+  {
+   "fichier": "ui/ui_3.ogg"
+  },
+  {
+   "fichier": "ui/ui_4.ogg"
+  },
+  {
+   "fichier": "ui/ui_5.ogg"
+  },
+  {
+   "fichier": "ui/ui_6.ogg"
+  },
+  {
+   "fichier": "ui/ui_7.ogg"
+  },
+  {
+   "fichier": "ui/ui_8.ogg"
+  },
+  {
+   "fichier": "douleur_ko/douleur_ko_1.ogg"
+  },
+  {
+   "fichier": "douleur_ko/douleur_ko_2.ogg"
+  },
+  {
+   "fichier": "douleur_ko/douleur_ko_3.ogg"
+  },
+  {
+   "fichier": "douleur_ko/douleur_ko_4.ogg"
+  },
+  {
+   "fichier": "douleur_ko/douleur_ko_5.ogg"
+  },
+  {
+   "fichier": "douleur_ko/douleur_ko_6.ogg"
+  },
+  {
+   "fichier": "douleur_ko/douleur_ko_7.ogg"
+  },
+  {
+   "fichier": "douleur_ko/douleur_ko_8.ogg"
+  }
+ ],
+ "regle": "Garder = ce son sert à sa famille, en alternance avec les autres gardés (choix local, jamais dans la simulation), variantes de hauteur ±3 % ; Remplacer l'actuel = remplace l'effet synthétisé ; Rejeter = inutilisé."
+}
