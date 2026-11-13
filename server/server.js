@@ -43,6 +43,7 @@ const MAX_INPUT_BITS = 32; // images par message `input` (les clients envoient 8
 const HOLD_LEAD = 12; // images neutres fournies d'avance a une place en attente (les autres ne l'attendent jamais)
 const HOLD_MIN_RETURN_MS = 300; // une entree perdue juste apres la mise en attente n'est pas un retour
 const READY_LEAD = 20; // images de plus apres `ready` : le message de reprise arrive chez le revenant avant qu'il n'atteigne l'image annoncee
+const CATCHUP_MAX_MS = 180000; // un rejeu (reprise) sans `ready` plus longtemps que cela n'est plus un rejeu : la place est traitee comme absente
 const HOLD_COOL_MS = 4000; // apres un retour, un nouveau gel passe directement a l'IA (pas de va-et-vient de resynchronisations)
 const REJOIN_MAX = 590; // plafond (le journal accepte au plus +600 images)
 const HOLD_MS = 20 * 60 * 1000; // une place coupee reste reservee 20 min
@@ -402,6 +403,22 @@ export function createServer(opts = {}) {
 
   // Avance d'un evenement de controle : le temps de rejeu du journal chez l'arrivant (~ 1/25 des images deja jouees) pour ne pas figer les autres, au moins 15 images.
   const rejoinMargin = (room) => Math.max(REJOIN_MIN, Math.min(REJOIN_MAX, Math.round(highest(room) / 25) + 12));
+  // Marge de la reprise annoncee par `ready` : le rejeu est FINI (le client est a ~60 images du direct, il n'avance pas de plus de READY_SLACK images avant le message), la marge
+  // `rejoinMargin` (1/25 des images jouees : 2 a 10 s d'IA apres chaque retour en milieu de partie) ne payait plus que le temps de rejeu qui n'existe plus ; il ne reste que le trajet
+  // du message (aller-retour du plus lent x 1,5, en images) pour que personne n'ait deja depasse l'image annoncee. Recuperation apres coupure de 10 s : 2 s de moins.
+  const readyMargin = (room) => {
+    if (opts.readyMargin !== undefined) return opts.readyMargin;
+    const worst = Math.max(0, ...humans(room).map(([x]) => (clients.get(x.ws)?.rtt) || 0));
+    return Math.max(REJOIN_MIN, Math.min(REJOIN_MAX, Math.round(worst * 0.09) + 15));
+  };
+  // Apres une reprise (`ready`, `resume`, retour d'attente, reconnexion) la place est remplie d'avance (entrees neutres) jusqu'a l'image `from` : le joueur n'a RIEN a envoyer
+  // avant que les autres n'y arrivent. Sans delai de grace, ce silence normal (marge de reprise + avance d'entree) passait pour un gel (> 900 ms) et le relais le remettait
+  // a l'IA 1 a 2 s apres son retour (boucle « ma place redevient humaine / IA prend ma place »). Grace = temps de jeu jusqu'a `from`, plus 1,2 s, plafonnee a 8 s.
+  const resumeGrace = (room, s, from) => {
+    const others = Math.max(-1, ...room.slots.slice(0, room.config.size).filter((x) => x !== s).map((x) => x.hi)); // sans ma place (deja remplie jusqu'a `from`)
+    const until = Date.now() + Math.min(8000, Math.max(0, from - others) * 17 + 1200);
+    s.grace = Math.max(s.grace || 0, until); s.lastInputAt = Math.max(s.lastInputAt || 0, until);
+  };
   const highest = (room) => Math.max(-1, ...room.slots.slice(0, room.config.size).map((s) => s.hi));
   function control(room, slot, from, extra) {
     const ev = { t: 'ctl', slot, from, ...extra };
@@ -458,12 +475,18 @@ export function createServer(opts = {}) {
   // 1 = synchronise (lockstep : tout le monde attend le plus lent, borne par gel/attente/IA) ; 2 = hote autoritaire (l'horloge est celle de l'hote : un joueur trop en retard
   // est comble par la derniere direction tenue au lieu de geler les autres, et l'empreinte de l'hote fait foi). 0 = choisir pour moi : 2 des 5 humains ou liaison tres lente (a revoir avec les notes des joueurs).
   const NM_LATE_MS = opts.nmLateMs ?? Number(process.env.NM_LATE_MS || 140); // silence d'un joueur avant comblement (mode 2)
+  const NM_RTT_SUSTAIN_MS = opts.nmRttSustainMs ?? 4000; // liaison lente continue avant de choisir l'horloge de l'hote (mode auto)
   const NM_LAG_FRAMES = 18; const NM_LAG_MS = 300; const NM_KEEP_MASK = 0x3ff | (1 << 10) | (1 << 11) | (1 << 12) | (1 << 16) | (1 << 17) | (1 << 20); // direction + gardes tenues, jamais de coups ponctuels
   function netMode(room) {
     const nm = room.nm | 0;
     if (nm === 1 || nm === 2) return nm;
     const hs = humans(room); const worst = Math.max(0, ...hs.map(([x]) => (clients.get(x.ws)?.rtt) || 0));
-    if (hs.length >= 5 || worst >= 160) room.autoB = true; else if (hs.length <= 3 && worst < 100) room.autoB = false;
+    // Un pic isole d'aller-retour (un paquet retransmis : +250 ms) ne vaut PAS une liaison lente : l'horloge de l'hote (comblement des joueurs en retard, donc reprises
+    // completes de leur part) n'est choisie qu'apres NM_RTT_SUSTAIN_MS de liaison lente continue. Et on en sort des que la salle est a 4 humains ou moins ET que la liaison
+    // est redevenue bonne : avant, a 4 humains le mode restait bloque a vie apres un seul pic (sortie reservee a 3 humains), d'ou les boucles de reprise a 4 joueurs.
+    const nowN = Date.now();
+    if (worst >= 160) { if (!room.slowSince) room.slowSince = nowN; } else room.slowSince = 0;
+    if (hs.length >= 5 || (room.slowSince && nowN - room.slowSince >= NM_RTT_SUSTAIN_MS)) room.autoB = true; else if (hs.length <= 4 && worst < 120) room.autoB = false;
     return room.autoB ? 2 : 1;
   }
   function netModeAnnounce(room) {
@@ -510,7 +533,10 @@ export function createServer(opts = {}) {
   }
   function fillNeutral(room, slot, upTo) {
     const s = room.slots[slot];
-    const to = Math.min(upTo, s.hi + 600);
+    // Plafond de securite de 1500 images (et non 600) : la marge de reprise atteint REJOIN_MAX (590, des l'image ~14 500 soit 4 min de jeu) + READY_LEAD (20) + HOLD_LEAD (12) = 622 > 600,
+    // et `ready` releve ensuite `hi` jusqu'a `from - 1` : les 10 a 25 dernieres images restaient SANS ENTREE alors que la place est humaine (trou de journal : tout rejeu bloque
+    // a jamais sur cette image, « abime non revenu », reprises en boucle). Defaut latent des parties de plus de 4 minutes.
+    const to = Math.min(upTo, s.hi + 1500);
     if (to <= s.hi) return;
     const f0 = s.hi + 1; const bits = [];
     for (let f = f0; f <= to; f++) { s.journal[f] = 0; bits.push(0); }
@@ -537,6 +563,9 @@ export function createServer(opts = {}) {
       const s = room.slots[i];
       if (!s.hold) continue;
       if (s.mode !== 'human') { s.hold = 0; continue; }
+      // Un joueur qui REJOUE (reprise en cours, connexion vivante) est present : son rejeu peut durer plus de holdAiMs (telephone : 100 a 150 images/s sur 5 000 images),
+      // l'IA ne doit pas le remplacer pour autant. Plafond de securite : un rejeu sans `ready` apres CATCHUP_MAX_MS est une absence.
+      if (s.catchup && s.ws && now - s.catchup < CATCHUP_MAX_MS) continue;
       if (now - s.hold >= holdAiMs) { s.hold = 0; dropToAi(room, i); broadcast(room, { t: 'presence', ev: 'afk', name: s.name, slot: i }, s.ws); }
     }
     fillHeld(room);
@@ -561,6 +590,7 @@ export function createServer(opts = {}) {
     fillNeutral(room, idx, from - 1);
     s.mode = 'human'; s.lastMove = Date.now(); s.lastInputAt = Date.now(); s.stalled = false; s.afkWarned = false;
     if (s.hi < from - 1) s.hi = from - 1;
+    resumeGrace(room, s, from);
     send(ws, { ...resyncPayload(room), you: idx });
     control(room, idx, from, { ai: false, name: s.name });
     presTick(room, true);
@@ -573,6 +603,7 @@ export function createServer(opts = {}) {
   function presState(room, i, now) {
     const s = room.slots[i];
     if (!s.token && !s.ws) return null;
+    if (s.catchup && s.ws && now - s.catchup < CATCHUP_MAX_MS) return { st: 'on', left: 0 }; // il rejoue : il est la
     if (s.hold) return { st: s.ws ? 'bg' : 're', left: Math.max(0, holdAiMs - (now - s.hold)) };
     if (s.ws) {
       if (s.mode === 'human' || s.catchup) return { st: 'on', left: 0 };
@@ -973,6 +1004,7 @@ export function createServer(opts = {}) {
       s.mode = 'human'; s.lastMove = Date.now(); s.lastInputAt = Date.now(); s.stalled = false;
       // Place jamais jouee par un humain : sans cela ses premieres entrees (image >> 600) seraient refusees (f > hi + 600).
       if (s.hi < from - 1) s.hi = from - 1;
+      resumeGrace(room, s, from);
       send(ws, { ...resyncPayload(room), you: idx });
       control(room, idx, from, { ai: false, name: s.name });
       if (room.full && s.loadout) control(room, idx, from, { kind: 'loadout', data: s.loadout });
@@ -1215,7 +1247,9 @@ export function createServer(opts = {}) {
       case 'need_resync': { // un client qui s'est vu bascule en IA apres avoir deja simule ces images demande l'etat complet (resynchronisation ciblee)
         if (!room.started) return;
         const nowR = Date.now();
-        if (nowR - s.lastResync < RESYNC_GAP_MS || s.catchup) return; // une reprise est deja en cours : une demande en vol de l'ancienne session ne la relance pas
+        // Une reprise est en cours : une demande en vol de l'ancienne session ne la relance pas... mais une demande NEUVE (le client attend depuis plus de RESYNC_GAP_MS une
+        // entree qui ne vient pas : message perdu pendant une coupure silencieuse) doit etre honoree, sinon un rejeu bloque ne finit jamais (CAUSE RACINE de « abime non revenu » en tunnel).
+        if (nowR - s.lastResync < RESYNC_GAP_MS || (s.catchup && nowR - s.catchup < RESYNC_GAP_MS)) return;
         s.lastResync = nowR;
         send(ws, { t: 'desync', f: 0 });
         if (c.cu) beginCatchup(room, ws, c.slot); else send(ws, { ...resyncPayload(room), you: c.slot, forced: true });
@@ -1230,18 +1264,20 @@ export function createServer(opts = {}) {
         const tickC = Number.isInteger(m.tick) && m.tick >= 0 && m.tick < 2000000 ? m.tick : 0;
         const fromR = Math.max(highest(room), tickC) + rejoinMargin(room);
         if (s.hi < fromR - 1) s.hi = fromR - 1;
+        resumeGrace(room, s, fromR);
         control(room, c.slot, fromR, { ai: false, name: s.name });
         return presTick(room);
       }
       case 'ready': { // fin du rejeu d'un arrivant / d'un revenant : sa reprise tombe APRES son image courante (jamais plus tot que ce qu'il a simule)
         if (!room.started || !room.config || s.ws !== ws || !s.catchup) return;
         const tickR = Number.isInteger(m.tick) && m.tick >= 0 && m.tick < 2000000 ? m.tick : 0;
-        const fromQ = Math.max(highest(room), tickR) + rejoinMargin(room) + READY_LEAD;
+        const fromQ = Math.max(highest(room), tickR) + readyMargin(room) + READY_LEAD;
         const nowQ = Date.now();
         s.catchup = 0;
         if (s.hold) { s.hold = 0; s.holdCoolUntil = nowQ + HOLD_COOL_MS; fillNeutral(room, c.slot, fromQ - 1); }
         s.mode = 'human'; s.lastMove = nowQ; s.lastInputAt = nowQ; s.stalled = false; s.afkWarned = false;
         if (s.hi < fromQ - 1) s.hi = fromQ - 1;
+        resumeGrace(room, s, fromQ);
         control(room, c.slot, fromQ, { ai: false, name: s.name });
         if (room.full && s.loadout) control(room, c.slot, fromQ, { kind: 'loadout', data: s.loadout });
         return presTick(room, true);

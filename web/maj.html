@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mise à jour</title>
+<style>:root{--bg:#fff3e0;--ink:#221834}@media (prefers-color-scheme:dark){:root{--bg:#221834;--ink:#fff3e0}}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg);color:var(--ink);font:18px/1.4 system-ui,sans-serif;text-align:center;padding:16px;box-sizing:border-box}</style>
+</head><body><p id="m">Mise à jour du jeu…</p>
+<script>
+(function(){
+  var go=function(){location.replace("/?v="+Date.now());};
+  var pr=[];
+  try{if(navigator.serviceWorker&&navigator.serviceWorker.getRegistrations)pr.push(navigator.serviceWorker.getRegistrations().then(function(rs){return Promise.all(rs.map(function(r){return r.unregister();}));}));}catch(e){}
+  try{if(window.caches)pr.push(caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return /^afh-/.test(k);}).map(function(k){return caches.delete(k);}));}));}catch(e){}
+  Promise.all(pr).then(go,go);setTimeout(go,4000);
+})();
+</script></body></html>
