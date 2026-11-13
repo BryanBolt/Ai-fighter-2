@@ -53,12 +53,109 @@
   @keyframes ldDrop { from { transform: translateY(-34px) scale(1.5); opacity: 0; } to { transform: none; opacity: 1; } }
   @keyframes ldTip { 0%, 30%, 100% { opacity: 0; transform: translateY(8px); } 6%, 26% { opacity: 1; transform: none; } }
   @media (prefers-reduced-motion: reduce) { #loading .mk, #loading .sh, #loading .wm .l, #loading .mk .pu { animation: none; } #loading .tips svg { animation: none; } #loading .tips svg:first-child { opacity: 1; } #loading .rail b { transition: none; } }
+
+  /* Ecran d'attente vivant : pluie neon, etapes, secondes ecoulees, astuces, echec avec « Reessayer ». Injecte par le script #afh-boot. */
+  #loading .stage { z-index: 1; }
+  #ld-rain { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+  #ld-info { position: absolute; left: 0; right: 0; bottom: max(14px, env(safe-area-inset-bottom)); z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 0 16px; font: 600 14px/1.4 ui-monospace, Menlo, Consolas, monospace; letter-spacing: 0; color: #fff3e0; }
+  #ld-steps { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+  #ld-steps span { padding: 3px 10px; border: 1px solid #fff3e04d; border-radius: 99px; font-size: 12px; opacity: .5; }
+  #ld-steps span.on { opacity: 1; border-color: #ffd27a; color: #ffd27a; animation: ldPulse 1.2s ease-in-out infinite; }
+  #ld-steps span.ok { opacity: .9; border-color: #6fe3a1; color: #6fe3a1; }
+  #ld-steps span.ko { opacity: 1; border-color: #d8456b; color: #d8456b; }
+  #ld-msg { position: static !important; font-size: 13px; opacity: .85; min-height: 1.4em; }
+  #ld-clock { font-size: 12px; opacity: .7; }
+  #ld-calm { min-height: 1.4em; color: #ffd27a; font-size: 13px; text-align: center; }
+  #ld-tip { max-width: min(92vw, 520px); min-height: 2.8em; font-weight: 400; font-size: 13px; opacity: .9; text-align: center; transition: opacity .4s; }
+  #ld-fail { display: none; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
+  #ld-fail.on { display: flex; }
+  #ld-fail b { color: #ff8aa6; }
+  #ld-fail button { min-height: 48px; min-width: 180px; font: 600 17px ui-monospace, Menlo, Consolas, monospace; border: 2px solid #d8456b; background: #d8456b; color: #fff; border-radius: 8px; }
+  @keyframes ldPulse { 50% { opacity: .55; } }
+  @media (max-height: 520px) { #ld-tip { display: none; } }
+  @media (prefers-reduced-motion: reduce) { #ld-steps span.on { animation: none; } }
 </style>
 </head>
 <body>
 
 <canvas id="glcanvas" tabindex="1" role="application" aria-label="AI Fighter 2 : jeu de combat. Fleches ou stick pour bouger, A pour frapper. Options, Accessibilite : texte plus grand, daltonisme, une main, sous-titres des sons."></canvas>
 <div id="loading" role="status" aria-label="Chargement"><div class="stage"><svg class="mk" viewBox="-130 -150 260 260" aria-hidden="true"><polygon points="-92.0,-10.0 -78.0,-132.0 -8.0,-90.0" fill="#d8456b"/><polygon points="-78.0,-35.0 -72.0,-98.0 -34.0,-74.0" fill="#ffd27a"/><polygon points="92.0,-10.0 78.0,-132.0 8.0,-90.0" fill="#d8456b"/><polygon points="78.0,-35.0 72.0,-98.0 34.0,-74.0" fill="#ffd27a"/><circle cx="0.0" cy="0.0" r="100.0" fill="#d8456b"/><circle cx="-38.0" cy="4.0" r="21.0" fill="#fff3e0"/><circle class="pu" cx="-40.0" cy="7.0" r="10.0" fill="#221834"/><circle cx="38.0" cy="4.0" r="21.0" fill="#fff3e0"/><circle class="pu" cx="40.0" cy="7.0" r="10.0" fill="#221834"/><line x1="-12.0" y1="46.0" x2="12.0" y2="46.0" stroke="#221834" stroke-width="9.0" stroke-linecap="round"/></svg><i class="sh"></i><svg class="wm" viewBox="-0.8 -0.8 55.90 7.6" aria-hidden="true"><g fill="none" stroke="#fff3e0" stroke-width="0.62" stroke-linecap="round" stroke-linejoin="round"><g class="l" style="--i:0"><path d="M0.00 6.00 L2.00 0.00 L4.00 6.00"/><path d="M0.80 4.00 L3.20 4.00"/></g><g class="l" style="--i:1"><path d="M6.20 0.00 L6.20 6.00"/></g><g class="l" style="--i:2"><path d="M16.10 0.00 L12.10 0.00 L12.10 6.00"/><path d="M12.10 3.00 L15.10 3.00"/></g><g class="l" style="--i:3"><path d="M18.30 0.00 L18.30 6.00"/></g><g class="l" style="--i:4"><path d="M24.50 1.00 L23.50 0.00 L21.50 0.00 L20.50 1.00 L20.50 5.00 L21.50 6.00 L23.50 6.00 L24.50 5.00 L24.50 3.00 L22.70 3.00"/></g><g class="l" style="--i:5"><path d="M26.20 0.00 L26.20 6.00"/><path d="M30.20 0.00 L30.20 6.00"/><path d="M26.20 3.00 L30.20 3.00"/></g><g class="l" style="--i:6"><path d="M31.90 0.00 L35.90 0.00"/><path d="M33.90 0.00 L33.90 6.00"/></g><g class="l" style="--i:7"><path d="M41.60 0.00 L37.60 0.00 L37.60 6.00 L41.60 6.00"/><path d="M37.60 3.00 L40.60 3.00"/></g><g class="l" style="--i:8"><path d="M43.30 6.00 L43.30 0.00 L46.30 0.00 L47.30 1.00 L47.30 2.00 L46.30 3.00 L43.30 3.00"/><path d="M45.30 3.00 L47.30 6.00"/></g><g class="l two" stroke="#d8456b" style="--i:9"><path d="M50.30 1.00 L51.30 0.00 L53.30 0.00 L54.30 1.00 L54.30 2.00 L50.30 6.00 L54.30 6.00"/></g></g></svg><div class="rail" role="progressbar" aria-valuemin="0" aria-valuemax="100"><b id="ld-bar"></b></div><div class="tips"><svg viewBox="0 0 84 100" aria-hidden="true"><line x1="40" y1="62" x2="42" y2="38"/><line x1="42" y1="38" x2="24" y2="50"/><line x1="42" y1="38" x2="66" y2="34"/><line x1="40" y1="62" x2="56" y2="82"/><line x1="40" y1="62" x2="30" y2="84"/><circle cx="44" cy="26" r="9" fill="#fff3e0" stroke="none"/></svg><svg viewBox="0 0 84 100" aria-hidden="true"><line x1="36" y1="60" x2="40" y2="38"/><line x1="40" y1="38" x2="22" y2="44"/><line x1="40" y1="38" x2="24" y2="24"/><line x1="36" y1="60" x2="70" y2="52"/><line x1="36" y1="60" x2="24" y2="84"/><circle cx="44" cy="26" r="9" fill="#fff3e0" stroke="none"/></svg><svg viewBox="0 0 84 100" aria-hidden="true"><line x1="40" y1="56" x2="40" y2="36"/><line x1="40" y1="36" x2="22" y2="18"/><line x1="40" y1="36" x2="58" y2="18"/><line x1="40" y1="56" x2="28" y2="78"/><line x1="40" y1="56" x2="54" y2="70"/><circle cx="40" cy="24" r="9" fill="#fff3e0" stroke="none"/></svg></div></div></div>
+<script id="afh-boot">
+// Attente vivante, des le premier octet de la page (avant le wasm) : reveil du serveur gratuit en parallele du telechargement,
+// etapes lisibles, secondes ecoulees, message rassurant apres 15 s, astuces, pluie legere, et un vrai echec avec « Reessayer ».
+(function () {
+  var W = window, D = document, t0 = Date.now();
+  var wk = W.afhWake = { st: 0, tries: 0 };
+  // 1) Reveil du relais : /api/status repete jusqu'a une reponse, sans jamais bloquer le chargement du wasm.
+  function ping() {
+    if (wk.st === 2) return;
+    if (wk.tries >= 12) { wk.st = 3; return; }
+    wk.tries++; wk.st = 1;
+    var ctl = W.AbortController ? new AbortController() : null, to = setTimeout(function () { try { if (ctl) ctl.abort(); } catch (e) {} }, 20000);
+    fetch("/api/status", { cache: "no-store", signal: ctl ? ctl.signal : undefined }).then(function (r) { clearTimeout(to); if (r && r.ok) wk.st = 2; else setTimeout(ping, 4000); }, function () { clearTimeout(to); setTimeout(ping, 4000); });
+  }
+  try { if (location.protocol.indexOf("http") === 0 && W.fetch) { ping(); try { fetch("/health", { mode: "no-cors", cache: "no-store" }).catch(function () {}); } catch (e) {} } else wk.st = 3; } catch (e) { wk.st = 3; }
+
+  var l = D.getElementById("loading"); if (!l) return;
+  // 2) Pluie neon (canvas leger, arretee quand le jeu est pret ou la page masquee).
+  var cv = D.createElement("canvas"); cv.id = "ld-rain"; l.insertBefore(cv, l.firstChild);
+  var cx = cv.getContext && cv.getContext("2d"), drops = [], calm = W.matchMedia && W.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function size() { cv.width = Math.max(1, Math.round(l.clientWidth / 2)); cv.height = Math.max(1, Math.round(l.clientHeight / 2)); }
+  size(); W.addEventListener("resize", size);
+  for (var i = 0; i < 70; i++) drops.push({ x: Math.random(), y: Math.random(), v: .6 + Math.random() * .9, c: i % 5 ? "#8fd0ff" : (i % 2 ? "#d8456b" : "#ffd27a") });
+  function rain() {
+    if (!cx || l.hidden || l.style.opacity === "0") return;
+    if (!D.hidden) {
+      cx.clearRect(0, 0, cv.width, cv.height); cx.lineWidth = 1; cx.globalAlpha = .45;
+      for (var i = 0; i < drops.length; i++) { var d = drops[i]; d.y += d.v * .012; d.x -= d.v * .002; if (d.y > 1.05) { d.y = -.05; d.x = Math.random() * 1.1; } cx.strokeStyle = d.c; cx.beginPath(); cx.moveTo(d.x * cv.width, d.y * cv.height); cx.lineTo(d.x * cv.width - 2, d.y * cv.height + 8 + d.v * 6); cx.stroke(); }
+    }
+    if (!calm) requestAnimationFrame(rain);
+  }
+  if (calm) { rain(); } else requestAnimationFrame(rain);
+  // 3) Bloc d'information.
+  var info = D.createElement("div"); info.id = "ld-info";
+  info.innerHTML = '<div id="ld-steps" aria-hidden="true"><span id="ld-s1">Chargement du jeu</span><span id="ld-s2">Réveil du serveur</span><span id="ld-s3">Connexion</span></div>' +
+    '<div id="ld-msg" aria-live="polite"></div><div id="ld-clock"></div><div id="ld-calm"></div><div id="ld-tip"></div>' +
+    '<div id="ld-fail" role="alert"><b id="ld-failmsg"></b><button id="ld-retry" type="button">Réessayer</button></div>';
+  l.appendChild(info);
+  var $ = function (id) { return D.getElementById(id); };
+  var TIPS = [
+    "Astuce : la direction compte. Tiens ↑ ou ↓ en frappant pour changer l'angle de l'attaque.",
+    "Astuce : esquive au bon moment, une roulade te rend intouchable un court instant.",
+    "Astuce : chaque arme a sa portée. Ramasse-la, puis garde ta distance pour frapper en premier.",
+    "Astuce : enchaîne poing, pied, puis recule avant la riposte : ne reste jamais collé à l'adversaire."
+  ], ti = Math.floor(Math.random() * TIPS.length), failed = false;
+  function tip() { var e = $("ld-tip"); if (!e) return; e.style.opacity = 0; setTimeout(function () { e.textContent = TIPS[ti++ % TIPS.length]; e.style.opacity = .9; }, 350); }
+  $("ld-tip").textContent = TIPS[ti++ % TIPS.length]; setInterval(function () { if (!failed) tip(); }, 6000);
+  function fail(text) {
+    if (failed) return; failed = true;
+    $("ld-failmsg").textContent = text; $("ld-fail").className = "on"; $("ld-calm").textContent = ""; $("ld-tip").style.display = "none"; $("ld-clock").textContent = "";
+    var s = $("ld-s1"); if (s && !(W.afhLoad && W.afhLoad.done)) s.className = "ko";
+    try { var b = l.querySelector(".rail b"); if (b) b.style.background = "#d8456b"; } catch (e) {}
+  }
+  W.afhBootFail = fail;
+  $("ld-retry").addEventListener("click", function () { try { sessionStorage.removeItem("afh_load_tries"); sessionStorage.removeItem("afh_resume"); sessionStorage.removeItem("afh_rl"); } catch (e) {} location.reload(); });
+  // 4) Horloge : une fois par seconde (etapes, secondes, message rassurant, echec reel).
+  function tick() {
+    if (l.hidden || l.style.opacity === "0" || failed) return;
+    var L = W.afhLoad || {}, sec = Math.floor((Date.now() - t0) / 1000), done = !!L.done;
+    var s1 = $("ld-s1"), s2 = $("ld-s2"), s3 = $("ld-s3");
+    s1.className = done ? "ok" : "on";
+    s2.className = wk.st === 2 ? "ok" : (wk.st === 3 ? "ko" : "on");
+    s3.className = done && wk.st === 2 ? "on" : "";
+    s3.textContent = done ? "Démarrage" : "Connexion";
+    $("ld-clock").textContent = sec + " s";
+    var m = "";
+    if (sec >= 15 && (wk.st === 1 || !done)) m = "Le serveur se réveille, ça peut prendre une minute. Pas de panique, ça avance.";
+    if (sec >= 40 && !done && !L.bytes) m = "Toujours en route… la première visite est la plus longue, la suite sera instantanée.";
+    $("ld-calm").textContent = m;
+    if (!L.bytes && !done && sec > 3) $("ld-msg").textContent = wk.st === 2 ? "Le serveur répond, le jeu arrive…" : "Réveil du serveur… (essai " + Math.max(1, wk.tries) + ")";
+    if (L.stalled && L.stalled()) fail("Le chargement est bloqué (réseau coupé ou serveur indisponible).");
+    else if (!L.bytes && !done && sec >= 90) fail("Le serveur ne répond pas.");
+  }
+  setInterval(tick, 1000); tick();
+})();
+</script>
 <button id="pi" title="Installer le jeu" aria-label="Installer le jeu" hidden>Installer</button>
 <button id="fs" title="Plein ecran" aria-label="Plein ecran">[ ]</button>
 <button id="pf" title="Prevenir mes amis" aria-label="Prevenir mes amis" hidden>Amis</button>
@@ -309,7 +406,7 @@
   function msg() {
     if (L.hidden) return "Page en arriere-plan : le jeu demarre des que tu reviens ici.";
     if (L.done) return "Demarrage du jeu...";
-    if (!L.bytes) return "Connexion au serveur...";
+    if (!L.bytes) return "Préparation du téléchargement…";
     var t = L.total || est;
     return "Telechargement " + mb(L.bytes) + (t ? " / " + mb(t) : "") + " Mo" + (L.visMs() - L.prog > 8000 ? " (connexion lente, ca continue...)" : "");
   }
@@ -362,7 +459,7 @@
 // Rapports d'erreurs anonymes : fil d'Ariane (50 derniers evenements), erreurs JS, ressources manquantes, WebGL/audio/wasm,
 // panic Rust (afh_report). Envoi : POST /report (sendBeacon). Aucune donnee personnelle : un identifiant de session aleatoire.
 (function () {
-  var KEY = "afh_reports", on = true, crumbs = [], ctx = {}, sent = {}, nSent = 0, shown = false, lastRep = null, ready = false;
+  var KEY = "afh_reports", on = false, crumbs = [], ctx = {}, sent = {}, nSent = 0, shown = false, lastRep = null, ready = false;
   // Diagnostic de partie en ligne : le jeu (Rust) pose un JSON borne (cle reservee `_diag`) avant chaque rapport ; la page y ajoute la
   // console (100 dernieres lignes), le service worker et son cache. Envois automatiques (desync, stall) : 3 par type, espaces de 20 s.
   var diagStr = "", recStr = "", comment = "", con = [], swInfo = "?", multi = {};
@@ -370,7 +467,7 @@
   ["log", "warn", "info"].forEach(function (l) { var o = console[l]; console[l] = function () { conPush(l, arguments); return o.apply(console, arguments); }; });
   try { if (window.caches) caches.keys().then(function (k) { swInfo = (k.filter(function (x) { return /^afh-/.test(x); }).join(",") || "aucun cache") + (navigator.serviceWorker && navigator.serviceWorker.controller ? " (sw actif)" : " (sw inactif)"); }); } catch (e) {}
   var sid = ""; try { sid = Array.prototype.map.call(crypto.getRandomValues(new Uint8Array(6)), function (b) { return ("0" + b.toString(16)).slice(-2); }).join(""); } catch (e) { sid = Math.random().toString(16).slice(2, 14); }
-  try { if (localStorage.getItem(KEY) === "0") on = false; } catch (e) {}
+  try { if (localStorage.getItem(KEY) === "1") on = true; } catch (e) {}  // rien n'est envoye avant le consentement (le jeu confirme au demarrage via afh_report_config)
   var url = "/report";
   try {
     if (location.protocol.indexOf("http") !== 0) url = "";
@@ -1044,6 +1141,7 @@ miniquad_add_plugin({
         if (kind === 1) { var q = new URLSearchParams(location.search); var sal = String(q.get("salon") || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8); s = sal || (q.get("watch") ? "~" + q.get("watch") : ""); } // ?salon=%20k7m2q%20 : espaces, minuscules, texte colle autour = meme code // ?watch=CODE : mode spectateur (le jeu reconnait le prefixe ~)
         if (kind === 3 && new URLSearchParams(location.search).get("labo")) s = "1";
         if (kind === 6 && new URLSearchParams(location.search).get("perf") === "1") s = "1"; // ?perf=1 : overlay de diagnostic (fps, ms, entites)
+        if (kind === 9) s = String(new URLSearchParams(location.search).get("transition") || "").slice(0, 12); // ?transition=droite|montee|descente|chute|glissade : apercu en boucle
         if (kind === 4) s = window.afhNfcCode || "";
         if (kind === 8) s = String(window.afhWake ? window.afhWake.st : 0); // chauffe du serveur : 1 en cours, 2 reveille, 3 echec
         if (kind === 7) { s = netFlags ? String(netFlags) : ""; netFlags = 0; }
@@ -1238,10 +1336,10 @@ miniquad_add_plugin({
 });
 // Chauffe du serveur : des l'ouverture de la page (le titre), une requete legere reveille le serveur d'hebergement gratuit
 // (il met jusqu'a ~30 s : plus de « Connexion... » interminable a la creation d'une partie). Sans effet hors http(s).
-window.afhWake = { st: 0 };
+window.afhWake = window.afhWake || { st: 0 };
 (function () {
   try {
-    if (location.protocol.indexOf("http") !== 0 || !window.fetch) return;
+    if (window.afhWake.tries || location.protocol.indexOf("http") !== 0 || !window.fetch) return;
     window.afhWake.st = 1;
     var ctl = window.AbortController ? new AbortController() : null;
     var to = setTimeout(function () { try { if (ctl) ctl.abort(); } catch (e) {} }, 70000);

@@ -1,0 +1,5 @@
+[
+ {"id":"snes-1","titre":"Sons SNES : écoute","texte":"Écoute sons_snes.html : tous les effets sont générés par le moteur avec la même chaîne console (32 kHz, BRR, lecture gaussienne). Cette identité te convient-elle, ou quelles catégories refaire ?","page":"web/propositions/sons_snes.html"},
+ {"id":"snes-2","titre":"Pluie légère par défaut","texte":"La pluie est de nouveau active par défaut (boucle de 64 s, très basse, réglable avec « Volume des ambiances », coupée à 0 %). La garder ainsi ?","page":"web/propositions/sons_snes.html"},
+ {"id":"snes-3","titre":"Jingles","texte":"Les quatre jingles (victoire, défaite, bilan, bonus) n'ont pas été passés dans la chaîne console (ils font partie des musiques). Les passer aussi pour une identité 100 % SNES ?","page":"tools/playtest/sons_snes.md"}
+]
