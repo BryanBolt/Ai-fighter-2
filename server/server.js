@@ -43,6 +43,7 @@ const GRACE_MAX_MS = 3000; // grace maximale d'une annonce `busy`
 const MAX_INPUT_BITS = 32; // images par message `input` (les clients envoient 8 au plus ; un ancien client pouvait en envoyer delai + 1 apres une reprise, jusqu'a 25, que le relais jetait en silence)
 const HOLD_LEAD = 12; // images neutres fournies d'avance a une place en attente (les autres ne l'attendent jamais)
 const HOLD_MIN_RETURN_MS = 300; // une entree perdue juste apres la mise en attente n'est pas un retour
+const HOLD_HID_RETURN_MS = 1500; // idem apres une attente annoncee par la page masquee (`idle` h:1) : la page ne tourne plus, une entree si tot etait en vol
 const READY_LEAD = 20; // images de plus apres `ready` : le message de reprise arrive chez le revenant avant qu'il n'atteigne l'image annoncee
 const CATCHUP_MAX_MS = 180000; // un rejeu (reprise) sans `ready` plus longtemps que cela n'est plus un rejeu : la place est traitee comme absente
 const HOLD_COOL_MS = 4000; // apres un retour, un nouveau gel passe directement a l'IA (pas de va-et-vient de resynchronisations)
@@ -532,8 +533,14 @@ export function createServer(opts = {}) {
     const s = room.slots[slot];
     if (s.mode !== 'human' || s.hold) return;
     if (holdAiMs <= 0 || Date.now() < (s.holdCoolUntil || 0)) { dropToAi(room, slot, live); return; }
-    s.hold = Date.now(); s.pAt = s.hold; s.dormantDue = false;
+    s.hold = Date.now(); s.pAt = s.hold; s.dormantDue = false; s.holdHid = false;
     fillHeld(room);
+  }
+  // Un message de jeu (entree, `busy`, `idle` d'un ancien client) de la socket d'une place en attente prouve que le joueur est revenu. Pas pendant un rejeu
+  // deja lance ; pas dans les HOLD_MIN_RETURN_MS (message en vol) ; une attente annoncee par la page masquee (`idle` h:1) attend HOLD_HID_RETURN_MS : une
+  // entree partie juste avant de masquer la page (liaison 4G lente) ne doit pas relancer une reprise vers une page qui ne tourne plus.
+  function backFromHold(s) {
+    return !!s.hold && !s.catchup && Date.now() - s.hold >= (s.holdHid ? HOLD_HID_RETURN_MS : HOLD_MIN_RETURN_MS);
   }
   function fillNeutral(room, slot, upTo) {
     const s = room.slots[slot];
@@ -580,7 +587,7 @@ export function createServer(opts = {}) {
   function beginCatchup(room, ws, idx) {
     const s = room.slots[idx]; const now = Date.now();
     if (s.mode === 'human') { s.hold = now; s.pAt = now; s.dormantDue = false; }
-    s.catchup = now; s.stalled = false; s.lastMove = now; s.lastInputAt = now;
+    s.holdHid = false; s.catchup = now; s.stalled = false; s.lastMove = now; s.lastInputAt = now;
     fillHeld(room);
     send(ws, { ...resyncPayload(room), you: idx, catch: true });
     presTick(room, true);
@@ -607,7 +614,9 @@ export function createServer(opts = {}) {
   function presState(room, i, now) {
     const s = room.slots[i];
     if (!s.token && !s.ws) return null;
-    if (s.catchup && s.ws && now - s.catchup < CATCHUP_MAX_MS) return { st: 'on', left: 0 }; // il rejoue : il est la
+    // Il rejoue : il est la. Mais si l'IA tient encore sa place pendant ce rejeu, les autres voient « reconnexion » (avant : « en ligne » jusqu'a 3 min alors que
+    // l'IA jouait et que son client pouvait etre fige, etude absence/retour C7).
+    if (s.catchup && s.ws && now - s.catchup < CATCHUP_MAX_MS) return s.mode === 'human' || !s.pSent ? { st: 'on', left: 0 } : { st: 're', left: Math.max(0, CATCHUP_MAX_MS - (now - s.catchup)) };
     if (s.hold) return { st: s.ws ? 'bg' : 're', left: Math.max(0, holdAiMs - (now - s.hold)) };
     if (s.ws) {
       if (s.mode === 'human' || s.catchup) return { st: 'on', left: 0 };
@@ -686,9 +695,11 @@ export function createServer(opts = {}) {
     return idx;
   }
   function takeAi(room, ws, c, char, now) {
-    const cands = room.slots.map((s, i) => [s, i]).filter(([s, i]) => i < room.config.size && !s.ws && s.mode === 'ai');
+    // JAMAIS une place reservee (joueur absent dont la socket est coupee, qui peut revenir avec son jeton) : avant, un arrivant pouvait prendre le heros
+    // d'un absent et celui-ci lisait « Ta place a ete reprise par un autre joueur » a son retour (etude absence/retour C5).
+    const cands = room.slots.map((s, i) => [s, i]).filter(([s, i]) => i < room.config.size && !s.ws && s.mode === 'ai' && !(s.heldUntil > now && !s.bye));
     if (!cands.length) return -1;
-    cands.sort((a, b) => ((a[0].heldUntil > now) - (b[0].heldUntil > now)) || ((b[0].char === char) - (a[0].char === char)));
+    cands.sort((a, b) => (b[0].char === char) - (a[0].char === char));
     const [s, idx] = cands[0];
     s.ws = ws; s.name = uniqueName(room, cleanName(c.name), idx); s.token = c.token; s.ip = c.ip; s.heldUntil = 0; s.color = pickColor(room, idx, c.color); s.cos = ''; s.ready = false; s.lastMove = now; s.lastInputAt = now; s.afkWarned = false;
     c.room = room; c.slot = idx;
@@ -714,7 +725,7 @@ export function createServer(opts = {}) {
     while (roomsOfIp(ip) >= MAX_ROOMS_PER_IP && mine.length) closeRoom(mine.shift());
   }
   function hostNew(ws, c, char, priv, stage, full, ff, keep, nm) {
-    if (rooms.size >= maxRooms) return send(ws, { t: 'error', msg: 'Serveur plein, reessaie dans un instant', code: 'full' });
+    if (!roomSpace()) return send(ws, { t: 'error', msg: 'Serveur plein, reessaie dans un instant', code: 'full' });
     evictOwned(c.ip);
     if (roomsOfIp(c.ip) >= MAX_ROOMS_PER_IP && !isLocal(c.ip)) return send(ws, { t: 'error', msg: 'Trop de parties ouvertes depuis cette connexion', code: 'limit' });
     const room = makeRoom(!priv); room.build = c.build;
@@ -743,7 +754,7 @@ export function createServer(opts = {}) {
     if (Number.isInteger(m.color)) c.color = m.color;
     const now = Date.now();
     for (const r of rooms.values()) {
-      if (!r.started) continue;
+      if (!r.started || buildClash(r, c)) continue; // jamais de retour dans une partie d une autre version (simulation differente)
       const back = reclaim(r, ws, c);
       if (back >= 0) return finishJoin(r, ws, c, back);
     }
@@ -807,7 +818,7 @@ export function createServer(opts = {}) {
     if (m.name) c.name = cleanName(m.name);
     if (Number.isInteger(m.color)) c.color = m.color;
     const now = Date.now();
-    for (const r of rooms.values()) { if (!r.started) continue; const back = reclaim(r, ws, c); if (back >= 0) return finishJoin(r, ws, c, back); }
+    for (const r of rooms.values()) { if (!r.started || buildClash(r, c)) continue; const back = reclaim(r, ws, c); if (back >= 0) return finishJoin(r, ws, c, back); }
     const key = matchKey(m);
     const late = m.late !== false;
     const fits = (r) => r.public && r.auto && r.mk === key && humans(r).length > 0 && humans(r).length < roomCap(r);
@@ -818,7 +829,7 @@ export function createServer(opts = {}) {
     if (open) return seat(ws, c, open, char, m, now, 'joined');
     // Des salles existent mais d'une AUTRE version du jeu : on le dit (sinon chacun se retrouve seul dans sa partie sans comprendre pourquoi).
     const other = [...rooms.values()].some((r) => fits(r) && buildClash(r, c));
-    if (rooms.size >= maxRooms) return send(ws, { t: 'error', msg: 'Serveur plein, reessaie dans un instant', code: 'full' });
+    if (!roomSpace()) return send(ws, { t: 'error', msg: 'Serveur plein, reessaie dans un instant', code: 'full' });
     evictOwned(c.ip);
     if (roomsOfIp(c.ip) >= MAX_ROOMS_PER_IP && !isLocal(c.ip)) return send(ws, { t: 'error', msg: 'Trop de parties ouvertes depuis cette connexion', code: 'limit' });
     const room = makeRoom(true); room.build = c.build; room.auto = true; room.keep = m.keep !== false; room.ownerIp = c.ip; room.mk = key;
@@ -864,6 +875,23 @@ export function createServer(opts = {}) {
     hostNew(ws, c, Math.max(0, Math.min(ROSTER - 1, m.char | 0)), !!m.private, m.stage === undefined ? undefined : m.stage | 0, full, typeof m.ff === 'boolean' ? m.ff : undefined, m.keep === true, m.nm);
   }
 
+  // Salon sans aucune connexion humaine : delai avant fermeture. Partie LANCEE dont une place est reservee a un joueur coupe (pas un depart volontaire) :
+  // gardee jusqu'a `autoHoldMs` (10 min) pour qu'il retrouve sa partie, au lieu de 30 / 60 s (avant : le seul humain qui verrouillait son telephone 2 min
+  // revenait sur « Cette partie est terminee », etude absence/retour C4). Memoire bornee par `maxRooms`.
+  function emptyTtl(room, now) {
+    const base = room.keep ? roomTtl : graceMs;
+    const reserved = room.started && room.config && room.slots.slice(0, room.config.size).some((s) => s.token && !s.bye && s.heldUntil > now);
+    return reserved ? Math.max(base, autoHoldMs) : base;
+  }
+  // Place pour un salon neuf : au plafond `maxRooms`, le salon VIDE (aucune connexion humaine) le plus anciennement vide est ferme d'abord ; les salons
+  // gardes pour un absent ne bloquent donc jamais un nouveau joueur.
+  function roomSpace() {
+    if (rooms.size < maxRooms) return true;
+    const empty = [...rooms.values()].filter((r) => humans(r).length === 0).sort((x, y) => (x.emptySince || x.created) - (y.emptySince || y.created))[0];
+    if (!empty) return false;
+    closeRoom(empty);
+    return rooms.size < maxRooms;
+  }
   function leaveRoom(c, ws, permanent) {
     const room = c.room;
     if (!room) return;
@@ -1058,7 +1086,7 @@ export function createServer(opts = {}) {
         if (c.room) leaveRoom(c, ws, true);
         evictOwned(c.ip);
         if (roomsOfIp(c.ip) >= MAX_ROOMS_PER_IP && !isLocal(c.ip)) return send(ws, { t: 'error', msg: 'Trop de parties ouvertes depuis cette connexion', code: 'limit' });
-        if (rooms.size >= maxRooms) return send(ws, { t: 'error', msg: 'Serveur plein, reessaie dans un instant', code: 'full' });
+        if (!roomSpace()) return send(ws, { t: 'error', msg: 'Serveur plein, reessaie dans un instant', code: 'full' });
         const room = makeRoom(!!m.public); room.build = c.build; // salon d'attente : PRIVE par defaut (lien), public seulement si demande
         room.keep = m.keep === true; room.ownerIp = c.ip;
         if (m.size !== undefined) room.options.size = int(m.size, 1, MAX_SLOTS, 2);
@@ -1087,6 +1115,8 @@ export function createServer(opts = {}) {
         const idx = room.slots.findIndex((s) => s.token && s.token === m.token);
         if (idx < 0) return send(ws, { t: 'error', msg: 'Reprise impossible', detail: 'Ta place a ete reprise par un autre joueur.', rejoin: true, code: 'taken' });
         if (isBanned(room.code, { ip: c.ip, token: m.token })) return send(ws, { t: 'error', msg: 'Reprise impossible', detail: 'Tu as ete expulse de ce salon.', rejoin: true, code: 'banned' });
+        // Page rechargee apres une mise a jour (onglet tue en arriere-plan) : une autre simulation ne peut pas reprendre cette partie (desynchronisation en boucle).
+        if (buildClash(room, c)) return send(ws, { t: 'error', msg: 'Reprise impossible', detail: 'Nouvelle version du jeu : recharge la page.', rejoin: true, code: 'build' });
         const s = room.slots[idx];
         if (room.started && room.config && idx < room.config.size) { c.token = m.token; if (reclaim(room, ws, c) === idx) return finishJoin(room, ws, c, idx); }
         // Ce client occupait deja un autre salon : il le quitte (sinon sa place y reste « occupee » par une connexion fantome).
@@ -1180,9 +1210,9 @@ export function createServer(opts = {}) {
         if (s.mode !== 'human') return;
         if (s.hold) { // place en attente : une entree d'une image deja fournie (neutre) = le joueur est de retour -> resynchronisation sans IA ; jamais relayee telle quelle
           if (c.cu) { // retour en deux temps : reprise complete maintenant, la place reste en attente neutre pendant le rejeu du client, `ready` la rend
-            if (!s.catchup && Date.now() - s.hold >= HOLD_MIN_RETURN_MS && m.f0 <= s.hi) {
-              beginCatchup(room, ws, c.slot);
-            }
+            // N'importe quelle entree, meme au-dela de l'image deja remplie : le joueur est la. Avant, seule une entree d'une image deja fournie comptait, ce que le
+            // client ne pouvait plus envoyer (il ne produit rien tant que le relais l'a rempli d'avance) : 40 s immobile malgre ses touches (etude absence/retour C1).
+            if (backFromHold(s)) beginCatchup(room, ws, c.slot);
             return;
           }
           if (Date.now() - s.hold >= HOLD_MIN_RETURN_MS && m.f0 <= s.hi) endHold(room, ws, c.slot);
@@ -1236,7 +1266,9 @@ export function createServer(opts = {}) {
         return;
       }
       case 'busy': { // le client annonce un travail lourd (changement d'etage / de lieu, chargement) : pas de mise en attente ni d'IA pendant `ms` (borne a 3 s), plafonne a une annonce par 500 ms
-        if (!room.started || s.mode !== 'human' || s.ws !== ws || s.hold) return;
+        if (!room.started || s.mode !== 'human' || s.ws !== ws) return;
+        // Place en attente : un client qui annonce une image longue TOURNE (premiere image apres un retour au premier plan) -> il est la, reprise sans IA.
+        if (s.hold) { if (c.cu && backFromHold(s)) beginCatchup(room, ws, c.slot); return; }
         const nowB = Date.now(); const ms = Math.max(0, Math.min(GRACE_MAX_MS, Number(m.ms) | 0));
         if (nowB - (s.graceAt || 0) < 500) return;
         s.graceAt = nowB; s.grace = nowB + ms; s.lastInputAt = Math.max(s.lastInputAt || 0, nowB + ms);
@@ -1244,8 +1276,11 @@ export function createServer(opts = {}) {
       }
       case 'idle': { // page masquee / application changee (telephone) : l'IA tient la place tout de suite, visible pour tous, personne n'attend
         if (!room.started || s.mode !== 'human' || s.ws !== ws) return;
+        // `h:1` : envoye par la PAGE au moment ou elle est masquee (vraie absence). Sans `h` (ancien client) : le drapeau est lu a la premiere image APRES le
+        // retour au premier plan ; si la place est deja en attente (gel detecte pendant l'absence), ce message prouve donc que le jeu tourne de nouveau : retour.
+        if (s.hold) { if (!m.h && c.cu && backFromHold(s)) beginCatchup(room, ws, c.slot); return; }
         s.stalled = true;
-        if (holdAiMs > 0 && Date.now() >= (s.holdCoolUntil || 0)) startHold(room, c.slot);
+        if (holdAiMs > 0 && Date.now() >= (s.holdCoolUntil || 0)) { startHold(room, c.slot); if (m.h) s.holdHid = true; }
         else { dropToAi(room, c.slot, true); send(ws, { t: 'stalled' }); }
         presTick(room, true);
         return;
@@ -1268,7 +1303,9 @@ export function createServer(opts = {}) {
         // Seul (ou avec des places IA) le client a continue de simuler pendant l'absence : la reprise doit tomber APRES son image courante,
         // sinon il attendait une entree d'une image deja passee (gel « En attente des autres joueurs » en jouant seul).
         const tickC = Number.isInteger(m.tick) && m.tick >= 0 && m.tick < 2000000 ? m.tick : 0;
-        const fromR = Math.max(highest(room), tickC) + rejoinMargin(room);
+        // Marge COURTE (trajet du message, comme `ready`) : le client tournait en direct, il n'a rien a rejouer. L'ancienne marge (1/25 des images jouees, jusqu'a
+        // 590 images) laissait jusqu'a 10 s d'IA apres la touche du joueur en fin de partie (etude absence/retour C6).
+        const fromR = Math.max(highest(room), tickC) + readyMargin(room);
         if (s.hi < fromR - 1) s.hi = fromR - 1;
         resumeGrace(room, s, fromR);
         control(room, c.slot, fromR, { ai: false, name: s.name });
@@ -1411,7 +1448,7 @@ export function createServer(opts = {}) {
         }
         continue;
       }
-      if (humans(room).length === 0 && (now - (room.emptySince || room.created) > (room.keep ? roomTtl : graceMs))) closeRoom(room);
+      if (humans(room).length === 0 && (now - (room.emptySince || room.created) > emptyTtl(room, now))) closeRoom(room);
     }
   }, 1000);
   timer.unref?.();

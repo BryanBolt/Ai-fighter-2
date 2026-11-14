@@ -156,7 +156,6 @@
   setInterval(tick, 1000); tick();
 })();
 </script>
-<button id="pi" title="Installer le jeu" aria-label="Installer le jeu" hidden>Installer</button>
 <button id="fs" title="Plein ecran" aria-label="Plein ecran" hidden>[ ]</button>
 <button id="pf" title="Prevenir mes amis" aria-label="Prevenir mes amis" hidden>Amis</button>
 <div id="pfp" hidden>
@@ -168,8 +167,6 @@
 </div>
 <style>
   #pf { position: absolute; left: max(6px, env(safe-area-inset-left)); top: max(6px, env(safe-area-inset-top)); z-index: 3; opacity: .3; font: 600 12px monospace; border: 1px solid var(--ink); background: var(--paper); color: var(--ink); border-radius: 6px; padding: 6px 8px; }
-  #pi { position: absolute; left: 50%; bottom: max(10px, env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 3; min-height: 44px; padding: 0 16px; font: 600 14px monospace; border: 2px solid var(--ink); background: var(--paper); color: var(--ink); border-radius: 8px; opacity: .85; }
-  #pi[hidden] { display: none; }
   #pf:hover, #pf:focus { opacity: .9; }
   #pfp { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 5; width: min(320px, 90vw); box-sizing: border-box; padding: 14px; background: var(--paper); color: var(--ink); border: 2px solid var(--ink); border-radius: 8px; font: 14px/1.4 ui-monospace, Menlo, Consolas, monospace; }
   #pfp[hidden], #pf[hidden] { display: none; }
@@ -764,16 +761,30 @@ if ("serviceWorker" in navigator) {
     }).catch(function () {});
   });
 }
-// Ecran d'installation : bouton « Installer » (Chrome / Android) tant que le jeu n'est pas installe ; masque des qu'il l'est.
-(function () {
-  var ev = null, b = null;
-  window.addEventListener("beforeinstallprompt", function (e) {
-    e.preventDefault(); ev = e; b = b || document.getElementById("pi"); if (!b) return; b.hidden = false;
-    b.onclick = function () { var p = ev; ev = null; b.hidden = true; try { p.prompt(); } catch (x) {} };
-    setTimeout(function () { if (b) b.hidden = true; }, 20000); // discret : jamais en travers du jeu bien longtemps
-  });
-  window.addEventListener("appinstalled", function () { ev = null; if (b) b.hidden = true; });
+/*AFH_INSTALL_BEGIN*/
+// Installation (raccourci PWA) : le jeu dessine lui-meme le bouton « Installer » (ecran titre et options) ; la page ne garde que l'etat.
+// afhInstall.state() : 0 = rien a proposer (deja installe, ou navigateur sans installation), 1 = installable (beforeinstallprompt capture),
+// 2 = iOS / Safari (pas d'evenement : astuce « Partager puis Sur l'ecran d'accueil »). afhInstall.prompt() ouvre la boite du navigateur.
+window.afhInstall = (function () {
+  var ev = null, done = false;
+  function standalone() {
+    try {
+      if (navigator.standalone === true) return true;
+      var q = ["standalone", "fullscreen", "minimal-ui"];
+      for (var i = 0; i < q.length; i++) if (window.matchMedia && window.matchMedia("(display-mode: " + q[i] + ")").matches) return true;
+    } catch (e) {}
+    return false;
+  }
+  var ua = navigator.userAgent || "";
+  var ios = /iPad|iPhone|iPod/.test(ua) || (/Macintosh/.test(ua) && (navigator.maxTouchPoints || 0) > 1);
+  window.addEventListener("beforeinstallprompt", function (e) { e.preventDefault(); ev = e; });
+  window.addEventListener("appinstalled", function () { ev = null; done = true; });
+  return {
+    state: function () { if (done || standalone()) return 0; if (ev) return 1; return ios ? 2 : 0; },
+    prompt: function () { var p = ev; if (!p) return; ev = null; try { p.prompt(); } catch (x) {} }
+  };
 })();
+/*AFH_INSTALL_END*/
 </script>
 <script>
 // SAISIE DE TEXTE (pont jeu <-> vrai champ HTML). Le jeu est un canvas : sans vrai <input> le clavier du telephone ne s'ouvre jamais.
@@ -1039,6 +1050,8 @@ miniquad_add_plugin({
     importObject.env.afh_focus_lost =function () { try { return window.afhGuard ? window.afhGuard.takeHidden() : 0; } catch (e) { return 0; } };
     // Preference systeme « reduire les animations » (reglage d'accessibilite) : 1 si activee.
     importObject.env.afh_reduced_motion = function () { try { return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 1 : 0; } catch (e) { return 0; } };
+    importObject.env.afh_install_state = function () { try { return window.afhInstall ? window.afhInstall.state() : 0; } catch (e) { return 0; } };
+    importObject.env.afh_install_prompt = function () { try { if (window.afhInstall) window.afhInstall.prompt(); } catch (e) {} };
     // Musiques a la demande (hors du wasm) : le jeu sonde afh_music_size (0 = en cours, -1 = echec, n = octets prets),
     // puis copie le morceau avec afh_music_copy. Chaque .ogg est telecharge, decode (WebAudio), raccorde en boucle (fondu croise
     // de 1 s fin -> debut, meme calcul que loop_crossfade cote Rust) et rendu en WAV mono 16 bits ; la copie vide l'entree
