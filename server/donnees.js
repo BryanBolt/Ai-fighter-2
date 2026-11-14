@@ -1,6 +1,6 @@
 // Donnees de jeu anonymes (envoyees seulement si le joueur a accepte, cote client) : POST /donnees { k: "partie" | "incident" | "rec" | "note", ... }
 //   partie   : chiffres d'une partie (version, plateforme generique, heros, joueurs, duree, etage, cause de fin, cartes, boutons, degats, reanimations)
-//   incident : deconnexion | reprise | desync | nouvelle_version | fluidite (+ version et plateforme generique)
+//   incident : deconnexion | reprise | desync | nouvelle_version | fluidite | tactile_masque (+ cause courte, version et plateforme generique)
 //   rec      : enregistrement rejouable de la fin de partie (format .afhrec, `rec` de src/rejeu.rs), borne, les 40 derniers gardes
 //   note     : trois visages (bien / moyen / pas_bien) relies a l'identifiant de partie `gid`
 // Lecture (en-tete x-admin-key ou Authorization: Bearer, JAMAIS dans l'URL ; sans ADMIN_KEY : 404) :
@@ -17,7 +17,7 @@ export const RATE_PER_MIN = 40;
 export const RATE_PER_HOUR = 400;
 export const MAX_PER_GID = 16;
 export const BUTTONS = ['poing', 'pied', 'saut', 'garde', 'esquive', 'saisie', 'special'];
-export const INCIDENTS = ['deconnexion', 'reprise', 'desync', 'nouvelle_version', 'fluidite'];
+export const INCIDENTS = ['deconnexion', 'reprise', 'desync', 'nouvelle_version', 'fluidite', 'tactile_masque'];
 export const FACES = ['bien', 'moyen', 'pas_bien'];
 export const ENDS = ['mort', 'abandon', 'victoire'];
 
@@ -57,7 +57,7 @@ export function cleanPartie(m) {
 }
 export function cleanIncident(m) {
   if (!m || typeof m !== 'object' || !INCIDENTS.includes(m.type)) return null;
-  return { type: m.type, gid: GID.test(String(m.gid || '')) ? String(m.gid) : '', build: clean(m.build, 48), platform: platform(m.platform), ms: num(m.ms, 1e8), n: num(m.n, 1e6) ?? 1 };
+  return { type: m.type, gid: GID.test(String(m.gid || '')) ? String(m.gid) : '', build: clean(m.build, 48), platform: platform(m.platform), ms: num(m.ms, 1e8), n: num(m.n, 1e6) ?? 1, cause: cleanKey(m.cause, 24) };
 }
 export function cleanNote(m) {
   if (!m || typeof m !== 'object' || !GID.test(String(m.gid || '')) || !FACES.includes(m.face)) return null;
