@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Voix et sons d'information</title>
+<style>
+:root{--ink:#221834;--paper:#fff3e0;--acc:#d8456b;--card:#fffaf2;--line:#e9d3b4}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/1.55 Nunito,system-ui,sans-serif}
+main{max-width:640px;margin:0 auto;padding:16px}
+h1{font-size:22px}h2{font-size:18px;margin:24px 0 8px;color:var(--acc)}
+.row{display:flex;gap:12px;align-items:center;background:var(--card);border:2px solid var(--ink);border-radius:10px;padding:10px 12px;margin:8px 0}
+button{min-height:44px;min-width:44px;border:2px solid var(--ink);border-radius:22px;background:var(--acc);color:var(--paper);font-size:18px;cursor:pointer}
+small{color:var(--ink);opacity:.75}
+</style></head><body><main>
+<h1>Voix et sons d'information</h1>
+<p>Sons synthetises par le jeu (aucun fichier externe). Écoute avec le casque : les voix sont courtes, les jingles different selon la rarete. Ils n'ont pas pu être ecoutes par l'auteur : dis ce qui sonne faux.</p>
+<h2>Voix des héros</h2>
+<div class="row"><button type="button" onclick="play('voix_kaze.wav',this)" aria-label="Ecouter">&#9654;</button><div><b>Kaze (héros, aigue et vive) : effort, douleur, KO</b><br><small>voix_kaze.wav, 2.1 s</small></div></div>
+<div class="row"><button type="button" onclick="play('voix_gorr.wav',this)" aria-label="Ecouter">&#9654;</button><div><b>Gorr (héros, grave) : effort, douleur, KO</b><br><small>voix_gorr.wav, 2.8 s</small></div></div>
+<div class="row"><button type="button" onclick="play('voix_nova.wav',this)" aria-label="Ecouter">&#9654;</button><div><b>Nova (héroïne, claire) : effort, douleur, KO</b><br><small>voix_nova.wav, 2.4 s</small></div></div>
+<div class="row"><button type="button" onclick="play('voix_kage.wav',this)" aria-label="Ecouter">&#9654;</button><div><b>Kage (héros, sec) : effort, douleur, KO</b><br><small>voix_kage.wav, 2.0 s</small></div></div>
+<div class="row"><button type="button" onclick="play('voix_yume.wav',this)" aria-label="Ecouter">&#9654;</button><div><b>Yume (héroïne, douce) : effort, douleur, KO</b><br><small>voix_yume.wav, 2.4 s</small></div></div>
+<div class="row"><button type="button" onclick="play('voix_zui.wav',this)" aria-label="Ecouter">&#9654;</button><div><b>Zui (héros, tout simple) : effort, douleur, KO</b><br><small>voix_zui.wav, 2.3 s</small></div></div>
+<h2>Voix des ennemis</h2>
+<div class="row"><button type="button" onclick="play('voix_nerveux.wav',this)" aria-label="Ecouter">&#9654;</button><div><b>Ennemi petit nerveux : effort, douleur, KO</b><br><small>voix_nerveux.wav, 2.0 s</small></div></div>
+<div class="row"><button type="button" onclick="play('voix_costaud.wav',this)" aria-label="Ecouter">&#9654;</button><div><b>Ennemi costaud : effort, douleur, KO</b><br><small>voix_costaud.wav, 2.9 s</small></div></div>
+<div class="row"><button type="button" onclick="play('voix_lache.wav',this)" aria-label="Ecouter">&#9654;</button><div><b>Ennemi lâche : effort, douleur, KO</b><br><small>voix_lâche.wav, 2.4 s</small></div></div>
+<div class="row"><button type="button" onclick="play('voix_boss.wav',this)" aria-label="Ecouter">&#9654;</button><div><b>Boss : effort, douleur, KO</b><br><small>voix_boss.wav, 3.2 s</small></div></div>
+<h2>Sons d'information</h2>
+<div class="row"><button type="button" onclick="play('info_attaque_lourde.wav',this)" aria-label="Ecouter">&#9654;</button><div><b>Danger : un ennemi arme un coup lourd (monte grave, s'arrete net)</b><br><small>info_attaque_lourde.wav, 0.5 s</small></div></div>
+<div class="row"><button type="button" onclick="play('info_tir_ennemi.wav',this)" aria-label="Ecouter">&#9654;</button><div><b>Danger : un ennemi prépare un tir (deux tics qui montent)</b><br><small>info_tir_ennemi.wav, 0.3 s</small></div></div>
+<div class="row"><button type="button" onclick="play('info_renforts.wav',this)" aria-label="Ecouter">&#9654;</button><div><b>Renforts : nouvelle vague (deux coups de cor)</b><br><small>info_renforts.wav, 0.9 s</small></div></div>
+<div class="row"><button type="button" onclick="play('info_allie_a_terre.wav',this)" aria-label="Ecouter">&#9654;</button><div><b>Allie a terre (plainte qui descend)</b><br><small>info_allie_a_terre.wav, 0.7 s</small></div></div>
+<div class="row"><button type="button" onclick="play('info_allie_releve.wav',this)" aria-label="Ecouter">&#9654;</button><div><b>Allie releve (deux notes claires qui montent)</b><br><small>info_allie_releve.wav, 0.5 s</small></div></div>
+<div class="row"><button type="button" onclick="play('info_arme_ramassee_ennemi.wav',this)" aria-label="Ecouter">&#9654;</button><div><b>Un ennemi saisit une arme (raclement et tintement)</b><br><small>info_arme_ramassee_ennemi.wav, 0.3 s</small></div></div>
+<div class="row"><button type="button" onclick="play('info_vie_basse.wav',this)" aria-label="Ecouter">&#9654;</button><div><b>Vie basse du joueur (deux battements)</b><br><small>info_vie_basse.wav, 0.5 s</small></div></div>
+<div class="row"><button type="button" onclick="play('info_arme_va_casser.wav',this)" aria-label="Ecouter">&#9654;</button><div><b>Arme du joueur sur le point de casser (craquements et grincement)</b><br><small>info_arme_va_casser.wav, 0.3 s</small></div></div>
+<h2>Accent et silence</h2>
+<div class="row"><button type="button" onclick="play('accent_dernier_ko.wav',this)" aria-label="Ecouter">&#9654;</button><div><b>Accent du dernier KO d'un étage (grosse caisse et claquement)</b><br><small>accent_dernier_ko.wav, 0.6 s</small></div></div>
+<h2>Récompenses (jingles)</h2>
+<div class="row"><button type="button" onclick="play('jingle_carte_commune.wav',this)" aria-label="Ecouter">&#9654;</button><div><b>Carte commune : jingle court</b><br><small>jingle_carte_commune.wav, 0.4 s</small></div></div>
+<div class="row"><button type="button" onclick="play('jingle_carte_rare.wav',this)" aria-label="Ecouter">&#9654;</button><div><b>Carte rare : arpege de trois notes</b><br><small>jingle_carte_rare.wav, 0.6 s</small></div></div>
+<div class="row"><button type="button" onclick="play('jingle_carte_epique.wav',this)" aria-label="Ecouter">&#9654;</button><div><b>Carte épique : arpege et accord</b><br><small>jingle_carte_épique.wav, 1.0 s</small></div></div>
+<div class="row"><button type="button" onclick="play('jingle_carte_legendaire.wav',this)" aria-label="Ecouter">&#9654;</button><div><b>Carte légendaire : fanfare et accord brillant</b><br><small>jingle_carte_légendaire.wav, 1.5 s</small></div></div>
+<div class="row"><button type="button" onclick="play('jingle_fin_etage.wav',this)" aria-label="Ecouter">&#9654;</button><div><b>Fin d'étage : montee de quatre notes</b><br><small>jingle_fin_étage.wav, 1.1 s</small></div></div>
+<div class="row"><button type="button" onclick="play('jingle_boss_vaincu.wav',this)" aria-label="Ecouter">&#9654;</button><div><b>Boss vaincu : timbale, appels et accord majeur</b><br><small>jingle_boss_vaincu.wav, 2.1 s</small></div></div>
+<script>
+var cur=null;function play(f,b){if(cur){cur.pause();}cur=new Audio('sons/'+f);cur.play();}
+</script></main></body></html>

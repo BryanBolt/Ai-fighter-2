@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sons de combat façon PlayStation</title>
+<style>
+:root{--ink:#221834;--paper:#fff3e0;--acc:#d8456b;--btn:#c03a5e;--gold:#ffd27a;--card:#fffaf2;--line:#e9d3b4;--ok:#2f8f5b}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/1.55 Nunito,system-ui,sans-serif}
+main{max-width:760px;margin:0 auto;padding:16px}
+h1{font-size:22px;margin:8px 0}h2{font-size:19px;margin:0 0 4px;color:var(--acc)}h3{font-size:17px;margin:16px 0 4px}
+.dir{background:var(--card);border:2px solid var(--ink);border-radius:12px;padding:12px;margin:16px 0}
+.dir p{margin:0 0 10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+button{min-height:56px;width:100%;border:2px solid var(--ink);border-radius:14px;background:var(--btn);color:var(--paper);font:700 17px/1.2 Nunito,system-ui,sans-serif;cursor:pointer;padding:6px 8px}
+button small{display:block;font-weight:400;font-size:13px;opacity:.85}
+button.chain{background:var(--gold);color:var(--ink);margin-top:8px}
+button.music{background:var(--card);color:var(--ink);min-height:64px;font-size:18px}
+button.music[aria-pressed="true"]{background:var(--ok);color:var(--paper)}
+button:active{transform:translateY(1px)}
+.sticky{position:sticky;top:0;background:var(--paper);padding:8px 0;z-index:2}
+.note{border-left:4px solid var(--acc);padding:4px 10px;background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:14px;margin-top:8px}
+td,th{border-bottom:1px solid var(--line);padding:4px 6px;text-align:left}
+.wrap{overflow-x:auto}
+</style></head><body><main>
+<h1>Sons de combat façon PlayStation (type Street Fighter EX2 Plus)</h1>
+<p class="note">Deux directions, les onze mêmes sons dans chacune, plus un enchaînement façon combo. Tout est synthétisé par le code du jeu (aucun échantillon d'un autre jeu, seulement le style). Pas de voix cette fois : les cris viendront d'enregistrements. Rien n'est branché dans le jeu. L'auteur n'a pas pu les écouter : dis laquelle garder et ce qui sonne faux.</p>
+
+<div class="sticky"><button type="button" class="music" id="mus" aria-pressed="false" onclick="music()">Avec la musique du jeu : non<small>Boucle de 18 s de « Level 1 » (musique de combat du premier lieu), au niveau du jeu</small></button></div>
+
+<section class="dir"><h2>Direction A : arcade PS1 nette</h2><p>Brillante et percutante, la plus proche de la référence : claquement sec et clair, corps court qui plonge, petite salle claire (queue de 0,3 s), échantillons « 32 kHz ». Accords en quintes sur sol (sol, ré, la), communs à toutes les musiques du jeu.</p><div class="grid">
+<button type="button" onclick="play('a_whoosh.wav')">Whoosh léger<small>370 ms</small></button>
+<button type="button" onclick="play('a_coup_leger.wav')">Coup léger<small>240 ms</small></button>
+<button type="button" onclick="play('a_coup_moyen.wav')">Coup moyen<small>370 ms</small></button>
+<button type="button" onclick="play('a_coup_lourd.wav')">Coup lourd<small>600 ms</small></button>
+<button type="button" onclick="play('a_garde.wav')">Coup bloqué (garde)<small>210 ms</small></button>
+<button type="button" onclick="play('a_chute.wav')">Chute au sol<small>720 ms</small></button>
+<button type="button" onclick="play('a_projection.wav')">Balayage, projection<small>1,0 s</small></button>
+<button type="button" onclick="play('a_charge.wav')">Charge d'énergie<small>0,8 s</small></button>
+<button type="button" onclick="play('a_super.wav')">Décharge, super<small>1,0 s</small></button>
+<button type="button" onclick="play('a_ko.wav')">Stinger de KO<small>1,5 s</small></button>
+<button type="button" onclick="play('a_jingle.wav')">Jingle récompense<small>1,1 s</small></button>
+</div><button type="button" class="chain" onclick="play('a_enchainement.wav')">Enchaînement : whoosh + coup léger, coup moyen, coup lourd + KO, chute</button></section>
+
+<section class="dir"><h2>Direction B : PS1 sombre et lourde</h2><p>Plus grave : claquement plus mat, corps qui descend plus bas, sub court plus présent, salle un peu plus grande et sombre (queue de 0,45 s), échantillons « 22 kHz ». Accords en quintes sur la (la, mi, sol), dans le caractère mineur des musiques de boss.</p><div class="grid">
+<button type="button" onclick="play('b_whoosh.wav')">Whoosh léger<small>510 ms</small></button>
+<button type="button" onclick="play('b_coup_leger.wav')">Coup léger<small>360 ms</small></button>
+<button type="button" onclick="play('b_coup_moyen.wav')">Coup moyen<small>510 ms</small></button>
+<button type="button" onclick="play('b_coup_lourd.wav')">Coup lourd<small>810 ms</small></button>
+<button type="button" onclick="play('b_garde.wav')">Coup bloqué (garde)<small>330 ms</small></button>
+<button type="button" onclick="play('b_chute.wav')">Chute au sol<small>920 ms</small></button>
+<button type="button" onclick="play('b_projection.wav')">Balayage, projection<small>1,1 s</small></button>
+<button type="button" onclick="play('b_charge.wav')">Charge d'énergie<small>0,9 s</small></button>
+<button type="button" onclick="play('b_super.wav')">Décharge, super<small>1,3 s</small></button>
+<button type="button" onclick="play('b_ko.wav')">Stinger de KO<small>1,7 s</small></button>
+<button type="button" onclick="play('b_jingle.wav')">Jingle récompense<small>1,4 s</small></button>
+</div><button type="button" class="chain" onclick="play('b_enchainement.wav')">Enchaînement : whoosh + coup léger, coup moyen, coup lourd + KO, chute</button></section>
+
+<h2>Comment c'est fait</h2>
+<p>Chaque impact empile trois couches : un claquement très sec de cuir ou de bois (2 à 5 kHz), un corps grave court dont la hauteur chute, une courte queue de bruit filtrée. Les coups moyen et lourd ont un balayage d'air avant l'impact. Ensuite, comme sur la console : bande passante d'échantillon, compression ADPCM (le grain discret des sons PS1, pas la réduction 8 bits), petite réverbération de salle commune à tous les sons, limiteur doux (aucune saturation), niveaux égalisés par famille.</p>
+<h3>Ce que disent les musiques du jeu</h3>
+<p>Les musiques de combat (« Level 1 », « Level 2 ») tournent à 139-150 BPM, centrées sur sol et la ; celles de boss sont en ré, la, fa ou do mineur. Leur énergie est dans le grave (60-150 Hz) et le médium (400 Hz-1 kHz) ; presque rien au-dessus de 5 kHz et sous 60 Hz. Les claquements visent donc 2-5 kHz et au-dessus, le sub des coups lourds descend sous 60 Hz, et la réverbération ne prend pas le grave (il reste sec pour ne pas brouiller la basse).</p>
+<h3>Comparaison avec les essais Mega Drive</h3>
+<div class="wrap"><table><tr><th>Son</th><th>Claquement 2-5 kHz (15 premières ms)</th><th>Corps 60-150 Hz (15-120 ms)</th><th>Durée utile</th></tr>
+<tr><td>Mega Drive 1, coup léger</td><td>2 %</td><td>87 %</td><td>115 ms</td></tr>
+<tr><td>Mega Drive 3, coup léger</td><td>16 %</td><td>44 %</td><td>140 ms</td></tr>
+<tr><td>Mega Drive 1, coup lourd</td><td>1 %</td><td>11 %</td><td>314 ms</td></tr>
+<tr><td>Mega Drive 3, coup lourd</td><td>4 %</td><td>48 %</td><td>379 ms</td></tr>
+<tr><td>PS1 A, coup léger</td><td>15 %</td><td>93 %</td><td>150 ms</td></tr>
+<tr><td>PS1 A, coup moyen</td><td>13 %</td><td>89 %</td><td>290 ms</td></tr>
+<tr><td>PS1 A, coup lourd</td><td>12 %</td><td>57 %</td><td>500 ms</td></tr>
+<tr><td>PS1 B, coup léger</td><td>7 %</td><td>92 %</td><td>255 ms</td></tr>
+<tr><td>PS1 B, coup moyen</td><td>7 %</td><td>68 %</td><td>395 ms</td></tr>
+<tr><td>PS1 B, coup lourd</td><td>10 %</td><td>34 % (le reste sous 60 Hz)</td><td>655 ms</td></tr>
+</table></div>
+<p>Durée utile : jusqu'à ce que le son tombe 40 dB sous sa crête, réverbération comprise.</p>
+<script>
+var cur=null,mus=null;
+function stop(){if(cur){cur.pause();}cur=null;}
+function play(f){stop();cur=new Audio('sons_ps1/'+f);cur.play();}
+function music(){var b=document.getElementById('mus');if(!mus){mus=new Audio('sons_ps1/musique_combat.wav');mus.loop=true;}
+var on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',on?'true':'false');
+b.firstChild.nodeValue=on?'Avec la musique du jeu : oui':'Avec la musique du jeu : non';if(on){mus.currentTime=0;mus.play();}else{mus.pause();}}
+</script></main></body></html>

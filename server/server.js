@@ -15,8 +15,10 @@ import { createPush } from './push.js';
 import { createReports, cleanReport } from './reports.js';
 import { createTelemetry } from './telemetry.js';
 import { createSignalements } from './signalements.js';
+import { createStockage } from './stockage.js';
+import { createDonnees } from './donnees.js';
 
-export const PROTOCOL_VERSION = 52; // 52 : repartition unique des objets de debut d etage ; 51 : Ascension en CARTES (76 cartes, capacites, choix rapide de l arrivant, champs drafts dans l empreinte) ; 50 : roue des pouvoirs, couts en Ki proportionnels, B transforme x3, supers de forme ; 49 : sol mouille, effets de terrain ; 48 : menage du decor ; 47 : coups orientes au petit pas ; 46 : effets de terrain, portage de corps ; 45 : Ascension : depart NU (aucun pouvoir de base), historique des propositions vu dans l'empreinte, cartes distinctes entre joueurs d'une salle ; 44 : choc de mur des corps projetes : daemons exclus, expulsion comique prioritaire ; decor sans coup sur un heros protege ; 43 : coups orientes au stick ; 42 : chocs de projection, reanimation comique et en combattant ; 41 : menage des niveaux ; 40 : diagonales poing / pied a geste propre, diagonales dans les combos ; // 39 : course de sortie d etage (CLIMB_TIME 140, echange a l image 45) ; 38 : modes de groupe (mode 5 : horde, drapeau) et combat libre en ligne RETIRES, l'Ascension est l'unique mode ; 37 : terrains : accessoires contre le mur ou au sol selon leur type, portes degagees, machines au mur ; 36 : armes innees abandonnees, diagonales poing / pied ; // 35 : nunchaku a chaine physique deterministe, oblique haute ; // 34 : matchmaking public « rejoindre sinon creer » (message `match`, salle d'attente avec compte a rebours, etat/etage dans la liste, rattrapage en cours d'etage) ; 33 : roulade arriere sans style de sprint ; 32 : roulade a la vitesse exacte de la course, poses uniques parade/recul/esquive ; 31 : roulade unique et plus rapide que la course (plus de tirage au hasard), transformation = Ki PLEIN puis seconde barre (ki_hold dans l empreinte) ; 30 : arme d origine jetable / cassable, agrafeuse de melee; // 29 : niveaux epures (oeufs retires, passage de pigeons retire) ; 28 : menu ouvert = heros protege (bit 28 de l'entree), ami qui rejoint protege 3 s ; 27 : modes de groupe : foot / course / sumo / colline retires, drapeau refait (capture de drapeau) ; 26 : armes et grenades (munitions finies sans recharge, grenade qui explose au contact ou au sol, degats de zone, portee de lancer +40 %), catalogue roguelite de 24 pouvoirs sans armes, adaptation d'equipe remise a zero a chaque run, parts d'equipe recalibrees ; 25 : terrains cohérents ; 24 : roguelite : vagues 2 a 4 ennemis, ennemis en plus, choix 35 s ; 23 : roguelite : niveaux n/max, offres sans doublon ; 22 : arrivee / retour EN DEUX TEMPS (le client rejoue le journal pendant que la place reste a l'IA ou en attente neutre, puis annonce `ready` : la reprise tombe apres SON image, plus jamais de gel des autres ni de boucle de relance), empreintes envoyees meme pendant les remplissages du relais, entree locale deja simulee contredite par le relais = reprise ciblee ; 21 : equilibre solo/duo du roguelite (nouvelles valeurs de simulation) ; 20 : roguelite en biomes (4 biomes, boss final, boucle plus dure, victoire dans l empreinte) ; 19 : roguelite coop : choix d un pouvoir parmi 3 propositions personnelles par etape (palier standard / cool apres un gros boss), minuterie 10 s, choix par defaut, nouveaux champs de cartes dans l empreinte ; 18 : une IA qui remplace un humain parti tient la place jusqu'a la fin du tableau (changement de vague) puis le heros s'efface, dans TOUS les salons ; 17 : empreinte de build (champ `b` du hello, un salon refuse un build different) ; 16 : roguelite coop (un pouvoir aleatoire par etape, vie partagee : le releveur paie 30 % de ses PV, nouveaux champs dans l'empreinte) ; 15 : anti-sandwich (jetons d'attaque, plafond de coups subis, nouveaux etats dans l'empreinte) ; 14 : empreinte de simulation etendue (univers, tournoi), commande tourn, messages watch / emote (spectateur), idle / need_resync ; 13 : pouvoir actif du roguelite (bits 25-27 de l entree) ; 12 : modes de groupe (mode 5, commande group) ; 11 : accessoires COSMETIQUES (message cos, champ cos des joueurs du salon) ; 10 : daemon de chaque joueur au salon (champ `daemon` des messages lobby et room) ; 9 : mode ROGUELITE en coop (mode 3 : run d equipe, cartes personnelles, etages) ; 8 : nunchaku (nouvelle arme ramassable, serie de six coups, Pied = coups de pied avec l'arme) et armes au sol du dojo/temple changees ; 7 : entree Saisie (nouveau bit d'entree) + coups renommes (SCHEMA_VERSION 8) ; 6 : table des coups changee (grammaire X/Y des 9 autres heros, SCHEMA_VERSION 7) ; 5 : jusqu'a 8 joueurs, vague/PV de depart (solo -> en ligne) ; 4 : table des coups changee (aeriens, realisme, grammaire X/Y ; tir allie, QA). 3 : parties hebergees (jeu complet : loadout, cmd sequences). 2 : join_any / host. Seuls les clients v8 sont acceptes.
+export const PROTOCOL_VERSION = 54; // 54 : equilibrage des degats, reanimation par Saisie robuste, poing allonge, arret sur image local ; 53 : tout pouvoir magique coute du Ki (porteur de daemon compris) ; 52 : repartition unique des objets de debut d etage ; 51 : Ascension en CARTES (76 cartes, capacites, choix rapide de l arrivant, champs drafts dans l empreinte) ; 50 : roue des pouvoirs, couts en Ki proportionnels, B transforme x3, supers de forme ; 49 : sol mouille, effets de terrain ; 48 : menage du decor ; 47 : coups orientes au petit pas ; 46 : effets de terrain, portage de corps ; 45 : Ascension : depart NU (aucun pouvoir de base), historique des propositions vu dans l'empreinte, cartes distinctes entre joueurs d'une salle ; 44 : choc de mur des corps projetes : daemons exclus, expulsion comique prioritaire ; decor sans coup sur un heros protege ; 43 : coups orientes au stick ; 42 : chocs de projection, reanimation comique et en combattant ; 41 : menage des niveaux ; 40 : diagonales poing / pied a geste propre, diagonales dans les combos ; // 39 : course de sortie d etage (CLIMB_TIME 140, echange a l image 45) ; 38 : modes de groupe (mode 5 : horde, drapeau) et combat libre en ligne RETIRES, l'Ascension est l'unique mode ; 37 : terrains : accessoires contre le mur ou au sol selon leur type, portes degagees, machines au mur ; 36 : armes innees abandonnees, diagonales poing / pied ; // 35 : nunchaku a chaine physique deterministe, oblique haute ; // 34 : matchmaking public « rejoindre sinon creer » (message `match`, salle d'attente avec compte a rebours, etat/etage dans la liste, rattrapage en cours d'etage) ; 33 : roulade arriere sans style de sprint ; 32 : roulade a la vitesse exacte de la course, poses uniques parade/recul/esquive ; 31 : roulade unique et plus rapide que la course (plus de tirage au hasard), transformation = Ki PLEIN puis seconde barre (ki_hold dans l empreinte) ; 30 : arme d origine jetable / cassable, agrafeuse de melee; // 29 : niveaux epures (oeufs retires, passage de pigeons retire) ; 28 : menu ouvert = heros protege (bit 28 de l'entree), ami qui rejoint protege 3 s ; 27 : modes de groupe : foot / course / sumo / colline retires, drapeau refait (capture de drapeau) ; 26 : armes et grenades (munitions finies sans recharge, grenade qui explose au contact ou au sol, degats de zone, portee de lancer +40 %), catalogue roguelite de 24 pouvoirs sans armes, adaptation d'equipe remise a zero a chaque run, parts d'equipe recalibrees ; 25 : terrains cohérents ; 24 : roguelite : vagues 2 a 4 ennemis, ennemis en plus, choix 35 s ; 23 : roguelite : niveaux n/max, offres sans doublon ; 22 : arrivee / retour EN DEUX TEMPS (le client rejoue le journal pendant que la place reste a l'IA ou en attente neutre, puis annonce `ready` : la reprise tombe apres SON image, plus jamais de gel des autres ni de boucle de relance), empreintes envoyees meme pendant les remplissages du relais, entree locale deja simulee contredite par le relais = reprise ciblee ; 21 : equilibre solo/duo du roguelite (nouvelles valeurs de simulation) ; 20 : roguelite en biomes (4 biomes, boss final, boucle plus dure, victoire dans l empreinte) ; 19 : roguelite coop : choix d un pouvoir parmi 3 propositions personnelles par etape (palier standard / cool apres un gros boss), minuterie 10 s, choix par defaut, nouveaux champs de cartes dans l empreinte ; 18 : une IA qui remplace un humain parti tient la place jusqu'a la fin du tableau (changement de vague) puis le heros s'efface, dans TOUS les salons ; 17 : empreinte de build (champ `b` du hello, un salon refuse un build different) ; 16 : roguelite coop (un pouvoir aleatoire par etape, vie partagee : le releveur paie 30 % de ses PV, nouveaux champs dans l'empreinte) ; 15 : anti-sandwich (jetons d'attaque, plafond de coups subis, nouveaux etats dans l'empreinte) ; 14 : empreinte de simulation etendue (univers, tournoi), commande tourn, messages watch / emote (spectateur), idle / need_resync ; 13 : pouvoir actif du roguelite (bits 25-27 de l entree) ; 12 : modes de groupe (mode 5, commande group) ; 11 : accessoires COSMETIQUES (message cos, champ cos des joueurs du salon) ; 10 : daemon de chaque joueur au salon (champ `daemon` des messages lobby et room) ; 9 : mode ROGUELITE en coop (mode 3 : run d equipe, cartes personnelles, etages) ; 8 : nunchaku (nouvelle arme ramassable, serie de six coups, Pied = coups de pied avec l'arme) et armes au sol du dojo/temple changees ; 7 : entree Saisie (nouveau bit d'entree) + coups renommes (SCHEMA_VERSION 8) ; 6 : table des coups changee (grammaire X/Y des 9 autres heros, SCHEMA_VERSION 7) ; 5 : jusqu'a 8 joueurs, vague/PV de depart (solo -> en ligne) ; 4 : table des coups changee (aeriens, realisme, grammaire X/Y ; tir allie, QA). 3 : parties hebergees (jeu complet : loadout, cmd sequences). 2 : join_any / host. Seuls les clients v8 sont acceptes.
 const COMPAT_VERSIONS = [PROTOCOL_VERSION]; // derive de PROTOCOL_VERSION : ne peut plus diverger (v8 etait refuse par erreur, ancienne valeur [7]) ; // protocole 7 : les clients 1 a 6 n'ont pas la meme table de coups (et 1 a 4 ne savent pas lire des salons de 8 places), ils doivent se mettre a jour
 const HOSTED_SIZE = 2; // taille par defaut d une partie hebergee (anciens clients) ; le client actuel demande 4 avec `size` (places vides dormantes)
 const HOSTED_MIN = 2; // taille minimale demandable
@@ -43,6 +45,7 @@ const GRACE_MAX_MS = 3000; // grace maximale d'une annonce `busy`
 const MAX_INPUT_BITS = 32; // images par message `input` (les clients envoient 8 au plus ; un ancien client pouvait en envoyer delai + 1 apres une reprise, jusqu'a 25, que le relais jetait en silence)
 const HOLD_LEAD = 12; // images neutres fournies d'avance a une place en attente (les autres ne l'attendent jamais)
 const HOLD_MIN_RETURN_MS = 300; // une entree perdue juste apres la mise en attente n'est pas un retour
+const HOLD_HID_RETURN_MS = 1500; // idem apres une attente annoncee par la page masquee (`idle` h:1) : la page ne tourne plus, une entree si tot etait en vol
 const READY_LEAD = 20; // images de plus apres `ready` : le message de reprise arrive chez le revenant avant qu'il n'atteigne l'image annoncee
 const CATCHUP_MAX_MS = 180000; // un rejeu (reprise) sans `ready` plus longtemps que cela n'est plus un rejeu : la place est traitee comme absente
 const HOLD_COOL_MS = 4000; // apres un retour, un nouveau gel passe directement a l'IA (pas de va-et-vient de resynchronisations)
@@ -83,7 +86,16 @@ export function createServer(opts = {}) {
   const verdicts = createVerdicts({ file: opts.verdictsFile !== undefined ? opts.verdictsFile : (process.env.VERDICTS_FILE || null), key: opts.verdictKey !== undefined ? opts.verdictKey : (process.env.VERDICT_KEY || null), now: opts.now });
   const push = createPush({ sender: opts.pushSender ?? null, env: opts.pushEnv ?? process.env, roomExists: (c) => rooms.has(c) });
   const telemetry = createTelemetry({ noDisk: opts.noTelemetryDisk ?? !!process.env.AFH_TEST, ...(opts.telemetry || {}) }); // telemetrie de jeu anonyme (GET protege par ADMIN_KEY)
-  const signalements = createSignalements({ noDisk: opts.noSignalementsDisk ?? !!process.env.AFH_TEST, ...(opts.signalements || {}) }); // signalements volontaires des joueurs (capture + note), lecture protegee par ADMIN_KEY
+  // Stockage commun des donnees recues (signalements + donnees de jeu anonymes) : memoire + disque, ou PostgreSQL si DATABASE_URL (stockage.js).
+  const sigOpts = { noDisk: opts.noSignalementsDisk ?? !!process.env.AFH_TEST, ...(opts.signalements || {}) };
+  const stock = createStockage({
+    noDisk: opts.noDonneesDisk ?? !!process.env.AFH_TEST, ...(opts.stockage || {}),
+    collections: { signalements: { dir: sigOpts.dir ?? process.env.SIGNALEMENTS_DIR ?? 'signalements', keep: sigOpts.keep ?? 60, maxFiles: sigOpts.maxFiles ?? 200, maxBytes: sigOpts.maxDisk ?? 40 * 1024 * 1024, noDisk: !!sigOpts.noDisk }, ...(opts.stockage?.collections || {}) },
+  });
+  stock.init().catch(() => { /* base injoignable : on reste en memoire */ });
+  const purgeTimer = setInterval(() => { try { stock.purge(); } catch { /* jamais fatal */ } }, 3600_000); purgeTimer.unref?.();
+  const donnees = createDonnees(stock, { ...(opts.donnees || {}) }); // chiffres de partie, incidents, enregistrements, notes (POST /donnees ; lecture protegee par ADMIN_KEY)
+  const signalements = createSignalements({ ...sigOpts, stock }); // signalements volontaires des joueurs (capture + note), lecture protegee par ADMIN_KEY // signalements volontaires des joueurs (capture + note), lecture protegee par ADMIN_KEY
   const errReports = createReports({ protocol: PROTOCOL_VERSION, ...(opts.reports || {}) }); // rapports d'erreurs anonymes (distinct de `reports` : signalements de joueurs)
 
   // Expulsion : par adresse, SAUF si un autre joueur present partage cette adresse (meme foyer, meme wifi, meme operateur mobile) : on bannit alors le jeton, sinon l'hote expulserait aussi ses voisins et lui-meme.
@@ -158,8 +170,10 @@ export function createServer(opts = {}) {
     if (push.handle(req, res, url.pathname)) return;
     if (url.pathname === '/telemetry' && req.method === 'POST') { telemetry.handlePost(req, res, httpIp(req)); return; }
     if (url.pathname === '/telemetry' || url.pathname === '/telemetry/captures') { telemetry.handleGet(req, res, url); return; }
+    if (url.pathname === '/donnees') { donnees.handlePost(req, res, httpIp(req)); return; }
+    if (url.pathname.startsWith('/donnees/')) { donnees.handleGet(req, res, url).catch(() => { try { res.writeHead(500); res.end(); } catch { /* deja repondu */ } }); return; }
     if (url.pathname === '/signalement') { signalements.handlePost(req, res, httpIp(req)); return; }
-    if (url.pathname === '/signalements' || url.pathname === '/signalements/img') { signalements.handleGet(req, res, url); return; }
+    if (url.pathname === '/signalements' || url.pathname === '/signalements/img') { signalements.handleGet(req, res, url).catch(() => { try { res.writeHead(500); res.end(); } catch { /* deja repondu */ } }); return; }
     if (url.pathname === '/report') { errReports.handlePost(req, res); return; }
     if (url.pathname === '/reports') { errReports.handleGet(req, res, url); return; }
     if (url.pathname === '/admin/erreurs') { req.url = '/propositions/erreurs.html'; url.pathname = req.url; }
@@ -532,8 +546,14 @@ export function createServer(opts = {}) {
     const s = room.slots[slot];
     if (s.mode !== 'human' || s.hold) return;
     if (holdAiMs <= 0 || Date.now() < (s.holdCoolUntil || 0)) { dropToAi(room, slot, live); return; }
-    s.hold = Date.now(); s.pAt = s.hold; s.dormantDue = false;
+    s.hold = Date.now(); s.pAt = s.hold; s.dormantDue = false; s.holdHid = false;
     fillHeld(room);
+  }
+  // Un message de jeu (entree, `busy`, `idle` d'un ancien client) de la socket d'une place en attente prouve que le joueur est revenu. Pas pendant un rejeu
+  // deja lance ; pas dans les HOLD_MIN_RETURN_MS (message en vol) ; une attente annoncee par la page masquee (`idle` h:1) attend HOLD_HID_RETURN_MS : une
+  // entree partie juste avant de masquer la page (liaison 4G lente) ne doit pas relancer une reprise vers une page qui ne tourne plus.
+  function backFromHold(s) {
+    return !!s.hold && !s.catchup && Date.now() - s.hold >= (s.holdHid ? HOLD_HID_RETURN_MS : HOLD_MIN_RETURN_MS);
   }
   function fillNeutral(room, slot, upTo) {
     const s = room.slots[slot];
@@ -580,7 +600,7 @@ export function createServer(opts = {}) {
   function beginCatchup(room, ws, idx) {
     const s = room.slots[idx]; const now = Date.now();
     if (s.mode === 'human') { s.hold = now; s.pAt = now; s.dormantDue = false; }
-    s.catchup = now; s.stalled = false; s.lastMove = now; s.lastInputAt = now;
+    s.holdHid = false; s.catchup = now; s.stalled = false; s.lastMove = now; s.lastInputAt = now;
     fillHeld(room);
     send(ws, { ...resyncPayload(room), you: idx, catch: true });
     presTick(room, true);
@@ -607,7 +627,9 @@ export function createServer(opts = {}) {
   function presState(room, i, now) {
     const s = room.slots[i];
     if (!s.token && !s.ws) return null;
-    if (s.catchup && s.ws && now - s.catchup < CATCHUP_MAX_MS) return { st: 'on', left: 0 }; // il rejoue : il est la
+    // Il rejoue : il est la. Mais si l'IA tient encore sa place pendant ce rejeu, les autres voient « reconnexion » (avant : « en ligne » jusqu'a 3 min alors que
+    // l'IA jouait et que son client pouvait etre fige, etude absence/retour C7).
+    if (s.catchup && s.ws && now - s.catchup < CATCHUP_MAX_MS) return s.mode === 'human' || !s.pSent ? { st: 'on', left: 0 } : { st: 're', left: Math.max(0, CATCHUP_MAX_MS - (now - s.catchup)) };
     if (s.hold) return { st: s.ws ? 'bg' : 're', left: Math.max(0, holdAiMs - (now - s.hold)) };
     if (s.ws) {
       if (s.mode === 'human' || s.catchup) return { st: 'on', left: 0 };
@@ -686,9 +708,11 @@ export function createServer(opts = {}) {
     return idx;
   }
   function takeAi(room, ws, c, char, now) {
-    const cands = room.slots.map((s, i) => [s, i]).filter(([s, i]) => i < room.config.size && !s.ws && s.mode === 'ai');
+    // JAMAIS une place reservee (joueur absent dont la socket est coupee, qui peut revenir avec son jeton) : avant, un arrivant pouvait prendre le heros
+    // d'un absent et celui-ci lisait « Ta place a ete reprise par un autre joueur » a son retour (etude absence/retour C5).
+    const cands = room.slots.map((s, i) => [s, i]).filter(([s, i]) => i < room.config.size && !s.ws && s.mode === 'ai' && !(s.heldUntil > now && !s.bye));
     if (!cands.length) return -1;
-    cands.sort((a, b) => ((a[0].heldUntil > now) - (b[0].heldUntil > now)) || ((b[0].char === char) - (a[0].char === char)));
+    cands.sort((a, b) => (b[0].char === char) - (a[0].char === char));
     const [s, idx] = cands[0];
     s.ws = ws; s.name = uniqueName(room, cleanName(c.name), idx); s.token = c.token; s.ip = c.ip; s.heldUntil = 0; s.color = pickColor(room, idx, c.color); s.cos = ''; s.ready = false; s.lastMove = now; s.lastInputAt = now; s.afkWarned = false;
     c.room = room; c.slot = idx;
@@ -714,7 +738,7 @@ export function createServer(opts = {}) {
     while (roomsOfIp(ip) >= MAX_ROOMS_PER_IP && mine.length) closeRoom(mine.shift());
   }
   function hostNew(ws, c, char, priv, stage, full, ff, keep, nm) {
-    if (rooms.size >= maxRooms) return send(ws, { t: 'error', msg: 'Serveur plein, reessaie dans un instant', code: 'full' });
+    if (!roomSpace()) return send(ws, { t: 'error', msg: 'Serveur plein, reessaie dans un instant', code: 'full' });
     evictOwned(c.ip);
     if (roomsOfIp(c.ip) >= MAX_ROOMS_PER_IP && !isLocal(c.ip)) return send(ws, { t: 'error', msg: 'Trop de parties ouvertes depuis cette connexion', code: 'limit' });
     const room = makeRoom(!priv); room.build = c.build;
@@ -743,7 +767,7 @@ export function createServer(opts = {}) {
     if (Number.isInteger(m.color)) c.color = m.color;
     const now = Date.now();
     for (const r of rooms.values()) {
-      if (!r.started) continue;
+      if (!r.started || buildClash(r, c)) continue; // jamais de retour dans une partie d une autre version (simulation differente)
       const back = reclaim(r, ws, c);
       if (back >= 0) return finishJoin(r, ws, c, back);
     }
@@ -807,7 +831,7 @@ export function createServer(opts = {}) {
     if (m.name) c.name = cleanName(m.name);
     if (Number.isInteger(m.color)) c.color = m.color;
     const now = Date.now();
-    for (const r of rooms.values()) { if (!r.started) continue; const back = reclaim(r, ws, c); if (back >= 0) return finishJoin(r, ws, c, back); }
+    for (const r of rooms.values()) { if (!r.started || buildClash(r, c)) continue; const back = reclaim(r, ws, c); if (back >= 0) return finishJoin(r, ws, c, back); }
     const key = matchKey(m);
     const late = m.late !== false;
     const fits = (r) => r.public && r.auto && r.mk === key && humans(r).length > 0 && humans(r).length < roomCap(r);
@@ -818,7 +842,7 @@ export function createServer(opts = {}) {
     if (open) return seat(ws, c, open, char, m, now, 'joined');
     // Des salles existent mais d'une AUTRE version du jeu : on le dit (sinon chacun se retrouve seul dans sa partie sans comprendre pourquoi).
     const other = [...rooms.values()].some((r) => fits(r) && buildClash(r, c));
-    if (rooms.size >= maxRooms) return send(ws, { t: 'error', msg: 'Serveur plein, reessaie dans un instant', code: 'full' });
+    if (!roomSpace()) return send(ws, { t: 'error', msg: 'Serveur plein, reessaie dans un instant', code: 'full' });
     evictOwned(c.ip);
     if (roomsOfIp(c.ip) >= MAX_ROOMS_PER_IP && !isLocal(c.ip)) return send(ws, { t: 'error', msg: 'Trop de parties ouvertes depuis cette connexion', code: 'limit' });
     const room = makeRoom(true); room.build = c.build; room.auto = true; room.keep = m.keep !== false; room.ownerIp = c.ip; room.mk = key;
@@ -864,6 +888,23 @@ export function createServer(opts = {}) {
     hostNew(ws, c, Math.max(0, Math.min(ROSTER - 1, m.char | 0)), !!m.private, m.stage === undefined ? undefined : m.stage | 0, full, typeof m.ff === 'boolean' ? m.ff : undefined, m.keep === true, m.nm);
   }
 
+  // Salon sans aucune connexion humaine : delai avant fermeture. Partie LANCEE dont une place est reservee a un joueur coupe (pas un depart volontaire) :
+  // gardee jusqu'a `autoHoldMs` (10 min) pour qu'il retrouve sa partie, au lieu de 30 / 60 s (avant : le seul humain qui verrouillait son telephone 2 min
+  // revenait sur « Cette partie est terminee », etude absence/retour C4). Memoire bornee par `maxRooms`.
+  function emptyTtl(room, now) {
+    const base = room.keep ? roomTtl : graceMs;
+    const reserved = room.started && room.config && room.slots.slice(0, room.config.size).some((s) => s.token && !s.bye && s.heldUntil > now);
+    return reserved ? Math.max(base, autoHoldMs) : base;
+  }
+  // Place pour un salon neuf : au plafond `maxRooms`, le salon VIDE (aucune connexion humaine) le plus anciennement vide est ferme d'abord ; les salons
+  // gardes pour un absent ne bloquent donc jamais un nouveau joueur.
+  function roomSpace() {
+    if (rooms.size < maxRooms) return true;
+    const empty = [...rooms.values()].filter((r) => humans(r).length === 0).sort((x, y) => (x.emptySince || x.created) - (y.emptySince || y.created))[0];
+    if (!empty) return false;
+    closeRoom(empty);
+    return rooms.size < maxRooms;
+  }
   function leaveRoom(c, ws, permanent) {
     const room = c.room;
     if (!room) return;
@@ -1058,7 +1099,7 @@ export function createServer(opts = {}) {
         if (c.room) leaveRoom(c, ws, true);
         evictOwned(c.ip);
         if (roomsOfIp(c.ip) >= MAX_ROOMS_PER_IP && !isLocal(c.ip)) return send(ws, { t: 'error', msg: 'Trop de parties ouvertes depuis cette connexion', code: 'limit' });
-        if (rooms.size >= maxRooms) return send(ws, { t: 'error', msg: 'Serveur plein, reessaie dans un instant', code: 'full' });
+        if (!roomSpace()) return send(ws, { t: 'error', msg: 'Serveur plein, reessaie dans un instant', code: 'full' });
         const room = makeRoom(!!m.public); room.build = c.build; // salon d'attente : PRIVE par defaut (lien), public seulement si demande
         room.keep = m.keep === true; room.ownerIp = c.ip;
         if (m.size !== undefined) room.options.size = int(m.size, 1, MAX_SLOTS, 2);
@@ -1087,6 +1128,8 @@ export function createServer(opts = {}) {
         const idx = room.slots.findIndex((s) => s.token && s.token === m.token);
         if (idx < 0) return send(ws, { t: 'error', msg: 'Reprise impossible', detail: 'Ta place a ete reprise par un autre joueur.', rejoin: true, code: 'taken' });
         if (isBanned(room.code, { ip: c.ip, token: m.token })) return send(ws, { t: 'error', msg: 'Reprise impossible', detail: 'Tu as ete expulse de ce salon.', rejoin: true, code: 'banned' });
+        // Page rechargee apres une mise a jour (onglet tue en arriere-plan) : une autre simulation ne peut pas reprendre cette partie (desynchronisation en boucle).
+        if (buildClash(room, c)) return send(ws, { t: 'error', msg: 'Reprise impossible', detail: 'Nouvelle version du jeu : recharge la page.', rejoin: true, code: 'build' });
         const s = room.slots[idx];
         if (room.started && room.config && idx < room.config.size) { c.token = m.token; if (reclaim(room, ws, c) === idx) return finishJoin(room, ws, c, idx); }
         // Ce client occupait deja un autre salon : il le quitte (sinon sa place y reste « occupee » par une connexion fantome).
@@ -1180,9 +1223,9 @@ export function createServer(opts = {}) {
         if (s.mode !== 'human') return;
         if (s.hold) { // place en attente : une entree d'une image deja fournie (neutre) = le joueur est de retour -> resynchronisation sans IA ; jamais relayee telle quelle
           if (c.cu) { // retour en deux temps : reprise complete maintenant, la place reste en attente neutre pendant le rejeu du client, `ready` la rend
-            if (!s.catchup && Date.now() - s.hold >= HOLD_MIN_RETURN_MS && m.f0 <= s.hi) {
-              beginCatchup(room, ws, c.slot);
-            }
+            // N'importe quelle entree, meme au-dela de l'image deja remplie : le joueur est la. Avant, seule une entree d'une image deja fournie comptait, ce que le
+            // client ne pouvait plus envoyer (il ne produit rien tant que le relais l'a rempli d'avance) : 40 s immobile malgre ses touches (etude absence/retour C1).
+            if (backFromHold(s)) beginCatchup(room, ws, c.slot);
             return;
           }
           if (Date.now() - s.hold >= HOLD_MIN_RETURN_MS && m.f0 <= s.hi) endHold(room, ws, c.slot);
@@ -1236,7 +1279,9 @@ export function createServer(opts = {}) {
         return;
       }
       case 'busy': { // le client annonce un travail lourd (changement d'etage / de lieu, chargement) : pas de mise en attente ni d'IA pendant `ms` (borne a 3 s), plafonne a une annonce par 500 ms
-        if (!room.started || s.mode !== 'human' || s.ws !== ws || s.hold) return;
+        if (!room.started || s.mode !== 'human' || s.ws !== ws) return;
+        // Place en attente : un client qui annonce une image longue TOURNE (premiere image apres un retour au premier plan) -> il est la, reprise sans IA.
+        if (s.hold) { if (c.cu && backFromHold(s)) beginCatchup(room, ws, c.slot); return; }
         const nowB = Date.now(); const ms = Math.max(0, Math.min(GRACE_MAX_MS, Number(m.ms) | 0));
         if (nowB - (s.graceAt || 0) < 500) return;
         s.graceAt = nowB; s.grace = nowB + ms; s.lastInputAt = Math.max(s.lastInputAt || 0, nowB + ms);
@@ -1244,8 +1289,11 @@ export function createServer(opts = {}) {
       }
       case 'idle': { // page masquee / application changee (telephone) : l'IA tient la place tout de suite, visible pour tous, personne n'attend
         if (!room.started || s.mode !== 'human' || s.ws !== ws) return;
+        // `h:1` : envoye par la PAGE au moment ou elle est masquee (vraie absence). Sans `h` (ancien client) : le drapeau est lu a la premiere image APRES le
+        // retour au premier plan ; si la place est deja en attente (gel detecte pendant l'absence), ce message prouve donc que le jeu tourne de nouveau : retour.
+        if (s.hold) { if (!m.h && c.cu && backFromHold(s)) beginCatchup(room, ws, c.slot); return; }
         s.stalled = true;
-        if (holdAiMs > 0 && Date.now() >= (s.holdCoolUntil || 0)) startHold(room, c.slot);
+        if (holdAiMs > 0 && Date.now() >= (s.holdCoolUntil || 0)) { startHold(room, c.slot); if (m.h) s.holdHid = true; }
         else { dropToAi(room, c.slot, true); send(ws, { t: 'stalled' }); }
         presTick(room, true);
         return;
@@ -1268,7 +1316,9 @@ export function createServer(opts = {}) {
         // Seul (ou avec des places IA) le client a continue de simuler pendant l'absence : la reprise doit tomber APRES son image courante,
         // sinon il attendait une entree d'une image deja passee (gel « En attente des autres joueurs » en jouant seul).
         const tickC = Number.isInteger(m.tick) && m.tick >= 0 && m.tick < 2000000 ? m.tick : 0;
-        const fromR = Math.max(highest(room), tickC) + rejoinMargin(room);
+        // Marge COURTE (trajet du message, comme `ready`) : le client tournait en direct, il n'a rien a rejouer. L'ancienne marge (1/25 des images jouees, jusqu'a
+        // 590 images) laissait jusqu'a 10 s d'IA apres la touche du joueur en fin de partie (etude absence/retour C6).
+        const fromR = Math.max(highest(room), tickC) + readyMargin(room);
         if (s.hi < fromR - 1) s.hi = fromR - 1;
         resumeGrace(room, s, fromR);
         control(room, c.slot, fromR, { ai: false, name: s.name });
@@ -1411,7 +1461,7 @@ export function createServer(opts = {}) {
         }
         continue;
       }
-      if (humans(room).length === 0 && (now - (room.emptySince || room.created) > (room.keep ? roomTtl : graceMs))) closeRoom(room);
+      if (humans(room).length === 0 && (now - (room.emptySince || room.created) > emptyTtl(room, now))) closeRoom(room);
     }
   }, 1000);
   timer.unref?.();
@@ -1462,7 +1512,7 @@ export function createServer(opts = {}) {
   }, opts.beatMs ?? 20000);
   beat.unref?.();
 
-  return { server, wss, rooms, stats, scores, pushCircles: push.circles, close: () => new Promise((r) => { clearInterval(timer); clearInterval(beat); clearInterval(stallTimer); clearInterval(clockTimer); scores.flush(); verdicts.flush(); for (const w of wss.clients) w.terminate(); wss.close(() => server.close(() => r())); }) };
+  return { server, wss, rooms, stats, scores, pushCircles: push.circles, close: () => new Promise((r) => { clearInterval(timer); clearInterval(beat); clearInterval(stallTimer); clearInterval(clockTimer); clearInterval(purgeTimer); stock.close().catch(() => {}); scores.flush(); verdicts.flush(); for (const w of wss.clients) w.terminate(); wss.close(() => server.close(() => r())); }) };
 }
 
 // Lancement direct.

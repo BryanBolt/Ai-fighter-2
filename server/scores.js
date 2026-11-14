@@ -5,6 +5,7 @@
 // bornes de plausibilite score / temps / etage, une seule entree par `pid` et par tableau, limites de debit par adresse et par `pid`.
 // Persistance : un fichier JSON (ecriture atomique, tailles bornees). Sans fichier (tests) : memoire seule.
 import fs from 'node:fs';
+import { dropBody } from './overflow.js';
 
 const M = (1n << 64n) - 1n;
 // Meme melangeur que `rl_daily::mix` cote Rust (test croise dans les deux langages).
@@ -216,7 +217,7 @@ export function createScores({ file = null, now = () => Date.now() } = {}) {
     }
     if ((p === '/api/scores' || p === '/api/scores/forget') && req.method === 'POST') {
       let body = '', dead = false;
-      req.on('data', (d) => { body += d; if (body.length > LIMITS.bodyMax && !dead) { dead = true; reply(413, { ok: false, err: 'trop gros' }); req.destroy(); } });
+      req.on('data', (d) => { body += d; if (body.length > LIMITS.bodyMax && !dead) { dead = true; reply(413, { ok: false, err: 'trop gros' }); dropBody(req); } });
       req.on('end', () => {
         if (dead) return;
         let j; try { j = JSON.parse(body); } catch { return reply(400, { ok: false, err: 'json invalide' }); }
