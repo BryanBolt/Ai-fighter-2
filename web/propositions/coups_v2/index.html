@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coups v2 : ancien contre nouveau</title>
+<style>
+:root { --fond: #1b1626; --papier: #f5ecdc; --encre: #2a2236; --accent: #ee5c38; --bleu: #4d9efa; }
+body { margin: 0; background: var(--fond); color: var(--papier); font: 16px/1.5 system-ui, sans-serif; }
+main { max-width: 1000px; margin: 0 auto; padding: 16px; }
+h1 { font-size: 1.5rem; }
+a.btn { display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; background: var(--accent); color: var(--papier); border-radius: 8px; text-decoration: none; font-weight: 600; }
+table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+td, th { border-bottom: 1px solid var(--encre); padding: 6px; text-align: right; }
+td:first-child, th:first-child { text-align: left; }
+img { width: 100%; height: auto; border-radius: 6px; margin: 8px 0 20px; }
+.note { background: var(--encre); padding: 10px 14px; border-radius: 8px; }
+</style>
+</head>
+<body>
+<main>
+<h1>Coups v2 : le membre qui touche est le membre dessiné</h1>
+<p>Prototype sur Kaze (et un Voyou) : un coup = des poses clés du squelette ; ce qui touche = le membre lui-même ; ce qui est touchable = le corps lui-même. Le labo jouable s'ouvre avec <code>?labo=coups</code>.</p>
+<p><a class="btn" href="../../index.html?labo=coups">Ouvrir le labo des coups v2</a></p>
+<h2>Mesure (coups v2 de Kaze, même définition que le test actuel)</h2>
+<p>(a) le membre dessiné traverse le corps sans toucher ; (b) la touche a lieu alors que le membre est loin du corps (plus de 0,1 taille).</p>
+<table>
+<tr><th>Scène</th><th>(a) ancien</th><th>(a) nouveau</th><th>(b) ancien</th><th>(b) nouveau</th></tr>
+<tr><td>Sol contre sol</td><td>6</td><td>0</td><td>0</td><td>7</td></tr>
+<tr><td>Sol contre cible en l'air</td><td>0</td><td>0</td><td>76</td><td>3</td></tr>
+<tr><td>Sol contre cible projetée</td><td>18</td><td>0</td><td>173</td><td>0</td></tr>
+<tr><td>Sauté contre sol</td><td>13</td><td>0</td><td>4</td><td>4</td></tr>
+<tr><td>Sauté contre sauté</td><td>12</td><td>0</td><td>0</td><td>0</td></tr>
+<tr><td>Sauté contre projetée</td><td>0</td><td>0</td><td>104</td><td>8</td></tr>
+<tr><td><b>Total</b></td><td><b>49</b></td><td><b>0</b></td><td><b>357</b></td><td><b>22</b></td></tr>
+<tr><td>Corps à terre (intouchable, voulu)</td><td>38</td><td>28</td><td>0</td><td>0</td></tr>
+<tr><td>Décalage en profondeur 12 / 24 / 36</td><td>9 / 68 / 79</td><td>0 / 55 / 62</td><td>0 / 0 / 0</td><td>7 / 0 / 0</td></tr>
+</table>
+<p class="note">Les (b) restants du nouveau système : l'avant-bras ou le tibia touche alors que le bout (poing, pied) est déjà passé, ce n'est pas une touche « dans le vide ». La profondeur reste le point faible des deux systèmes : à l'écran, 24 unités de profondeur ne décalent la cible que de 5 unités.</p>
+<h2>Planches (gauche ancien, droite nouveau ; haut contact, bas retour ; capsules visibles)</h2>
+<img src="planche_poing_rapide.png" alt="Poing rapide">
+<img src="planche_poing_lourd.png" alt="Poing lourd">
+<img src="planche_pied_avant.png" alt="Pied avant">
+<img src="planche_pied_haut.png" alt="Pied haut">
+<img src="planche_balayage_bas.png" alt="Balayage bas">
+<img src="planche_poing_saute.png" alt="Poing sauté">
+<img src="planche_pied_saute.png" alt="Pied sauté">
+<img src="planche_coup_de_course.png" alt="Coup de course">
+</main>
+</body>
+</html>

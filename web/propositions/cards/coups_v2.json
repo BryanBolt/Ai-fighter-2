@@ -1,0 +1,6 @@
+[
+  {"id": "coups_v2_generaliser", "titre": "Généraliser les coups v2 ?", "texte": "Le prototype (Kaze + Voyou) supprime presque toutes les incohérences membre/zone ; le généraliser veut dire réécrire les poses clés de chaque combattant (environ une demi-journée d'agent par héros) et changer le hash et le protocole au moment de l'activer en ligne.", "page": "propositions/coups_v2/index.html"},
+  {"id": "coups_v2_portee", "titre": "Accepter des portées plus courtes", "texte": "En v2 un coup ne touche que là où le membre arrive : les pieds de Kaze portent 66 à 70 au lieu de 92 à 128, ce qui change l'équilibrage (espacement de l'IA, combos) et devra être rééquilibré.", "page": "propositions/coups_v2/index.html"},
+  {"id": "coups_v2_profondeur", "titre": "Tolérance de profondeur", "texte": "Au-delà de la tolérance (18 par défaut) un membre qui recouvre la cible à l'écran ne touche pas : faut-il la montrer (ombre, contour) ou l'élargir ? Réglable en direct dans le labo.", "page": "propositions/coups_v2/index.html"},
+  {"id": "coups_v2_au_sol", "titre": "Corps à terre touchable ?", "texte": "Le corps couché a de vraies capsules en v2 ; la règle actuelle (pas de coup au sol) est gardée, donc un balayage qui le traverse ne touche pas : garder la règle ou autoriser une frappe au sol ?", "page": "propositions/coups_v2/index.html"}
+]
