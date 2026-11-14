@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sons B en jeu : écoute</title>
+<style>
+:root{--ink:#221834;--paper:#fff3e0;--acc:#d8456b;--btn:#c03a5e;--gold:#ffd27a;--card:#fffaf2;--line:#e9d3b4;--ok:#2f8f5b}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/1.55 Nunito,system-ui,sans-serif}
+main{max-width:760px;margin:0 auto;padding:16px}
+h1{font-size:22px;margin:8px 0}h2{font-size:19px;margin:0 0 4px;color:var(--acc)}
+.dir{background:var(--card);border:2px solid var(--ink);border-radius:12px;padding:12px;margin:16px 0}
+.dir p{margin:0 0 10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+button{min-height:56px;width:100%;border:2px solid var(--ink);border-radius:14px;background:var(--btn);color:var(--paper);font:700 17px/1.2 Nunito,system-ui,sans-serif;cursor:pointer;padding:6px 8px}
+button small{display:block;font-weight:400;font-size:13px;opacity:.85}
+button.big{background:var(--gold);color:var(--ink);min-height:64px;font-size:18px;margin-top:8px}
+button.sec{background:var(--ink);color:var(--paper);margin-top:8px}
+button:active{transform:translateY(1px)}
+.note{border-left:4px solid var(--acc);padding:4px 10px;background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:14px;margin-top:8px}
+td,th{border-bottom:1px solid var(--line);padding:4px 6px;text-align:left}
+.wrap{overflow-x:auto}
+</style></head><body><main>
+<h1>Sons B en jeu : ce que le canal TEST jouera</h1>
+<p class="note">La direction B (« PS1 sombre et lourde ») a été choisie à l'écoute par l'utilisateur. Cette page n'écoute pas le choix : elle fait entendre ce que le jeu en fait, c'est-à-dire les 11 sons <b>tels que joués en jeu</b> et un combat simulé de 16 s mêlé à la musique du premier lieu. Personne ne l'a encore écoutée dans le jeu.</p>
+
+<section class="dir"><h2>Combat simulé (16 s)</h2>
+<p>Une succession d'événements réels du jeu passés par la même table que le jeu : souffles, coups légers puis moyens puis lourds, parade, garde, chute, charge coupée au relâchement, projection, rafale, bris de garde, contre, super, KO, fin d'étage. Musique « Level 1 » à son niveau de jeu, avec le petit creux sur les coups lourds, le super et le KO.</p>
+<button type="button" class="big" onclick="play('sons_b_jeu/combat_simule.wav')">Écouter le combat simulé</button>
+<button type="button" class="sec" onclick="play('sons_b_jeu/musique_seule.wav')">Musique seule (repère de niveau)</button>
+<button type="button" class="sec" onclick="stop()">Arrêter</button>
+</section>
+
+<section class="dir"><h2>Les 11 sons, un par un</h2>
+<p>Même synthèse que la page précédente (identique à l'octet, vérifié par un test). Seule différence en jeu : au coup moyen et au coup lourd, le souffle qui précède est retiré, car il devient l'événement « souffle » à part et l'impact doit tomber pile sur le coup.</p>
+<div class="grid">
+<button type="button" onclick="play('sons_b_jeu/whoosh.wav')">Souffle<small>coup dans le vide, départ d'un coup lourd</small></button>
+<button type="button" onclick="play('sons_b_jeu/coup_leger.wav')">Coup léger<small>puissance &lt; 6</small></button>
+<button type="button" onclick="play('sons_b_jeu/coup_moyen.wav')">Coup moyen<small>6 à 18</small></button>
+<button type="button" onclick="play('sons_b_jeu/coup_lourd.wav')">Coup lourd<small>18 et plus, contre, coup puissant</small></button>
+<button type="button" onclick="play('sons_b_jeu/garde.wav')">Garde<small>coup bloqué, parade, bris</small></button>
+<button type="button" onclick="play('sons_b_jeu/chute.wav')">Chute<small>corps qui tombe au sol</small></button>
+<button type="button" onclick="play('sons_b_jeu/projection.wav')">Projection<small>saisie projetée</small></button>
+<button type="button" onclick="play('sons_b_jeu/charge.wav')">Charge<small>montée, coupée au relâchement</small></button>
+<button type="button" onclick="play('sons_b_jeu/super.wav')">Décharge / super<small>coup final d'une super</small></button>
+<button type="button" onclick="play('sons_b_jeu/ko.wav')">KO<small>stinger</small></button>
+<button type="button" onclick="play('sons_b_jeu/jingle.wav')">Récompense<small>carte prise, fin d'étage</small></button>
+</div></section>
+
+<section class="dir"><h2>Table événement → son</h2>
+<div class="wrap"><table>
+<tr><th>Événement du jeu</th><th>Son B</th><th>Notes</th></tr>
+<tr><td>Coup (donné ou reçu)</td><td>léger / moyen / lourd</td><td>coupures 6 et 18 (celles du jeu actuel) ; plus fort et plus grave avec la puissance</td></tr>
+<tr><td>Contre, coup puissant</td><td>coup lourd</td><td>un peu plus grave</td></tr>
+<tr><td>Coup bloqué, parade, bris de garde</td><td>garde</td><td>parade plus brillante, bris plus grave</td></tr>
+<tr><td>Chute au sol</td><td>chute</td><td>au plus un son toutes les 150 ms</td></tr>
+<tr><td>Projection</td><td>projection</td><td>la saisie seule garde son petit claquement</td></tr>
+<tr><td>Souffle (vide, coup lourd à l'arme)</td><td>souffle</td><td>léger plus doux et plus aigu</td></tr>
+<tr><td>Charge du héros (Ki tenu, coup chargé)</td><td>charge</td><td>suit l'état, relancée si longue, coupée net au relâchement</td></tr>
+<tr><td>Coup final d'une super</td><td>décharge</td><td>creux de musique 30 %</td></tr>
+<tr><td>KO</td><td>stinger</td><td>creux de musique 30 % ; le coup final de la même image est absorbé</td></tr>
+<tr><td>Fin d'étage, carte prise</td><td>récompense</td><td>plus pleine avec la rareté de la carte</td></tr>
+</table></div>
+<p>Armes, projectiles, ambiances, daemons, interface, pas, ramassages : inchangés. Les voix synthétiques restent coupées. Le canal stable ne change pas : les sons B n'y sont même pas créés.</p></section>
+
+<p><a href="sons_b.html">Page précédente : les quatre directions autour de B</a></p>
+<script>
+var cur=null;
+function stop(){if(cur){cur.pause();cur=null;}}
+function play(f){stop();cur=new Audio(f);cur.play();}
+</script></main></body></html>
