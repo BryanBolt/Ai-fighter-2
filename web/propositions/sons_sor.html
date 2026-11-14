@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Essais de sons beat'em up</title>
+<style>
+:root{--ink:#221834;--paper:#fff3e0;--acc:#d8456b;--btn:#c03a5e;--gold:#ffd27a;--card:#fffaf2;--line:#e9d3b4}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/1.55 Nunito,system-ui,sans-serif}
+main{max-width:720px;margin:0 auto;padding:16px}
+h1{font-size:22px;margin:8px 0}h2{font-size:19px;margin:0 0 4px;color:var(--acc)}
+.dir{background:var(--card);border:2px solid var(--ink);border-radius:12px;padding:12px;margin:16px 0}
+.dir p{margin:0 0 10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+button{min-height:56px;width:100%;border:2px solid var(--ink);border-radius:14px;background:var(--btn);color:var(--paper);font:700 17px/1.2 Nunito,system-ui,sans-serif;cursor:pointer;padding:6px 8px}
+button small{display:block;font-weight:400;font-size:13px;opacity:.85}
+button.chain{background:var(--gold);color:var(--ink);margin-top:8px}
+button:active{transform:translateY(1px)}
+.note{border-left:4px solid var(--acc);padding:4px 10px;background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:14px;margin-top:8px}
+td,th{border-bottom:1px solid var(--line);padding:4px 6px;text-align:left}
+</style></head><body><main>
+<h1>Essais de sons : style beat'em up Mega Drive, un peu street</h1>
+<p class="note">Trois directions, les six mêmes sons dans chacune. Tout est synthétisé par le code du jeu (aucun extrait d'un jeu existant, seulement le style). Rien n'est branché dans le jeu : c'est seulement pour choisir. L'auteur n'a pas pu les écouter : dis laquelle garder, et ce qui sonne faux.</p>
+<section class="dir"><h2>Direction 1 : FM pure</h2><p>Tout en synthèse FM à 4 opérateurs façon puce Mega Drive : basses grasses, claquements métalliques par retour d'opérateur, cuivres FM. Aucun bruit échantillonné, son propre et brillant.</p><div class="grid">
+<button type="button" onclick="play('d1_coup_leger.wav')">Coup léger<small>120 ms</small></button>
+<button type="button" onclick="play('d1_coup_lourd.wav')">Coup lourd<small>320 ms</small></button>
+<button type="button" onclick="play('d1_effort_heros.wav')">Effort « HA ! »<small>170 ms</small></button>
+<button type="button" onclick="play('d1_douleur.wav')">Douleur « UGH ! »<small>240 ms</small></button>
+<button type="button" onclick="play('d1_ko_ennemi.wav')">KO « AAARGH »<small>430 ms</small></button>
+<button type="button" onclick="play('d1_jingle.wav')">Jingle récompense<small>630 ms</small></button>
+</div><button type="button" class="chain" onclick="chain(1)">Enchaîner coup lourd + cri de KO</button></section>
+<section class="dir"><h2>Direction 2 : FM + PCM crade</h2><p>Impacts et voix passés en 8 bits à 8 ou 11 kHz, saturés et compressés (grain granuleux de canal d'échantillons), avec le corps FM net dessous. Le plus « cartouche ».</p><div class="grid">
+<button type="button" onclick="play('d2_coup_leger.wav')">Coup léger<small>130 ms</small></button>
+<button type="button" onclick="play('d2_coup_lourd.wav')">Coup lourd<small>340 ms</small></button>
+<button type="button" onclick="play('d2_effort_heros.wav')">Effort « HA ! »<small>170 ms</small></button>
+<button type="button" onclick="play('d2_douleur.wav')">Douleur « UGH ! »<small>240 ms</small></button>
+<button type="button" onclick="play('d2_ko_ennemi.wav')">KO « AAARGH »<small>430 ms</small></button>
+<button type="button" onclick="play('d2_jingle.wav')">Jingle récompense<small>630 ms</small></button>
+</div><button type="button" class="chain" onclick="chain(2)">Enchaîner coup lourd + cri de KO</button></section>
+<section class="dir"><h2>Direction 3 : street moderne</h2><p>Plus lourd et sec : kick et caisse claire de boîte à rythmes, sub court, voix plus graves et plus saturées, grain rétro léger (10 à 12 bits).</p><div class="grid">
+<button type="button" onclick="play('d3_coup_leger.wav')">Coup léger<small>140 ms</small></button>
+<button type="button" onclick="play('d3_coup_lourd.wav')">Coup lourd<small>380 ms</small></button>
+<button type="button" onclick="play('d3_effort_heros.wav')">Effort « HA ! »<small>170 ms</small></button>
+<button type="button" onclick="play('d3_douleur.wav')">Douleur « UGH ! »<small>240 ms</small></button>
+<button type="button" onclick="play('d3_ko_ennemi.wav')">KO « AAARGH »<small>430 ms</small></button>
+<button type="button" onclick="play('d3_jingle.wav')">Jingle récompense<small>680 ms</small></button>
+</div><button type="button" class="chain" onclick="chain(3)">Enchaîner coup lourd + cri de KO</button></section>
+
+<h2>Mesures</h2>
+<p>Crête et niveau RMS en dBFS (0 = maximum), durée, et clic de bord (premier et dernier échantillon, plus grand saut dans les 3 dernières ms ; 0 = aucun clic).</p>
+<table><tr><th>Son</th><th>Crête</th><th>RMS</th><th>Durée</th><th>Bord</th></tr>
+<tr><td>D1 Coup léger</td><td>-1.01</td><td>-14.7</td><td>120 ms</td><td>0.0000</td></tr>
+<tr><td>D1 Coup lourd</td><td>-1.01</td><td>-10.8</td><td>320 ms</td><td>0.0000</td></tr>
+<tr><td>D1 Effort « HA ! »</td><td>-1.01</td><td>-10.7</td><td>170 ms</td><td>0.0009</td></tr>
+<tr><td>D1 Douleur « UGH ! »</td><td>-1.01</td><td>-8.3</td><td>240 ms</td><td>0.0004</td></tr>
+<tr><td>D1 KO « AAARGH »</td><td>-1.01</td><td>-7.9</td><td>430 ms</td><td>0.0016</td></tr>
+<tr><td>D1 Jingle récompense</td><td>-1.01</td><td>-14.8</td><td>630 ms</td><td>0.0000</td></tr>
+<tr><td>D2 Coup léger</td><td>-1.01</td><td>-17.4</td><td>130 ms</td><td>0.0002</td></tr>
+<tr><td>D2 Coup lourd</td><td>-1.01</td><td>-13.4</td><td>340 ms</td><td>0.0000</td></tr>
+<tr><td>D2 Effort « HA ! »</td><td>-1.01</td><td>-12.3</td><td>170 ms</td><td>0.0013</td></tr>
+<tr><td>D2 Douleur « UGH ! »</td><td>-1.01</td><td>-11.0</td><td>240 ms</td><td>0.0014</td></tr>
+<tr><td>D2 KO « AAARGH »</td><td>-1.01</td><td>-11.6</td><td>430 ms</td><td>0.0013</td></tr>
+<tr><td>D2 Jingle récompense</td><td>-1.01</td><td>-16.2</td><td>630 ms</td><td>0.0000</td></tr>
+<tr><td>D3 Coup léger</td><td>-1.01</td><td>-14.3</td><td>140 ms</td><td>0.0017</td></tr>
+<tr><td>D3 Coup lourd</td><td>-1.01</td><td>-12.0</td><td>380 ms</td><td>0.0002</td></tr>
+<tr><td>D3 Effort « HA ! »</td><td>-1.01</td><td>-12.9</td><td>170 ms</td><td>0.0020</td></tr>
+<tr><td>D3 Douleur « UGH ! »</td><td>-1.01</td><td>-11.9</td><td>240 ms</td><td>0.0012</td></tr>
+<tr><td>D3 KO « AAARGH »</td><td>-1.01</td><td>-10.5</td><td>430 ms</td><td>0.0066</td></tr>
+<tr><td>D3 Jingle récompense</td><td>-1.01</td><td>-13.1</td><td>680 ms</td><td>0.0002</td></tr>
+</table>
+<script>
+var cur=null,next=null;
+function stop(){if(cur){cur.onended=null;cur.pause();}cur=null;}
+function play(f){stop();cur=new Audio('sons_sor/'+f);cur.play();}
+function chain(d){stop();var a=new Audio('sons_sor/d'+d+'_coup_lourd.wav'),b=new Audio('sons_sor/d'+d+'_ko_ennemi.wav');cur=a;a.onended=function(){cur=b;b.play();};a.play();}
+</script></main></body></html>

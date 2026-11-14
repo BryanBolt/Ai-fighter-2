@@ -590,6 +590,13 @@
     try { if (navigator.sendBeacon && navigator.sendBeacon(tu, new Blob([body], { type: "text/plain" }))) return; } catch (e) {}
     try { fetch(tu, { method: "POST", headers: { "content-type": "text/plain" }, body: body, keepalive: true }).catch(function () {}); } catch (e) {}
   }
+  // Donnees de jeu anonymes (cle `_don`, voir src/donnees.rs) : le jeu n'appelle que si le joueur a accepte ; POST /donnees (JSON), en arriere-plan, echec silencieux.
+  // keepalive seulement pour les petits corps (limite navigateur 64 Ko) ; l'enregistrement rejouable (~200 Ko) part sans.
+  function donPost(json) {
+    if (!url || !on) return;
+    var du = url.replace(/\/report$/, "/donnees");
+    try { fetch(du, { method: "POST", headers: { "content-type": "text/plain" }, body: json, keepalive: json.length < 60000 }).catch(function () {}); } catch (e) {}
+  }
   // Signalement volontaire (bouton « Signaler » du jeu, voir src/signalement.rs) : capture du canvas prise APRES le dessin (cle `_sigcap`), puis
   // le jeu pose son JSON (cle `_sig`) ; la page y joint la capture, le poste vers /signalement et garde une FILE locale (localStorage, 3 au plus,
   // 1,5 Mo) renvoyee a la reconnexion. Autorise meme si la telemetrie est refusee (action voulue). Retour discret : « Envoye » / « En attente d'envoi ».
@@ -658,6 +665,7 @@
       if (k === "_rec") { recStr = String(v); return; }   // enregistrement de rejeu (JSON), joint au prochain rapport
       if (k === "_comment") { comment = String(v).slice(0, 300); return; }
       if (k === "_tel") { telPost(String(v)); return; }   // telemetrie de jeu (JSON) : POST /telemetry ; `cap` = joindre une miniature JPEG du canvas
+      if (k === "_don") { donPost(String(v)); return; }   // donnees de jeu anonymes (JSON) : POST /donnees
       ctx[k.slice(0, 32)] = String(v).slice(0, 120);
     },
     config: function (v) { on = !!v; try { localStorage.setItem(KEY, on ? "1" : "0"); } catch (e) {} },
@@ -1257,6 +1265,7 @@ miniquad_add_plugin({
         if (kind === 10 && new URLSearchParams(location.search).get("strikes") === "1") s = "1"; // ?strikes=1 : apercu des coups orientes (mannequin, tous les angles)
         if (kind === 6 && new URLSearchParams(location.search).get("perf") === "1") s = "1"; // ?perf=1 : overlay de diagnostic (fps, ms, entites)
         if (kind === 9) s = String(new URLSearchParams(location.search).get("transition") || "").slice(0, 12); // ?transition=droite|montee|descente|chute|glissade : apercu en boucle
+        if (kind === 11) s = String(new URLSearchParams(location.search).get("mode") || "").slice(0, 12); // ?mode=histoire : campagne cachee
         if (kind === 4) s = window.afhNfcCode || "";
         if (kind === 8) s = String(window.afhWake ? window.afhWake.st : 0); // chauffe du serveur : 1 en cours, 2 reveille, 3 echec
         if (kind === 7) { s = netFlags ? String(netFlags) : ""; netFlags = 0; }

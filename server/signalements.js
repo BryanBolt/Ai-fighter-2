@@ -6,11 +6,10 @@
 // dans SIGNALEMENTS_DIR) avec rotation : MAX_FILES signalements et MAX_DISK_BYTES au plus. ATTENTION : sur Render (offre gratuite) le disque
 // n'est PAS persistant (efface a chaque deploiement ou reveil) : c'est la memoire qui sert, donc recuperer les signalements avec
 // tools/signalements.sh avant un redeploiement. Un signalement est volontaire : il est accepte meme si le joueur a refuse la telemetrie.
-import fs from 'node:fs';
-import path from 'node:path';
 import crypto from 'node:crypto';
 import { cleanRec } from './reports.js';
 import { dropBody } from './overflow.js';
+import { createStockage } from './stockage.js';
 
 export const MAX_BODY = 640 * 1024;
 export const MAX_IMG_BYTES = 160 * 1024; // image decodee (JPEG ou PNG)
@@ -70,14 +69,16 @@ export function cleanSignalement(m) {
 }
 
 export function createSignalements(opts = {}) {
-  const dir = opts.dir ?? process.env.SIGNALEMENTS_DIR ?? 'signalements';
   const adminKey = () => opts.adminKey ?? process.env.ADMIN_KEY ?? '';
-  const keep = opts.keep ?? MAX_KEEP, maxFiles = opts.maxFiles ?? MAX_FILES, maxDisk = opts.maxDisk ?? MAX_DISK_BYTES;
   const perMin = opts.perMin ?? RATE_PER_MIN, perHour = opts.perHour ?? RATE_PER_HOUR;
-  const mem = new Map(); // id -> { meta, img, ext } (les plus recents)
+  // Stockage commun (stockage.js : memoire, disque, PostgreSQL si DATABASE_URL, purge) ; autonome si le relais n'en fournit pas (tests).
+  const stock = opts.stock ?? createStockage({
+    databaseUrl: '', noDisk: !!opts.noDisk,
+    collections: { signalements: { dir: opts.dir ?? process.env.SIGNALEMENTS_DIR ?? 'signalements', keep: opts.keep ?? MAX_KEEP, maxFiles: opts.maxFiles ?? MAX_FILES, maxBytes: opts.maxDisk ?? MAX_DISK_BYTES, noDisk: !!opts.noDisk } },
+  });
   const rate = new Map();
   const stats = { posts: 0, rejected: 0, stored: 0 };
-  let seq = 0;
+  const memOf = () => stock.coll('signalements').mem; // id -> { meta, img, ext } (les plus recents)
 
   function rateOk(ip) {
     const now = Date.now(); const l = (rate.get(ip) || []).filter((t) => now - t < 3600000);
@@ -85,48 +86,9 @@ export function createSignalements(opts = {}) {
     l.push(now); rate.set(ip, l); if (rate.size > 5000) rate.clear();
     return true;
   }
-  // Rotation du disque : au plus maxFiles signalements et maxDisk octets, les plus anciens d'abord.
-  function rotate() {
-    if (opts.noDisk) return;
-    try {
-      const names = fs.readdirSync(dir).filter((n) => /^[0-9]{13}-[0-9a-f]{8}\./.test(n));
-      const ids = [...new Set(names.map((n) => n.split('.')[0]))].sort();
-      const size = (id) => names.filter((n) => n.startsWith(id + '.')).reduce((a, n) => { try { return a + fs.statSync(path.join(dir, n)).size; } catch { return a; } }, 0);
-      let total = ids.reduce((a, id) => a + size(id), 0);
-      while (ids.length > 1 && (ids.length > maxFiles || total > maxDisk)) {
-        const id = ids.shift(); total -= size(id);
-        for (const n of names.filter((x) => x.startsWith(id + '.'))) { try { fs.unlinkSync(path.join(dir, n)); } catch { /* deja parti */ } }
-      }
-    } catch { /* dossier absent */ }
-  }
-  function load() {
-    if (opts.noDisk) return;
-    try {
-      const ids = fs.readdirSync(dir).filter((n) => /^[0-9]{13}-[0-9a-f]{8}\.json$/.test(n)).map((n) => n.slice(0, -5)).sort().slice(-keep);
-      for (const id of ids) {
-        try {
-          const meta = JSON.parse(fs.readFileSync(path.join(dir, id + '.json'), 'utf8'));
-          const ext = meta.img_ext; let img = null;
-          if (ext) { try { img = fs.readFileSync(path.join(dir, id + '.' + ext)); } catch { /* image perdue */ } }
-          mem.set(id, { meta, img, ext: img ? ext : '' });
-        } catch { /* fichier abime */ }
-      }
-    } catch { /* pas de dossier */ }
-  }
   function store(c) {
-    const at = Date.now();
-    const id = String(at).padStart(13, '0') + '-' + crypto.createHash('sha1').update(String(seq++) + ':' + at + ':' + (c.img ? c.img.buf.length : 0) + c.out.note).digest('hex').slice(0, 8);
-    const meta = { id, at, ...c.out, img_ext: c.img ? c.img.ext : '', img_bytes: c.img ? c.img.buf.length : 0 };
-    mem.set(id, { meta, img: c.img ? c.img.buf : null, ext: c.img ? c.img.ext : '' });
-    while (mem.size > keep) mem.delete(mem.keys().next().value);
-    if (!opts.noDisk) {
-      try {
-        fs.mkdirSync(dir, { recursive: true });
-        fs.writeFileSync(path.join(dir, id + '.json'), JSON.stringify(meta));
-        if (c.img) fs.writeFileSync(path.join(dir, id + '.' + c.img.ext), c.img.buf);
-        rotate();
-      } catch { /* disque en lecture seule : la memoire suffit */ }
-    }
+    const data = { ...c.out, img_ext: c.img ? c.img.ext : '', img_bytes: c.img ? c.img.buf.length : 0 };
+    const id = stock.add('signalements', data, c.img ? { blob: c.img.buf, ext: c.img.ext } : {});
     stats.stored++;
     return id;
   }
@@ -163,17 +125,18 @@ export function createSignalements(opts = {}) {
   }
   const summary = (e) => { const { rec, snap, inputs, ...rest } = e.meta; return { ...rest, rec_bytes: rec ? rec.epochs.reduce((a, x) => a + x.b64.length, 0) : 0, has_snap: !!snap }; };
   // GET /signalements[?since=ms] : liste (sans rejeu) ; ?id=..[&format=rec] : un signalement complet ou son rejeu seul ; GET /signalements/img?id=.. : l'image.
-  function handleGet(req, res, url) {
+  async function handleGet(req, res, url) {
     if (!adminKey()) { res.writeHead(404); res.end('desactive'); return; }
     if (!authed(req, url)) { res.writeHead(403); res.end('cle invalide'); return; }
     const id = url.searchParams.get('id');
     if (url.pathname === '/signalements/img') {
-      const e = id && mem.get(id);
-      if (!e || !e.img) { res.writeHead(404); res.end(); return; }
-      res.writeHead(200, { 'content-type': e.ext === 'png' ? 'image/png' : 'image/jpeg', 'cache-control': 'no-store' }); res.end(e.img); return;
+      const e = id && memOf().get(id);
+      const img = e && (e.img || (await stock.blob('signalements', id).catch(() => null)));
+      if (!e || !img) { res.writeHead(404); res.end(); return; }
+      res.writeHead(200, { 'content-type': e.ext === 'png' ? 'image/png' : 'image/jpeg', 'cache-control': 'no-store' }); res.end(img); return;
     }
     if (id) {
-      const e = mem.get(id);
+      const e = memOf().get(id);
       if (!e) { res.writeHead(404); res.end(); return; }
       if (url.searchParams.get('format') === 'rec') {
         if (!e.meta.rec) { res.writeHead(404); res.end('pas de rejeu'); return; }
@@ -182,10 +145,9 @@ export function createSignalements(opts = {}) {
       res.writeHead(200, { 'content-type': 'application/json', 'cache-control': 'no-store' }); res.end(JSON.stringify(e.meta)); return;
     }
     const since = Number(url.searchParams.get('since')) || 0;
-    const rows = [...mem.values()].filter((e) => e.meta.at > since).map(summary);
+    const rows = [...memOf().values()].filter((e) => e.meta.at > since).map(summary);
     res.writeHead(200, { 'content-type': 'application/json', 'cache-control': 'no-store' });
-    res.end(JSON.stringify({ n: rows.length, kept: mem.size, signalements: rows }));
+    res.end(JSON.stringify({ n: rows.length, kept: memOf().size, signalements: rows }));
   }
-  load();
-  return { handlePost, handleGet, ingest, mem, stats, rotate };
+  return { handlePost, handleGet, ingest, get mem() { return memOf(); }, stats, rotate: () => stock.purge(), stock };
 }
