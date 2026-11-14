@@ -24,8 +24,8 @@
   #loading small { font-weight: 400; font-size: 14px; opacity: .8; margin-top: 8px; letter-spacing: 0; }
   #fs { position: absolute; left: max(4px, env(safe-area-inset-left)); top: 50%; transform: translateY(-50%); z-index: 3;
 }
-  /* Telephone en portrait : le bouton plein ecran a un emplacement FIXE (bord gauche, a mi-hauteur) : jamais sur le HUD en haut ni sur les commandes en bas. */
-  @media (orientation: portrait) and (max-width: 820px) { #fs { opacity: .3; }
+  /* Telephone en portrait : le bouton plein ecran a un emplacement FIXE (coin haut gauche, centre dans la bande de l'encoche) : jamais sur les lignes d'un menu, ni sur le HUD, ni sur les commandes en bas. */
+  @media (orientation: portrait) and (max-width: 820px) { #fs { opacity: .3; top: max(calc(env(safe-area-inset-top, 0px) / 2), 22px); }
 }
   /* Cible tactile >= 44 px sans agrandir le bouton visible (zone invisible autour) ; contraste releve (opacite .35 -> .55). */
   #fs::after { content: ""; position: absolute; inset: -6px; }
@@ -157,7 +157,7 @@
 })();
 </script>
 <button id="pi" title="Installer le jeu" aria-label="Installer le jeu" hidden>Installer</button>
-<button id="fs" title="Plein ecran" aria-label="Plein ecran">[ ]</button>
+<button id="fs" title="Plein ecran" aria-label="Plein ecran" hidden>[ ]</button>
 <button id="pf" title="Prevenir mes amis" aria-label="Prevenir mes amis" hidden>Amis</button>
 <div id="pfp" hidden>
   <b>Prevenir mes amis</b>
@@ -593,10 +593,70 @@
     try { if (navigator.sendBeacon && navigator.sendBeacon(tu, new Blob([body], { type: "text/plain" }))) return; } catch (e) {}
     try { fetch(tu, { method: "POST", headers: { "content-type": "text/plain" }, body: body, keepalive: true }).catch(function () {}); } catch (e) {}
   }
+  // Signalement volontaire (bouton « Signaler » du jeu, voir src/signalement.rs) : capture du canvas prise APRES le dessin (cle `_sigcap`), puis
+  // le jeu pose son JSON (cle `_sig`) ; la page y joint la capture, le poste vers /signalement et garde une FILE locale (localStorage, 3 au plus,
+  // 1,5 Mo) renvoyee a la reconnexion. Autorise meme si la telemetrie est refusee (action voulue). Retour discret : « Envoye » / « En attente d'envoi ».
+  var sigImg = "", SIGQ = "afh_sigq", sigBusy = false;
+  function sigCapture() {
+    sigImg = "";
+    try {
+      var c = document.getElementById("glcanvas") || document.querySelector("canvas"); if (!c || !c.width) return;
+      var ws = [560, 440, 340, 260];
+      for (var i = 0; i < ws.length; i++) {
+        var w = Math.min(ws[i], c.width), h = Math.max(1, Math.round(c.height * w / c.width)), o = document.createElement("canvas"); o.width = w; o.height = h;
+        o.getContext("2d").drawImage(c, 0, 0, w, h);
+        for (var q = 0.7; q >= 0.3; q -= 0.2) { var d = o.toDataURL("image/jpeg", q); if (d.length * 0.75 <= 150000) { sigImg = d; return; } }
+      }
+    } catch (e) {}
+  }
+  function sigToast(t) {
+    try {
+      var d = document.getElementById("afh-sigtoast");
+      if (!d) { d = document.createElement("div"); d.id = "afh-sigtoast"; d.setAttribute("role", "status"); d.setAttribute("aria-live", "polite");
+        d.style.cssText = "position:fixed;left:50%;bottom:calc(14% + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:50;pointer-events:none;background:rgba(30,20,28,.86);color:#fff3e0;font:600 15px/1.2 ui-monospace,Menlo,Consolas,monospace;padding:8px 16px;border-radius:18px;transition:opacity .25s;opacity:0";
+        document.body.appendChild(d); }
+      d.textContent = t; d.style.opacity = "1"; clearTimeout(d._t); d._t = setTimeout(function () { d.style.opacity = "0"; }, 3000);
+    } catch (e) {}
+  }
+  function sigQueue() { try { var q = JSON.parse(localStorage.getItem(SIGQ) || "[]"); return Array.isArray(q) ? q : []; } catch (e) { return []; } }
+  function sigSave(q) {
+    // Bornes : 3 signalements, 1,5 Mo de texte au total (le plus ancien part le premier).
+    while (q.length > 3 || (q.length > 1 && q.join("").length > 1500000)) q.shift();
+    try { localStorage.setItem(SIGQ, JSON.stringify(q)); } catch (e) { if (q.length > 1) { q.shift(); sigSave(q); } }
+  }
+  function sigFlush(quiet) {
+    if (sigBusy || !url) return;
+    var q = sigQueue(); if (!q.length) return;
+    sigBusy = true;
+    var su = url.replace(/\/report$/, "/signalement");
+    (function next() {
+      var q2 = sigQueue(); if (!q2.length) { sigBusy = false; if (!quiet) sigToast("Envoye, merci"); return; }
+      fetch(su, { method: "POST", headers: { "content-type": "application/json" }, body: q2[0] }).then(function (r) {
+        // 2xx : recu ; 4xx : refuse pour de bon (trop gros / invalide) : on le retire pour ne pas boucler ; 429 et 5xx : on retentera.
+        if (r.ok || (r.status >= 400 && r.status < 500 && r.status !== 429 && r.status !== 408)) { q2.shift(); sigSave(q2); next(); }
+        else { sigBusy = false; if (!quiet) sigToast("En attente d'envoi"); }
+      }, function () { sigBusy = false; if (!quiet) sigToast("En attente d'envoi"); });
+    })();
+  }
+  function sigPost(json) {
+    var m = null; try { m = JSON.parse(json); } catch (e) { return; }
+    if (sigImg) { m.img = sigImg; sigImg = ""; }
+    m.late = false;
+    var body = JSON.stringify(m);
+    if (body.length > 600000) { delete m.rec; body = JSON.stringify(m); }
+    var q = sigQueue(); q.push(body); sigSave(q);
+    sigToast("En attente d'envoi");
+    sigFlush(false);
+  }
+  window.addEventListener("online", function () { sigFlush(true); });
+  setTimeout(function () { sigFlush(true); }, 6000);
+  setInterval(function () { sigFlush(true); }, 60000);
   window.AFH_REPORT = {
     crumb: crumb, submit: submit, fatal: fatal, on: function () { return on; },
     ctx: function (k, v) {
       k = String(k);
+      if (k === "_sigcap") { sigCapture(); return; }   // capture du canvas (JPEG <= 150 Ko), prise juste apres le dessin
+      if (k === "_sig") { sigPost(String(v)); return; }   // signalement du joueur (JSON) : + capture, file locale, envoi vers /signalement
       if (k === "_diag") { diagStr = String(v); return; }   // diagnostic Rust (JSON), joint au prochain rapport
       if (k === "_rec") { recStr = String(v); return; }   // enregistrement de rejeu (JSON), joint au prochain rapport
       if (k === "_comment") { comment = String(v).slice(0, 300); return; }
@@ -1032,6 +1092,8 @@ miniquad_add_plugin({
       var mm = mus[MUS_NAMES[id]]; if (!mm || !mm.buf) return;
       new Uint8Array(wasm_memory.buffer, dst, mm.buf.length).set(mm.buf); delete mus[MUS_NAMES[id]];
     };
+    // Plein ecran : plus de bouton sur le terrain ; le jeu l'offre dans « Options rapides » de la pause.
+    importObject.env.afh_fullscreen = function () { try { var d = document.documentElement; if (document.fullscreenElement) document.exitFullscreen(); else if (d.requestFullscreen) { d.requestFullscreen().then(function () {}).catch(function () {}); } } catch (e) {} };
     importObject.env.afh_vibrate =function (ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} };
     // Motif de vibration (haptique par niveau) : vibre / pause alternes en ms, zeros de fin ignores.
     importObject.env.afh_vibrate_pat = function (a, b, c, d, e) { try { var p = [a, b, c, d, e]; while (p.length && p[p.length - 1] === 0) p.pop(); if (navigator.vibrate && p.length) navigator.vibrate(p); } catch (x) {} };
