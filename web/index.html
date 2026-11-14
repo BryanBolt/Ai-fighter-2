@@ -1173,13 +1173,45 @@ miniquad_add_plugin({
       } catch (e) {}
     };
     // Jeu en ligne : WebSocket vers le serveur de relais (les messages recus sont mis en file pour le jeu).
-    var ws = null, wsq = [], wsState = 2;
+    // File bornee (WSQ_MAX) : au-dela, un lot d'entrees n'est plus garde (les messages de controle le sont, jusqu'a WSQ_HARD) et le debordement est SIGNALE au jeu
+    // (bit 32), qui demande aussitot une reprise complete au lieu de traiter une file trouee (avant : jete en silence, trou dans le lockstep, 2,5 s d'attente puis reprise).
+    var ws = null, wsq = [], wsState = 2, WSQ_MAX = 2000, WSQ_HARD = 6000, wsBig = null;
     // Evenements reseau lus par le jeu (afh_ws_page kind 7, une fois par image) : 1 retour au premier plan, 2 « online », 4 « offline », 8 changement de reseau
-    // (wifi <-> 4G), 16 socket fermee anormalement (codes 1005 / 1006). Le jeu se reconnecte tout de suite avec son jeton : voir tools/playtest/checkpoints.md.
+    // (wifi <-> 4G), 16 socket fermee anormalement (codes 1005 / 1006), 32 file de messages debordee (reprise a demander), 64 retour apres plus de 30 s masquee.
+    // Le jeu se reconnecte tout de suite avec son jeton : voir tools/playtest/checkpoints.md et docs/ETUDE_ABSENCE_RETOUR_2026-11-15.md.
     var netFlags = 0;
+    // File et lecture : fonctions pures, executees sous Node avec tout le plugin par server/test/web_plugin.test.js (A-J4, A-J4b).
+    function afhWsPush(d) {
+      if (wsq.length < WSQ_MAX) { wsq.push(d); return; }
+      netFlags |= 32;
+      if (d.lastIndexOf('{"t":"input', 0) === 0 || wsq.length >= WSQ_HARD) return; // lot d'entrees : la reprise demandee le remplacera
+      wsq.push(d);
+    }
+    // Message plus grand que le tampon du jeu (reprise d'une partie de plusieurs minutes : journal de 100 a 500 Ko) : on renvoie -taille SANS le retirer, le jeu agrandit
+    // son tampon et rappelle (avant : jete en silence au-dela de 64 Ko, donc tout retour / arrivee apres quelques minutes de partie echouait sur le web, etude C2).
+    // Un ancien jeu (tampon fixe) qui rappelle avec la meme taille : le message est alors jete comme avant, la file ne se bloque jamais.
+    function afhWsRecv(cap, copy) {
+      if (!wsq.length) return 0;
+      var b = wsBig && wsBig.s === wsq[0] ? wsBig.b : new TextEncoder().encode(wsq[0]);
+      if (b.length > cap) {
+        if (wsBig && wsBig.s === wsq[0] && wsBig.cap === cap) { wsq.shift(); wsBig = null; return 0; }
+        wsBig = { s: wsq[0], b: b, cap: cap };
+        return -b.length;
+      }
+      wsq.shift(); wsBig = null;
+      copy(b);
+      return b.length;
+    }
     try {
-      document.addEventListener("visibilitychange", function () { if (!document.hidden) netFlags |= 1; });
-      window.addEventListener("pageshow", function () { netFlags |= 1; });
+      // Absence (page masquee) : `idle` part TOUT DE SUITE par la socket (la boucle du jeu s'arrete des que la page est masquee : elle ne pourrait pas le dire) ; `h:1` = vraie
+      // absence, jamais un retour pour le relais. Une simple perte de focus (alt-tab, volet de notifications) n'envoie RIEN : le joueur est encore la (etude absence/retour, C1).
+      // Au retour : bit 1 ; bit 64 en plus si la page est restee masquee plus de 30 s (socket probablement coupee par le systeme : reconnexion immediate, sans sonde de 3 s).
+      var hiddenAt = 0;
+      var markHidden = function () { if (hiddenAt) return; hiddenAt = Date.now(); try { if (ws && ws.readyState === 1) ws.send('{"t":"idle","h":1}'); } catch (e) {} };
+      var markBack = function () { if (hiddenAt && Date.now() - hiddenAt > 30000) netFlags |= 64; hiddenAt = 0; netFlags |= 1; };
+      document.addEventListener("visibilitychange", function () { if (document.hidden) markHidden(); else markBack(); });
+      window.addEventListener("pagehide", markHidden);
+      window.addEventListener("pageshow", function () { if (!document.hidden) markBack(); });
       window.addEventListener("online", function () { netFlags |= 2; });
       window.addEventListener("offline", function () { netFlags |= 4; });
       var cn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
@@ -1188,27 +1220,20 @@ miniquad_add_plugin({
     importObject.env.afh_ws_open = function (p, l) {
       // L'ancienne socket est detachee AVANT d'etre fermee : son « close » tardif ne doit pas marquer la nouvelle comme coupee.
       try { if (ws) { ws.onopen = ws.onclose = ws.onerror = ws.onmessage = null; ws.close(); } } catch (e) {}
-      wsq = []; wsState = 0;
+      wsq = []; wsState = 0; wsBig = null;
       try {
         var me = new WebSocket(UTF8ToString(p, l));
         ws = me;
         me.onopen = function () { if (ws === me) wsState = 1; AFH_REPORT.crumb("ws", "ouvert"); };
         me.onclose = function (ev) { if (ws === me) { wsState = 2; if (ev && (ev.code === 1005 || ev.code === 1006)) netFlags |= 16; } AFH_REPORT.crumb("ws", "ferme code " + (ev && ev.code) + (ev && ev.wasClean ? "" : " (non propre)")); };
         me.onerror = function () { if (ws === me) wsState = 2; AFH_REPORT.crumb("ws", "erreur reseau"); };
-        me.onmessage = function (e) { if (ws === me && typeof e.data === "string" && wsq.length < 2000) wsq.push(e.data); };
+        me.onmessage = function (e) { if (ws === me && typeof e.data === "string") afhWsPush(e.data); };
       } catch (e) { wsState = 2; AFH_REPORT.crumb("ws", "WebSocket impossible : " + e); }
     };
     importObject.env.afh_ws_send = function (p, l) { try { if (ws && ws.readyState === 1) ws.send(UTF8ToString(p, l)); } catch (e) {} };
     importObject.env.afh_ws_state = function () { return wsState; };
     importObject.env.afh_ws_close = function () { try { if (ws) ws.close(); } catch (e) {} wsState = 2; };
-    importObject.env.afh_ws_recv = function (dst, cap) {
-      if (!wsq.length) return 0;
-      var b = new TextEncoder().encode(wsq[0]);
-      if (b.length > cap) { wsq.shift(); return 0; }
-      wsq.shift();
-      new Uint8Array(wasm_memory.buffer, dst, b.length).set(b);
-      return b.length;
-    };
+    importObject.env.afh_ws_recv = function (dst, cap) { return afhWsRecv(cap, function (b) { new Uint8Array(wasm_memory.buffer, dst, b.length).set(b); }); };
     // kind 0 : adresse WebSocket du serveur qui sert la page ; kind 1 : code de salon du lien d'invitation (?salon=CODE).
     importObject.env.afh_ws_page = function (kind, dst, cap) {
       var s = "";

@@ -3,6 +3,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import { dropBody } from './overflow.js';
 
 export const KINDS = ['panic', 'js', 'net', 'asset', 'audio', 'webgl', 'wasm', 'ws', 'desync', 'stall', 'user', 'other'];
 const MAX_BODY = 512 * 1024; // le rapport sans enregistrement reste sous 64 Ko ; l'enregistrement de rejeu (`rec`) peut en ajouter ~250 Ko
@@ -164,7 +165,7 @@ export function createReports(opts = {}) {
     if (!allowed(ip)) { res.writeHead(429, cors); res.end('trop vite'); req.resume(); return; }
     let body = ''; let over = false;
     req.setEncoding('utf8');
-    req.on('data', (d) => { body += d; if (body.length > MAX_BODY) { over = true; body = ''; req.destroy(); } });
+    req.on('data', (d) => { body += d; if (body.length > MAX_BODY) { over = true; body = ''; res.writeHead(413, cors); res.end('trop gros'); dropBody(req); } });
     req.on('error', () => {});
     req.on('end', () => {
       if (over) return;

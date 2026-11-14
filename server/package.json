@@ -7,7 +7,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "node --test --test-concurrency=1 test/server.test.js test/online2.test.js test/edge.test.js test/robust.test.js test/lobby.test.js test/push.test.js test/static.test.js test/web_guard.test.js test/web_plugin.test.js test/scores.test.js test/reports.test.js test/signalements.test.js test/verdicts.test.js test/verdicts_client.test.js test/net_quality.test.js test/watch.test.js test/build_id.test.js test/multi_refonte.test.js test/presence.test.js test/presence_40s.test.js test/arrivee_deux_temps.test.js test/reprise_ciblee.test.js test/netchaos.test.js test/points_de_sauvegarde.test.js test/netq.test.js test/multi_6_joueurs.test.js test/diffusion_groupee.test.js test/reload_loop.test.js test/grace_transition.test.js"
+    "test": "node --test --test-force-exit --test-timeout=240000 --test-concurrency=1 test/server.test.js test/online2.test.js test/edge.test.js test/robust.test.js test/lobby.test.js test/push.test.js test/static.test.js test/web_guard.test.js test/web_plugin.test.js test/scores.test.js test/reports.test.js test/signalements.test.js test/verdicts.test.js test/verdicts_client.test.js test/net_quality.test.js test/watch.test.js test/build_id.test.js test/multi_refonte.test.js test/presence.test.js test/presence_40s.test.js test/arrivee_deux_temps.test.js test/reprise_ciblee.test.js test/netchaos.test.js test/points_de_sauvegarde.test.js test/netq.test.js test/multi_6_joueurs.test.js test/diffusion_groupee.test.js test/reload_loop.test.js test/grace_transition.test.js"
   },
   "engines": {
     "node": ">=20"

@@ -4,6 +4,7 @@
 // Persistance : fichier JSON (VERDICTS_FILE, ecriture atomique tmp + rename) ; sans fichier : memoire seule.
 import fs from 'node:fs';
 import crypto from 'node:crypto';
+import { dropBody } from './overflow.js';
 
 export const VLIMITS = { bodyMax: 8192, pageMax: 64, carteMax: 120, versionMax: 64, commentMax: 2000, entriesMax: 5000, ipWindowMs: 60000, ipWindowMax: 240, badKeyMax: 20 };
 export const VERDICTS = ['ok', 'refaire', 'discuter', ''];
@@ -82,7 +83,7 @@ export function createVerdicts({ file = null, key = null, now = () => Date.now()
     }
     if (p === '/api/verdict' && req.method === 'PUT') {
       let size = 0; const chunks = []; let dead = false;
-      req.on('data', (c) => { size += c.length; if (size > VLIMITS.bodyMax) { if (!dead) { dead = true; send(413, { error: 'corps trop gros' }); req.destroy(); } return; } chunks.push(c); });
+      req.on('data', (c) => { size += c.length; if (size > VLIMITS.bodyMax) { if (!dead) { dead = true; send(413, { error: 'corps trop gros' }); dropBody(req); } return; } chunks.push(c); });
       req.on('end', () => {
         if (dead) return;
         let body; try { body = JSON.parse(Buffer.concat(chunks).toString('utf8')); } catch { send(400, { error: 'json invalide' }); return; }

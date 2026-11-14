@@ -5,6 +5,7 @@
 // copie sur disque en JSON-lines (TELEMETRY_FILE, ecrite a la fin de session ou a la note, rechargee au demarrage).
 import fs from 'node:fs';
 import crypto from 'node:crypto';
+import { dropBody } from './overflow.js';
 
 const MAX_BODY = 160 * 1024;
 const MAX_SESSIONS = 4000;
@@ -125,7 +126,7 @@ export function createTelemetry(opts = {}) {
   function handlePost(req, res, ip = '') {
     if (!rateOk(ip)) { res.writeHead(429); res.end('trop vite'); return; }
     let size = 0; const chunks = [];
-    req.on('data', (c) => { size += c.length; if (size > MAX_BODY) { res.writeHead(413); res.end('trop gros'); req.destroy(); } else chunks.push(c); });
+    req.on('data', (c) => { size += c.length; if (size > MAX_BODY) { res.writeHead(413); res.end('trop gros'); dropBody(req); } else chunks.push(c); });
     req.on('end', () => {
       if (res.writableEnded) return;
       let m = null; try { m = JSON.parse(Buffer.concat(chunks).toString('utf8')); } catch { /* json invalide */ }

@@ -10,6 +10,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { cleanRec } from './reports.js';
+import { dropBody } from './overflow.js';
 
 export const MAX_BODY = 640 * 1024;
 export const MAX_IMG_BYTES = 160 * 1024; // image decodee (JPEG ou PNG)
@@ -142,9 +143,9 @@ export function createSignalements(opts = {}) {
     if (req.method !== 'POST') { res.writeHead(405, cors); res.end(); return; }
     if (!rateOk(ip)) { stats.rejected++; res.writeHead(429, cors); res.end('trop vite'); return; }
     const declared = Number(req.headers['content-length']);
-    if (declared > MAX_BODY) { stats.rejected++; res.writeHead(413, { ...cors, connection: 'close' }); res.end('trop gros'); return; }
+    if (declared > MAX_BODY) { stats.rejected++; res.writeHead(413, cors); res.end('trop gros'); dropBody(req); return; }
     let size = 0; const chunks = [];
-    req.on('data', (c) => { size += c.length; if (size > MAX_BODY) { if (!res.writableEnded) { stats.rejected++; res.writeHead(413, { ...cors, connection: 'close' }); res.end('trop gros'); } req.destroy(); } else chunks.push(c); });
+    req.on('data', (c) => { size += c.length; if (size > MAX_BODY) { if (!res.writableEnded) { stats.rejected++; res.writeHead(413, cors); res.end('trop gros'); } dropBody(req); } else chunks.push(c); });
     req.on('end', () => {
       if (res.writableEnded) return;
       let m = null; try { m = JSON.parse(Buffer.concat(chunks).toString('utf8')); } catch { /* json invalide */ }

@@ -2,6 +2,7 @@
 // Rien de sensible n'est garde : seulement l'adresse d'abonnement du navigateur (en memoire) et un pseudo.
 // Sans cles VAPID (VAPID_PUBLIC / VAPID_PRIVATE / VAPID_SUBJECT), les routes repondent « push indisponible » et le jeu continue.
 import * as webpush from 'web-push';
+import { dropBody } from './overflow.js';
 
 const CIRCLE_RE = /^[A-Z0-9]{5,8}$/;
 const MAX_CIRCLES = 2000;
@@ -42,7 +43,7 @@ export function createPush({ env = process.env, sender = null, roomExists = () =
   const reply = (res, code, obj) => { res.writeHead(code, { 'content-type': 'application/json', 'cache-control': 'no-store' }); res.end(JSON.stringify(obj)); };
   function readJson(req, res, cb) {
     let body = '', dead = false;
-    req.on('data', (d) => { body += d; if (body.length > MAX_BODY && !dead) { dead = true; reply(res, 413, { ok: false, err: 'trop gros' }); req.destroy(); } });
+    req.on('data', (d) => { body += d; if (body.length > MAX_BODY && !dead) { dead = true; reply(res, 413, { ok: false, err: 'trop gros' }); dropBody(req); } });
     req.on('end', () => {
       if (dead) return;
       let j; try { j = JSON.parse(body); } catch { return reply(res, 400, { ok: false, err: 'json invalide' }); }
