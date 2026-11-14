@@ -3,7 +3,7 @@
 # utiliser IDEAS_WEBHOOK pour les recevoir ailleurs). Le service s'endort après 15 min sans visite.
 services:
   - type: web
-    name: ai-fighter-2
+    name: ai-fighter-2-test
     runtime: docker
     plan: free
     healthCheckPath: /health

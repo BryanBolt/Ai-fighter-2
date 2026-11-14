@@ -2,7 +2,7 @@
 // Strategie : reseau d'abord (version la plus recente), cache seulement en secours hors ligne ; jamais de version perimee
 // tant que le reseau repond. Hors ligne : la derniere copie vue ; une page (navigation) retombe sur index.html, mais une
 // ressource manquante (wasm, son) reste une vraie erreur : lui servir du HTML faisait planter l'instanciation du wasm.
-const CACHE = 'afh-shell-v8';
+const CACHE = 'afh-test-shell-v8';
 // Pre-cache du jeu a l'installation (hors ligne des la 1re visite) : au mieux, fichier par fichier (un echec ne bloque jamais
 // l'installation ; le wasm de ~12 Mo ne retient pas le demarrage : la page le telecharge deja en parallele).
 // Mise a jour sans casser une partie : skipWaiting + claim ne rechargent JAMAIS la page ouverte ; la nouvelle version n'est
