@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Impacts gradués : écoute</title>
+<style>
+:root{--ink:#221834;--paper:#fff3e0;--acc:#d8456b;--btn:#c03a5e;--gold:#ffd27a;--card:#fffaf2;--line:#e9d3b4}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/1.55 Nunito,system-ui,sans-serif}
+main{max-width:760px;margin:0 auto;padding:16px}
+h1{font-size:22px;margin:8px 0}h2{font-size:19px;margin:0 0 4px;color:var(--acc)}
+.dir{background:var(--card);border:2px solid var(--ink);border-radius:12px;padding:12px;margin:16px 0}
+.dir p{margin:0 0 10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+button{min-height:56px;width:100%;border:2px solid var(--ink);border-radius:14px;background:var(--btn);color:var(--paper);font:700 17px/1.2 Nunito,system-ui,sans-serif;cursor:pointer;padding:6px 8px}
+button small{display:block;font-weight:400;font-size:13px;opacity:.85}
+button.big{background:var(--gold);color:var(--ink);min-height:64px;font-size:18px;margin-top:8px}
+button.sec{background:var(--ink);color:var(--paper);margin-top:8px}
+button:active{transform:translateY(1px)}
+.note{border-left:4px solid var(--acc);padding:4px 10px;background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:14px;margin-top:8px}
+td,th{border-bottom:1px solid var(--line);padding:4px 6px;text-align:left}
+.wrap{overflow-x:auto}
+</style></head><body><main>
+<h1>Impacts gradués du combo de Kaze</h1>
+<p class="note">Rien de neuf dans le matériau : ce sont les sons B (« PS1 sombre et lourde ») déjà choisis, joués à des niveaux, des hauteurs et des gains différents selon la force du coup et le rang du coup dans le combo. Canal TEST seulement. Personne n'a écouté ces extraits en jeu : jugez la montée du 1er au 5e coup, le poids du finisseur, et si la rafale fatigue.</p>
+
+<section class="dir"><h2>La rafale de cinq coups</h2>
+<p>Cinq touches à la cadence du combo (0,2 s), force légère : tête, corps, jambes mêlés. Le niveau monte du léger au moyen puis le finisseur, plus grave et plus long. La seconde version ajoute la musique de l'étage, qui ne baisse qu'au finisseur.</p>
+<button type="button" class="big" onclick="play('etage/rafale_5_coups.wav')">Rafale de 5 coups, sons seuls</button>
+<button type="button" class="big" onclick="play('etage/rafale_5_coups_musique.wav')">Rafale de 5 coups sous la musique</button>
+<button type="button" class="sec" onclick="stop()">Arrêter</button>
+</section>
+
+<section class="dir"><h2>Les niveaux, un par un</h2>
+<div class="grid">
+<button type="button" onclick="play('etage/impact_leger.wav')">Touche légère<small>sec, court</small></button>
+<button type="button" onclick="play('etage/impact_moyen.wav')">Touche moyenne<small>plus de corps</small></button>
+<button type="button" onclick="play('etage/impact_finisseur.wav')">Finisseur<small>grave, lourd, long</small></button>
+<button type="button" onclick="play('etage/impact_bloque.wav')">Bloqué, paré, bris<small>trois sons de garde</small></button>
+<button type="button" onclick="play('etage/impacts_quatre_niveaux.wav')">Les quatre d'affilée<small>léger, moyen, lourd, finisseur</small></button>
+</div></section>
+
+<section class="dir"><h2>Table force et rang du coup, vers son et vibration</h2>
+<div class="wrap"><table>
+<tr><th>Niveau</th><th>Quand</th><th>Son B</th><th>Gain</th><th>Hauteur</th><th>Téléphone</th><th>Manette</th><th>Musique</th></tr>
+<tr><td>Léger</td><td>force légère, coups 1 à 3</td><td>léger</td><td>0,65 à 0,69</td><td>1,05 à 1,01</td><td>25 ms</td><td>25 % 40 ms</td><td>rien</td></tr>
+<tr><td>Moyen</td><td>force moyenne, ou légère au coup 4</td><td>moyen</td><td>0,79 à 0,86</td><td>1,0 à 0,94</td><td>55 ms</td><td>45 % 70 ms</td><td>rien</td></tr>
+<tr><td>Lourd</td><td>force lourde, ou moyenne au coup 4</td><td>lourd</td><td>0,90 à 1,0</td><td>0,96 à 0,88</td><td>90 ms</td><td>65 % 100 ms</td><td>rien</td></tr>
+<tr><td>Finisseur</td><td>5e coup</td><td>lourd, variantes graves 0,80 et 0,72 (plus longues)</td><td>1,1</td><td>0,76</td><td>120 ms</td><td>100 % 170 ms</td><td>creux de 35 %</td></tr>
+<tr><td>Kaze encaisse</td><td>tout niveau</td><td>le même son d'impact</td><td></td><td></td><td>15 à 25 ms</td><td>30 à 48 % 25 à 32 ms</td><td></td></tr>
+<tr><td>Garde touchée</td><td>coup bloqué ou paré</td><td>garde (parade plus claire, bris plus grave)</td><td></td><td></td><td>aucune</td><td>aucune</td><td></td></tr>
+</table></div>
+<p>Zone touchée : la tête sonne plus claire (+5 % de hauteur), les jambes plus sourdes (-6 %). Hauteur variée à chaque touche, jamais deux fois la même variante d'affilée. Au plus 4 impacts simultanés ; au-delà, seuls les lourds et le finisseur passent. Le souffle de départ n'existe que pour les coups lourds et le finisseur (règle du jeu), pas pour les légers. Les réglages de vibration du joueur (marche, arrêt, intensité) s'appliquent à tout.</p></section>
+
+<p><a href="sons_b_jeu.html">Page précédente : les sons B en jeu</a></p>
+<script>
+var cur=null;
+function stop(){if(cur){cur.pause();cur=null;}}
+function play(f){stop();cur=new Audio(f);cur.play();}
+</script></main></body></html>
