@@ -1267,6 +1267,7 @@ miniquad_add_plugin({
         if (kind === 9) s = String(new URLSearchParams(location.search).get("transition") || "").slice(0, 12); // ?transition=droite|montee|descente|chute|glissade : apercu en boucle
         if (kind === 11) s = String(new URLSearchParams(location.search).get("mode") || "").slice(0, 12); // ?mode=histoire : campagne cachee
         if (kind === 12) s = String(new URLSearchParams(location.search).get("corps") || "").slice(0, 4); // ?corps=3 : prototype corps v3 (labo, etage, essai)
+        if (kind === 13) s = String(new URLSearchParams(location.search).get("niveau") || "").replace(/[^a-z0-9_]/gi, "").slice(0, 16); // ?labo=etage&niveau=toits : niveau du labo de l'etage
         if (kind === 4) s = window.afhNfcCode || "";
         if (kind === 8) s = String(window.afhWake ? window.afhWake.st : 0); // chauffe du serveur : 1 en cours, 2 reveille, 3 echec
         if (kind === 7) { s = netFlags ? String(netFlags) : ""; netFlags = 0; }

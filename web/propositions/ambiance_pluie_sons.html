@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pluie de la Ruelle</title>
+<style>
+  :root { --fond: #221834; --papier: #fff3e0; --accent: #ffd27a; --carte: #2a1230; }
+  body { margin: 0; padding: 16px; background: var(--fond); color: var(--papier); font-family: system-ui, sans-serif; line-height: 1.5; }
+  main { max-width: 720px; margin: 0 auto; }
+  h1 { color: var(--accent); font-size: 1.4rem; }
+  section { background: var(--carte); border-radius: 12px; padding: 16px; margin: 16px 0; }
+  audio { width: 100%; min-height: 44px; }
+  img { width: 100%; border-radius: 8px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Pluie de « La Ruelle » : le son</h1>
+  <section>
+    <p>Aucun son nouveau : l'étage réutilise la boucle de pluie existante (légère, longue, volume bas, décision déjà validée). Elle suit maintenant la pluie AFFICHÉE de l'étage : elle monte avec l'averse (vers 44 s), reste pendant l'averse forte, puis s'efface à l'accalmie, avec le fondu lent de l'ambiance (environ 2 s).</p>
+    <audio controls preload="none" src="sons/ambiance_pluie.wav"></audio>
+    <p>Écouté par : personne (à écouter en jeu : labo de l'étage, averse vers 44 s).</p>
+  </section>
+  <section>
+    <p>Ce qu'on voit pendant ce son :</p>
+    <img src="ambiance/planche_portrait.png" alt="Déroulé de la météo de la Ruelle en portrait">
+  </section>
+</main>
+</body>
+</html>
