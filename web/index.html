@@ -1268,6 +1268,7 @@ miniquad_add_plugin({
         if (kind === 11) s = String(new URLSearchParams(location.search).get("mode") || "").slice(0, 12); // ?mode=histoire : campagne cachee
         if (kind === 12) s = String(new URLSearchParams(location.search).get("corps") || "").slice(0, 4); // ?corps=2 : ancien systeme de corps (corps v3 par defaut ; labo, etage, essai)
         if (kind === 14) s = String(new URLSearchParams(location.search).get("parcours") || "").replace(/[^0-9]/g, "").slice(0, 2); // ?labo=etage&parcours=1 : parcours de plusieurs niveaux
+        if (kind === 16) s = String(new URLSearchParams(location.search).get("graine") || "").replace(/[^0-9]/g, "").slice(0, 12); // ?labo=etage&graine=123456 : rejouer la meme partie (vagues composees)
         if (kind === 15) s = String(new URLSearchParams(location.search).get("ambiance") || "").replace(/[^a-z0-9_]/gi, "").slice(0, 16); // ?labo=etage&ambiance=orage : variante d'ambiance imposee (meteo, heure)
         if (kind === 13) s = String(new URLSearchParams(location.search).get("niveau") || "").replace(/[^a-z0-9_]/gi, "").slice(0, 16); // ?labo=etage&niveau=toits : niveau du labo de l'etage
         if (kind === 4) s = window.afhNfcCode || "";
