@@ -1272,6 +1272,9 @@ miniquad_add_plugin({
         if (kind === 17) s = String(new URLSearchParams(location.search).get("reglages") || "").replace(/[^a-z0-9_.:;=,\- ]/gi, "").slice(0, 500); // ?labo=coups&reglages=ejection_lourd:1.5;zoom_impact:2 : jeu de reglages de sensation colle dans le labo des coups
         if (kind === 15) s = String(new URLSearchParams(location.search).get("ambiance") || "").replace(/[^a-z0-9_]/gi, "").slice(0, 16); // ?labo=etage&ambiance=orage : variante d'ambiance imposee (meteo, heure)
         if (kind === 13) s = String(new URLSearchParams(location.search).get("niveau") || "").replace(/[^a-z0-9_]/gi, "").slice(0, 16); // ?labo=etage&niveau=toits : niveau du labo de l'etage
+        if (kind === 18) s = String(new URLSearchParams(location.search).get("heure") || "").replace(/[^a-z0-9_]/gi, "").slice(0, 16); // ?labo=etage&heure=nuit : heure imposee (saisons composables)
+        if (kind === 19) s = String(new URLSearchParams(location.search).get("meteo") || "").replace(/[^a-z0-9_]/gi, "").slice(0, 16); // ?labo=etage&meteo=pluie_fine : meteo imposee
+        if (kind === 20) s = String(new URLSearchParams(location.search).get("saison") || "").replace(/[^a-z0-9_]/gi, "").slice(0, 16); // ?labo=etage&saison=hiver : saison imposee
         if (kind === 4) s = window.afhNfcCode || "";
         if (kind === 8) s = String(window.afhWake ? window.afhWake.st : 0); // chauffe du serveur : 1 en cours, 2 reveille, 3 echec
         if (kind === 7) { s = netFlags ? String(netFlags) : ""; netFlags = 0; }
