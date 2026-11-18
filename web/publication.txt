@@ -1,0 +1,1 @@
+publication 2026-11-18 18:24:02 canal=test commit=d8f7f4691e99486c00e7313353dc1d61610f9e02 numero=t88 build_id=9a27baab91a2b5a8 (dans le wasm : oui) protocole=63 wasm=7347583 octets sha256=67d10b7645d8c13c30ec99c8adb5d9c54eacd8d02566b6e4538a5ba1953c9bba
