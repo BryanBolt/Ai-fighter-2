@@ -1,0 +1,14 @@
+<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Sons d'interface et son étouffé</title>
+<style>body{font:16px system-ui;max-width:640px;margin:1em auto;padding:0 1em}li{margin:1em 0}audio{width:100%}</style>
+<h1>Sons d'interface et son étouffé</h1>
+<p>Sons synthétisés (famille console du jeu), originaux. Rien n'a été écouté par l'auteur du lot : à juger à l'oreille.</p>
+<ul>
+<li><b>valider</b> : deux tics d'impulsion qui montent d'une quinte (0,13 s)<br><audio controls preload="none" src="valider.wav"></audio></li>
+<li><b>retour</b> : une note douce qui glisse vers le bas (0,11 s)<br><audio controls preload="none" src="retour.wav"></audio></li>
+<li><b>debut_vague</b> : houle grave, souffle, un tintement (0,32 s)<br><audio controls preload="none" src="debut_vague.wav"></audio></li>
+<li><b>victoire</b> : accord ouvert qui gonfle et s'éteint, éclats métalliques (0,55 s)<br><audio controls preload="none" src="victoire.wav"></audio></li>
+</ul>
+<h2>Passe-bas (démonstration du filtre)</h2>
+<p>Même signal, avant puis après : le filtre se ferme à 1,0 s (80 ms), se rouvre à 2,2 s (200 ms). Dans le jeu, le moteur ne peut pas filtrer en direct : il baisse la musique et les ambiances de 40 % au plus (voir le constat).</p>
+<p>Avant<br><audio controls preload="none" src="etouffe_avant.wav"></audio></p>
+<p>Après<br><audio controls preload="none" src="etouffe_apres.wav"></audio></p>
