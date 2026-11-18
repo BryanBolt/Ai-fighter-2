@@ -27,6 +27,7 @@ const MAX_CONNS = 600; // connexions totales
 const MAX_ROOMS_PER_IP = 3; // salons ouverts par la meme adresse
 const CHAT_GAP_MS = 600; // delai minimal entre deux messages de chat
 const MAX_LOADOUTS = 200; // changements d'equipement par place et par partie
+const NEED_WAIT_MAX_MS = 12000; // demandes de reprise d'un client qui attend une entree pas encore recue par le relais : honorees au-dela (garde-fou)
 const RESYNC_GAP_MS = 2500; // delai minimal entre deux reprises forcees d'un meme joueur
 const MAX_BANNED = 40; // adresses bannies par salon
 const CMD_MARGIN = 30; // images d'avance d'une commande de jeu (vote, chapitre, dialogue)
@@ -77,6 +78,7 @@ export function createServer(opts = {}) {
   const autoHoldMs = opts.autoHoldMs ?? 10 * 60 * 1000; // place d'un joueur parti reservee pour son retour (le heros s'efface au prochain boss, cote clients)
   const bgGoneMs = opts.bgGoneMs ?? Number(process.env.BG_GONE_MS || 180000); // joueur absent (page masquee / IA a sa place) : au-dela, annonce « semble parti » (la place reste reprenable)
   const holdAiMs = opts.holdAiMs ?? HOLD_AI_MS; // 0 = ancien comportement (IA tout de suite)
+  const resyncGapMs = opts.resyncGapMs ?? RESYNC_GAP_MS; // reglable par les tests (ordre des messages verifie sans course contre l'horloge)
   const graceMs = opts.graceMs ?? 30000; // partie vide apres une simple coupure : gardee un instant
   const restartMs = opts.restartMs ?? 7000; // ecran de resultats avant la nouvelle partie
   const joinRate = new Map(); // ip -> derniere demande host/join_any
@@ -496,7 +498,12 @@ export function createServer(opts = {}) {
   // 1 = synchronise (lockstep : tout le monde attend le plus lent, borne par gel/attente/IA) ; 2 = hote autoritaire (l'horloge est celle de l'hote : un joueur trop en retard
   // est comble par la derniere direction tenue au lieu de geler les autres, et l'empreinte de l'hote fait foi). 0 = choisir pour moi : 2 des 5 humains ou liaison tres lente (a revoir avec les notes des joueurs).
   const NM_LATE_MS = opts.nmLateMs ?? Number(process.env.NM_LATE_MS || 140); // silence d'un joueur avant comblement (mode 2)
-  const NM_RTT_SUSTAIN_MS = opts.nmRttSustainMs ?? 4000; // liaison lente continue avant de choisir l'horloge de l'hote (mode auto)
+  const NM_RTT_SUSTAIN_MS = opts.nmRttSustainMs ?? 6000; // liaison lente continue avant de choisir l'horloge de l'hote (mode auto)
+  // SEUIL du mode auto (mesures : docs/preuves/2026-11-19_reseau_4_joueurs.md, banc `online_real_seuil_hote_autoritaire`). Aller-retour le plus lent de la salle :
+  // 4G bonne 100-190 ms, 4G moyenne 150-300, pertes 5 % 175-430, 4G mauvaise 380-810. Jusqu'a la 4G moyenne et aux pertes, le synchronise donne le MEME delai
+  // et les memes a-coups avec moins de reprises (1 par ami contre 2 a 6) ; l'hote autoritaire ne gagne nettement que si un joueur est en 4G mauvaise
+  // (a-coups de l'hote 28-34 % -> 4-5 %). Avant : 160 ms (la 4G BONNE y passait deja). Hysteresis 450 -> 300 ms : pas d'oscillation.
+  const NM_SLOW_RTT_MS = opts.nmSlowRttMs ?? 450; const NM_FAST_RTT_MS = opts.nmFastRttMs ?? 300;
   const NM_LAG_FRAMES = 18; const NM_LAG_MS = 300; const NM_KEEP_MASK = 0x3ff | (1 << 10) | (1 << 11) | (1 << 12) | (1 << 16) | (1 << 17) | (1 << 20); // direction + gardes tenues, jamais de coups ponctuels
   function netMode(room) {
     const nm = room.nm | 0;
@@ -506,8 +513,8 @@ export function createServer(opts = {}) {
     // completes de leur part) n'est choisie qu'apres NM_RTT_SUSTAIN_MS de liaison lente continue. Et on en sort des que la salle est a 4 humains ou moins ET que la liaison
     // est redevenue bonne : avant, a 4 humains le mode restait bloque a vie apres un seul pic (sortie reservee a 3 humains), d'ou les boucles de reprise a 4 joueurs.
     const nowN = Date.now();
-    if (worst >= 160) { if (!room.slowSince) room.slowSince = nowN; } else room.slowSince = 0;
-    if (hs.length >= 5 || (room.slowSince && nowN - room.slowSince >= NM_RTT_SUSTAIN_MS)) room.autoB = true; else if (hs.length <= 4 && worst < 120) room.autoB = false;
+    if (worst >= NM_SLOW_RTT_MS) { if (!room.slowSince) room.slowSince = nowN; } else room.slowSince = 0;
+    if (hs.length >= 5 || (room.slowSince && nowN - room.slowSince >= NM_RTT_SUSTAIN_MS)) room.autoB = true; else if (hs.length <= 4 && worst < NM_FAST_RTT_MS) room.autoB = false;
     return room.autoB ? 2 : 1;
   }
   function netModeAnnounce(room) {
@@ -605,7 +612,11 @@ export function createServer(opts = {}) {
     if (s.mode === 'human') { s.hold = now; s.pAt = now; s.dormantDue = false; }
     s.holdHid = false; s.catchup = now; s.stalled = false; s.lastMove = now; s.lastInputAt = now;
     fillHeld(room);
-    send(ws, { ...resyncPayload(room), you: idx, catch: true });
+    // Numero de reprise (`rid`) : le client le renvoie dans `ready`. Sans lui, un `ready` d'un rejeu PRECEDENT (en vol, ou renvoye toutes les 3 s) arrivait
+    // pendant CETTE reprise et la rendait : la vraie reponse du client etait ensuite ignoree (plus de rattrapage), place figee ~10 s puis nouvelle reprise,
+    // de nouveau mangee par un ancien `ready` : CAUSE RACINE de la boucle de reprises au meme point (banc reel a 4 joueurs, docs/preuves/2026-11-19_reseau_4_joueurs.md).
+    s.rid = (s.rid | 0) + 1;
+    send(ws, { ...resyncPayload(room), you: idx, catch: true, rid: s.rid });
     presTick(room, true);
   }
   // Fin de l'attente (le joueur est revenu : meme connexion qui reparle). Retourne true si une attente existait.
@@ -1046,7 +1057,8 @@ export function createServer(opts = {}) {
         const nowJ = Date.now();
         if (s.hold) { s.hold = nowJ; s.pAt = nowJ; } else if (s.mode === 'human') dropToAi(room, idx);
         s.catchup = nowJ; s.stalled = false; s.lastMove = nowJ; s.lastInputAt = nowJ; s.afkWarned = false;
-        send(ws, { ...resyncPayload(room), you: idx, catch: true });
+        s.rid = (s.rid | 0) + 1;
+        send(ws, { ...resyncPayload(room), you: idx, catch: true, rid: s.rid });
       } else {
       // CAUSE RACINE du gel a la reconnexion : si la place etait encore « humaine » (ancienne connexion fantome), ses entrees entre sa derniere image connue
       // et `from` n'existent nulle part : tous les autres clients attendaient ces images a jamais. L'IA reprend donc d'abord la place (ctl ai:true a hi+1).
@@ -1275,7 +1287,7 @@ export function createServer(opts = {}) {
           for (const [k, v] of h) {
             if (v === ref) continue;
             const sk = room.slots[k]; const nowH = Date.now();
-            if (nowH - sk.lastResync < RESYNC_GAP_MS) continue; // pas de tempete de reprises si un client reste en desaccord
+            if (nowH - sk.lastResync < resyncGapMs) continue; // pas de tempete de reprises si un client reste en desaccord
             sk.lastResync = nowH;
             if (sk.catchup) continue;
             send(sk.ws, { t: 'desync', f, hashes: hashesObj }); room.resyncs = (room.resyncs | 0) + 1;
@@ -1309,9 +1321,28 @@ export function createServer(opts = {}) {
       case 'need_resync': { // un client qui s'est vu bascule en IA apres avoir deja simule ces images demande l'etat complet (resynchronisation ciblee)
         if (!room.started) return;
         const nowR = Date.now();
+        // Demande d'un client qui ATTEND une autre place (`slot`, image `f`, clients recents). Mesure (banc reel a 4 joueurs, 4G mauvaise) : dans presque tous les
+        // cas le relais AVAIT deja cette entree, encore en route vers le client (lien sature par le debit borne, gigue) ; la reprise complete qui suivait
+        // (journal de toute la partie, plusieurs Ko de plus sur le meme lien) mettait la place du client en attente, attendue a son tour par les autres :
+        // reprises en cascade de toute la salle, surtout au changement d'etage (grace `busy`). Maintenant : entree connue -> renvoi de CETTE tranche seule
+        // (doublon sans effet si l'original arrive) ; entree pas encore recue par le relais -> rien (attente neutre et IA du relais s'en chargent) ;
+        // place a l'IA au relais (ordre manquant chez le client) -> reprise complete comme avant. Garde-fou : meme demande au-dela de NEED_WAIT_MAX_MS -> reprise.
+        if (Number.isInteger(m.slot) && Number.isInteger(m.f) && m.slot >= 0 && m.slot < room.config.size && m.slot !== c.slot && m.f >= 0) {
+          const o = room.slots[m.slot];
+          if (o.mode === 'human') {
+            if (!s.needSince || nowR - (s.needLast || 0) > 5000 || s.needF !== m.f) { s.needSince = nowR; s.needF = m.f; }
+            s.needLast = nowR;
+            if (nowR - s.needSince < NEED_WAIT_MAX_MS) {
+              const to = Math.min(o.hi, m.f + 599);
+              for (let f0 = m.f; f0 <= to; f0 += 8) { const bits = []; for (let f = f0; f <= Math.min(to, f0 + 7); f++) bits.push(o.journal[f] | 0); sendRaw(ws, JSON.stringify({ t: 'input', slot: m.slot, f0, bits })); }
+              return;
+            }
+          }
+        }
         // Une reprise est en cours : une demande en vol de l'ancienne session ne la relance pas... mais une demande NEUVE (le client attend depuis plus de RESYNC_GAP_MS une
         // entree qui ne vient pas : message perdu pendant une coupure silencieuse) doit etre honoree, sinon un rejeu bloque ne finit jamais (CAUSE RACINE de « abime non revenu » en tunnel).
-        if (nowR - s.lastResync < RESYNC_GAP_MS || (s.catchup && nowR - s.catchup < RESYNC_GAP_MS)) return;
+        if (nowR - s.lastResync < resyncGapMs || (s.catchup && nowR - s.catchup < resyncGapMs)) return;
+        s.needSince = 0;
         s.lastResync = nowR;
         send(ws, { t: 'desync', f: 0 });
         if (c.cu) beginCatchup(room, ws, c.slot); else send(ws, { ...resyncPayload(room), you: c.slot, forced: true });
@@ -1334,6 +1365,7 @@ export function createServer(opts = {}) {
       }
       case 'ready': { // fin du rejeu d'un arrivant / d'un revenant : sa reprise tombe APRES son image courante (jamais plus tot que ce qu'il a simule)
         if (!room.started || !room.config || s.ws !== ws || !s.catchup) return;
+        if (m.rid !== undefined && m.rid !== s.rid) return; // `ready` d'un rejeu precedent (voir beginCatchup) : la reprise en cours attend le sien (les anciens clients n'envoient pas `rid`)
         const tickR = Number.isInteger(m.tick) && m.tick >= 0 && m.tick < 2000000 ? m.tick : 0;
         const fromQ = Math.max(highest(room), tickR) + readyMargin(room) + READY_LEAD;
         const nowQ = Date.now();
@@ -1371,7 +1403,9 @@ export function createServer(opts = {}) {
         if (!['reward_pick', 'chapter_next', 'skip_dialog', 'arena', 'tourn'].includes(m.cmd) || s.cmds >= MAX_CMDS) return;
         const arg = int(m.arg, 0, 200);
         s.cmds++; s.lastMove = Date.now(); // lire un dialogue / voter n'est pas etre AFK
-        return control(room, c.slot, highest(room) + CMD_MARGIN, { kind: 'cmd', cmd: m.cmd, arg });
+        // Marge = au moins le trajet du message (comme `ready`) : avec 30 images fixes, sur une liaison lente (4G, pause d'1 s) un client seul humain
+        // (l'autre en rattrapage) depassait deja l'image annoncee quand l'ordre arrivait, l'appliquait en retard et divergeait du journal (banc reel 4G).
+        return control(room, c.slot, highest(room) + Math.max(CMD_MARGIN, readyMargin(room)), { kind: 'cmd', cmd: m.cmd, arg });
       }
       case 'chat': {
         // Moderation de base : liens masques, lettres repetees ramenees, meme message repete refuse.
