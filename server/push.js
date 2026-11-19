@@ -106,7 +106,7 @@ export function createPush({ env = process.env, sender = null, roomExists = () =
         if (lastInvite.size > 5000) lastInvite.clear();
         const from = typeof j.endpoint === 'string' ? j.endpoint : '';
         const who = cleanText(j.name, 14);
-        const payload = JSON.stringify({ title: 'AI Fighter 2', body: (who || 'Un ami') + ' t\'invite a jouer !', url: '/?salon=' + code });
+        const payload = JSON.stringify({ title: 'InkRise', body: (who || 'Un ami') + ' t\'invite a jouer !', url: '/?salon=' + code });
         let sent = 0;
         for (const [ep, e] of [...m]) {
           if (ep === from) continue;

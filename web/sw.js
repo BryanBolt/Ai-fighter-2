@@ -87,7 +87,7 @@ self.addEventListener('fetch', (e) => {
 // Notifications push (invitation d'un ami) : affichage et ouverture du lien d'invitation.
 self.addEventListener('push', (e) => {
   let d = {}; try { d = e.data ? e.data.json() : {}; } catch (_) {}
-  const title = typeof d.title === 'string' ? d.title.slice(0, 80) : 'AI Fighter 2';
+  const title = typeof d.title === 'string' ? d.title.slice(0, 80) : 'InkRise';
   const body = typeof d.body === 'string' ? d.body.slice(0, 200) : 'Un ami t\'invite a jouer !';
   // Seul un lien du meme site est ouvert (un push ne doit jamais emmener ailleurs).
   let target = '/';

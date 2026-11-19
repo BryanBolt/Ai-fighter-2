@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<title>[TEST] AI Fighter 2</title>
+<title>[TEST] InkRise : the Stickman Ascension</title>
 <style>
   /* Jeu plein ecran : papier clair, encre sombre, accent rouge sceau. Un seul look, voulu. */
   :root { --paper: #fff3e0; --ink: #221834; --seal: #d8456b; color-scheme: light; }
@@ -38,10 +38,11 @@
   #loading .mk { width: min(34vw, 150px, 24vh); height: auto; overflow: visible; animation: ldHop 1.1s cubic-bezier(.3,0,.4,1) infinite; transform-origin: 50% 90%; }
   #loading .mk .pu { animation: ldBlink 3.6s infinite; transform-box: fill-box; transform-origin: center; }
   #loading .sh { width: min(24vw, 100px); height: 8px; border-radius: 50%; background: #0000004d; margin: 6px 0 14px; animation: ldShadow 1.1s cubic-bezier(.3,0,.4,1) infinite; }
-  #loading .wm { width: 100%; height: auto; overflow: visible; }
+  #loading .wm { width: min(60%, 200px); height: auto; overflow: visible; }
+  #loading .sub { margin-top: 8px; font: 600 clamp(12px, 3.4vw, 16px)/1.2 ui-monospace, Menlo, Consolas, monospace; letter-spacing: .18em; color: #fff3e0; opacity: .85; text-align: center; }
   #loading .wm .l { animation: ldDrop .5s cubic-bezier(.2,1.4,.4,1) both; animation-delay: calc(var(--i) * .06s + .1s); transform-box: fill-box; transform-origin: center; }
   #loading .wm .two { animation-delay: .85s; }
-  #loading .rail { width: 100%; height: 10px; border-radius: 99px; background: #fff3e026; margin-top: 22px; overflow: hidden; }
+  #loading .rail { width: 100%; height: 10px; border-radius: 99px; background: #fff3e026; margin-top: 12px; overflow: hidden; }
   #loading .rail b { display: block; height: 100%; width: 4%; border-radius: 99px; background: #ffd27a; transition: width .25s ease-out; }
   #loading .tips { position: relative; width: 84px; height: 100px; margin-top: 18px; }
   #loading .tips svg { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; stroke: #fff3e0; stroke-width: 10; stroke-linecap: round; animation: ldTip 3.6s infinite; }
@@ -56,6 +57,10 @@
 
   /* Ecran d'attente vivant : pluie neon, etapes, secondes ecoulees, astuces, echec avec « Reessayer ». Injecte par le script #afh-boot. */
   #loading .stage { z-index: 1; }
+  #loading { justify-content: flex-start; padding-top: max(10px, 2.5vh); }
+  #ld-scene { display: block; width: 100vw; max-width: none; height: clamp(120px, 40dvh, 440px); margin: 8px 0 0; border-radius: 0; pointer-events: none; }
+  @media (orientation: landscape) { #ld-scene { height: 54dvh; } #loading .wm { width: min(34%, 150px); } #loading .sub { margin-top: 4px; } }
+  @media (orientation: landscape) and (max-height: 520px) { #ld-scene { height: 43dvh; margin-top: 4px; } #loading .wm { width: min(26%, 118px); } #loading .rail { margin-top: 8px; } #ld-info { gap: 3px; bottom: max(6px, env(safe-area-inset-bottom)); } }
   #ld-rain { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
   #ld-info { position: absolute; left: 0; right: 0; bottom: max(14px, env(safe-area-inset-bottom)); z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 0 16px; font: 600 14px/1.4 ui-monospace, Menlo, Consolas, monospace; letter-spacing: 0; color: #fff3e0; }
   #ld-steps { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
@@ -78,8 +83,8 @@
 </head>
 <body>
 
-<canvas id="glcanvas" tabindex="1" role="application" aria-label="AI Fighter 2 : jeu de combat. Fleches ou stick pour bouger, A pour frapper. Options, Accessibilite : texte plus grand, daltonisme, une main, sous-titres des sons."></canvas>
-<div id="loading" role="status" aria-label="Chargement"><div class="stage"><svg class="mk" viewBox="-130 -150 260 260" aria-hidden="true"><polygon points="-92.0,-10.0 -78.0,-132.0 -8.0,-90.0" fill="#d8456b"/><polygon points="-78.0,-35.0 -72.0,-98.0 -34.0,-74.0" fill="#ffd27a"/><polygon points="92.0,-10.0 78.0,-132.0 8.0,-90.0" fill="#d8456b"/><polygon points="78.0,-35.0 72.0,-98.0 34.0,-74.0" fill="#ffd27a"/><circle cx="0.0" cy="0.0" r="100.0" fill="#d8456b"/><circle cx="-38.0" cy="4.0" r="21.0" fill="#fff3e0"/><circle class="pu" cx="-40.0" cy="7.0" r="10.0" fill="#221834"/><circle cx="38.0" cy="4.0" r="21.0" fill="#fff3e0"/><circle class="pu" cx="40.0" cy="7.0" r="10.0" fill="#221834"/><line x1="-12.0" y1="46.0" x2="12.0" y2="46.0" stroke="#221834" stroke-width="9.0" stroke-linecap="round"/></svg><i class="sh"></i><svg class="wm" viewBox="-0.8 -0.8 55.90 7.6" aria-hidden="true"><g fill="none" stroke="#fff3e0" stroke-width="0.62" stroke-linecap="round" stroke-linejoin="round"><g class="l" style="--i:0"><path d="M0.00 6.00 L2.00 0.00 L4.00 6.00"/><path d="M0.80 4.00 L3.20 4.00"/></g><g class="l" style="--i:1"><path d="M6.20 0.00 L6.20 6.00"/></g><g class="l" style="--i:2"><path d="M16.10 0.00 L12.10 0.00 L12.10 6.00"/><path d="M12.10 3.00 L15.10 3.00"/></g><g class="l" style="--i:3"><path d="M18.30 0.00 L18.30 6.00"/></g><g class="l" style="--i:4"><path d="M24.50 1.00 L23.50 0.00 L21.50 0.00 L20.50 1.00 L20.50 5.00 L21.50 6.00 L23.50 6.00 L24.50 5.00 L24.50 3.00 L22.70 3.00"/></g><g class="l" style="--i:5"><path d="M26.20 0.00 L26.20 6.00"/><path d="M30.20 0.00 L30.20 6.00"/><path d="M26.20 3.00 L30.20 3.00"/></g><g class="l" style="--i:6"><path d="M31.90 0.00 L35.90 0.00"/><path d="M33.90 0.00 L33.90 6.00"/></g><g class="l" style="--i:7"><path d="M41.60 0.00 L37.60 0.00 L37.60 6.00 L41.60 6.00"/><path d="M37.60 3.00 L40.60 3.00"/></g><g class="l" style="--i:8"><path d="M43.30 6.00 L43.30 0.00 L46.30 0.00 L47.30 1.00 L47.30 2.00 L46.30 3.00 L43.30 3.00"/><path d="M45.30 3.00 L47.30 6.00"/></g><g class="l two" stroke="#d8456b" style="--i:9"><path d="M50.30 1.00 L51.30 0.00 L53.30 0.00 L54.30 1.00 L54.30 2.00 L50.30 6.00 L54.30 6.00"/></g></g></svg><div class="rail" role="progressbar" aria-valuemin="0" aria-valuemax="100"><b id="ld-bar"></b></div><div class="tips"><svg viewBox="0 0 84 100" aria-hidden="true"><line x1="40" y1="62" x2="42" y2="38"/><line x1="42" y1="38" x2="24" y2="50"/><line x1="42" y1="38" x2="66" y2="34"/><line x1="40" y1="62" x2="56" y2="82"/><line x1="40" y1="62" x2="30" y2="84"/><circle cx="44" cy="26" r="9" fill="#fff3e0" stroke="none"/></svg><svg viewBox="0 0 84 100" aria-hidden="true"><line x1="36" y1="60" x2="40" y2="38"/><line x1="40" y1="38" x2="22" y2="44"/><line x1="40" y1="38" x2="24" y2="24"/><line x1="36" y1="60" x2="70" y2="52"/><line x1="36" y1="60" x2="24" y2="84"/><circle cx="44" cy="26" r="9" fill="#fff3e0" stroke="none"/></svg><svg viewBox="0 0 84 100" aria-hidden="true"><line x1="40" y1="56" x2="40" y2="36"/><line x1="40" y1="36" x2="22" y2="18"/><line x1="40" y1="36" x2="58" y2="18"/><line x1="40" y1="56" x2="28" y2="78"/><line x1="40" y1="56" x2="54" y2="70"/><circle cx="40" cy="24" r="9" fill="#fff3e0" stroke="none"/></svg></div></div></div>
+<canvas id="glcanvas" tabindex="1" role="application" aria-label="InkRise : the Stickman Ascension : jeu de combat. Fleches ou stick pour bouger, A pour frapper. Options, Accessibilite : texte plus grand, daltonisme, une main, sous-titres des sons."></canvas>
+<div id="loading" role="status" aria-label="Chargement"><div class="stage"><svg class="wm" viewBox="-0.8 -0.8 32.20 7.60" role="img" aria-label="InkRise"><g fill="none" stroke="#fff3e0" stroke-width="0.62" stroke-linecap="round" stroke-linejoin="round"><g class="l" style="--i:0"><path d="M0.00 0.00 L0.00 6.00"/></g><g class="l" style="--i:1"><path d="M1.70 6.00 L1.70 0.00 L5.70 6.00 L5.70 0.00"/></g><g class="l" style="--i:2"><path d="M7.40 0.00 L7.40 6.00"/><path d="M11.40 0.00 L7.40 3.00 L11.40 6.00"/></g><g stroke="#d8456b"><g class="l two" style="--i:3"><path d="M13.10 6.00 L13.10 0.00 L16.10 0.00 L17.10 1.00 L17.10 2.00 L16.10 3.00 L13.10 3.00"/><path d="M15.10 3.00 L17.10 6.00"/></g><g class="l two" style="--i:4"><path d="M18.80 0.00 L18.80 6.00"/></g><g class="l two" style="--i:5"><path d="M24.50 0.00 L20.50 0.00 L20.50 3.00 L24.50 3.00 L24.50 6.00 L20.50 6.00"/></g><g class="l two" style="--i:6"><path d="M30.20 0.00 L26.20 0.00 L26.20 6.00 L30.20 6.00"/><path d="M26.20 3.00 L29.20 3.00"/></g></g></g></svg><div class="sub">the Stickman Ascension</div><canvas id="ld-scene" role="img" aria-label="Extrait de combat du jeu devant une haute tour"></canvas><div class="rail" role="progressbar" aria-valuemin="0" aria-valuemax="100"><b id="ld-bar"></b></div></div></div>
 <script id="afh-boot">
 // Attente vivante, des le premier octet de la page (avant le wasm) : reveil du serveur gratuit en parallele du telechargement,
 // etapes lisibles, secondes ecoulees, message rassurant apres 15 s, astuces, pluie legere, et un vrai echec avec « Reessayer ».
@@ -89,10 +94,11 @@
   // 1) Reveil du relais : /api/status repete jusqu'a une reponse, sans jamais bloquer le chargement du wasm.
   function ping() {
     if (wk.st === 2) return;
-    if (wk.tries >= 12) { wk.st = 3; return; }
+    if (Date.now() - t0 > 275000) { wk.st = 3; return; } // meme budget que le telechargement (4 min 30)
+    if (navigator.onLine === false) { setTimeout(ping, 2000); return; }
     wk.tries++; wk.st = 1;
     var ctl = W.AbortController ? new AbortController() : null, to = setTimeout(function () { try { if (ctl) ctl.abort(); } catch (e) {} }, 20000);
-    fetch("/api/status", { cache: "no-store", signal: ctl ? ctl.signal : undefined }).then(function (r) { clearTimeout(to); if (r && r.ok) wk.st = 2; else setTimeout(ping, 4000); }, function () { clearTimeout(to); setTimeout(ping, 4000); });
+    fetch("/api/status", { cache: "no-store", signal: ctl ? ctl.signal : undefined }).then(function (r) { clearTimeout(to); if (r && r.ok) wk.st = 2; else setTimeout(ping, Math.min(3000 + wk.tries * 1000, 10000)); }, function () { clearTimeout(to); setTimeout(ping, Math.min(3000 + wk.tries * 1000, 10000)); });
   }
   try { if (location.protocol.indexOf("http") === 0 && W.fetch) { ping(); try { fetch("/health", { mode: "no-cors", cache: "no-store" }).catch(function () {}); } catch (e) {} } else wk.st = 3; } catch (e) { wk.st = 3; }
 
@@ -134,24 +140,26 @@
     try { var b = l.querySelector(".rail b"); if (b) b.style.background = "#d8456b"; } catch (e) {}
   }
   W.afhBootFail = fail;
-  $("ld-retry").addEventListener("click", function () { try { sessionStorage.removeItem("afh_load_tries"); sessionStorage.removeItem("afh_resume"); sessionStorage.removeItem("afh_rl"); } catch (e) {} location.reload(); });
+  $("ld-retry").addEventListener("click", function () { try { sessionStorage.removeItem("afh_load_tries"); sessionStorage.removeItem("afh_resume"); sessionStorage.removeItem("afh_rl"); sessionStorage.removeItem("afh_load_reload"); } catch (e) {} location.reload(); });
   // 4) Horloge : une fois par seconde (etapes, secondes, message rassurant, echec reel).
   function tick() {
     if (l.hidden || l.style.opacity === "0" || failed) return;
     var L = W.afhLoad || {}, sec = Math.floor((Date.now() - t0) / 1000), done = !!L.done;
     var s1 = $("ld-s1"), s2 = $("ld-s2"), s3 = $("ld-s3");
     s1.className = done ? "ok" : "on";
-    s2.className = wk.st === 2 ? "ok" : (wk.st === 3 ? "ko" : "on");
+    s2.className = wk.st === 2 ? "ok" : (wk.st === 3 && L.failed ? "ko" : "on");
     s3.className = done && wk.st === 2 ? "on" : "";
     s3.textContent = done ? "Démarrage" : "Connexion";
-    $("ld-clock").textContent = sec + " s";
+    $("ld-clock").textContent = "Temps écoulé " + Math.floor(sec / 60) + ":" + ("0" + (sec % 60)).slice(-2) + (L.attempt > 1 ? " · essai " + L.attempt : "");
     var m = "";
-    if (sec >= 15 && (wk.st === 1 || !done)) m = "Le serveur se réveille, ça peut prendre une minute. Pas de panique, ça avance.";
+    if (sec >= 15 && (wk.st === 1 || !done)) m = "Le serveur se réveille, ça peut prendre une à deux minutes. Pas de panique, ça avance.";
     if (sec >= 40 && !done && !L.bytes) m = "Toujours en route… la première visite est la plus longue, la suite sera instantanée.";
+    if (sec >= 120 && !done && !L.bytes) m = "Le serveur met du temps à se réveiller. On continue d'essayer, merci de patienter.";
     $("ld-calm").textContent = m;
-    if (!L.bytes && !done && sec > 3) $("ld-msg").textContent = wk.st === 2 ? "Le serveur répond, le jeu arrive…" : "Réveil du serveur… (essai " + Math.max(1, wk.tries) + ")";
-    if (L.stalled && L.stalled()) fail("Le chargement est bloqué (réseau coupé ou serveur indisponible).");
-    else if (!L.bytes && !done && sec >= 90) fail("Le serveur ne répond pas.");
+    if (L.offline || navigator.onLine === false) $("ld-msg").textContent = "Pas de connexion : le chargement reprendra tout seul dès que le réseau revient.";
+    else if (!L.bytes && !done && sec > 3) $("ld-msg").textContent = wk.st === 2 ? "Le serveur répond, le jeu arrive…" : "Réveil du serveur… (essai " + Math.max(1, wk.tries) + ")";
+    // Echec seulement quand le telechargement patient a épuisé son budget (voir wasmFetch) : jamais pendant un simple réveil du serveur.
+    if (L.failed) fail(L.failMsg || "Le chargement n'a pas abouti.");
   }
   setInterval(tick, 1000); tick();
 })();
@@ -380,6 +388,178 @@
   }, 25000);
 })();
 </script>
+<script id="afh-clips">
+// Ecran de chargement : des extraits de VRAIS combats du jeu, enregistres avec le moteur (web/chargement_clips.json, produit par le
+// test d'outil src/export_chargement.rs : bot de demonstration de l'etage, squelettes du nouveau combat image par image). La page ne
+// fait que les rejouer : 30 images/s interpolees, memes epaisseurs (membre = 0,6 x rayon de tete) et memes teintes que le jeu,
+// gerbes d'encre aux impacts enregistres. Charge APRES le premier affichage ; s'arrete page cachee et des que le jeu a pris la place.
+(function () {
+  var cv = document.getElementById("ld-scene"); if (!cv || !cv.getContext) return;
+  var cx = cv.getContext("2d"); if (!cx) return;
+  var D = document, W = window, RM = false; try { RM = W.matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (e) {}
+  var DATA = null, clip = null, last = -1, t = 0, ts0 = 0, raf = 0, fade = 0, ink = [], pool = [], evi = 0;
+  var GW = 300, GH = 150, GR = 126; // vue logique : hauteur fixe, largeur suivant la forme de la scene ; sol a GR
+  var sc = 1, ox = 0, oy = 0, cw = 0, ch = 0;
+  function live() { var l = D.getElementById("loading"); return !!l && !l.hidden && l.style.opacity !== "0"; }
+  function resize() {
+    var dpr = Math.min(W.devicePixelRatio || 1, 2), r = cv.getBoundingClientRect();
+    cw = Math.max(2, Math.round(r.width * dpr)); ch = Math.max(2, Math.round(r.height * dpr));
+    if (cv.width !== cw || cv.height !== ch) { cv.width = cw; cv.height = ch; }
+    GW = GH * cw / ch; sc = ch / GH; ox = 0; oy = 0;
+    if (clip) scale(clip);
+  }
+  function rnd(a) { return Math.floor(Math.random() * a); }
+  function shade(hex, k) { var n = parseInt(hex.slice(1), 16); return "rgb(" + Math.round((n >> 16 & 255) * k) + "," + Math.round((n >> 8 & 255) * k) + "," + Math.round((n & 255) * k) + ")"; }
+  function choose() {
+    var n = DATA.clips.length, i = rnd(n); if (n > 1) while (i === last) i = rnd(n);
+    last = i; clip = DATA.clips[i]; t = 0; evi = 0; ink = []; pool = []; tint(clip);
+    var ev = clip.e; clip.ev = ev;
+    // echelle : le plus grand combattant occupe ~60 % de la hauteur de la scene
+    scale(clip);
+  }
+  // Le heros prend au hasard l'une des 8 couleurs de joueur du jeu (meme melange que `couleurs_joueurs::teinte_corps` : 35 % corps, 65 % couleur)
+  var PCOL = [[230, 159, 0], [86, 180, 233], [0, 158, 115], [240, 228, 66], [0, 92, 170], [204, 121, 167], [205, 205, 205], [110, 70, 170]];
+  function hexrgb(h) { var n = parseInt(h.slice(1), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; }
+  function tint(c) {
+    if (c.tc) return;
+    var base = null, pc = PCOL[rnd(8)]; c.tc = c.p.map(function (m) { return m.c; });
+    c.p.forEach(function (m, q) { if (m.h) { var b = hexrgb(m.c), o = [0, 1, 2].map(function (k) { return Math.round(b[k] * .35 + pc[k] * .65); }); c.tc[q] = "#" + o.map(function (v) { return ("0" + v.toString(16)).slice(-2); }).join(""); } });
+  }
+  function scale(c) { // camera : cadre sur les combattants (suivi lisse), le plus grand occupe au plus ~64 % de la hauteur
+    var bh = 0, n = c.f.length, cxs = [], ks = [], i, k, a, lo, hi, kv, p, q, tot, cnt;
+    for (k = 0; k < c.p.length; k++) bh = Math.max(bh, c.p[k].b);
+    var mh = bh, kmin = 1e9;
+    for (i = 0; i < n; i++) for (k = 0; k < c.p.length; k++) { a = c.f[i][k]; if (a) mh = Math.max(mh, (a[1] + a[5]) / 2 + c.p[k].r / 2); }
+    kv = (GR * .86) / Math.min(mh, bh * 1.45); // les sauts les plus hauts peuvent depasser un peu le haut du cadre
+    for (i = 0; i < n; i++) {
+      lo = 1e9; hi = -1e9;
+      for (k = 0; k < c.p.length; k++) { a = c.f[i][k]; if (a && a[23] !== 2) { lo = Math.min(lo, a[0] / 2); hi = Math.max(hi, a[0] / 2); } }
+      if (lo > hi) { lo = hi = (cxs.length ? cxs[i - 1] : 0); }
+      cxs.push((lo + hi) / 2); ks.push(Math.min(kv, (GW * .66) / (hi - lo + 70))); kmin = Math.min(kmin, ks[i]);
+    }
+    for (p = 0; p < 3; p++) { // lissage : moyenne mobile (3 passes) pour une camera sans a-coup
+      var ncx = [], nk = [];
+      for (i = 0; i < n; i++) { tot = 0; var tk = 0; cnt = 0; for (q = -9; q <= 9; q++) { var j = Math.max(0, Math.min(n - 1, i + q)); tot += cxs[j]; tk += ks[j]; cnt++; } ncx.push(tot / cnt); nk.push(tk / cnt); }
+      cxs = ncx; ks = nk;
+    }
+    for (i = 0; i < n; i++) ks[i] = Math.min(kv, Math.max(kmin, (GH * .5) / (bh || 100))); // echelle fixe par extrait (pas de zoom qui respire)
+    c.cx = cxs; c.kk = ks; c.ev = c.e;
+    // les corps deja vaincus au debut de l'extrait ne sont pas montres
+    c.hide = c.p.map(function (m, q) { return !!(c.f[0][q] && c.f[0][q][23] === 2); });
+  }
+  var NF = 0;
+  function frameAt(tt) { // pose interpolee de chaque combattant a l'instant tt (en images enregistrees)
+    var F = clip.f, i = Math.min(F.length - 1, Math.floor(tt)), j = Math.min(F.length - 1, i + 1), u = tt - i, out = [];
+    for (var k = 0; k < clip.p.length; k++) {
+      var a = F[i][k], b = F[j][k];
+      if (!a && !b) { out.push(null); continue; }
+      if (!a || !b) { var z = a || b, y = z.slice(); for (var q = 2; q < 22; q++) y[q] += y[q & 1]; out.push(y); continue; }
+      var o = []; for (var m = 0; m < 22; m++) o.push(a[m] + (b[m] - a[m]) * u);
+      for (m = 2; m < 22; m++) o[m] += o[m & 1]; // points enregistres relatifs au bassin
+      o.push(a[22]); o.push(a[23]); out.push(o);
+    }
+    return out;
+  }
+  function spawn(kind, x, y, cols) {
+    var big = kind === 0 || kind === 5 || kind === 3, n = big ? (kind === 5 ? 13 : 9) : 4, pal = ["#fff3e0", "#d8456b", cols[0], cols[1], "#ffd27a"];
+    for (var i = 0; i < n; i++) {
+      var a = -Math.PI * (.1 + Math.random() * .8), sp = 26 + Math.random() * (big ? 70 : 34);
+      ink.push({ x: x, y: y, vx: Math.cos(a) * sp * (Math.random() < .5 ? -1 : 1), vy: -Math.sin(a) * sp, r: .8 + Math.random() * (big ? 1.9 : 1.1), c: pal[i % pal.length] });
+    }
+  }
+  function limb(x1, y1, x2, y2, w, col) { cx.strokeStyle = col; cx.lineWidth = w; cx.beginPath(); cx.moveTo(x1, y1); cx.lineTo(x2, y2); cx.stroke(); }
+  var WIN = []; (function () { var x = 12345; for (var i = 0; i < 200; i++) { x = (x * 1103515245 + 12345) & 0x7fffffff; WIN.push((x >> 8) % 100); } })();
+  function drawBg(cxm) {
+    cx.clearRect(0, 0, cw, ch);
+    var tx = (GW / 2 - (cxm || 0) * .04) * sc; // la tour bouge a peine : profondeur
+    var TK = 1.5; function box(x0, x1, y0, y1, col) { cx.fillStyle = col; cx.fillRect(tx + x0 * TK * sc, y0 * sc, (x1 - x0) * TK * sc, (y1 - y0) * sc); }
+    var TW = "#3a2d5e", TW2 = "#46386f";
+    box(-30, 30, -20, GR, TW); box(-23, 23, -20, GR - 96, TW2); box(-36, 36, GR - 100, GR - 92, TW2); box(-40, 40, GR - 40, GR - 34, TW2); box(-4, 4, -20, GR - 150, TW2);
+    var n = 0;
+    for (var r = 0; r < 9; r++) for (var c = -2; c <= 2; c++) { var y = GR - 14 - r * 13, w = r < 6 ? 26 : 18; if (Math.abs(c * 11) > w) continue; n++; box(c * 11 - 2, c * 11 + 2, y - 7, y, WIN[(r * 5 + c + 2) % 200] < 30 ? "#ffd27a" : "#2f2450"); }
+    // projecteur : eclaircit le fond derriere les combattants pour que les teintes sombres restent lisibles
+    var g = cx.createRadialGradient(GW / 2 * sc, (GR - 34) * sc, 8 * sc, GW / 2 * sc, (GR - 34) * sc, 105 * sc);
+    g.addColorStop(0, "rgba(176,156,232,.62)"); g.addColorStop(.55, "rgba(150,130,208,.30)"); g.addColorStop(1, "rgba(120,100,180,0)");
+    cx.fillStyle = g; cx.fillRect(0, 0, cw, ch);
+    cx.fillStyle = "#3d3063"; cx.fillRect(0, GR * sc, cw, ch - GR * sc);
+    cx.fillStyle = "#7a69ad"; cx.fillRect(0, GR * sc, cw, Math.max(1.5, 1.4 * sc));
+  }
+  function draw(poses, tt) {
+    var i, p, fi = Math.max(0, Math.min(clip.f.length - 1, Math.floor(tt))), fj = Math.min(clip.f.length - 1, fi + 1), fu = tt - fi;
+    var cxm = clip.cx[fi] + (clip.cx[fj] - clip.cx[fi]) * fu, k = clip.kk[fi] + (clip.kk[fj] - clip.kk[fi]) * fu;
+    drawBg(cxm);
+    function X(v) { return ox + (GW / 2 + (v / 2 - cxm) * k) * sc; }
+    function Y(v) { return oy + (GR - v / 2 * k) * sc; }
+    // ombres puis encre au sol
+    for (i = 0; i < pool.length; i++) { var q = pool[i]; cx.globalAlpha = Math.min(1, q.l * 1.4) * .85; cx.fillStyle = q.c; cx.beginPath(); cx.ellipse(ox + (GW / 2 + (q.x / 2 - cxm) * k) * sc, oy + (GR + 2.2) * sc, q.r * 1.7 * sc, q.r * .55 * sc, 0, 0, 7); cx.fill(); }
+    cx.globalAlpha = 1;
+    cx.lineCap = "round"; cx.lineJoin = "round";
+    // le plus proche du spectateur dessine en dernier : on garde l'ordre des enregistrements (le heros d'abord)
+    for (i = 0; i < poses.length; i++) {
+      p = poses[i]; if (!p || clip.hide[i]) continue;
+      var m = clip.p[i], col = clip.tc ? clip.tc[i] : m.c, dark = shade(col, .74), hr = p[22] / 2 * k * sc, lw = hr * .6;
+      // sens : vers l'adversaire le plus proche
+      var dir = 1, bd = 1e9; for (var o = 0; o < poses.length; o++) if (o !== i && poses[o] && Math.abs(poses[o][0] - p[0]) < bd) { bd = Math.abs(poses[o][0] - p[0]); dir = poses[o][0] >= p[0] ? 1 : -1; }
+      var P = function (n) { return [X(p[2 * n]), Y(p[2 * n + 1])]; };
+      var hip = P(0), sh = P(1), hd = P(2), ef = P(3), hf = P(4), eb = P(5), hb = P(6), kf = P(7), ff = P(8), kb = P(9), fb = P(10);
+      cx.fillStyle = "rgba(15,10,30,.35)"; cx.beginPath(); cx.ellipse((ff[0] + fb[0]) / 2, oy + GR * sc + 1, Math.max(hr * 1.6, 6 * sc), 2.6 * sc, 0, 0, 7); cx.fill();
+      // membres du fond (plus sombres), buste, tete, membres de devant : meme ordre que le dessin du jeu
+      limb(hip[0], hip[1], kb[0], kb[1], lw, dark); limb(kb[0], kb[1], fb[0], fb[1], lw, dark);
+      limb(sh[0], sh[1], eb[0], eb[1], lw, dark); limb(eb[0], eb[1], hb[0], hb[1], lw, dark);
+      limb(hip[0], hip[1], sh[0], sh[1], lw, col); limb(sh[0], sh[1], hd[0], hd[1], lw, col);
+      limb(hip[0], hip[1], kf[0], kf[1], lw, col); limb(kf[0], kf[1], ff[0], ff[1], lw, col);
+      limb(sh[0], sh[1], ef[0], ef[1], lw, col); limb(ef[0], ef[1], hf[0], hf[1], lw, col);
+      cx.fillStyle = col; cx.beginPath(); cx.arc(hd[0], hd[1], hr, 0, 7); cx.fill();
+      var ex = hd[0] + dir * hr * .42, ey = hd[1] - hr * .02;
+      if (p[23] === 1) { cx.strokeStyle = "#fff3e0"; cx.lineWidth = Math.max(1, hr * .13); cx.beginPath(); cx.moveTo(ex - dir * hr * .3, ey - hr * .22); cx.lineTo(ex + dir * hr * .2, ey); cx.lineTo(ex - dir * hr * .3, ey + hr * .22); cx.stroke(); }
+      else if (p[23] !== 2) { cx.fillStyle = "#fff3e0"; cx.beginPath(); cx.arc(ex, ey, hr * .3, 0, 7); cx.fill(); cx.fillStyle = "#221834"; cx.beginPath(); cx.arc(ex + dir * hr * .08, ey, hr * .16, 0, 7); cx.fill(); }
+      if (m.h) { // bandeau du heros
+        cx.strokeStyle = "#d8456b"; cx.lineWidth = Math.max(1.5, hr * .3); cx.beginPath(); cx.moveTo(hd[0] - hr * .97, hd[1] - hr * .3); cx.lineTo(hd[0] + hr * .97, hd[1] - hr * .3); cx.stroke();
+        cx.lineWidth = Math.max(1, hr * .22); cx.beginPath(); cx.moveTo(hd[0] - dir * hr, hd[1] - hr * .3); cx.lineTo(hd[0] - dir * hr * 2.1, hd[1] - hr * .05); cx.stroke();
+      }
+    }
+    for (i = 0; i < ink.length; i++) { var d = ink[i]; cx.fillStyle = d.c; cx.beginPath(); cx.arc(ox + (GW / 2 + (d.x / 2 - cxm) * k) * sc, oy + (GR - d.y / 2 * k) * sc, d.r * sc, 0, 7); cx.fill(); }
+    if (fade > 0) { cx.globalCompositeOperation = "destination-out"; cx.globalAlpha = fade; cx.fillStyle = "#000"; cx.fillRect(0, 0, cw, ch); cx.globalAlpha = 1; cx.globalCompositeOperation = "source-over"; }
+  }
+  function step(dt) {
+    t += dt * 30; var F = clip.f.length;
+    // impacts enregistres : gerbes d'encre a l'instant de l'image
+    while (evi < clip.ev.length && clip.ev[evi][0] <= t) { var e = clip.ev[evi++]; spawn(e[1], e[2], e[3], [clip.p[0].c, (clip.p[1] || clip.p[0]).c]); }
+    for (var i = ink.length - 1; i >= 0; i--) { var d = ink[i]; d.vy -= 280 * dt * 2; d.x += d.vx * dt * 2; d.y += d.vy * dt * 2; if (d.y <= 0) { pool.push({ x: d.x, r: d.r * 1.5, c: d.c, l: 1 }); ink.splice(i, 1); } }
+    for (i = pool.length - 1; i >= 0; i--) { pool[i].l -= dt * .5; if (pool[i].l <= 0) pool.splice(i, 1); }
+    // fondu a la jonction : sortie sur la derniere demi-seconde, entree sur la premiere
+    var rest = (F - 1 - t) / 30; fade = rest < .3 ? 1 - rest / .3 : (t < 9 ? 1 - t / 9 : 0);
+    if (t >= F - 1) choose();
+  }
+  function tick(ts) {
+    raf = 0;
+    if (!live()) return;
+    if (W.afhClipsPause) { raf = requestAnimationFrame(tick); return; }
+    if (D.hidden) { ts0 = 0; return; }
+    var dt = ts0 ? Math.min(.05, (ts - ts0) / 1000) : .016; ts0 = ts;
+    step(dt); draw(frameAt(t), t);
+    raf = requestAnimationFrame(tick);
+  }
+  function go() { if (!raf && DATA && !RM && live() && !D.hidden) { ts0 = 0; raf = requestAnimationFrame(tick); } }
+  function decode(c) { // image 1 absolue, puis differences avec l'image precedente du meme combattant (si elle existait) ; l'etat (dernier entier) est absolu
+    for (var i = 1; i < c.f.length; i++) for (var k = 0; k < c.p.length; k++) { var a = c.f[i][k], b = c.f[i - 1][k]; if (a && b) for (var q = 0; q < 23; q++) a[q] += b[q]; }
+  }
+  function load(n) {
+    if (!live() || !W.fetch) return;
+    fetch("chargement_clips.json").then(function (r) { if (!r.ok) throw 0; return r.json(); }).then(function (j) {
+      if (!j || !j.clips || !j.clips.length) return;
+      j.clips.forEach(decode); DATA = j; choose(); resize();
+      if (RM) { t = Math.min(clip.f.length - 2, 40); fade = 0; draw(frameAt(t), t); } else go();
+    }).catch(function () { if (n < 40) setTimeout(function () { load(n + 1); }, 5000); });
+  }
+  resize(); drawBg(0);
+  W.addEventListener("resize", function () { resize(); if (clip) draw(frameAt(t), t); else drawBg(0); });
+  D.addEventListener("visibilitychange", function () { if (!D.hidden) go(); });
+  W.afhClips = { choose: function (i) { if (DATA) { last = i; clip = DATA.clips[i]; t = 0; evi = 0; ink = []; pool = []; scale(clip); } }, at: function (tt) { t = 0; evi = 0; ink = []; pool = []; while (t < tt && t < clip.f.length - 2) step(1 / 60); fade = 0; var tq = Math.min(t, clip.f.length - 1.01); draw(frameAt(tq), tq); }, data: function () { return DATA; }, stop: function () { W.afhClipsPause = true; } };
+  // apres le premier affichage : jamais avant que la page ait eu le temps de peindre
+  setTimeout(function () { load(0); }, 400);
+})();
+</script>
 <script>
 // Jauge de chargement : octets reels du wasm (80 %) et de la musique du titre (20 %) lus au passage ; le chargement lui-meme
 // ne change pas (meme requete, memes en-tetes). Sans taille annoncee : estimation d'apres le dernier chargement.
@@ -400,26 +580,128 @@
     paint();
   });
   function mb(n) { return (n / 1048576).toFixed(1).replace(".", ","); }
+  function clock(ms) { var s = Math.max(0, Math.round(ms / 1000)); return Math.floor(s / 60) + ":" + ("0" + (s % 60)).slice(-2); }
+  // Texte d'attente : jamais d'echec tant que le serveur peut simplement se reveiller (voir wasmFetch plus bas).
   function msg() {
+    if (L.failed) return ""; // le message d'echec est celui du bloc #ld-fail (avec « Reessayer »)
+    if (L.offline) return "Pas de connexion : le chargement reprendra tout seul des que le reseau revient.";
     if (L.hidden) return "Page en arriere-plan : le jeu demarre des que tu reviens ici.";
     if (L.done) return "Demarrage du jeu...";
-    if (!L.bytes) return "Préparation du téléchargement…";
+    var wait = Date.now() - L.t0;
+    if (L.waiting) {
+      if (L.bytes) return "Connexion interrompue, reprise du telechargement...";
+      if (wait < 8000) return "Connexion au serveur...";
+      if (wait < 15000) return "Le serveur se reveille...";
+      if (wait < 90000) return "Pas besoin de recharger : on reessaie tout seul.";
+      return "Le serveur met du temps a se reveiller. On continue d'essayer, merci de patienter.";
+    }
+    if (!L.bytes) return "Connexion au serveur...";
     var t = L.total || est;
     return "Telechargement " + mb(L.bytes) + (t ? " / " + mb(t) : "") + " Mo" + (L.visMs() - L.prog > 8000 ? " (connexion lente, ca continue...)" : "");
   }
+  var shownPct = 4;
   function paint() {
     var l = document.getElementById("loading");
     if (l && !l.hidden && l.style.opacity !== "0" && W.afhSay) W.afhSay(msg());
+    var sub = document.getElementById("ld-sub");
+    if (sub) sub.textContent = (L.failed || L.done) ? "" : (L.offline ? "" : "Temps ecoule " + clock(Date.now() - L.t0) + (L.attempt > 1 ? " - essai " + L.attempt : ""));
     bar = bar || document.getElementById("ld-bar"); if (!bar) return;
     var wf = p.w[1] ? p.w[0] / p.w[1] : Math.min(.92, p.w[0] / (est || 6e6));
     var mf = p.m[1] ? p.m[0] / p.m[1] : 0;
-    bar.style.width = Math.round(Math.max(.04, Math.min(1, wf * .8 + mf * .2)) * 100) + "%";
+    var pct = Math.max(.04, Math.min(1, wf * .8 + mf * .2)) * 100;
+    // Attente du serveur : la barre avance doucement (jusqu'a ~30 %) pour montrer que ca vit, sans jamais reculer.
+    if (!L.bytes && !L.done && !L.failed) pct = Math.max(pct, 4 + 26 * (1 - Math.exp(-(Date.now() - L.t0) / 70000)));
+    if (L.failed) pct = shownPct;
+    shownPct = Math.max(shownPct, pct);
+    bar.style.width = Math.round(shownPct) + "%";
   }
+  L.paint = paint;
   setInterval(function () { if (!L.hidden) paint(); }, 1000);
+  // Telechargement patient du wasm. Avant : un 502/503 (Render gratuit qui se reveille, 30 a 90 s, parfois plus) ou une coupure faisait
+  // echouer le chargement, puis 8 rechargements espaces de 2 a 9 s abandonnaient apres ~1 min. Maintenant : essais automatiques a delais
+  // croissants (1,5 s puis +1,5 s jusqu'a 10 s) pendant 4 min 30 de temps EN LIGNE (le temps hors connexion ne compte pas), chaque requete
+  // avec son propre delai (AbortController : en-tetes 20 a 45 s, 20 s sans octet pendant le corps), reprise du telechargement la ou il
+  // s'est arrete (Range + If-Range quand la reponse n'est pas compressee, sinon on repart de zero), sans recharger la page.
+  // Le wasm est rendu au chargeur du jeu en une seule fois (Response reconstituee) : le protocole et le jeu ne changent pas.
+  function wasmFetch(F, u, o) {
+    var BUDGET = W.afhLoadBudget || 270000, qb = /[?&]afh_budget=(\d+)/.exec(location.search); // 4 min 30 ; ?afh_budget=<ms> : reglage d'essai
+    if (qb) BUDGET = +qb[1];
+    return new Promise(function (resolve, reject) {
+      var chunks = [], got = 0, etag = "", encoded = false, total = 0, attempt = 0, timer = 0, offAt = 0, offTotal = 0, over = false;
+      L.waiting = true; L.attempt = 0;
+      function used() { return Date.now() - L.t0 - offTotal - (offAt ? Date.now() - offAt : 0); }
+      function cleanup() { W.removeEventListener("online", kick); W.removeEventListener("offline", off); document.removeEventListener("visibilitychange", vis); clearTimeout(timer); timer = 0; }
+      function kick() { if (!over && (offAt || timer)) go(); }
+      function off() { if (!over) { L.offline = true; paint(); } }
+      function vis() { if (!document.hidden && timer) go(); }
+      W.addEventListener("online", kick); W.addEventListener("offline", off); document.addEventListener("visibilitychange", vis);
+      function fail() {
+        if (over) return; over = true; cleanup();
+        L.waiting = false; L.failed = true;
+        L.failMsg = "Impossible de joindre le serveur apres plus de " + Math.max(4, Math.floor(used() / 60000)) + " minutes. Verifie ta connexion, puis reessaie.";
+        L.failedAt = Date.now(); paint(); try { W.afhBootFail && W.afhBootFail(L.failMsg); } catch (e) {}
+        reject(new Error("wasm: serveur injoignable apres " + Math.round(used() / 1000) + " s (" + attempt + " essais)"));
+      }
+      function retry() {
+        if (over) return;
+        L.waiting = true; paint();
+        if (used() > BUDGET) return fail();
+        timer = setTimeout(go, Math.min(1500 + attempt * 1500, 10000));
+      }
+      function finish() {
+        if (!got || (!encoded && total && got < total)) throw new Error("telechargement incomplet");
+        var bytes = new Uint8Array(got), at = 0;
+        for (var i = 0; i < chunks.length; i++) { bytes.set(chunks[i], at); at += chunks[i].length; }
+        chunks = []; over = true; cleanup();
+        p.w = [1, 1]; L.done = true; L.waiting = false; L.offline = false; L.mark();
+        try { localStorage.setItem(KEY, String(got)); } catch (e) {}
+        setTimeout(function () { try { W.afhWarm && W.afhWarm(); } catch (e) {} }, 3000);
+        paint();
+        resolve(new Response(bytes, { status: 200, headers: { "content-type": "application/wasm" } }));
+      }
+      function go() {
+        clearTimeout(timer); timer = 0;
+        if (over) return;
+        if (navigator.onLine === false) { if (!offAt) offAt = Date.now(); L.offline = true; L.waiting = true; paint(); return; } // reprise a l'evenement « online »
+        if (offAt) { offTotal += Date.now() - offAt; offAt = 0; }
+        L.offline = false;
+        if (used() > BUDGET) return fail();
+        attempt++; L.attempt = attempt;
+        var ac = new AbortController(), hdr = setTimeout(function () { try { ac.abort(); } catch (e) {} }, Math.min(20000 + attempt * 5000, 45000)), stall = 0;
+        var init = {}; if (o) for (var k in o) init[k] = o[k];
+        init.signal = ac.signal;
+        if (got && etag && !encoded) init.headers = { "Range": "bytes=" + got + "-", "If-Range": etag };
+        F(u, init).then(function (r) {
+          clearTimeout(hdr);
+          if (over) return;
+          if (!(r.status === 200 || r.status === 206) || !r.body || !r.body.getReader) { try { r.body && r.body.cancel(); } catch (e) {} throw new Error("http " + r.status); }
+          if (r.status === 200) { chunks = []; got = 0; total = +r.headers.get("content-length") || 0; }
+          encoded = !!r.headers.get("content-encoding");
+          etag = r.headers.get("etag") || etag;
+          L.waiting = false; L.total = total; p.w = [got, total];
+          var rd = r.body.getReader();
+          function pump() {
+            clearTimeout(stall); stall = setTimeout(function () { try { ac.abort(); } catch (e) {} }, 20000);
+            return rd.read().then(function (x) {
+              if (over) { clearTimeout(stall); return; }
+              if (x.done) { clearTimeout(stall); return finish(); }
+              chunks.push(x.value); got += x.value.length;
+              if (total && got > total) total = 0; // reponse compressee : la taille annoncee ne vaut plus
+              p.w = [got, total]; L.bytes = got; L.total = total; L.mark(); paint();
+              return pump();
+            });
+          }
+          return pump();
+        }).catch(function (e) { clearTimeout(hdr); clearTimeout(stall); retry(); });
+      }
+      go();
+    });
+  }
   if (!W.fetch || !W.ReadableStream || !W.Response) return;
   var F = W.fetch.bind(W);
   W.fetch = function (u, o) {
     var url = String((u && u.url) || u), k = /\.wasm(\?|$)/.test(url) ? "w" : (/music\/title\.ogg/.test(url) ? "m" : "");
+    if (k === "w" && W.AbortController && !W.afhNoRetryFetch) return wasmFetch(F, u, o);
     var pr = F(u, o);
     if (!k) return pr;
     return pr.then(function (r) {
@@ -677,6 +959,7 @@
   (function watch() {
     if (ready) return;
     var L = window.afhLoad;
+    if (L && L.waiting && !L.failed && !L.done) { setTimeout(watch, 2000); return; } // attente patiente du serveur : pas une panne du jeu
     if (!L || L.stalled()) {
       var d = L ? " (visible " + Math.round(L.visMs() / 1000) + " s sur " + Math.round((Date.now() - L.t0) / 1000) + " s, " + L.bytes + "/" + L.total + " octets" + (L.done ? ", wasm recu" : "") + ")" : "";
       crumb("wasm", "pas de demarrage" + d); submit("wasm", "le jeu ne demarre pas apres 25 s visibles" + d, "", false); return;
@@ -1295,7 +1578,7 @@ miniquad_add_plugin({
         try { var t = document.createElement("textarea"); t.value = url; t.style.position = "fixed"; t.style.opacity = "0"; document.body.appendChild(t); t.select(); done = document.execCommand("copy") ? 1 : 0; document.body.removeChild(t); } catch (e) {}
       }
       try { if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(url).catch(legacy); done = 1; } else legacy(); } catch (e) { legacy(); }
-      try { if (navigator.share && navigator.maxTouchPoints > 0) navigator.share({ title: "AI Fighter 2", text: "Viens jouer avec moi !", url: url }).catch(function () {}); } catch (e) {}
+      try { if (navigator.share && navigator.maxTouchPoints > 0) navigator.share({ title: "InkRise : the Stickman Ascension", text: "Viens jouer avec moi !", url: url }).catch(function () {}); } catch (e) {}
       return done;
     };
     // Invitation (v2) : flags 1 = copier le lien, 2 = feuille de partage native (navigator.share : WhatsApp, SMS, Messenger, Telegram...), 4 = prevenir le cercle d'amis (push).
@@ -1306,7 +1589,7 @@ miniquad_add_plugin({
         var legacy = function () { try { var t = document.createElement("textarea"); t.value = url; t.style.position = "fixed"; t.style.opacity = "0"; document.body.appendChild(t); t.select(); document.execCommand("copy"); document.body.removeChild(t); } catch (e) {} };
         try { if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).catch(legacy); else legacy(); } catch (e) { legacy(); }
       }
-      if (flags & 2) { try { if (navigator.share) { navigator.share({ title: "AI Fighter 2", text: text, url: url }).catch(function () {}); shared = 1; } } catch (e) {} }
+      if (flags & 2) { try { if (navigator.share) { navigator.share({ title: "InkRise : the Stickman Ascension", text: text, url: url }).catch(function () {}); shared = 1; } } catch (e) {} }
       return shared;
     };
     // Capacites et NFC. kind 0 : bits (1 = Web NFC, 2 = cercle d'amis actif, 4 = navigator.share) ; 1 : ecrire un lien sur une etiquette NFC ; 2 : lire une etiquette (code de salon) ; 3 : vider le code lu.
@@ -1395,7 +1678,7 @@ miniquad_add_plugin({
           var lab = document.createElement("span"); lab.textContent = "Clip pret (" + Math.round(file.size / 1024) + " Ko)";
           box.appendChild(lab);
           if (navigator.canShare && navigator.share && navigator.canShare({ files: [file] })) {
-            box.appendChild(mk("Partager", function () { navigator.share({ files: [file], title: "AI Fighter 2" }).catch(function () {}); }));
+            box.appendChild(mk("Partager", function () { navigator.share({ files: [file], title: "InkRise : the Stickman Ascension" }).catch(function () {}); }));
           }
           box.appendChild(mk("Enregistrer", function () {
             var a = document.createElement("a"); a.href = url; a.download = file.name; a.style.display = "none";
@@ -1449,7 +1732,7 @@ window.afhInviteShare = function (url, text) {
     try { if (nav.clipboard && nav.clipboard.writeText) { nav.clipboard.writeText(msg).then(function () { window.afhInviteDone = 3; }, function () { window.afhInviteDone = legacy() ? 3 : 4; }); return; } } catch (e) {}
     window.afhInviteDone = legacy() ? 3 : 4;
   }
-  var data = { title: "AI Fighter 2", text: text || "", url: url };
+  var data = { title: "InkRise : the Stickman Ascension", text: text || "", url: url };
   try {
     if (nav.share && (!nav.canShare || nav.canShare(data))) {
       mode = 1;
@@ -1497,30 +1780,17 @@ miniquad_add_plugin({
 // Telephone (tactile, pixels denses) : on dessine a la taille CSS et le navigateur agrandit, bien plus fluide qu'en pleine
 // resolution native (x7 pixels a remplir sur un ecran 3x). PC et ecrans peu denses : resolution native.
 high_dpi = !((navigator.maxTouchPoints > 0 || 'ontouchstart' in window) && window.devicePixelRatio > 1.5);
-// Demarrage a froid (serveur endormi : 503/502, coupure reseau) : le chargeur n'affiche qu'une erreur en console et la page
-// restait figee sur le chargement. On le dit a l'ecran et on retente seul (rechargement, delais croissants, 8 essais).
+// Demarrage a froid (serveur endormi : 502/503, coupure reseau) : toute l'attente patiente est dans wasmFetch (script de la jauge) et
+// dans l'ecran #afh-boot (etapes, secondes, echec reel + « Reessayer »). Ici : le wasm recu qui ne demarre pas (un seul rechargement
+// automatique, avec fusible), et la relance automatique d'un echec affiche au retour de l'onglet ou du reseau.
 (function () {
-  var tries = 0; try { tries = +sessionStorage.getItem("afh_load_tries") || 0; } catch (e) {}
-  function loading() { var l = document.getElementById("loading"); return l && !l.hidden && l.style.opacity !== "0"; }
-  function say(t) {
-    var l = document.getElementById("loading"); if (!l) return;
-    var m = document.getElementById("ld-msg");
-    if (!m) { m = document.createElement("div"); m.id = "ld-msg"; m.style.cssText = "position:absolute;left:0;right:0;bottom:12%;text-align:center;color:#fff3e0;font:600 15px/1.4 ui-monospace,Menlo,Consolas,monospace;padding:0 16px"; l.appendChild(m); }
-    m.textContent = t;
-  }
-  window.afhSay = say;
-  // Reprise a la reapparition de la page : le telechargement lance en arriere-plan est souvent suspendu ou coupe par le systeme.
-  // Si le wasm n'est pas recu et que rien n'avance depuis 8 s, on relance une fois ou deux (compteur propre, sans toucher aux 503).
-  document.addEventListener("visibilitychange", function () {
-    if (document.hidden || !loading()) return;
-    var L = window.afhLoad; if (!L || L.done) return;
-    var r = 0; try { r = +sessionStorage.getItem("afh_resume") || 0; } catch (e) {}
-    if (r >= 2 || Date.now() - (L.progWall || L.t0) < 8000) return;
-    try { sessionStorage.setItem("afh_resume", String(r + 1)); } catch (e) {}
-    if (!fuse()) return;
-    say("Reprise du chargement..."); setTimeout(function () { location.reload(); }, 300);
-  });
-  // Fusible anti-boucle (TOUTES les relances automatiques) : au plus 3 rechargements en 60 s. Au-dela, on s'arrete et on le dit (jamais de page qui se recharge sans fin).
+  var D = document, W = window;
+  function loading() { var l = D.getElementById("loading"); return l && !l.hidden && l.style.opacity !== "0"; }
+  function say(t) { var m = D.getElementById("ld-msg"); if (m) m.textContent = t; }
+  W.afhSay = say;
+  function ss(k, v) { try { if (v === null) sessionStorage.removeItem(k); else sessionStorage.setItem(k, v); } catch (e) {} }
+  function sg(k) { try { return sessionStorage.getItem(k); } catch (e) { return null; } }
+  // Fusible anti-boucle (TOUTES les relances automatiques) : au plus 3 rechargements en 60 s.
   function fuse() {
     var now = Date.now(), log = [];
     try { log = JSON.parse(sessionStorage.getItem("afh_rl") || "[]").filter(function (t) { return now - t < 60000; }); } catch (e) {}
@@ -1529,22 +1799,34 @@ high_dpi = !((navigator.maxTouchPoints > 0 || 'ontouchstart' in window) && windo
     try { sessionStorage.setItem("afh_rl", JSON.stringify(log)); } catch (e) {}
     return true;
   }
-  window.afhFuse = fuse;
-  // Une relance n'a de sens que si le wasm n'est PAS encore recu (serveur endormi, coupure) : une fois les octets recus, une erreur de console ou un rejet de promesse
-  // (audio, WebGL...) ne doit JAMAIS recharger la page (c'etait la boucle « Demarrage du jeu... » de l'ami qui rejoint par lien).
-  function retry() {
-    if (!loading()) return;
-    var L = window.afhLoad; if (L && L.done) return;
+  W.afhFuse = fuse;
+  // Echec affiche et on revient sur l'onglet, ou le reseau revient : on relance tout seul (pas plus d'une fois par 5 s, avec le fusible).
+  function auto() { var L = W.afhLoad; if (L && L.failed && loading() && Date.now() - (L.failedAt || 0) > 5000 && fuse()) { ss("afh_load_reload", null); try { location.reload(); } catch (e) {} } }
+  D.addEventListener("visibilitychange", function () { if (!D.hidden) auto(); });
+  W.addEventListener("online", auto);
+  // Le wasm est arrive mais ne se compile pas / ne demarre pas (octets corrompus, cache perime) : UN seul rechargement, ensuite on le dit.
+  function bad(m) {
+    var L = W.afhLoad; if (!loading() || (L && L.failed)) return;
+    var vu = /wasm|webassembly|compile|instantiat|link/i.test(String(m || ""));
+    if (L && L.done) {
+      // Wasm recu mais inutilisable (octets corrompus, cache perime) : UN seul rechargement ; une erreur d'audio ou de WebGL ne recharge jamais.
+      if (!vu) return;
+      if (sg("afh_load_reload") || !fuse()) { if (W.afhBootFail) W.afhBootFail("Le jeu n'a pas pu demarrer. Reessaie, ou vide le cache du navigateur si ca recommence."); return; }
+      ss("afh_load_reload", "1"); say("Reprise du chargement...");
+      setTimeout(function () { try { location.reload(); } catch (e) {} }, 800);
+      return;
+    }
+    // Attente patiente en cours (wasmFetch : essais, delais, reprise) : on ne recharge pas, l'echec reel est annonce par wasmFetch.
+    if (L && L.waiting) return;
+    // Sans telechargeur patient (navigateur ancien) : ancienne relance, au plus 3 rechargements en 60 s (fusible).
     if (!fuse()) return;
-    if (tries >= 8) { say("Le serveur ne repond pas. Recharge la page dans un instant."); return; }
-    say("Le serveur se reveille, nouvelle tentative (" + (tries + 1) + "/8)...");
-    try { sessionStorage.setItem("afh_load_tries", String(tries + 1)); } catch (e) {}
-    setTimeout(function () { location.reload(); }, Math.min(2000 + tries * 1500, 9000));
+    say("Le serveur se reveille, nouvelle tentative...");
+    setTimeout(function () { try { location.reload(); } catch (e) {} }, 2000);
   }
   var ce = console.error;
-  console.error = function () { ce.apply(console, arguments); if (loading()) retry(); };
-  window.addEventListener("unhandledrejection", function () { if (loading()) retry(); });
-  window.addEventListener("load", function () { setTimeout(function () { if (!loading()) { try { sessionStorage.removeItem("afh_load_tries"); sessionStorage.removeItem("afh_resume"); } catch (e) {} } }, 4000); });
+  console.error = function () { ce.apply(console, arguments); try { bad(Array.prototype.join.call(arguments, " ")); } catch (e) {} };
+  W.addEventListener("unhandledrejection", function (e) { var r = e && e.reason; try { bad(r && (r.message || r)); } catch (x) {} });
+  W.addEventListener("load", function () { setTimeout(function () { if (!loading()) { ss("afh_load_reload", null); ss("afh_load_tries", null); ss("afh_resume", null); } }, 4000); });
 })();
 load("ai_fighter_2.wasm");
 (function () {
