@@ -57,7 +57,7 @@
 
   /* Ecran d'attente vivant : pluie neon, etapes, secondes ecoulees, astuces, echec avec « Reessayer ». Injecte par le script #afh-boot. */
   #loading .stage { z-index: 1; }
-  #loading { justify-content: flex-start; padding-top: max(10px, 2.5vh); }
+  #loading { justify-content: flex-start; padding-top: calc(max(10px, 2.5vh) + var(--upd, 0px)); }
   #ld-scene { display: block; width: 100vw; max-width: none; height: clamp(120px, 40dvh, 440px); margin: 8px 0 0; border-radius: 0; pointer-events: none; }
   @media (orientation: landscape) { #ld-scene { height: 54dvh; } #loading .wm { width: min(34%, 150px); } #loading .sub { margin-top: 4px; } }
   @media (orientation: landscape) and (max-height: 520px) { #ld-scene { height: 43dvh; margin-top: 4px; } #loading .wm { width: min(26%, 118px); } #loading .rail { margin-top: 8px; } #ld-info { gap: 3px; bottom: max(6px, env(safe-area-inset-bottom)); } }
@@ -552,7 +552,11 @@
       if (RM) { t = Math.min(clip.f.length - 2, 40); fade = 0; draw(frameAt(t), t); } else go();
     }).catch(function () { if (n < 40) setTimeout(function () { load(n + 1); }, 5000); });
   }
-  resize(); drawBg(0);
+  // Pose de garde integree a la page : la scene n'est JAMAIS vide, meme si les extraits n'arrivent pas (serveur qui dort, 404, reseau lent).
+  // Images enregistrees du vrai moteur (premiere image de l'extrait « corps_jete_a » : Kaze et un Voyou en garde), figees.
+  var FA = [0, 71, -8, 32, -16, 74, -37, 36, -55, 58, 2, 5, -8, -22, -33, -28, -41, -71, 26, -34, 57, -65, 24, 0], FBP = [-92, 60, 10, 33, 24, 76, 35, 15, 41, 45, 4, 3, 8, -27, 45, -7, 45, -52, 0, -45, -45, -45, 25, 0];
+  var FB = { p: [{ c: "#3c8cff", b: 80, h: 1, m: "Kaze", r: 24 }, { c: "#a07850", b: 84, h: 0, m: "Voyou", r: 25 }], f: [[FA, FBP], [FA, FBP]], e: [] };
+  resize(); clip = FB; scale(FB); t = 0; draw(frameAt(0), 0);
   W.addEventListener("resize", function () { resize(); if (clip) draw(frameAt(t), t); else drawBg(0); });
   D.addEventListener("visibilitychange", function () { if (!D.hidden) go(); });
   W.afhClips = { choose: function (i) { if (DATA) { last = i; clip = DATA.clips[i]; t = 0; evi = 0; ink = []; pool = []; scale(clip); } }, at: function (tt) { t = 0; evi = 0; ink = []; pool = []; while (t < tt && t < clip.f.length - 2) step(1 / 60); fade = 0; var tq = Math.min(t, clip.f.length - 1.01); draw(frameAt(tq), tq); }, data: function () { return DATA; }, stop: function () { W.afhClipsPause = true; } };
@@ -1042,6 +1046,8 @@ if ("serviceWorker" in navigator) {
         d.textContent = "Nouvelle version, recharger";
         d.onclick = function () { location.reload(); };
         document.body.appendChild(d);
+        // Le bandeau ne doit jamais recouvrir le titre : on reserve sa hauteur en haut de l'ecran de chargement.
+        try { document.documentElement.style.setProperty("--upd", d.offsetHeight + "px"); } catch (e) {}
       }
       window.afhShowUpdate = banner;
       reg.addEventListener("updatefound", function () {
