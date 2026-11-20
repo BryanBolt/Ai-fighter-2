@@ -1,1 +1,1 @@
-publication 2026-11-20 04:40:43 canal=test commit=67a395f9dc7e6293b67617d12844d373067b3e2d numero=t103 build_id=83253832ff28deb7 (dans le wasm : oui) protocole=67 wasm=7714953 octets sha256=bd5dba9e61d93b385276ad7d2ea84c126dcd6dbb7dde6a626dd9114b5c565692
+publication 2026-11-20 06:19:54 canal=test commit=b68fb0bf61155dc0e50e2b53fff3b65133db4bba numero=t104 build_id=03f5f27f5864d1ee (dans le wasm : oui) protocole=67 wasm=7787671 octets sha256=375947e6cb0172d629dcdc3d758447fe157e2bf2255ac17c79a65b89e4697160
