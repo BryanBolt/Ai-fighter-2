@@ -1076,7 +1076,21 @@ window.afhInstall = (function () {
   var ios = /iPad|iPhone|iPod/.test(ua) || (/Macintosh/.test(ua) && (navigator.maxTouchPoints || 0) > 1);
   window.addEventListener("beforeinstallprompt", function (e) { e.preventDefault(); ev = e; });
   window.addEventListener("appinstalled", function () { ev = null; done = true; });
+  // Refus de la carte « Installer » (jeu) : compteur en stockage local, lecture et ecriture protegees (mode prive, stockage bloque).
+  function refus() { try { var v = parseInt(localStorage.getItem("afh_install_refus") || "0", 10); return v > 0 ? Math.min(v, 9) : 0; } catch (e) { return 0; } }
+  function noterRefus(n) { try { localStorage.setItem("afh_install_refus", String(Math.max(0, Math.min(9, n | 0)))); } catch (e) {} }
+  // Plein ecran propose ? Non si deja en plein ecran, lance comme appli installee, ou si le navigateur n'a pas l'API (iPhone).
+  function plein() {
+    try {
+      var d = document.documentElement;
+      if (document.fullscreenElement || document.webkitFullscreenElement) return false;
+      if (!(d.requestFullscreen || d.webkitRequestFullscreen)) return false;
+      if (standalone()) return false;
+    } catch (e) { return false; }
+    return true;
+  }
   return {
+    refus: refus, noterRefus: noterRefus, pleinEcranPropose: plein,
     state: function () { if (done || standalone()) return 0; if (ev) return 1; return ios ? 2 : 0; },
     prompt: function () { var p = ev; if (!p) return; ev = null; try { p.prompt(); } catch (x) {} }
   };
@@ -1348,6 +1362,11 @@ miniquad_add_plugin({
     // Preference systeme « reduire les animations » (reglage d'accessibilite) : 1 si activee.
     importObject.env.afh_reduced_motion = function () { try { return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 1 : 0; } catch (e) { return 0; } };
     importObject.env.afh_install_state = function () { try { return window.afhInstall ? window.afhInstall.state() : 0; } catch (e) { return 0; } };
+    importObject.env.afh_fs_hidden = function () { try { return window.afhInstall && window.afhInstall.pleinEcranPropose() ? 0 : 1; } catch (e) { return 1; } };
+    importObject.env.afh_install_refusals = function () { try { return window.afhInstall ? window.afhInstall.refus() : 0; } catch (e) { return 0; } };
+    importObject.env.afh_install_refuse = function (n) { try { if (window.afhInstall) window.afhInstall.noterRefus(n); } catch (e) {} };
+    // Labo des coups depuis l'appli installee (pas de barre d'adresse) : meme page avec ?labo=coups, le reste de l'adresse est garde.
+    importObject.env.afh_open_labo = function () { try { var u = new URL(location.href); u.searchParams.set("labo", "coups"); location.assign(u.toString()); } catch (e) {} };
     importObject.env.afh_install_prompt = function () { try { if (window.afhInstall) window.afhInstall.prompt(); } catch (e) {} };
     // Musiques a la demande (hors du wasm) : le jeu sonde afh_music_size (0 = en cours, -1 = echec, n = octets prets),
     // puis copie le morceau avec afh_music_copy. Chaque .ogg est telecharge, decode (WebAudio), raccorde en boucle (fondu croise
@@ -1403,7 +1422,7 @@ miniquad_add_plugin({
       new Uint8Array(wasm_memory.buffer, dst, mm.buf.length).set(mm.buf); delete mus[MUS_NAMES[id]];
     };
     // Plein ecran : plus de bouton sur le terrain ; le jeu l'offre dans « Options rapides » de la pause.
-    importObject.env.afh_fullscreen = function () { try { var d = document.documentElement; if (document.fullscreenElement) document.exitFullscreen(); else if (d.requestFullscreen) { d.requestFullscreen().then(function () {}).catch(function () {}); } } catch (e) {} };
+    importObject.env.afh_fullscreen = function () { try { var d = document.documentElement; if (document.fullscreenElement || document.webkitFullscreenElement) { if (document.exitFullscreen) document.exitFullscreen(); else if (document.webkitExitFullscreen) document.webkitExitFullscreen(); } else if (d.requestFullscreen) { d.requestFullscreen().then(function () {}).catch(function () {}); } else if (d.webkitRequestFullscreen) { d.webkitRequestFullscreen(); } } catch (e) {} };
     importObject.env.afh_vibrate =function (ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} };
     // Motif de vibration (haptique par niveau) : vibre / pause alternes en ms, zeros de fin ignores.
     importObject.env.afh_vibrate_pat = function (a, b, c, d, e) { try { var p = [a, b, c, d, e]; while (p.length && p[p.length - 1] === 0) p.pop(); if (navigator.vibrate && p.length) navigator.vibrate(p); } catch (x) {} };
