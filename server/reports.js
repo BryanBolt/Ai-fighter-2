@@ -232,7 +232,7 @@ export function createReports(opts = {}) {
 
   // Resume lisible (pour tools/fetch_reports.sh) : un bloc par groupe, avec fichier:ligne du panic et dernier fil d'Ariane.
   function markdown(groups, total) {
-    const L = [`# Rapports d'erreurs AI Fighter 2`, '', `Genere le ${new Date().toISOString()} - ${total} rapports, ${groups.length} groupes (du plus recent au plus ancien).`, ''];
+    const L = [`# Rapports d'erreurs InkRise`, '', `Genere le ${new Date().toISOString()} - ${total} rapports, ${groups.length} groupes (du plus recent au plus ancien).`, ''];
     if (!groups.length) L.push('Aucun rapport.');
     // Resume des divergences en tete : les plus precoces (image la plus basse) d'abord.
     const divs = groups.flatMap((g) => g.samples.map((s) => ({ g, s, line: divergence(g, s), f: s.diag?.first_div?.frame ?? Infinity }))).filter((x) => x.line).sort((a, b) => a.f - b.f);

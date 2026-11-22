@@ -1,4 +1,4 @@
-// Relais en ligne d'AI Fighter 2 : salons, parties rapides, relais des entrees (lockstep deterministe),
+// Relais en ligne d'InkRise : salons, parties rapides, relais des entrees (lockstep deterministe),
 // journal des entrees (reprise, arrivee en cours de partie), detection de desynchronisation, AFK, expulsion.
 // Le serveur ne simule RIEN : chaque client fait tourner le jeu complet.
 import http from 'node:http';
@@ -264,7 +264,7 @@ export function createServer(opts = {}) {
       const line = JSON.stringify({ at: new Date().toISOString(), text }) + '\n';
       try { fs.appendFileSync(process.env.IDEAS_FILE || 'ideas.jsonl', line); } catch { /* disque en lecture seule */ }
       if (process.env.IDEAS_WEBHOOK) {
-        fetch(process.env.IDEAS_WEBHOOK, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ content: 'Idee AI Fighter 2 : ' + text }) }).catch(() => {});
+        fetch(process.env.IDEAS_WEBHOOK, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ content: 'Idee InkRise : ' + text }) }).catch(() => {});
       }
       res.writeHead(200, { 'content-type': 'text/plain' }); res.end('merci');
     });
@@ -1575,5 +1575,5 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   process.on('uncaughtException', (e) => console.error('exception non rattrapee :', e && e.stack || e));
   process.on('unhandledRejection', (e) => console.error('promesse rejetee :', e && e.stack || e));
   const port = Number(process.env.PORT || 8787);
-  createServer().server.listen(port, () => console.log(`AI Fighter 2 : serveur en ligne sur le port ${port}`));
+  createServer().server.listen(port, () => console.log(`InkRise : serveur en ligne sur le port ${port}`));
 }
