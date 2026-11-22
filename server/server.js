@@ -328,6 +328,9 @@ export function createServer(opts = {}) {
   // entree (6 joueurs x 60 entrees/s x 5 destinataires = 1800 envois/s -> au plus 1 lot par destinataire et par periode). Les clients sans `cb` (tests, anciens bancs) gardent un message par entree.
   // L'ordre avec les `ctl` est conserve : tout autre message diffuse vide d'abord le lot en attente.
   const INPUT_BATCH_MS = opts.inputBatchMs ?? 12;
+  // Salon de 2 humains (le cas courant) : une seule destination, rien a grouper ; le lot n'ajoutait que de l'attente (jusqu'a 12 ms entre l'appui et l'autre
+  // ecran, donc 1 image de delai d'entree en plus). Relaye tout de suite, sauf reglage explicite (`inputBatchDuoMs`, ou `inputBatchMs` pour tous). Banc : src/qa_lag_multi.rs.
+  const INPUT_BATCH_DUO_MS = opts.inputBatchDuoMs ?? opts.inputBatchMs ?? 0;
   function flushInputs(room) {
     if (room.inT) { clearTimeout(room.inT); room.inT = null; }
     const q = room.inq; room.inq = null;
@@ -337,16 +340,19 @@ export function createServer(opts = {}) {
   function broadcastInput(room, slot, f0, bits, except = null) {
     let one = null;
     const item = [slot, f0, bits];
+    const hs = humans(room);
+    const batchMs = hs.length <= 2 ? INPUT_BATCH_DUO_MS : INPUT_BATCH_MS;
+    if (batchMs <= 0 && room.inq) flushInputs(room); // passage de 3 a 2 humains : le lot en attente part avant (ordre conserve)
     const each = (w) => {
       if (w === except) return;
-      if (clients.get(w)?.cb && INPUT_BATCH_MS > 0) {
+      if (clients.get(w)?.cb && batchMs > 0) {
         if (!room.inq) room.inq = new Map();
         const a = room.inq.get(w); if (a) a.push(item); else room.inq.set(w, [item]);
       } else sendRaw(w, one ?? (one = JSON.stringify({ t: 'input', slot, f0, bits })));
     };
-    for (const [s] of humans(room)) each(s.ws);
+    for (const [s] of hs) each(s.ws);
     for (const w of room.watchers) each(w);
-    if (room.inq && !room.inT) room.inT = setTimeout(() => { room.inT = null; flushInputs(room); }, INPUT_BATCH_MS);
+    if (room.inq && !room.inT) room.inT = setTimeout(() => { room.inT = null; flushInputs(room); }, batchMs);
   }
   // Liste publique : seulement les salons habites, les plus remplis (puis les plus recents) d'abord, bornee.
   const publicList = () => [...rooms.values()].filter((r) => r.public && humans(r).length > 0)
