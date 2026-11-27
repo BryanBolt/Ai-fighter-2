@@ -255,7 +255,7 @@
     keepAwake();
   }
   // Safari/Android : le contexte peut passer en « interrupted » (appel, notification) sans evenement de page : un geste le relance.
-  ["touchend", "mousedown", "keydown"].forEach(function (n) { W.addEventListener(n, function () { wake(); }, { capture: true, passive: true }); });
+  ["touchend", "mousedown", "keydown"].forEach(function (n) { W.addEventListener(n, function () { if (!G.sleeping || (D.hasFocus && D.hasFocus())) wake(); }, { capture: true, passive: true }); });
   // « Le jeu se met en pause tout seul » : le jeu lit ce drapeau (afh_focus_lost) une fois par image.
   G.takeHidden = function () { var v = G.hiddenFlag; G.hiddenFlag = false; return v ? 1 : 0; };
 
