@@ -238,7 +238,7 @@
   G.ctxs = ctxs;
   if (AC) {
     try {
-      var Wrapped = function (o) { var c = new AC(o); ctxs.push(c); return c; };
+      var Wrapped = function (o) { var c = new AC(o); ctxs.push(c); try { c.addEventListener("statechange", function () { if ((G.sleeping || D.hidden) && c.state === "running") { c.afhSlept = true; var p = c.suspend(); if (p && p.catch) p.catch(function () {}); } }); } catch (e) {} if (G.sleeping || D.hidden) { try { c.afhSlept = true; var q = c.suspend(); if (q && q.catch) q.catch(function () {}); } catch (e) {} } return c; };
       Wrapped.prototype = AC.prototype;
       W.AudioContext = Wrapped;
       if (W.webkitAudioContext) W.webkitAudioContext = Wrapped;
@@ -255,7 +255,7 @@
     keepAwake();
   }
   // Safari/Android : le contexte peut passer en « interrupted » (appel, notification) sans evenement de page : un geste le relance.
-  ["touchend", "mousedown", "keydown"].forEach(function (n) { W.addEventListener(n, function () { if (!G.sleeping) wake(); }, { capture: true, passive: true }); });
+  ["touchend", "mousedown", "keydown"].forEach(function (n) { W.addEventListener(n, function () { wake(); }, { capture: true, passive: true }); });
   // « Le jeu se met en pause tout seul » : le jeu lit ce drapeau (afh_focus_lost) une fois par image.
   G.takeHidden = function () { var v = G.hiddenFlag; G.hiddenFlag = false; return v ? 1 : 0; };
 
@@ -1048,6 +1048,9 @@ if ("serviceWorker" in navigator) {
         document.body.appendChild(d);
         // Le bandeau ne doit jamais recouvrir le titre : on reserve sa hauteur en haut de l'ecran de chargement.
         try { document.documentElement.style.setProperty("--upd", d.offsetHeight + "px"); } catch (e) {}
+        // En partie en ligne : bandeau masque (un rechargement ferait perdre la place pour toujours), revu toutes les 2 s.
+        var hide = function () { try { d.style.display = window.afhOnlineLive && window.afhOnlineLive() ? "none" : ""; } catch (e) {} };
+        hide(); setInterval(hide, 2000);
       }
       window.afhShowUpdate = banner;
       reg.addEventListener("updatefound", function () {
@@ -1559,6 +1562,8 @@ miniquad_add_plugin({
         me.onmessage = function (e) { if (ws === me && typeof e.data === "string") afhWsPush(e.data); };
       } catch (e) { wsState = 2; AFH_REPORT.crumb("ws", "WebSocket impossible : " + e); }
     };
+    // Liaison en ligne ouverte (partie ou salon) : le bandeau « Nouvelle version » se cache tant qu'elle dure (audit D2 : recharger en partie = plus de retour possible).
+    window.afhOnlineLive = function () { try { return !!(ws && ws.readyState === 1); } catch (e) { return false; } };
     importObject.env.afh_ws_send = function (p, l) { try { if (ws && ws.readyState === 1) ws.send(UTF8ToString(p, l)); } catch (e) {} };
     importObject.env.afh_ws_state = function () { return wsState; };
     importObject.env.afh_ws_close = function () { try { if (ws) ws.close(); } catch (e) {} wsState = 2; };
@@ -1646,12 +1651,26 @@ miniquad_add_plugin({
         }
         if (kind === 3) window.afhNfcCode = "";
         // kind 4 : METTRE A JOUR (version differente des autres joueurs) : desinscrit le service worker, vide les caches afh-, recharge.
-        if (kind === 4) {
+        // Anti-boucle (audit D1) : au plus une mise a jour par 2 min, et seulement si la version SERVIE differe de celle deja chargee
+        // (mon jeu peut etre le plus recent : c'est alors a l'ami de recharger, recharger ici bouclerait sans fin).
+        var majNow = function () {
           var done = function () { location.reload(); };
           var pr = [];
           try { if (navigator.serviceWorker && navigator.serviceWorker.getRegistrations) pr.push(navigator.serviceWorker.getRegistrations().then(function (rs) { return Promise.all(rs.map(function (r) { return r.unregister(); })); })); } catch (e) {}
           try { if (window.caches) pr.push(caches.keys().then(function (ks) { return Promise.all(ks.filter(function (k) { return /^afh-/.test(k); }).map(function (k) { return caches.delete(k); })); })); } catch (e) {}
           Promise.all(pr).then(done, done); setTimeout(done, 4000);
+        };
+        if (kind === 4) {
+          var note = function (t) { var d = document.getElementById("afh-maj") || document.createElement("div"); d.id = "afh-maj"; d.style.cssText = "position:fixed;left:0;right:0;bottom:0;z-index:99999;background:#1e3a8a;color:#fff;font:600 14px sans-serif;padding:8px;text-align:center"; d.textContent = t; if (!d.parentNode) document.body.appendChild(d); setTimeout(function () { try { d.remove(); } catch (e) {} }, 9000); };
+          var lastT = 0; try { lastT = +sessionStorage.getItem("afh_maj_t") || 0; } catch (e) {}
+          if (Date.now() - lastT < 120000) { note("Mise à jour déjà faite il y a peu : ton ami doit recharger sa page."); return 0; }
+          (window.afhServedTag ? window.afhServedTag() : Promise.resolve("")).then(function (tag) {
+            var mine = window.afhLoadedTag || ""; try { mine = mine || sessionStorage.getItem("afh_maj_tag") || ""; } catch (e) {}
+            if (tag && mine && tag === mine) { note("Ton jeu est déjà à jour : ton ami doit recharger sa page."); return; }
+            try { sessionStorage.setItem("afh_maj_t", String(Date.now())); if (tag) sessionStorage.setItem("afh_maj_tag", tag); } catch (e) {}
+            majNow();
+          });
+          return 0;
         }
       } catch (e) {}
       return 0;
@@ -1854,6 +1873,20 @@ high_dpi = !((navigator.maxTouchPoints > 0 || 'ontouchstart' in window) && windo
   W.addEventListener("load", function () { setTimeout(function () { if (!loading()) { ss("afh_load_reload", null); ss("afh_load_tries", null); ss("afh_resume", null); } }, 4000); });
 })();
 load("ai_fighter_2.wasm");
+// Version SERVIE du jeu (audit D1) : empreinte du wasm en ligne (ETag, sinon date + taille), lue sans cache. afhLoadedTag = celle du
+// chargement de cette page (lue juste apres le demarrage) ; la mise a jour pour « version differente » n'a lieu que si elles different.
+window.afhServedTag = function () {
+  try {
+    // Borne de 5 s : une reponse qui ne vient pas ne doit jamais bloquer la mise a jour (repli : empreinte inconnue).
+    var lim = new Promise(function (r) { setTimeout(function () { r(""); }, 5000); });
+    return Promise.race([lim, fetch("ai_fighter_2.wasm", { method: "HEAD", cache: "no-store" }).then(function (r) {
+      if (!r.ok) return "";
+      var h = r.headers, lm = h.get("last-modified") || "", n = h.get("content-length") || "";
+      return h.get("etag") || (lm || n ? lm + "|" + n : "");
+    }).catch(function () { return ""; })]);
+  } catch (e) { return Promise.resolve(""); }
+};
+window.addEventListener("load", function () { window.afhServedTag().then(function (t) { if (t && !window.afhLoadedTag) window.afhLoadedTag = t; }); });
 (function () {
   // Reveil du relais des l'ouverture du titre : un serveur gratuit s'endort et met ~30 s a repondre ; une requete legere (/health, reponse ignoree) part tout de
   // suite et se repete au retour au premier plan apres 4 min, pour qu'il soit eveille quand on veut jouer en ligne.
